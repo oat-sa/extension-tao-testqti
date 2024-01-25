@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2023 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2023-2024 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
@@ -31,8 +32,12 @@ use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
 use Psr\Log\LoggerInterface;
+use qtism\common\datatypes\QtiDuration;
+use qtism\data\AssessmentItemRef;
 use Throwable;
 
 class ConcurringSessionService
@@ -81,12 +86,15 @@ class ConcurringSessionService
         );
 
         foreach ($userExecutions as $execution) {
-            if ($execution->getOriginalIdentifier() !== $activeExecution->getOriginalIdentifier()) {
+            $executionId = $execution->getOriginalIdentifier();
+
+            if ($executionId !== $activeExecution->getOriginalIdentifier()) {
                 try {
-                    $this->setConcurringSession($execution->getOriginalIdentifier());
+                    $this->setConcurringSession($executionId);
 
                     $context = $this->getContextByDeliveryExecution($execution);
 
+                    $this->storeItemDuration($context, $executionId);
                     $this->qtiRunnerService->endTimer($context);
                     $this->qtiRunnerService->pause($context);
                 } catch (Throwable $e) {
@@ -94,7 +102,7 @@ class ConcurringSessionService
                         sprintf(
                             '%s: Unable to pause delivery execution %s: %s',
                             self::class,
-                            $execution->getOriginalIdentifier(),
+                            $executionId,
                             $e->getMessage()
                         )
                     );
@@ -124,9 +132,101 @@ class ConcurringSessionService
         );
     }
 
+    public function adjustTimers(DeliveryExecution $execution): void
+    {
+        $this->logger->debug(
+            sprintf(
+                'Adjusting timers on execution %s restart',
+                $execution->getIdentifier()
+            )
+        );
+
+        $testSession = $this->getTestSessionService()->getTestSession($execution);
+
+        if ($testSession->getCurrentAssessmentItemRef()) {
+            $duration = $testSession->getTimerDuration(
+                $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
+                $testSession->getTimerTarget()
+            );
+
+            $this->logger->debug(
+                sprintf(
+                    'Timer duration on execution %s timer adjustment = %f',
+                    $execution->getIdentifier(),
+                    $duration->getSeconds(true)
+                )
+            );
+
+            $ids = [
+                $execution->getIdentifier(),
+                $execution->getOriginalIdentifier()
+            ];
+
+            foreach ($ids as $executionId) {
+                $key = "itemDuration-{$executionId}";
+
+                if (!$this->currentSession->hasAttribute($key)) {
+                    continue;
+                }
+
+                $oldDuration = $this->currentSession->getAttribute($key);
+                $this->currentSession->removeAttribute($key);
+
+                $this->logger->debug(
+                    sprintf(
+                        'Timer duration on execution %s pause was %f',
+                        $execution->getIdentifier(),
+                        $oldDuration
+                    )
+                );
+
+                $delta = (int) ceil($duration->getSeconds(true) - $oldDuration);
+
+                if ($delta > 0) {
+                    $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
+
+                    $this->getTimerAdjustmentService()->increase($testSession, $delta);
+
+                    $testSession->suspend();
+                    $this->getTestSessionService()->persist($testSession);
+                }
+            }
+        }
+    }
+
+    private function storeItemDuration(
+        QtiRunnerServiceContext $context,
+        string $executionId
+    ): void {
+        $testSession = $context->getTestSession();
+        $itemRef = $testSession->getCurrentAssessmentItemRef();
+
+        if ($itemRef instanceof AssessmentItemRef) {
+            /** @var QtiDuration $duration */
+            $duration = $context->getTestSession()->getTimerDuration(
+                $itemRef->getIdentifier(),
+                $testSession->getTimerTarget()
+            );
+
+            $this->logger->debug(
+                sprintf(
+                    'duration when execution %s was paused = %f',
+                    $executionId,
+                    $duration->getSeconds(true)
+                )
+            );
+
+            $this->currentSession->setAttribute(
+                "itemDuration-{$executionId}",
+                $duration->getSeconds(true)
+            );
+        }
+    }
+
     private function getContextByDeliveryExecution(DeliveryExecutionInterface $execution): QtiRunnerServiceContext
     {
-        $container = $this->runtimeService->getDeliveryContainer($execution->getDelivery()->getUri());
+        $delivery = $execution->getDelivery();
+        $container = $this->runtimeService->getDeliveryContainer($delivery->getUri());
 
         if (!$container instanceof QtiTestDeliveryContainer) {
             throw new common_Exception(
@@ -137,7 +237,8 @@ class ConcurringSessionService
             );
         }
 
-        $testDefinition = $container->getSourceTest($execution);
+        $sessionId = $execution->getIdentifier();
+        $testDefinitionUri = $container->getSourceTest($execution);
         $testCompilation = sprintf(
             '%s|%s',
             $container->getPrivateDirId($execution),
@@ -145,9 +246,27 @@ class ConcurringSessionService
         );
 
         return $this->qtiRunnerService->getServiceContext(
-            $testDefinition,
+            $testDefinitionUri,
             $testCompilation,
-            $execution->getOriginalIdentifier()
+            $sessionId,
+            $execution->getUserIdentifier()
         );
+    }
+
+    private function getTimerAdjustmentService(): TimerAdjustmentService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceManager()->get(TimerAdjustmentService::SERVICE_ID);
+    }
+
+    private function getTestSessionService(): TestSessionService
+    {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
+    }
+
+    private function getServiceManager()
+    {
+        return ServiceManager::getServiceManager();
     }
 }
