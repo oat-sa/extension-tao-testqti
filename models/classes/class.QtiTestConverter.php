@@ -18,6 +18,7 @@
 * Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
 
+use qtism\common\datatypes\QtiPair;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
@@ -146,7 +147,9 @@ class taoQtiTest_models_classes_QtiTestConverter
             $value = $this->getValue($component, $property);
             if ($value !== null) {
                 $key = $property->getName();
-                if ($value instanceof QtiComponentCollection) {
+                if ($value instanceof QtiPair) {
+                    $array[$property->getName()] = (string) $value;
+                } elseif ($value instanceof QtiComponentCollection) {
                     $array[$key] = [];
                     foreach ($value as $item) {
                         $array[$key][] = $this->componentToArray($item);
