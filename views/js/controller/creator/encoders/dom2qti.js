@@ -156,13 +156,13 @@ define([
                     nodeName = normalizeNodeName(elt.nodeName);
 
                     object = _.merge(qtiElementHelper.create(nodeName, {
-                            'id': '',
-                            'class': '',
-                            'xmlBase': '',
-                            'lang': '',
-                            'label': ''
-                        }),
-                        _.transform(elt.attributes, function (acc, value) {
+                        'id': '',
+                        'class': '',
+                        'xmlBase': '',
+                        'lang': '',
+                        'label': ''
+                    }), {
+                        ...(_.transform(elt.attributes, function (acc, value) {
                             const attrName = normalizeNodeName(value.nodeName);
                             if (attrName) {
                                 if (typedAttributes[nodeName] && typedAttributes[nodeName][attrName]) {
@@ -171,7 +171,8 @@ define([
                                     acc[attrName] = value.nodeValue;
                                 }
                             }
-                        }));
+                        }))
+                    });
                     if (elt.childNodes.length > 0) {
                         object.content = self.decode(elt.childNodes);
                     }
