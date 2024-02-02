@@ -118,7 +118,7 @@ define([
     function validateModel(model) {
         const identifiers = extractIdentifiers(model, qtiTypesForUniqueIds);
         let nonUniqueIdentifiers = 0;
-        const outcomes = _.indexBy(outcomeHelper.listOutcomes(model));
+        const outcomes = _.keyBy(outcomeHelper.listOutcomes(model));
         let messageDetails = '';
 
         _(identifiers)
@@ -165,7 +165,7 @@ define([
 
         const extract = function extract(element) {
             if (element && _.has(element, 'identifier') && _.isString(element.identifier)) {
-                if (!includesOnlyTypes.length || _.contains(includesOnlyTypes, element['qti-type'])) {
+                if (!includesOnlyTypes.length || _.includes(includesOnlyTypes, element['qti-type'])) {
                     identifiers.push({
                         identifier: element.identifier.toUpperCase(),
                         originalIdentifier: element.identifier,
@@ -176,7 +176,7 @@ define([
             }
             _.forEach(element, function (subElement) {
                 if (_.isPlainObject(subElement) || _.isArray(subElement)) {
-                    if (!excludeTypes.length || !_.contains(excludeTypes, subElement['qti-type'])) {
+                    if (!excludeTypes.length || !_.includes(excludeTypes, subElement['qti-type'])) {
                         extract(subElement);
                     }
                 }

@@ -171,7 +171,9 @@ define([
                                     acc[attrName] = value.nodeValue;
                                 }
                             }
-                        }));
+                            return acc;
+                        }, {})
+                    );
                     if (elt.childNodes.length > 0) {
                         object.content = self.decode(elt.childNodes);
                     }

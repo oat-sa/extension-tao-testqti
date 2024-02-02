@@ -73,7 +73,7 @@ define(['jquery', 'lodash', 'ui/areaBroker', 'taoQtiTest/runner/ui/toolbox/toolb
             if (!config.areas) {
                 config.areas = config.defaultAreas;
             } else {
-                config.areas = _.keys(_.merge(_.object(config.areas), _.object(config.defaultAreas)));
+                config.areas = _.keys(_.merge(_.fromPairs(config.areas), _.fromPairs(config.defaultAreas)));
             }
 
             _.forEach(config.areas, areaId => {
