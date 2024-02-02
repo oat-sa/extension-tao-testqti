@@ -44,7 +44,7 @@
  * Data for each service call id will be stored in local storage to be able get data
  * after reloading the page or resuming the test session.
  *
- * To clear all data related to current test_.every_id used <i>clearData</i> method.
+ * To clear all data related to current test_call_id used <i>clearData</i> method.
  */
 define([
     'lodash'
