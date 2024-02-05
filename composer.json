@@ -62,7 +62,7 @@
     "ext-zip": "*",
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
-    "qtism/qtism": ">=0.28.3",
+    "qtism/qtism": "dev-feat/tr-5906/import-http-https as 0.28.3",
     "oat-sa/generis" : ">=15.22",
     "oat-sa/tao-core": ">=53.0.0",
     "oat-sa/extension-tao-item" : ">=12.1.0",
