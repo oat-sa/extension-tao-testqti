@@ -32,6 +32,8 @@ class TestPackageExport extends AbstractTestExport
 {
     use EventManagerAwareTrait;
 
+    protected const VERSION = 'metadata';
+
     public function getLabel(): string
     {
         return __('QTI Test Metadata');
