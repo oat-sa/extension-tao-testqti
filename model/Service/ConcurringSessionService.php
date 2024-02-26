@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
+use common_exception_NotFound;
 use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -113,7 +114,7 @@ class ConcurringSessionService
 
     public function isConcurringSession(DeliveryExecution $execution): bool
     {
-        $key = "pauseReason-{$execution->getOriginalIdentifier()}";
+        $key = $this->getPauseReasonSessionKey($execution);
 
         return $this->currentSession->hasAttribute($key)
             && $this->currentSession->getAttribute($key) === self::PAUSE_REASON_CONCURRENT_TEST;
@@ -121,13 +122,15 @@ class ConcurringSessionService
 
     public function clearConcurringSession(DeliveryExecution $execution): void
     {
-        $this->currentSession->removeAttribute("pauseReason-{$execution->getOriginalIdentifier()}");
+        $this->currentSession->removeAttribute(
+            $this->getPauseReasonSessionKey($execution)
+        );
     }
 
     public function setConcurringSession(string $executionId): void
     {
         $this->currentSession->setAttribute(
-            "pauseReason-{$executionId}",
+            $this->getPauseReasonSessionKey($executionId),
             self::PAUSE_REASON_CONCURRENT_TEST
         );
     }
@@ -251,6 +254,19 @@ class ConcurringSessionService
             $sessionId,
             $execution->getUserIdentifier()
         );
+    }
+
+    /**
+     * @param DeliveryExecution|string $execution
+     * @throws common_exception_NotFound
+     */
+    private function getPauseReasonSessionKey($execution): string
+    {
+        if ($execution instanceof DeliveryExecution) {
+            return "pauseReason-{$execution->getOriginalIdentifier()}";
+        }
+
+        return "pauseReason-{$execution}";
     }
 
     private function getTimerAdjustmentService(): TimerAdjustmentService
