@@ -377,6 +377,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $report->add(common_report_Report::createFailure($invalidArchiveMsg));
         }
 
+        // @todo Changing this file should trigger an error in the pipelines due to high CC
+        
         // Validate the manifest (well formed XML, valid against the schema).
         if ($validPackage === true) {
             $folder = $qtiPackageParser->extract();
