@@ -43,7 +43,8 @@ define([
                     'taoqtimaths',
                     'taoqtiinclude',
                     'taoqtitable',
-                    'sharedspace' // That Ck instance still use floatingspace to position the toolbar, whereas the sharedspace plugin is used by the Item creator
+                    'sharedspace', // That Ck instance still use floatingspace to position the toolbar, whereas the sharedspace plugin is used by the Item creator
+                    'taofurigana' // furiganaPlugin currently unsupported on test authoring
                 ].join(','),
 
                 toolbar = [
