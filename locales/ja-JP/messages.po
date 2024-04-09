@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:19\n"
+"PO-Revision-Date: 2024-04-09 08:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -1251,7 +1251,7 @@ msgid "Some rubric blocks have been updated to reflect the changes in the list o
 msgstr "結果リストの変更に伴い、一部のルーブリックブロックを更新しました"
 
 msgid "Something unexpected happened."
-msgstr "予想外のエラーが発生しまた。"
+msgstr "予想外のエラーが発生しました。"
 
 msgid "Something went wrong..."
 msgstr "何か問題が発生しました。"
