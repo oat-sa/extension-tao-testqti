@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:18\n"
+"PO-Revision-Date: 2024-04-09 08:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr\n"
@@ -150,7 +150,7 @@ msgid "An error occurred during the test, please content your administrator."
 msgstr "Une erreur s'est produite lors du test, veuillez contacter votre administrateur."
 
 msgid "An error occurred!"
-msgstr ""
+msgstr "Une erreur s'est produite !"
 
 msgid "An error occurs, please contact your administrator"
 msgstr "Une erreur s'est produite, veuillez contacter votre administrateur."
@@ -174,7 +174,7 @@ msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr ""
 
 msgid "and"
-msgstr ""
+msgstr "et"
 
 msgid "and flagged %s of them"
 msgstr "et marqué %s d'entre eux"
@@ -450,7 +450,7 @@ msgid "Enter a custom category"
 msgstr "Entrer une catégorie personnalisée"
 
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 msgid "Error during file import"
 msgstr "Erreur pendant l'import du fichier."
@@ -810,7 +810,7 @@ msgid "Minimum duration for this test part."
 msgstr "Durée minimale pour cette partie de test."
 
 msgid "minutes"
-msgstr ""
+msgstr "minutes"
 
 msgid "Missed required parameter \\'id\\'"
 msgstr ""
@@ -864,7 +864,7 @@ msgid "New test part"
 msgstr "Nouvelle partie de test"
 
 msgid "Next"
-msgstr ""
+msgstr "Suivant"
 
 msgid "Next Section"
 msgstr "Section suivante"
@@ -1002,7 +1002,7 @@ msgid "Preview the covered area"
 msgstr "Prévisualiser la zone couverte"
 
 msgid "Previous"
-msgstr ""
+msgstr "Précédent"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
@@ -1302,7 +1302,7 @@ msgid "technical"
 msgstr "technique"
 
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 msgid "Test constructor"
 msgstr "Constructeur de test"
@@ -1323,7 +1323,7 @@ msgid "Test Part Properties"
 msgstr "Propriétés des pièces d'essai"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr ""
+msgstr "La prévisualisation de test n’est pas installée, merci de contacter votre administrateur."
 
 msgid "Test Saved"
 msgstr "Test enregistré"
@@ -1342,7 +1342,7 @@ msgstr "Outils du participant"
 
 #, tao-public
 msgid "Tests"
-msgstr ""
+msgstr "Tests"
 
 msgid "Text content"
 msgstr "Contenu du texte"
@@ -1571,7 +1571,7 @@ msgid "Tutor"
 msgstr "Tuteur"
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "Unanswered"
 msgstr "Non répondu"
