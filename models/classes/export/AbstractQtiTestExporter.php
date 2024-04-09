@@ -32,6 +32,7 @@ use DOMException;
 use DOMXPath;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
@@ -49,6 +50,8 @@ use ZipArchive;
 
 abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestExporterInterface
 {
+    public const FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION = 'FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION';
+
     /** The QTISM XmlDocument representing the Test to be exported. */
     private XmlDocument $testDocument;
 
@@ -174,11 +177,13 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
-        $this->genericLomOntologyExtractor()->extract(
-            array_merge([$this->getItem()], $this->getItems()),
-            $this->getManifest()
-        );
 
+        if ($this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION)) {
+            $this->genericLomOntologyExtractor()->extract(
+                array_merge([$this->getItem()], $this->getItems()),
+                $this->getManifest()
+            );
+        }
 
         // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
@@ -360,5 +365,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
     {
         return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagChecker
+    {
+        return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
 }
