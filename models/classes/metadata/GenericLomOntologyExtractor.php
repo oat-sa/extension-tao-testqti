@@ -35,8 +35,11 @@ class GenericLomOntologyExtractor implements GenericMetadataExtractor
     private PropertyMapper $propertyMapper;
     private MetadataLomService $metadataLomService;
 
-    public function __construct(Ontology $ontology, PropertyMapper $propertyMapper, MetadataLomService $metadataLomService)
-    {
+    public function __construct(
+        Ontology $ontology,
+        PropertyMapper $propertyMapper,
+        MetadataLomService $metadataLomService
+    ) {
         $this->ontology = $ontology;
         $this->propertyMapper = $propertyMapper;
         $this->metadataLomService = $metadataLomService;

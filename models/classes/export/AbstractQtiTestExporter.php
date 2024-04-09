@@ -173,7 +173,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $this->exportTest($report->getData());
 
         // 3. Export test metadata to manifest
-        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());;
+        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
         $this->genericLomOntologyExtractor()->extract(
             array_merge([$this->getItem()], $this->getItems()),
             $this->getManifest()
