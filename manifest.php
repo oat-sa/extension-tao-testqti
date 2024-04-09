@@ -21,6 +21,7 @@
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
+use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
 // phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 // phpcs:enable Generic.Files.LineLength

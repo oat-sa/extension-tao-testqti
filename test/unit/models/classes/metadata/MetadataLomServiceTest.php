@@ -59,5 +59,4 @@ class MetadataLomServiceTest extends TestCase
             $manifest->saveXML()
         );
     }
-
 }

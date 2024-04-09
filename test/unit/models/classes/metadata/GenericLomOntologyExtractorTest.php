@@ -33,7 +33,6 @@ use core_kernel_classes_Resource as Resource;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Triple as Triple;
 
-
 class GenericLomOntologyExtractorTest extends TestCase
 {
     public function setUp(): void
