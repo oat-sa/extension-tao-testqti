@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<metadata>
+    <imsmd:lom>
+        <imsmd:metaMetadata>
+            <extension>
+                <customProperties>
+                    <property>
+                        <label>label_example</label>
+                        <domain>domain_example</domain>
+                        <alias>alias_example</alias>
+                        <multiple>multiple_example</multiple>
+                    </property>
+                    <property>
+                        <label>label_another_example</label>
+                        <domain>domain_another_example</domain>
+                        <alias>alias_another_example</alias>
+                        <multiple>multiple_another_example</multiple>
+                    </property>
+                </customProperties>
+            </extension>
+        </imsmd:metaMetadata>
+    </imsmd:lom>
+</metadata>

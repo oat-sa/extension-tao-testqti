@@ -182,6 +182,7 @@ return [
         CustomInteractionPostProcessingServiceProvider::class,
         ItemsReferencesServiceProvider::class,
         TestQtiServiceProvider::class,
-        TestSessionStateServiceProvider::class
+        TestSessionStateServiceProvider::class,
+        MetadataServiceProvider::class
     ],
 ];

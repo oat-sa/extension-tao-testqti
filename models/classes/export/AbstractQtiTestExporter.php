@@ -32,6 +32,7 @@ use DOMException;
 use DOMXPath;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
+use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\Directory;
@@ -172,7 +173,12 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $this->exportTest($report->getData());
 
         // 3. Export test metadata to manifest
-        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
+        $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());;
+        $this->genericLomOntologyExtractor()->extract(
+            array_merge([$this->getItem()], $this->getItems()),
+            $this->getManifest()
+        );
+
 
         // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
@@ -349,5 +355,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     protected function getServiceManager(): ServiceManager
     {
         return ServiceManager::getServiceManager();
+    }
+
+    private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
+    {
+        return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
     }
 }
