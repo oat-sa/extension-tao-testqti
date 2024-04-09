@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:19\n"
+"PO-Revision-Date: 2024-04-09 08:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pt\n"
@@ -578,7 +578,7 @@ msgid "Html title"
 msgstr "Título HTML"
 
 msgid "Identifier"
-msgstr ""
+msgstr "Identificador"
 
 msgid "If required it must appear (at least once) in the selection."
 msgstr "Se necessário ele deve aparecer (pelo menos uma vez) na seleção."
