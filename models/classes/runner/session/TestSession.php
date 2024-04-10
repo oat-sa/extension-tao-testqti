@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA
+ * Copyright (c) 2016-2024 (original work) Open Assessment Technologies SA
  *
  */
 
@@ -336,14 +336,18 @@ class TestSession extends taoQtiTest_helpers_TestSession implements UserUriAware
     {
         $target = $this->getTimerTarget();
         $routeItem = $this->getCurrentRouteItem();
+
         $sources = [
-            $routeItem->getAssessmentTest(),
+            $this->getAssessmentTest(),
             $this->getCurrentTestPart(),
             $this->getCurrentAssessmentSection(),
-            $routeItem->getAssessmentItemRef(),
         ];
 
-        foreach ($sources as $source) {
+        if ($routeItem instanceof RouteItem) {
+            $sources[] = $routeItem->getAssessmentItemRef();
+        }
+
+        foreach (array_filter($sources) as $source) {
             $this->updateDurationCache($source->getIdentifier(), $target);
         }
     }

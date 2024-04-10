@@ -905,7 +905,7 @@ define([
      * @param {Object} model
      */
     function removeScoring(model) {
-        var scoringOutcomes = _.indexBy(outcomeHelper.listOutcomes(model, getOutcomesRecipe), function (outcome) {
+        var scoringOutcomes = _.keyBy(outcomeHelper.listOutcomes(model, getOutcomesRecipe), function (outcome) {
             return outcome;
         });
 

@@ -155,7 +155,7 @@ define([
             if (_.isFunction(outcomes)) {
                 check = outcomes;
             } else {
-                outcomes = _.indexBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
+                outcomes = _.keyBy(_.isArray(outcomes) ? outcomes : [outcomes], function (outcome) {
                     return outcome;
                 });
 

@@ -22,11 +22,13 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\eventHandler\ResultTransmissionEventHandler;
 
+use oat\oatbox\service\ServiceNotFoundException;
 use oat\tao\model\service\InjectionAwareService;
 use oat\taoDelivery\model\execution\DeliveryServerService;
 use oat\taoQtiTest\models\classes\event\ResultTestVariablesTransmissionEvent;
 use oat\taoQtiTest\models\event\ResultItemVariablesTransmissionEvent;
 use taoQtiCommon_helpers_ResultTransmitter;
+use oat\oatbox\service\exception\InvalidServiceManagerException;
 
 class ResultTransmissionEventHandler extends InjectionAwareService implements
     Api\ResultTransmissionEventHandlerInterface
@@ -45,6 +47,9 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
     }
 
     /**
+     * @param ResultTestVariablesTransmissionEvent $event
+     * @throws InvalidServiceManagerException
+     * @throws ServiceNotFoundException
      * @throws \taoQtiCommon_helpers_ResultTransmissionException
      */
     public function transmitResultTestVariable(ResultTestVariablesTransmissionEvent $event): void
@@ -56,6 +61,12 @@ class ResultTransmissionEventHandler extends InjectionAwareService implements
         );
     }
 
+    /**
+     * @param $deliveryExecutionIdigcicd
+     * @return taoQtiCommon_helpers_ResultTransmitter
+     * @throws InvalidServiceManagerException
+     * @throws \oat\oatbox\service\ServiceNotFoundException
+     */
     private function buildTransmitter($deliveryExecutionId): taoQtiCommon_helpers_ResultTransmitter
     {
         /** @var DeliveryServerService $deliveryServerService */
