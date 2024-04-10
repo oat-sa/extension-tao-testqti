@@ -35,11 +35,15 @@ class MetadataServiceProvider implements ContainerServiceProviderInterface
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
+
+        $services->set(ChecksumGenerator::class, ChecksumGenerator::class)
+            ->args([service(Ontology::SERVICE_ID)]);
+
         $services->set(MetadataLomService::class, MetadataLomService::class);
 
         $services->set(PropertyMapper::class, PropertyMapper::class)
             ->args([
-                service(Ontology::SERVICE_ID),
+                service(ChecksumGenerator::class),
                 [
                     'label' => RDFS_LABEL,
                     'domain' => RDFS_DOMAIN,
@@ -49,7 +53,7 @@ class MetadataServiceProvider implements ContainerServiceProviderInterface
             ]);
 
         $services
-            ->set(GenericLomOntologyExtractor::class, GenericMetadataExtractor::class)
+            ->set(GenericLomOntologyExtractor::class, GenericLomOntologyExtractor::class)
             ->public()
             ->args([
                 service(Ontology::SERVICE_ID),

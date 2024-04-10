@@ -22,14 +22,34 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\metadata;
 
-use core_kernel_classes_Resource;
-use DOMDocument;
+use core_kernel_classes_Property as Property;
+use oat\generis\model\data\Ontology;
 
-interface GenericMetadataExtractor
+class ChecksumGenerator
 {
-    /**
-     * @param core_kernel_classes_Resource[] $resourceCollection
-     * @param DOMDocument $manifest
-     */
-    public function extract(array $resourceCollection, DOMDocument $manifest);
+    private Ontology $ontology;
+
+    public function __construct(Ontology $ontology)
+    {
+        $this->ontology = $ontology;
+    }
+
+    public function getRangeChecksum(Property $property): string
+    {
+        $checksum = '';
+
+        $listValues = array_filter($property->getRange()->getNestedResources(), function ($range) {
+            return $range['isclass'] === 0;
+        });
+
+        if (empty($listValues)) {
+            return '';
+        }
+
+        foreach ($listValues as $value) {
+            $checksum .= $this->ontology->getResource($value['id'])->getLabel();
+        }
+
+        return sha1($checksum);
+    }
 }

@@ -26,8 +26,8 @@ use core_kernel_classes_Class;
 use core_kernel_classes_Literal;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
-use oat\generis\model\data\Ontology;
 use oat\generis\model\GenerisRdf;
+use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 use PHPUnit\Framework\TestCase;
 
@@ -35,6 +35,7 @@ class PropertyMapperTest extends TestCase
 {
     public function setUp(): void
     {
+        $this->checksumGeneratorMock = $this->createMock(ChecksumGenerator::class);
         $this->metaMetadataCollectionToExport = [
             'label' => RDFS_LABEL,
             'domain' => RDFS_DOMAIN,
@@ -42,13 +43,11 @@ class PropertyMapperTest extends TestCase
             'multiple' => GenerisRdf::PROPERTY_MULTIPLE
         ];
 
-        $this->ontology = $this->createMock(Ontology::class);
-        $this->subject  = new PropertyMapper($this->ontology, $this->metaMetadataCollectionToExport);
+        $this->subject  = new PropertyMapper($this->checksumGeneratorMock, $this->metaMetadataCollectionToExport);
     }
 
     public function testGetMetadataProperties(): void
     {
-        $classMock = $this->createMock(core_kernel_classes_Class::class);
         $property = $this->createMock(Property::class);
         $resourceMock = $this->createMock(Resource::class);
         $property->method('getUri')->willReturn('uri');
@@ -63,37 +62,9 @@ class PropertyMapperTest extends TestCase
                 null
             );
 
-
-        $property->method('getRange')->willReturn($classMock);
-        $classMock->method('getNestedResources')->willReturn(
-            [
-                [
-                    'id' => 'id',
-                    'isclass' => 1,
-                ],
-                [
-                    'id' => 'non_class_id',
-                    'isclass' => 0,
-                ],
-                [
-                    'id' => 'non_class_id_2',
-                    'isclass' => 0,
-                ]
-            ]
-        );
-
-        $this->ontology
-            ->expects($this->exactly(2))
-            ->method('getResource')
-            ->with($this->logicalOr(
-                $this->equalTo('non_class_id'),
-                $this->equalTo('non_class_id_2')
-            ))
-            ->willReturn($resourceMock);
-
-        $resourceMock->expects($this->exactly(2))
-            ->method('getLabel')
-            ->willReturn('label');
+        $this->checksumGeneratorMock
+            ->method('getRangeChecksum')
+            ->willReturn('c315a4bd4fa0f4479b1ea4b5998aa548eed3b670');
 
 
         $result = $this->subject->getMetadataProperties($property);

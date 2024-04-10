@@ -29,7 +29,7 @@ use oat\generis\model\data\Ontology;
 use oat\taoQtiItem\model\qti\metadata\MetadataExtractionException;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 
-class GenericLomOntologyExtractor implements GenericMetadataExtractor
+class GenericLomOntologyExtractor
 {
     private Ontology $ontology;
     private PropertyMapper $propertyMapper;

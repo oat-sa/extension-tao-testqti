@@ -26,6 +26,7 @@ use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\OntologyRdf;
+use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
 use taoTests_models_classes_TestsService;
 
 class PropertyMapper
@@ -33,12 +34,12 @@ class PropertyMapper
     public const DATATYPE_CHECKSUM = 'checksum';
 
     private array $metaMetadataCollectionToExport;
-    private Ontology $ontology;
+    private ChecksumGenerator $checksumGenerator;
 
-    public function __construct(Ontology $ontology, array $metaMetadataCollectionToExport)
+    public function __construct(ChecksumGenerator $checksumGenerator,  $metaMetadataCollectionToExport)
     {
         $this->metaMetadataCollectionToExport = $metaMetadataCollectionToExport;
-        $this->ontology = $ontology;
+        $this->checksumGenerator = $checksumGenerator;
     }
 
     public function getMetadataProperties(Property $property): array
@@ -56,29 +57,10 @@ class PropertyMapper
         }
 
         if (!$this->isIgnoredForCollectionGathering($property)) {
-            $fields[self::DATATYPE_CHECKSUM] = $this->getRangeChecksum($property);
+            $fields[self::DATATYPE_CHECKSUM] = $this->checksumGenerator->getRangeChecksum($property);
         }
 
         return $fields;
-    }
-
-    private function getRangeChecksum(Property $property): string
-    {
-        $checksum = '';
-
-        $listValues = array_filter($property->getRange()->getNestedResources(), function ($range) {
-            return $range['isclass'] === 0;
-        });
-
-        if (empty($listValues)) {
-            return '';
-        }
-
-        foreach ($listValues as $value) {
-            $checksum .= $this->ontology->getResource($value['id'])->getLabel();
-        }
-
-        return sha1($checksum);
     }
 
     private function isIgnoredForCollectionGathering(Property $property): bool
