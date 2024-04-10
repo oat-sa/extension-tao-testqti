@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:21\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-12-04 16:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: nb-NO\n"
+"Language: nb_NO\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: nb-NO\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: nb\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Norwegian Bokmal\n"
 
 msgid "%s to answer %s"
 msgstr "%s for å svare på %s"
@@ -191,7 +198,7 @@ msgid "Are you sure you want to clear your answer and go to the next item? You w
 msgstr "Er du sikker på at du vil slette svaret ditt og gå til neste oppgave? Du kan ikke gå tilbake i oppgavesettet."
 
 msgid "Are you sure you want to end the test?"
-msgstr "Vil du avslutte prøven?"
+msgstr ""
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
 msgstr "Er du sikker på at du vil gå til neste oppgave? Du vil ikke kunne gå tilbake igjen og endre svaret ditt."
@@ -275,13 +282,16 @@ msgid "Class"
 msgstr "Mappe"
 
 msgid "Class successfully created."
-msgstr "Mappe ble opprettet."
+msgstr "Mappen ble opprettet."
 
 msgid "Clear all active highlights"
 msgstr "Nullstill alle aktive uthevinger"
 
 msgid "Clear Highlights"
 msgstr "Nullstill utheving"
+
+msgid "Click \"%s\" to continue"
+msgstr ""
 
 msgid "Click \"%s\" to continue."
 msgstr "Klikk \"%s\" for å fortsette."
@@ -391,10 +401,7 @@ msgstr "Ikke gi nytt navn."
 msgid "Do not show alert on timeout"
 msgstr "Ikke vis varsel ved timeout"
 
-msgid "Don't save"
-msgstr "Ikke lagre"
-
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -430,10 +437,10 @@ msgstr "Aktiver oppgavegjennomgang/navigering på skjerm."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Aktiver muligheten til å  gå videre i oppgavesettet innen gitt oppgaveseksjon. Krever at valget se gjennom oppgavene på skjerm er aktivert."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Avslutt prøven"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Avslutt prøven"
 
 msgid "Enter a blueprint"
@@ -492,7 +499,7 @@ msgid "File not found!"
 msgstr "Filen ble ikke funnet!"
 
 msgid "Filter"
-msgstr "Filter"
+msgstr ""
 
 msgid "Fixed"
 msgstr "Fast"
@@ -600,7 +607,7 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
-msgstr "Import"
+msgstr "Importer"
 
 msgid "Import a QTI/APIP Content Package"
 msgstr "Importer en QTI/APIP-innholdspakke"
@@ -609,7 +616,7 @@ msgid "Import QTI TEST into \"%s"
 msgstr "Importer QTI PRØVE til \"%s"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS dokument-filen kunne ikke importeres."
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS dokument-filen ble importert."
@@ -671,11 +678,11 @@ msgstr "Oppgavens svaridentifikator samsvarer ikke med gjeldende oppgave"
 msgid "Item Session Control"
 msgstr "Innstilling for gjennomføring"
 
-msgid "Items"
-msgstr "Oppgaver"
-
 msgid "items"
 msgstr "oppgaver"
+
+msgid "Items"
+msgstr "Oppgaver"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Oppgaver kan tilordnes en eller flere kategorier."
@@ -743,12 +750,12 @@ msgstr "Administrer rubrikkbokser"
 msgid "Manage test properties"
 msgstr "Administrer prøveegenskaper"
 
+msgid "Manage Tests"
+msgstr "Administrer Oppgavesett"
+
 #, tao-public
 msgid "Manage tests"
 msgstr "Administrer oppgavesett"
-
-msgid "Manage Tests"
-msgstr "Administrer Oppgavesett"
 
 msgid "Mark for review"
 msgstr "Marker for å se gjennom"
@@ -802,12 +809,12 @@ msgid "Minimum duration for this test part."
 msgstr "Minste varighet for denne prøvedelen."
 
 msgid "minutes"
-msgstr "minutter"
+msgstr ""
 
-msgid "Missed required parameter \'id"
-msgstr "Manglet nødvendig parameter \'id"
+msgid "Missed required parameter \\'id\\'"
+msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -862,7 +869,7 @@ msgid "Next Section"
 msgstr "Neste seksjon"
 
 msgid "No"
-msgstr "Ingen"
+msgstr "Nei"
 
 msgid "NO"
 msgstr ""
@@ -907,13 +914,13 @@ msgid "Not shuffled, the position remains fixed."
 msgstr "Ikke blandet, posisjonen forblir fast."
 
 msgid "Offline"
-msgstr "Offline"
+msgstr ""
 
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 msgid "Ok"
-msgstr "Ok"
+msgstr ""
 
 msgid "OK & End test"
 msgstr "OK og avslutt prøve"
@@ -925,7 +932,7 @@ msgid "One or more dependent IMS QTI Items could not be imported."
 msgstr "En eller flere avhengige IMS QTI-oppgaver kunne ikke importeres."
 
 msgid "Online"
-msgstr "Online"
+msgstr ""
 
 msgid "Only display the items marked for review"
 msgstr "Vis bare oppgavene som er merket for å se gjennom"
@@ -952,7 +959,7 @@ msgid "Ordering"
 msgstr "Rekkefølge på oppgaver"
 
 msgid "Outcome"
-msgstr "Resultat"
+msgstr ""
 
 msgid "Outcome declarations"
 msgstr "Skåringsvariabler"
@@ -970,7 +977,7 @@ msgid "Passage"
 msgstr "Innhold"
 
 msgid "Pause"
-msgstr "Pause"
+msgstr ""
 
 msgid "Pause the test"
 msgstr "Sett prøven på pause"
@@ -1000,16 +1007,16 @@ msgid "PROCEED & END ASSESSMENT"
 msgstr "FORTSETT OG AVSLUTT VURDERING"
 
 msgid "Proctor"
-msgstr "Proktor"
+msgstr ""
 
 msgid "Properties"
-msgstr "Egenskaper"
+msgstr ""
 
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Test Driver"
+msgstr ""
 
 msgid "QTI Item Runner"
-msgstr "QTI Item Runner"
+msgstr ""
 
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTI Prøve \"%s\" publisering mislyktes."
@@ -1081,7 +1088,7 @@ msgid "Reset filters"
 msgstr "Tilbakestill filtre"
 
 msgid "Resource(s) successfully exported."
-msgstr "Ressurs(er) ble eksportert."
+msgstr "Ressurs ble eksportert."
 
 msgid "ResultTransmission event successfully registered"
 msgstr ""
@@ -1156,7 +1163,7 @@ msgid "Selection"
 msgstr "Utvalg"
 
 msgid "Send"
-msgstr "Send"
+msgstr ""
 
 msgid "Set outcome identifier the feedback block is related to"
 msgstr "Angi resultatidentifikator som tilbakemelding er relatert til"
@@ -1183,7 +1190,7 @@ msgid "SetSynchronisationService successfully configured."
 msgstr "SetSynchronisationService ble konfigurert."
 
 msgid "Settings"
-msgstr "Innstillinger"
+msgstr "Instillinger"
 
 msgid "Show Feedback"
 msgstr "Vis tilbakemelding"
@@ -1210,7 +1217,7 @@ msgid "Show/Hide the review screen"
 msgstr "Vis/skjul å se gjennom-bildet"
 
 msgid "Shuffle"
-msgstr "Blande"
+msgstr "Tilfeldig rekkefølge"
 
 msgid "Simultaneous"
 msgstr "Samtidig"
@@ -1294,7 +1301,7 @@ msgid "technical"
 msgstr "teknisk"
 
 msgid "Test"
-msgstr "Prøve"
+msgstr "Oppgavesett"
 
 msgid "Test constructor"
 msgstr "Prøveutvikler"
@@ -1315,7 +1322,7 @@ msgid "Test Part Properties"
 msgstr "Egenskaper for prøvedel"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr "Forhåndsvisning av prøve er ikke installert. Ta kontakt med administrator."
+msgstr "Forhåndsvisning av oppgavesett er ikke installert. Ta kontakt med administrator."
 
 msgid "Test Saved"
 msgstr "Oppgavesett lagret"
@@ -1400,7 +1407,7 @@ msgid "The identifier of the section."
 msgstr "Identifikatoren for seksjonen."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "IMS QTI-oppgaven referert til som \"%s\" i IMS Dokument-filen var allerede lagret i oppgavebanken."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "IMS QTI-prøvepakken kunne ikke importeres."
@@ -1460,7 +1467,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "Innleveringsmodusen avgjør når elevens svar blir sendt til vurdering. En prøvedel i individuell modus krever at eleven leverer svarene sine enkeltvis. I samtidig modus sendes alleelevenes svar sammen på slutten av prøvedelen."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1564,7 +1570,7 @@ msgid "Tutor"
 msgstr "Veileder"
 
 msgid "Type"
-msgstr "Type"
+msgstr ""
 
 msgid "Unanswered"
 msgstr "Ubesvart"
@@ -1760,7 +1766,7 @@ msgid "Your connection seems to be back, please proceed."
 msgstr "Tilkoblingen din ser ut til å være tilbake. Fortsett."
 
 msgid "Zoom"
-msgstr "Zoom"
+msgstr ""
 
 msgid "Zoom in"
 msgstr "Zoom inn"

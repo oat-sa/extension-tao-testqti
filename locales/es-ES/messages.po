@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:19\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-12-04 16:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: es-ES\n"
+"Language: es\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: es-ES\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Spanish\n"
 
 msgid "%s to answer %s"
 msgstr "%s por responder %s"
@@ -143,7 +150,7 @@ msgid "An error occurred during the test, please content your administrator."
 msgstr "Se produjo un error durante la prueba, póngase en contacto con el administrador."
 
 msgid "An error occurred!"
-msgstr "Se produjo un error."
+msgstr ""
 
 msgid "An error occurs, please contact your administrator"
 msgstr "Se produjo un error, póngase en contacto con el administrador."
@@ -167,7 +174,7 @@ msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr "Se produjo un error irrecuperable. La sesión de su prueba se pausará."
 
 msgid "and"
-msgstr "y"
+msgstr ""
 
 msgid "and flagged %s of them"
 msgstr "y marcó %s de ellas"
@@ -191,7 +198,7 @@ msgid "Are you sure you want to clear your answer and go to the next item? You w
 msgstr "¿Está seguro de que desea borrar su respuesta y pasar al siguiente ítem? No podrá retroceder para proporcionar una respuesta."
 
 msgid "Are you sure you want to end the test?"
-msgstr "¿Está seguro(a) de que desea finalizar la prueba?"
+msgstr "¿Está seguro de que desea finalizar la prueba?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
 msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder y cambiar su respuesta."
@@ -275,13 +282,16 @@ msgid "Class"
 msgstr "Clase"
 
 msgid "Class successfully created."
-msgstr "La clase se creó satisfactoriamente."
+msgstr ""
 
 msgid "Clear all active highlights"
 msgstr "Borrar todos los resaltados activos"
 
 msgid "Clear Highlights"
 msgstr "Borrar resaltados"
+
+msgid "Click \"%s\" to continue"
+msgstr ""
 
 msgid "Click \"%s\" to continue."
 msgstr "Haga clic en \"%s\" para continuar"
@@ -391,11 +401,11 @@ msgstr "No renombrar."
 msgid "Do not show alert on timeout"
 msgstr "No mostrar alerta sobre tiempo de espera"
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr "No guardar"
 
 msgid "Download"
-msgstr "Descragar"
+msgstr ""
 
 msgid "Download the pupil responses and submit manually."
 msgstr "Descargue las respuestas de los alumnos y envíelas manualmente."
@@ -427,10 +437,10 @@ msgstr "Activar la pantalla de revisión/navegador de ítems."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Permite saltar a otros elementos de esta sección. Requiere la opción Pantalla de revisión."
 
-msgid "End Test"
+msgid "End test"
 msgstr "Finalizar prueba"
 
-msgid "End test"
+msgid "End Test"
 msgstr "Finalizar prueba"
 
 msgid "Enter a blueprint"
@@ -440,7 +450,7 @@ msgid "Enter a custom category"
 msgstr "Ingresar una categoría personalizada"
 
 msgid "Error"
-msgstr "Error"
+msgstr ""
 
 msgid "Error during file import"
 msgstr "Error durante la importación"
@@ -463,7 +473,7 @@ msgid "Export failed. Key uri nor classUri in formValues are not defined"
 msgstr ""
 
 msgid "Export metadata"
-msgstr "Exportar metadatos"
+msgstr ""
 
 msgid "Export QTI %s Test Package"
 msgstr ""
@@ -601,13 +611,13 @@ msgid "Import"
 msgstr "Importar"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr "Importar paquete de contenido QTI/APIP"
+msgstr ""
 
 msgid "Import QTI TEST into \"%s"
 msgstr "Importar PRUEBA QTI en \"%s"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "Elemento IMS QTI referenciado como \"%s\" en el archivo Manifiesto IMS no podrá ser importado."
+msgstr ""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Elemento IMS QTI referenciado como \"%s\" en el archivo Manifiesto IMS importado satisfactoriamente."
@@ -625,7 +635,7 @@ msgid "Inconsistency at line %1d:"
 msgstr "Inconsistencia en linea %1d:"
 
 msgid "Individual"
-msgstr "Individual"
+msgstr ""
 
 msgid "Informational item"
 msgstr ""
@@ -669,11 +679,11 @@ msgstr "El identificador de respuesta del elemento no coincide con el elemento a
 msgid "Item Session Control"
 msgstr "Control de Sesión de Elemento"
 
-msgid "Items"
-msgstr "Elementos"
-
 msgid "items"
 msgstr "elementos"
+
+msgid "Items"
+msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
@@ -741,12 +751,12 @@ msgstr "Administrar Bloques de Rúbrica"
 msgid "Manage test properties"
 msgstr "Administrar las propiedades de prueba"
 
+msgid "Manage Tests"
+msgstr "Gestionar Pruebas"
+
 #, tao-public
 msgid "Manage tests"
 msgstr "Gestionar pruebas"
-
-msgid "Manage Tests"
-msgstr "Gestionar Pruebas"
 
 msgid "Mark for review"
 msgstr "Marcar para revisión"
@@ -802,8 +812,11 @@ msgstr "Minima duración para esta parte de la prueba."
 msgid "minutes"
 msgstr "minutos"
 
-msgid "Missed required parameter \'id\'"
-msgstr "Se omitió el parámetro requerido \'id\'"
+msgid "Missed required parameter \\'id\\'"
+msgstr "Se omitió el parámetro requerido \\'id\\'"
+
+msgid "Missed required parameter \\'id\\'"
+msgstr ""
 
 msgid "Missed test package file"
 msgstr "Se omitió el archivo de paquete de la prueba"
@@ -830,7 +843,7 @@ msgid "name of the pupil"
 msgstr "nombre del alumno"
 
 msgid "Navigation"
-msgstr "Navegación"
+msgstr ""
 
 msgid "Navigation shortcuts"
 msgstr "Atajos de Navegación"
@@ -851,13 +864,13 @@ msgid "New test part"
 msgstr "Nueva parte de prueba"
 
 msgid "Next"
-msgstr "Siguiente"
+msgstr ""
 
 msgid "Next Section"
 msgstr "Sección siguiente"
 
 msgid "No"
-msgstr "No"
+msgstr ""
 
 msgid "NO"
 msgstr ""
@@ -905,7 +918,7 @@ msgid "Offline"
 msgstr "Fuera de línea"
 
 msgid "OK"
-msgstr "Aceptar"
+msgstr ""
 
 msgid "Ok"
 msgstr "Aceptar"
@@ -983,28 +996,28 @@ msgid "Please wait while we try to restore the connection."
 msgstr "Por favor espere mientras intenta restablecer la conexión."
 
 msgid "Preview"
-msgstr "Vista preliminar"
+msgstr "Vista previa"
 
 msgid "Preview the covered area"
 msgstr "Vista preliminar del área cubierta"
 
 msgid "Previous"
-msgstr "Anterior"
+msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "PROCEDER Y FINALIZAR LA EVALUACIÓN"
 
 msgid "Proctor"
-msgstr "Proctor"
+msgstr "Supervisor"
 
 msgid "Properties"
-msgstr "Propiedades"
+msgstr ""
 
 msgid "QTI 2.1 Test Driver"
 msgstr "Conductor de Prueba QTI 2.1"
 
 msgid "QTI Item Runner"
-msgstr "Ejecutor de elemento QTI"
+msgstr "Item QTI Runner"
 
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Publicación de prueba \"%s\" QTI fallida."
@@ -1027,11 +1040,11 @@ msgstr "Paquete de prueba QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Paquete con contenido de prueba QTI/APIP"
 
-msgid "Question"
-msgstr "Pregunta"
-
 msgid "question"
 msgstr "pregunta"
+
+msgid "Question"
+msgstr "Pregunta"
 
 msgid "Question %s"
 msgstr ""
@@ -1076,7 +1089,7 @@ msgid "Reset filters"
 msgstr "Restaurar filtros"
 
 msgid "Resource(s) successfully exported."
-msgstr "Recursos exportados satisfactoriamente."
+msgstr ""
 
 msgid "ResultTransmission event successfully registered"
 msgstr ""
@@ -1097,7 +1110,7 @@ msgid "Rubric Blocks"
 msgstr "Bloque de Rúbrica"
 
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 msgid "Saved"
 msgstr "Guardado"
@@ -1136,7 +1149,7 @@ msgid "Section Properties"
 msgstr "Propiedades de sección"
 
 msgid "Select"
-msgstr "Seleccionar"
+msgstr ""
 
 msgid "Select a blueprint"
 msgstr "Seleccionar un blueprint"
@@ -1178,7 +1191,7 @@ msgid "SetSynchronisationService successfully configured."
 msgstr "Se ha configurado con éxito SetSynchronisationService."
 
 msgid "Settings"
-msgstr "Ajustes"
+msgstr ""
 
 msgid "Show Feedback"
 msgstr "Mostrar comentarios"
@@ -1205,7 +1218,7 @@ msgid "Show/Hide the review screen"
 msgstr "Mostrar/esconder la pantalla de revisión"
 
 msgid "Shuffle"
-msgstr "Aleatorio"
+msgstr ""
 
 msgid "Simultaneous"
 msgstr "Simúltanea"
@@ -1241,7 +1254,7 @@ msgid "Something unexpected happened."
 msgstr "Ocurrió algo inesperado."
 
 msgid "Something went wrong..."
-msgstr "Algo salió mal..."
+msgstr ""
 
 msgid "Speech speed"
 msgstr "Velocidad del habla"
@@ -1289,7 +1302,7 @@ msgid "technical"
 msgstr "técnico"
 
 msgid "Test"
-msgstr "Prueba"
+msgstr ""
 
 msgid "Test constructor"
 msgstr "Constructor de prueba"
@@ -1310,7 +1323,7 @@ msgid "Test Part Properties"
 msgstr "Propiedades de la parte de prueba"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr "La vista previa de la prueba no está instalada, por favor contacte con su administrador."
+msgstr ""
 
 msgid "Test Saved"
 msgstr "Prueba Guardada"
@@ -1329,16 +1342,16 @@ msgstr "Herramientas de examinado"
 
 #, tao-public
 msgid "Tests"
-msgstr "Pruebas"
+msgstr ""
 
 msgid "Text content"
 msgstr "Contenido del texto"
 
-msgid "Text To Speech"
-msgstr "Texto A Voz"
-
 msgid "Text to Speech"
 msgstr "Texto a Voz"
+
+msgid "Text To Speech"
+msgstr "Texto A Voz"
 
 msgid "that was being taken."
 msgstr "que estaba siendo tomada."
@@ -1365,7 +1378,7 @@ msgid "The assessment has been terminated."
 msgstr "La evaluación se ha terminado."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación se ha terminado. Ya no puede interactuar con ella."
+msgstr "La evaluación terminó. Ya no puede interactuar con ella."
 
 msgid "The assessment is still running."
 msgstr "La evaluación sigue ejecutándose."
@@ -1395,7 +1408,7 @@ msgid "The identifier of the section."
 msgstr "El identificador de la sección."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "El ítem IMS QTI al que se hace referencia como \"%s\" en el archivo de manifiesto de IMS ya se almacenó en el banco de ítems."
+msgstr ""
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "El Paquete de Prueba IMS QTI no pudo ser importado."
@@ -1440,8 +1453,7 @@ msgid "The reference."
 msgstr "La referencia."
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \"%s\\n"
-"\"en el archivo Manifiesto IMS se deshacen."
+msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \"%s\\n\"en el archivo Manifiesto IMS se deshacen."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
 msgstr "Se procesará el puntaje para toda la prueba. Se calculará una suma de todos los resultados de PUNTAJE y se dividirá por la suma del MAX SCORE; el resultado obtenido se comparará con el puntaje de corte (o ratio de aprobado) y, a continuación, se establecerá el resultado de PASS_TOTAL en consecuencia."
@@ -1456,7 +1468,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "El modo de presentación determina cuando las respuestas de los candidatos se presentan para el procesamiento de la respuesta. Un testPart en modo individual requiere que el candidato presente sus respuestas en una base elemento por elemento. En el modo simultáneo las respuestas de los candidatos están presentadas juntas al final del testPart."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1557,10 +1568,10 @@ msgid "Try connecting the machine to the internet via cable, or move to an area 
 msgstr "Intenta conectar el equipo a Internet por cable, o muévete a un área con una mejor señal wifi."
 
 msgid "Tutor"
-msgstr "Tutor"
+msgstr ""
 
 msgid "Type"
-msgstr "Tipo"
+msgstr ""
 
 msgid "Unanswered"
 msgstr "Sin responder"
@@ -1590,7 +1601,7 @@ msgid "Validate Responses"
 msgstr "Respuestas Validadas"
 
 msgid "Value"
-msgstr "Valor"
+msgstr ""
 
 msgid "Viewed"
 msgstr "Visto"
@@ -1602,7 +1613,7 @@ msgid "Views"
 msgstr "Vistas"
 
 msgid "Visible"
-msgstr "Visible"
+msgstr ""
 
 msgid "Volume"
 msgstr "Volumen"
@@ -1680,11 +1691,11 @@ msgstr "error XML en la linea %1$d columna %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr "Amarillo sobre Azul"
 
-msgid "YES"
-msgstr ""
-
 msgid "Yes"
 msgstr "Sí"
+
+msgid "YES"
+msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "Usted respondió %s de %s pregunta(s) para esta sección de la prueba"
@@ -1756,7 +1767,7 @@ msgid "Your connection seems to be back, please proceed."
 msgstr "Su conexión parece haber vuelto, por favor proceda."
 
 msgid "Zoom"
-msgstr "Zoom"
+msgstr ""
 
 msgid "Zoom in"
 msgstr "Acercar"

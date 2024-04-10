@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:22\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-12-04 16:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: pt-PT\n"
+"Language: pt\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: pt-PT\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: pt-PT\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Portuguese\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -293,7 +300,7 @@ msgid "Click to speak"
 msgstr ""
 
 msgid "Close"
-msgstr ""
+msgstr "Fechar"
 
 msgid "Close Magnifier"
 msgstr ""
@@ -394,7 +401,7 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -443,7 +450,7 @@ msgid "Enter a custom category"
 msgstr ""
 
 msgid "Error"
-msgstr "Erro"
+msgstr ""
 
 msgid "Error during file import"
 msgstr "Erro durante a importação do ficheiro"
@@ -600,7 +607,7 @@ msgid "If you need help, please contact our Helpline on 0330 088 4171."
 msgstr ""
 
 msgid "Import"
-msgstr "Importar"
+msgstr ""
 
 msgid "Import a QTI/APIP Content Package"
 msgstr ""
@@ -627,7 +634,7 @@ msgid "Inconsistency at line %1d:"
 msgstr ""
 
 msgid "Individual"
-msgstr "Individual"
+msgstr ""
 
 msgid "Informational item"
 msgstr ""
@@ -714,7 +721,7 @@ msgid "Line Reader"
 msgstr ""
 
 msgid "Linear"
-msgstr "Linear"
+msgstr ""
 
 msgid "Link durations to activate the guided navigation"
 msgstr ""
@@ -748,7 +755,7 @@ msgstr ""
 
 #, tao-public
 msgid "Manage tests"
-msgstr ""
+msgstr "Gerir testes"
 
 msgid "Mark for review"
 msgstr ""
@@ -804,7 +811,10 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \\'id\\'"
+msgstr ""
+
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -817,7 +827,7 @@ msgid "Missing required configuration option %s"
 msgstr ""
 
 msgid "Move"
-msgstr ""
+msgstr "Mover"
 
 msgid "Move Down"
 msgstr ""
@@ -906,10 +916,10 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
 msgid "OK & End test"
@@ -1099,7 +1109,7 @@ msgid "Rubric Blocks"
 msgstr ""
 
 msgid "Save"
-msgstr "Guardar"
+msgstr ""
 
 msgid "Saved"
 msgstr ""
@@ -1113,10 +1123,10 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1207,7 +1217,7 @@ msgid "Show/Hide the review screen"
 msgstr ""
 
 msgid "Shuffle"
-msgstr "Baralhar"
+msgstr ""
 
 msgid "Simultaneous"
 msgstr "Simultâneo"
@@ -1291,7 +1301,7 @@ msgid "technical"
 msgstr ""
 
 msgid "Test"
-msgstr "Teste"
+msgstr ""
 
 msgid "Test constructor"
 msgstr ""
@@ -1336,10 +1346,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1457,7 +1467,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1681,10 +1690,10 @@ msgstr ""
 msgid "Yellow on Blue"
 msgstr ""
 
-msgid "YES"
+msgid "Yes"
 msgstr ""
 
-msgid "Yes"
+msgid "YES"
 msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
