@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\models\classes\metadata\metaMetadata;
 
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
-use oat\generis\model\data\Ontology;
 use oat\generis\model\OntologyRdf;
 use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
 use taoTests_models_classes_TestsService;
@@ -36,7 +35,7 @@ class PropertyMapper
     private array $metaMetadataCollectionToExport;
     private ChecksumGenerator $checksumGenerator;
 
-    public function __construct(ChecksumGenerator $checksumGenerator,  $metaMetadataCollectionToExport)
+    public function __construct(ChecksumGenerator $checksumGenerator, array $metaMetadataCollectionToExport)
     {
         $this->metaMetadataCollectionToExport = $metaMetadataCollectionToExport;
         $this->checksumGenerator = $checksumGenerator;
