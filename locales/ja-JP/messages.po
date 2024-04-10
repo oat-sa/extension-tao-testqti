@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:21\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2024-04-09 08:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: ja-JP\n"
+"Language: ja\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: ja-JP\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Japanese\n"
 
 msgid "%s to answer %s"
 msgstr "%s から %s の回答"
@@ -167,7 +174,7 @@ msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr "回復不能なエラーが発生しました。受験は一時停止されます。"
 
 msgid "and"
-msgstr "・"
+msgstr ""
 
 msgid "and flagged %s of them"
 msgstr "%s にフラグを立てました。"
@@ -191,7 +198,7 @@ msgid "Are you sure you want to clear your answer and go to the next item? You w
 msgstr "解答をクリアして次に進んでよろしいですか？　戻って解答することができなくなります。"
 
 msgid "Are you sure you want to end the test?"
-msgstr "テストを終了してよろしいですか？"
+msgstr "テストを終了してよろしいでしょうか？"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
 msgstr "次に進んでよろしいですか？　戻って解答し直すことができなくなります。"
@@ -275,13 +282,16 @@ msgid "Class"
 msgstr "クラス"
 
 msgid "Class successfully created."
-msgstr "クラスは正常に作成されました。"
+msgstr "クラスが作成されました。"
 
 msgid "Clear all active highlights"
 msgstr "すべてのラインマーカをクリア"
 
 msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
+
+msgid "Click \"%s\" to continue"
+msgstr ""
 
 msgid "Click \"%s\" to continue."
 msgstr "続行するには、「%s」をクリックしてください"
@@ -391,7 +401,7 @@ msgstr "リネームしないでください"
 msgid "Do not show alert on timeout"
 msgstr "タイムアウト警告を非表示"
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr "保存しないでください"
 
 msgid "Download"
@@ -427,10 +437,10 @@ msgstr "受験者にレビュースクリーン（問題一覧・解答状況画
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
-msgid "End Test"
+msgid "End test"
 msgstr "テスト終了"
 
-msgid "End test"
+msgid "End Test"
 msgstr "テスト終了"
 
 msgid "Enter a blueprint"
@@ -463,7 +473,7 @@ msgid "Export failed. Key uri nor classUri in formValues are not defined"
 msgstr ""
 
 msgid "Export metadata"
-msgstr "メタデータエクスポート"
+msgstr "メタデータのエクスポート"
 
 msgid "Export QTI %s Test Package"
 msgstr ""
@@ -601,13 +611,13 @@ msgid "Import"
 msgstr "インポート"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr "QTI/APIP Content Packageをインポート"
+msgstr "QTI/APIP Content Packageのインポート"
 
 msgid "Import QTI TEST into \"%s"
 msgstr "QTI TESTを\"%s\"にインポートします"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMSマニフェストファイル内で\"%s\"として参照されるQTIアイテムがインポートできませんでした"
+msgstr "IMS Manifestファイル\"%s\"として参照されるIMS QTIアイテムをインポートできませんでした。"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMSマニフェストファイル内で\"%s\"として参照されるQTIアイテムのインポートが完了しました"
@@ -638,6 +648,9 @@ msgstr "内部サーバエラー"
 
 msgid "is already used in the test."
 msgstr "既にテストで使用されています"
+
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
+msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）にしてください"
@@ -738,11 +751,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テスト管理"
 
-#, tao-public
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr "テスト管理"
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr "テスト管理"
 
 msgid "Mark for review"
@@ -799,11 +812,11 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr "分"
 
-msgid "Missed required parameter \'id\'"
-msgstr ""
+msgid "Missed required parameter \\'id\\'"
+msgstr "必要なパラメータが不足しています \\'id\\'"
 
-msgid "Missed required parameter \'id\'"
-msgstr "必要なパラメータが不足しています \'id\'"
+msgid "Missed required parameter \\'id\\'"
+msgstr ""
 
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
@@ -856,10 +869,10 @@ msgstr "次へ"
 msgid "Next Section"
 msgstr "次のセクション"
 
-msgid "NO"
+msgid "No"
 msgstr "いいえ"
 
-msgid "No"
+msgid "NO"
 msgstr "いいえ"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
@@ -947,7 +960,7 @@ msgid "Ordering"
 msgstr "出題順"
 
 msgid "Outcome"
-msgstr "結果識別子"
+msgstr "結果"
 
 msgid "Outcome declarations"
 msgstr "結果変数の宣言"
@@ -989,22 +1002,22 @@ msgid "Preview the covered area"
 msgstr "カバーエリアをプレビュー"
 
 msgid "Previous"
-msgstr "前"
+msgstr "前へ"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "進行と最終評価"
 
 msgid "Proctor"
-msgstr "試験監督"
+msgstr "試検監督者"
 
 msgid "Properties"
 msgstr "プロパティ"
 
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Test Driver"
+msgstr ""
 
 msgid "QTI Item Runner"
-msgstr "QTI Item Runner"
+msgstr "QTIアイテムランナー"
 
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTIテスト \"%s\" の公開ができませんでした"
@@ -1019,18 +1032,18 @@ msgid "QTI Test Package %s"
 msgstr ""
 
 msgid "QTI Test Package 2.1"
-msgstr "QTI Test Package 2.1"
+msgstr ""
 
 msgid "QTI Test Package 2.2"
-msgstr "QTI Test Package 2.2"
+msgstr ""
 
 msgid "QTI/APIP Test Content Package"
-msgstr "QTI/APIP Test Content Package"
-
-msgid "Question"
-msgstr "問題"
+msgstr ""
 
 msgid "question"
+msgstr "問題"
+
+msgid "Question"
 msgstr "問題"
 
 msgid "Question %s"
@@ -1076,7 +1089,7 @@ msgid "Reset filters"
 msgstr "全て表示"
 
 msgid "Resource(s) successfully exported."
-msgstr "リソースが正常にエクスポートされました"
+msgstr "リソースがエクスポートされました"
 
 msgid "ResultTransmission event successfully registered"
 msgstr "ResultTransmission イベントが正常に登録されました。"
@@ -1136,7 +1149,7 @@ msgid "Section Properties"
 msgstr "セッションプロパティ"
 
 msgid "Select"
-msgstr "選択数"
+msgstr "選択"
 
 msgid "Select a blueprint"
 msgstr "ブループリント選択"
@@ -1238,10 +1251,10 @@ msgid "Some rubric blocks have been updated to reflect the changes in the list o
 msgstr "結果リストの変更に伴い、一部のルーブリックブロックを更新しました"
 
 msgid "Something unexpected happened."
-msgstr "予想外のエラーが発生しまた。"
+msgstr "予想外のエラーが発生しました。"
 
 msgid "Something went wrong..."
-msgstr "不具合が発生しました"
+msgstr "何か問題が発生しました。"
 
 msgid "Speech speed"
 msgstr "話す速さ"
@@ -1310,7 +1323,7 @@ msgid "Test Part Properties"
 msgstr "テストパートプロパティ"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr "テストプレビューがインストールされていない場合は、管理者にお問い合わせください。"
+msgstr "テストプレビューはインストールされていません。管理者に問合せてください。"
 
 msgid "Test Saved"
 msgstr "テストを保存しました"
@@ -1334,10 +1347,10 @@ msgstr "テスト"
 msgid "Text content"
 msgstr "テキストコンテンツ"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "テキスト読み上げ"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "テキスト読み上げ"
 
 msgid "that was being taken."
@@ -1356,7 +1369,7 @@ msgid "The assessment has been suspended by an authorized proctor. If you wish t
 msgstr "テストは担当の試験監督者によって中断されています。再開する場合は、再度実施して必要に応じて試験監督者に連絡してください。"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "テストは一時停止されました。再開する場合は、再度実施行して必要に応じて試験監督者に連絡してください。"
+msgstr "テストは中断されています。再開する場合は、再度実行して必要に応じて試験監督に連絡してください。"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
 msgstr "テストは中断されています。再開する場合は再度実施してください。"
@@ -1365,7 +1378,7 @@ msgid "The assessment has been terminated."
 msgstr "テストは終了されました"
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "テストは終了されましたので、これ以上操作することはできません"
+msgstr "テストは終了していますので、これ以上操作することはできません。"
 
 msgid "The assessment is still running."
 msgstr "テストは実施中です"
@@ -1395,7 +1408,7 @@ msgid "The identifier of the section."
 msgstr "セクション識別子"
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "IMSマニフェストファイルで、\"%s\" として参照されたIMS QTIアイテムは既にアイテムバンクに格納されています。"
+msgstr "IMS Manifestファイルの中で\"%s\"として参照されているIMS QTIアイテムは、すでにアイテムバンクに格納されました。"
 
 msgid "The IMS QTI Test Package could not be imported."
 msgstr "IMS QTIのテストパッケージはインポートできませんでした。"
@@ -1455,7 +1468,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1679,10 +1691,10 @@ msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 msgid "Yellow on Blue"
 msgstr "ブルー地に黄色"
 
-msgid "YES"
-msgstr "はい"
-
 msgid "Yes"
+msgstr "Yes"
+
+msgid "YES"
 msgstr "はい"
 
 msgid "You answered %s of %s question(s) for this section of the test"

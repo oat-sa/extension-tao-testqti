@@ -1,24 +1,31 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:21\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2023-06-07 09:15\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: lt-LT\n"
+"Language: lt\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: lt-LT\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: lt\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/taoQtiTestItemRunner.rdf.po\n"
+"X-Crowdin-File-ID: 537\n"
+"Language-Team: Lithuanian\n"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI Test Parent Service Call ID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI Test Parent Service Call ID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -29,4 +36,9 @@ msgstr "QTI Testo Elemento Vykdytojas"
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
 msgstr "Įterpti ir vykdyti elementą į QTI Testą. Šis servisas vykdo TAO API ir kontekstus."
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "QTI Test Item Runner"
+msgstr ""
 
