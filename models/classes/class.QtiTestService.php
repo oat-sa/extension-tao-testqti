@@ -31,6 +31,8 @@ use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\metaMetadata\Importer as MetaMetadataImporter;
+use oat\taoQtiItem\model\qti\metaMetadata\MetaMetadataService;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -570,6 +572,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $domManifest->load($folder . 'imsmanifest.xml');
 
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+        $metaMetadataValues = $this->getMetaMetadataImporter()->extract($domManifest);
 
         // Note: without this fix, metadata guardians do not work.
         $this->getMetadataImporter()->setMetadataValues($metadataValues);
@@ -697,7 +700,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->useMetadataValidators,
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
-                                            $reportCtx->overwrittenItems
+                                            $reportCtx->overwrittenItems,
+                                            $metaMetadataValues
                                         );
 
                                         $reportCtx->createdClasses = array_merge(
@@ -1409,6 +1413,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $this->metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
         }
         return $this->metadataImporter;
+    }
+
+    protected function getMetaMetadataImporter(): MetaMetadataImporter
+    {
+        return $this->getServiceLocator()->get(MetaMetadataService::SERVICE_ID)->getImporter();
     }
 
     private function getSecureResourceService(): SecureResourceServiceInterface
