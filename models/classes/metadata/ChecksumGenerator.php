@@ -46,11 +46,11 @@ class ChecksumGenerator
         if (empty($listValues)) {
             return '';
         }
-
+        asort($listValues);
         foreach ($listValues as $value) {
-            $checksum .= $this->ontology->getResource($value['id'])->getLabel();
+            $checksum .= strtolower($this->ontology->getResource($value['id'])->getLabel());
         }
-        common_Logger::d(sprintf('ChecksumGenerator value before sha1 : "%s"',  $checksum));
-        return sha1($checksum);
+        common_Logger::e(sprintf('ChecksumGenerator value before sha1 : "%s"',  $checksum));
+        return sha1(trim($checksum));
     }
 }
