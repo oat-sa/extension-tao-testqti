@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\metadata;
 
+use common_Logger;
 use core_kernel_classes_Property as Property;
 use oat\generis\model\data\Ontology;
 
@@ -45,11 +46,11 @@ class ChecksumGenerator
         if (empty($listValues)) {
             return '';
         }
-
+        asort($listValues);
         foreach ($listValues as $value) {
-            $checksum .= $this->ontology->getResource($value['id'])->getLabel();
+            $checksum .= strtolower($this->ontology->getResource($value['id'])->getLabel());
         }
-
-        return sha1($checksum);
+        common_Logger::e(sprintf('ChecksumGenerator value before sha1 : "%s"',  $checksum));
+        return sha1(trim($checksum));
     }
 }
