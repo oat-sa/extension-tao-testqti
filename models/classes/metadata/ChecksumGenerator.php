@@ -39,18 +39,20 @@ class ChecksumGenerator
     {
         $checksum = '';
 
-        $listValues = array_filter($property->getRange()->getNestedResources(), function ($range) {
+        $resourceList = array_filter($property->getRange()->getNestedResources(), function ($range) {
             return $range['isclass'] === 0;
         });
 
-        if (empty($listValues)) {
+        if (empty($resourceList)) {
             return '';
         }
-        asort($listValues);
-        foreach ($listValues as $value) {
-            $checksum .= strtolower($this->ontology->getResource($value['id'])->getLabel());
+        $labels = [];
+        foreach ($resourceList as $resource) {
+            $labels[] = strtolower($this->ontology->getResource($resource['id'])->getLabel());
         }
-        common_Logger::e(sprintf('ChecksumGenerator value before sha1 : "%s"',  $checksum));
+        asort($labels);
+        $checksum = implode('', $labels);
+        common_Logger::e(sprintf('ChecksumGenerator resource before sha1 : "%s"',  $checksum));
         return sha1(trim($checksum));
     }
 }
