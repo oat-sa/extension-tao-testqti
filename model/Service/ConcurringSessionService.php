@@ -24,10 +24,12 @@ namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
 use oat\oatbox\service\ServiceManager;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
@@ -35,6 +37,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
 use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use qtism\common\datatypes\QtiDuration;
 use qtism\data\AssessmentItemRef;
@@ -43,7 +46,14 @@ use Throwable;
 class ConcurringSessionService
 {
     private const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
-
+    /**
+     * @var string Controls whether a delivery execution state should be kept as is or reset each time it starts.
+     *             `false` – the state will be reset on each restart.
+     *             `true` – the state will be maintained upon a restart.
+     *
+     * phpcs:disable Generic.Files.LineLength
+     */
+    private const FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE = 'FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE';
     private LoggerInterface $logger;
     private QtiRunnerService $qtiRunnerService;
     private RuntimeService $runtimeService;
@@ -65,6 +75,21 @@ class ConcurringSessionService
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->currentSession = $currentSession ?? PHPSession::singleton();
+    }
+
+    public function pauseActiveDeliveryExecution($activeExecution): void
+    {
+        if ($activeExecution instanceof DeliveryExecution) {
+            $this->getConcurringSessionService()->pauseConcurrentSessions($activeExecution);
+
+            if ($activeExecution->getState()->getUri() === DeliveryExecution::STATE_PAUSED) {
+                $this->getConcurringSessionService()->adjustTimers($activeExecution);
+            }
+
+            $this->getConcurringSessionService()->clearConcurringSession($activeExecution);
+        }
+
+        $this->resetDeliveryExecutionState($activeExecution);
     }
 
     public function pauseConcurrentSessions(DeliveryExecution $activeExecution): void
@@ -192,6 +217,46 @@ class ConcurringSessionService
                 }
             }
         }
+    }
+
+    private function resetDeliveryExecutionState(DeliveryExecution $activeExecution = null): void
+    {
+        if (
+            null === $activeExecution
+            || !$this->isDeliveryExecutionStateResetEnabled()
+            || $activeExecution->getState()->getUri() === DeliveryExecution::STATE_PAUSED
+        ) {
+            return;
+        }
+
+        $this->getStateService()->pause($activeExecution);
+    }
+
+    private function isDeliveryExecutionStateResetEnabled(): bool
+    {
+        return !$this->getFeatureFlagChecker()->isEnabled(
+            static::FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE
+        );
+    }
+
+    private function getStateService(): StateServiceInterface
+    {
+        return $this->getPsrContainer()->get(StateServiceInterface::SERVICE_ID);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagChecker
+    {
+        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
+    }
+
+    private function getConcurringSessionService(): ConcurringSessionService
+    {
+        return $this->getPsrContainer()->get(ConcurringSessionService::class);
+    }
+
+    private function getPsrContainer(): ContainerInterface
+    {
+        return $this->getServiceManager()->getContainer();
     }
 
     private function storeItemDuration(
