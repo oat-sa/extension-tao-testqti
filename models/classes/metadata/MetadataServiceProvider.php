@@ -37,7 +37,8 @@ class MetadataServiceProvider implements ContainerServiceProviderInterface
         $services = $configurator->services();
 
         $services->set(ChecksumGenerator::class, ChecksumGenerator::class)
-            ->args([service(Ontology::SERVICE_ID)]);
+            ->args([service(Ontology::SERVICE_ID)])
+            ->public();
 
         $services->set(MetadataLomService::class, MetadataLomService::class);
 

@@ -37,8 +37,6 @@ class ChecksumGenerator
 
     public function getRangeChecksum(Property $property): string
     {
-        $checksum = '';
-
         $resourceList = array_filter($property->getRange()->getNestedResources(), function ($range) {
             return $range['isclass'] === 0;
         });

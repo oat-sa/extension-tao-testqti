@@ -29,9 +29,9 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
-use oat\taoQtiItem\model\qti\metaMetadata\Importer as MetaMetadataImporter;
 use oat\taoQtiItem\model\qti\metaMetadata\MetaMetadataService;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
@@ -572,7 +572,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $domManifest->load($folder . 'imsmanifest.xml');
 
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
-        $metaMetadataValues = $this->getMetaMetadataImporter()->extract($domManifest);
+        $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
 
         // Note: without this fix, metadata guardians do not work.
         $this->getMetadataImporter()->setMetadataValues($metadataValues);
@@ -1415,9 +1415,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->metadataImporter;
     }
 
-    protected function getMetaMetadataImporter(): MetaMetadataImporter
+    protected function getMetaMetadataExtractor(): MetaMetadataExtractor
     {
-        return $this->getServiceLocator()->get(MetaMetadataService::SERVICE_ID)->getImporter();
+        return $this->getServiceLocator()->getContainer()->get(MetaMetadataExtractor::class);
     }
 
     private function getSecureResourceService(): SecureResourceServiceInterface
