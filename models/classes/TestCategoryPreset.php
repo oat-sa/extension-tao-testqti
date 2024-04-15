@@ -47,6 +47,11 @@ class TestCategoryPreset implements JsonSerializable
     private $qtiCategory;
 
     /**
+     * @var string[] $altCategories - the other possible qti categories that would activate the preset
+     */
+    private $altCategories;
+
+    /**
      * @var string $description - what is the category purpose
      */
     private $description = '';
@@ -92,6 +97,8 @@ class TestCategoryPreset implements JsonSerializable
         $this->label        = (string) $label;
         $this->qtiCategory  = (string) $qtiCategory;
 
+        $this->altCategories = [];
+
         if (isset($data['description'])) {
             $this->description = (string) $data['description'];
         }
@@ -103,6 +110,9 @@ class TestCategoryPreset implements JsonSerializable
         }
         if (isset($data['featureFlag'])) {
             $this->featureFlag = (string) $data['featureFlag'];
+        }
+        if (isset($data['altCategories'])) {
+            $this->altCategories = array_map('strval', $data['altCategories']);
         }
     }
 
@@ -121,7 +131,12 @@ class TestCategoryPreset implements JsonSerializable
         return $this->qtiCategory;
     }
 
-    public function getDescription(): string
+    public function getAltCategory(): array
+    {
+        return $this->altCategories;
+    }
+
+    public function getDescription(): ?string
     {
         return $this->description;
     }
@@ -156,13 +171,14 @@ class TestCategoryPreset implements JsonSerializable
     public function toArray(): array
     {
         return [
-            'id'          => $this->id,
-            'label'       => $this->label,
-            'qtiCategory' => $this->qtiCategory,
-            'description' => $this->description,
-            'order'       => $this->order,
-            'pluginId'    => $this->pluginId,
-            'featureFlag' => $this->featureFlag
+            'id'            => $this->id,
+            'label'         => $this->label,
+            'qtiCategory'   => $this->qtiCategory,
+            'altCategories' => $this->altCategories,
+            'description'   => $this->description,
+            'order'         => $this->order,
+            'pluginId'      => $this->pluginId,
+            'featureFlag'   => $this->featureFlag
         ];
     }
 
