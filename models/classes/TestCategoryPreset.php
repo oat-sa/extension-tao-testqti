@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2024 (original work) Open Assessment Technologies SA;
  *
  */
 
@@ -106,37 +106,37 @@ class TestCategoryPreset implements JsonSerializable
         }
     }
 
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    public function getLabel()
+    public function getLabel(): string
     {
         return $this->label;
     }
 
-    public function getQtiCategory()
+    public function getQtiCategory(): string
     {
         return $this->qtiCategory;
     }
 
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    public function getOrder()
+    public function getOrder(): int
     {
         return $this->order;
     }
 
-    public function getPluginId()
+    public function getPluginId(): string
     {
         return $this->pluginId;
     }
 
-    public function getFeatureFlag()
+    public function getFeatureFlag(): string
     {
         return (string) $this->featureFlag;
     }
@@ -144,7 +144,7 @@ class TestCategoryPreset implements JsonSerializable
     /**
      * @see JsonSerializable::jsonSerialize
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -153,7 +153,7 @@ class TestCategoryPreset implements JsonSerializable
      * Convenient method to convert the members to an assoc array
      * @return array the data
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'id'          => $this->id,
@@ -172,7 +172,7 @@ class TestCategoryPreset implements JsonSerializable
      * @return TestCategoryPreset the new instance
      * @throws common_exception_InconsistentData
      */
-    public static function fromArray(array $data)
+    public static function fromArray(array $data): TestCategoryPreset
     {
         if (!isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory'])) {
             throw new common_exception_InconsistentData(
