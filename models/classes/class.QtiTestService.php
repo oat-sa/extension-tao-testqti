@@ -856,7 +856,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         // phpcs:enable Generic.Files.LineLength
                     )
                 );
-            } catch(MetaMetadataException $e) {
+            } catch (MetaMetadataException $e) {
                 $report = Reporter::createError(
                     sprintf('Import failed at validating metametadata with message: "%s"', $e->getMessage())
                 );

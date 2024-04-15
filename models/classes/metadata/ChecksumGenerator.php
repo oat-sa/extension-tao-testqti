@@ -50,7 +50,7 @@ class ChecksumGenerator
         }
         asort($labels);
         $checksum = implode('', $labels);
-        common_Logger::e(sprintf('ChecksumGenerator resource before sha1 : "%s"',  $checksum));
+
         return sha1(trim($checksum));
     }
 }
