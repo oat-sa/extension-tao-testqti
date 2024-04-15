@@ -23,16 +23,18 @@ use oat\generis\model\data\event\ResourceCreated;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\oatbox\reporting\Report as Reporter;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataException;
 use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataValidator;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
-use oat\taoQtiItem\model\qti\metaMetadata\MetaMetadataService;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -609,6 +611,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $testDefinition = new XmlDocument();
 
             try {
+                $this->getMetaMetadataValidator()->validateClass($testClass, $metaMetadataValues);
                 $testDefinition->load($expectedTestFile, true);
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
@@ -853,6 +856,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         // phpcs:enable Generic.Files.LineLength
                     )
                 );
+            } catch(MetaMetadataException $e) {
+                $report = Reporter::createError(
+                    sprintf('Import failed at validating metametadata with message: "%s"', $e->getMessage())
+                );
+                common_Logger::e($e->getMessage());
             }
         }
 
@@ -1496,5 +1504,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
+    }
+
+    protected function getMetaMetadataValidator(): MetaMetadataValidator
+    {
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataValidator::class);
     }
 }
