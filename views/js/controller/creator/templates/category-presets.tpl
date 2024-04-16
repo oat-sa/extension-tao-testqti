@@ -3,7 +3,7 @@
 
 <div class="category-preset-group-{{groupId}} toggled">
     {{#each presets}}
-    <div class="grid-row pseudo-label-box category-preset" data-qti-category="{{qtiCategory}}">
+    <div class="grid-row pseudo-label-box category-preset" data-qti-category="{{qtiCategory}}" data-categories="{{categories}}">
         <div class="col-1">
             <label>
                 <input
