@@ -29,9 +29,12 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\importer\MetaMetadataImportMapper;
+use oat\taoQtiItem\model\qti\metadata\importer\PropertyDoesNotExistException;
 use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\metadata\ontology\MappedMetadataInjector;
 use oat\taoQtiItem\model\qti\metaMetadata\MetaMetadataService;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
@@ -586,6 +589,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $reportCtx->overwrittenItems = [];
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = $metadataValues[$qtiTestResourceIdentifier] ?? [];
+        $reportCtx->metaMetadata = $metaMetadataValues;
         $reportCtx->createdClasses = [];
 
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
@@ -628,6 +632,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 }
 
                 $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
+                $mappedProperties = $this->getMetaMetadataImporter()->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
                 // add real label without saving (to not pass it separately to item importer)
                 $targetItemClass->label = $testLabel;
@@ -682,7 +687,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             );
                                         }
                                     }
-
                                     // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same
                                     // file).
                                     if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
@@ -701,7 +705,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
                                             $reportCtx->overwrittenItems,
-                                            $metaMetadataValues
+                                            $mappedProperties['itemProperties']
                                         );
 
                                         $reportCtx->createdClasses = array_merge(
@@ -784,6 +788,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
+                            $this->getServiceManager()->getContainer()->get(MappedMetadataInjector::class)->inject(
+                                $mappedProperties['testProperties'],
+                                $metadataValues[$qtiTestResourceIdentifier],
+                                $testResource
+                            );
 
                             // 5. if $targetClass does not contain any instances
                             // (because everything resolved by class lookups),
@@ -837,14 +846,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
-            } catch (CatEngineNotFoundException $e) {
+            }
+            catch (PropertyDoesNotExistException $e) {
+                $report->add(
+                    new common_report_Report(
+                        common_report_Report::TYPE_ERROR,
+                        __("Property '%s' does not exist.", $e->getProperty())
+                    )
+                );
+            }
+            catch (CatEngineNotFoundException $e) {
                 $report->add(
                     new common_report_Report(
                         common_report_Report::TYPE_ERROR,
                         __('No CAT Engine configured for CAT Endpoint "%s".', $e->getRequestedEndpoint())
                     )
                 );
-            } catch (AdaptiveSectionInjectionException $e) {
+            }
+            catch (AdaptiveSectionInjectionException $e) {
                 $report->add(
                     new common_report_Report(
                         common_report_Report::TYPE_ERROR,
@@ -1496,5 +1515,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
+    }
+
+    private function getMetaMetadataImporter(): MetaMetadataImportMapper
+    {
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
     }
 }
