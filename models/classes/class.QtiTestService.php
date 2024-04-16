@@ -29,13 +29,14 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
 use oat\taoQtiItem\model\qti\metadata\importer\MetaMetadataImportMapper;
 use oat\taoQtiItem\model\qti\metadata\importer\PropertyDoesNotExistException;
-use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataValidator;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiItem\model\qti\metadata\ontology\MappedMetadataInjector;
-use oat\taoQtiItem\model\qti\metaMetadata\MetaMetadataService;
+use oat\taoQtiItem\model\qti\metaMetadata\imsManifest\MetaMetadataException;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -45,6 +46,7 @@ use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
+use PHP_CodeSniffer\Reporter;
 use Psr\Container\ContainerInterface;
 use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
@@ -613,6 +615,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $testDefinition = new XmlDocument();
 
             try {
+                $this->getMetaMetadataValidator()->validateClass($testClass, $metaMetadataValues);
                 $testDefinition->load($expectedTestFile, true);
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
@@ -872,6 +875,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         // phpcs:enable Generic.Files.LineLength
                     )
                 );
+            } catch (MetaMetadataException $e) {
+                $report = Reporter::createError(
+                    sprintf('Import failed at validating metametadata with message: "%s"', $e->getMessage())
+                );
+                common_Logger::e($e->getMessage());
             }
         }
 
@@ -1520,5 +1528,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getMetaMetadataImporter(): MetaMetadataImportMapper
     {
         return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
+    }
+
+    protected function getMetaMetadataValidator(): MetaMetadataValidator
+    {
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataValidator::class);
     }
 }
