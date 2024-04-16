@@ -77,7 +77,7 @@ class ConcurringSessionService
         $this->currentSession = $currentSession ?? PHPSession::singleton();
     }
 
-    public function pauseActiveDeliveryExecution($activeExecution): void
+    public function pauseActiveDeliveryExecutionsForUser($activeExecution): void
     {
         if ($activeExecution instanceof DeliveryExecution) {
             $this->getConcurringSessionService()->pauseConcurrentSessions($activeExecution);
