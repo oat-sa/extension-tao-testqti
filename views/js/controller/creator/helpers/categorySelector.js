@@ -37,6 +37,7 @@ define([
 
     let allPresets = [];
     let allQtiCategoriesPresets = [];
+    let categoryToPreset = new Map();
 
     function categorySelectorFactory($container) {
         const $presetsContainer = $container.find('.category-presets');
@@ -136,16 +137,21 @@ define([
 
                 const $presetsCheckboxes = $container.find('.category-preset input');
                 $presetsCheckboxes.each((idx, input) => {
-                    const category = input.value;
-
-                    input.indeterminate = false;
-                    input.checked = false;
-
-                    if (indeterminate.indexOf(category) !== -1) {
-                        input.indeterminate = true;
-                    } else if (selected.indexOf(category) !== -1) {
-                        input.checked = true;
+                    const qtiCategory = input.value;
+                    if (!categoryToPreset.has(qtiCategory)) {
+                        // Unlikely to happen, but better safe than sorry...
+                        input.indeterminate = indeterminate.includes(qtiCategory);
+                        input.checked = selected.includes(qtiCategory);
+                        return;
                     }
+                    // Check if one category declared for the preset is selected.
+                    // Usually, only one exists, but it may happen that alternatives are present.
+                    // In any case, only the main declared category (qtiCategory) will be saved.
+                    // The concept is as follows: read all, write one.
+                    const preset = categoryToPreset.get(qtiCategory);
+                    const hasCategory = category => preset.categories.includes(category);
+                    input.indeterminate = indeterminate.some(hasCategory);
+                    input.checked = selected.some(hasCategory);
                 });
 
                 // Custom categories
@@ -181,6 +187,7 @@ define([
      *              id: 'nextPartWarning',
      *              label: 'Next Part Warning',
      *              qtiCategory: 'x-tao-option-nextPartWarning',
+     *              altCategories: [x-tao-option-nextPartWarningMessage]
      *              description: 'Displays a warning before the user finishes a part'
      *              ...
      *          },
@@ -191,22 +198,19 @@ define([
      * ]
      */
     categorySelectorFactory.setPresets = function setPresets(presets) {
-        if (_.isArray(presets)) {
-            allPresets = presets;
-            allQtiCategoriesPresets = extractCategoriesFromPresets();
+        if (Array.isArray(presets)) {
+            allPresets = Array.from(presets);
+            categoryToPreset = new Map();
+            allQtiCategoriesPresets = allPresets.reduce((allCategories, group) => {
+                return group.presets.reduce((all, preset) => {
+                    const categories = [preset.qtiCategory].concat(preset.altCategories || []);
+                    categories.forEach(category => categoryToPreset.set(category, preset));
+                    preset.categories = categories;
+                    return all.concat(categories);
+                }, allCategories);
+            }, []);
         }
     };
-
-    /**
-     * Extract the qtiCategory property of all presets of all groups
-     * @returns {String[]}
-     */
-    function extractCategoriesFromPresets() {
-        return allPresets.reduce((prev, current) => {
-            const groupIds = _.map(current.presets, 'qtiCategory');
-            return prev.concat(groupIds);
-        }, []);
-    }
 
     return categorySelectorFactory;
 });
