@@ -87,9 +87,8 @@ class ConcurringSessionService
             }
 
             $this->getConcurringSessionService()->clearConcurringSession($activeExecution);
+            $this->resetDeliveryExecutionState($activeExecution);
         }
-
-        $this->resetDeliveryExecutionState($activeExecution);
     }
 
     public function pauseConcurrentSessions(DeliveryExecution $activeExecution): void
