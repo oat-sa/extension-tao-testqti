@@ -49,7 +49,7 @@ class TestCategoryPreset implements JsonSerializable
     /**
      * @var string[] $altCategories - the other possible qti categories that would activate the preset
      */
-    private $altCategories;
+    private $altCategories = [];
 
     /**
      * @var string $description - what is the category purpose
@@ -97,8 +97,6 @@ class TestCategoryPreset implements JsonSerializable
         $this->label        = (string) $label;
         $this->qtiCategory  = (string) $qtiCategory;
 
-        $this->altCategories = [];
-
         if (isset($data['description'])) {
             $this->description = (string) $data['description'];
         }
@@ -136,7 +134,7 @@ class TestCategoryPreset implements JsonSerializable
         return $this->altCategories;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
