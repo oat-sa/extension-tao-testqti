@@ -31,57 +31,45 @@ use common_exception_InconsistentData;
  */
 class TestCategoryPreset implements JsonSerializable
 {
-    /**
-     * @var string $id
-     */
-    private $id;
+    private string $id;
 
     /**
-     * @var string $label - short preset name
+     * Short preset name
      */
-    private $label;
+    private string $label;
 
     /**
-     * @var string $qtiCategory - the actual qti category that will end up in the QTI markup
+     * The actual qti category that will end up in the QTI markup
      */
-    private $qtiCategory;
+    private string $qtiCategory;
 
     /**
-     * @var string[] $altCategories - the other possible qti categories that would activate the preset
+     * The other possible qti categories that would activate the preset
      */
-    private $altCategories = [];
+    private array $altCategories = [];
 
     /**
-     * @var string $description - what is the category purpose
+     * What is the category purpose
      */
-    private $description = '';
+    private string $description = '';
 
     /**
-     * @var string $order - to sort the categories
+     * To sort the categories
      */
-    private $order = 0;
+    private int $order = 0;
 
     /**
-     * @var string $pluginId - related plugin that the preset depends on
+     * Related plugin that the preset depends on
      */
-    private $pluginId = '';
+    private string $pluginId = '';
 
     /**
-     * @var string $featureFlag - the name of a config flag,
-     * the preset will be deactivated based on this optional value.
+     * The name of a config flag, the preset will be deactivated based on this optional value.
      */
-    private $featureFlag;
+    private string $featureFlag = '';
 
 
-    /**
-     * Create a test category preset
-     * @param string $id
-     * @param string $label
-     * @param string $qtiCategory
-     * @param array $data - optional parameters
-     * @throws common_exception_InconsistentData
-     */
-    public function __construct($id, $label, $qtiCategory, $data)
+    public function __construct(string $id, string $label, string $qtiCategory, array $data = [])
     {
         if (! is_string($id) || empty($id)) {
             throw new common_exception_InconsistentData('The category preset needs an id');
@@ -151,21 +139,14 @@ class TestCategoryPreset implements JsonSerializable
 
     public function getFeatureFlag(): string
     {
-        return (string) $this->featureFlag;
+        return $this->featureFlag;
     }
 
-    /**
-     * @see JsonSerializable::jsonSerialize
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    /**
-     * Convenient method to convert the members to an assoc array
-     * @return array the data
-     */
     public function toArray(): array
     {
         return [
@@ -180,12 +161,6 @@ class TestCategoryPreset implements JsonSerializable
         ];
     }
 
-    /**
-     * Create a test category preset from an assoc array
-     * @param array $data
-     * @return TestCategoryPreset the new instance
-     * @throws common_exception_InconsistentData
-     */
     public static function fromArray(array $data): TestCategoryPreset
     {
         if (!isset($data['id']) || !isset($data['label']) || !isset($data['qtiCategory'])) {
