@@ -22,12 +22,11 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\metadata\metaMetadata;
 
-use core_kernel_classes_Class;
 use core_kernel_classes_Literal;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
 use oat\generis\model\GenerisRdf;
-use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
+use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 use PHPUnit\Framework\TestCase;
 
