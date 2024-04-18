@@ -47,7 +47,6 @@ class GenericLomOntologyExtractorTest extends TestCase
             $this->ontologyMock,
             $this->propertyMapperMock,
             $this->metadataLomServiceMock,
-            $this->checksumGeneratorMock
         );
     }
 

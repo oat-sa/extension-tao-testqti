@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\metadata\metaMetadata;
 
-use core_kernel_classes_Class;
 use core_kernel_classes_Literal;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
