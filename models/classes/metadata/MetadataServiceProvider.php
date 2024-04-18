@@ -28,6 +28,7 @@ use oat\generis\model\GenerisRdf;
 use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class MetadataServiceProvider implements ContainerServiceProviderInterface
