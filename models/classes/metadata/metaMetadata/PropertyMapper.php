@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\classes\metadata\metaMetadata;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
 use oat\generis\model\OntologyRdf;
-use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
+use oat\taoQtiItem\model\import\ChecksumGenerator;
 use taoTests_models_classes_TestsService;
 
 class PropertyMapper

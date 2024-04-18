@@ -25,9 +25,9 @@ namespace oat\taoQtiTest\models\classes\metadata;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\generis\model\GenerisRdf;
+use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
-
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class MetadataServiceProvider implements ContainerServiceProviderInterface
@@ -35,10 +35,6 @@ class MetadataServiceProvider implements ContainerServiceProviderInterface
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
-
-        $services->set(ChecksumGenerator::class, ChecksumGenerator::class)
-            ->args([service(Ontology::SERVICE_ID)])
-            ->public();
 
         $services->set(MetadataLomService::class, MetadataLomService::class);
 
