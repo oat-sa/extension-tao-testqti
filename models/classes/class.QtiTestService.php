@@ -632,7 +632,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 }
 
                 $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
-                $mappedProperties = $this->getMetaMetadataImporter()->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
+                $mappedProperties = $this->getMetaMetadataImporter()
+                    ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
                 // add real label without saving (to not pass it separately to item importer)
                 $targetItemClass->label = $testLabel;
@@ -846,20 +847,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
-            }
-            catch (PropertyDoesNotExistException $e) {
+            } catch (PropertyDoesNotExistException $e) {
                 $reportCtx->itemClass = $targetItemClass;
                 $report->add(Report::createError($e->getMessage()));
-            }
-            catch (CatEngineNotFoundException $e) {
+            } catch (CatEngineNotFoundException $e) {
                 $report->add(
                     new common_report_Report(
                         common_report_Report::TYPE_ERROR,
                         __('No CAT Engine configured for CAT Endpoint "%s".', $e->getRequestedEndpoint())
                     )
                 );
-            }
-            catch (AdaptiveSectionInjectionException $e) {
+            } catch (AdaptiveSectionInjectionException $e) {
                 $report->add(
                     new common_report_Report(
                         common_report_Report::TYPE_ERROR,
@@ -1430,9 +1428,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->metadataImporter;
     }
 
-    protected function getMetaMetadataExtractor(): MetaMetadataExtractor
+    private function getMetaMetadataExtractor(): MetaMetadataExtractor
     {
-        return $this->getServiceLocator()->getContainer()->get(MetaMetadataExtractor::class);
+        return $this->getPsrContainer()->get(MetaMetadataExtractor::class);
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataExtractor::class);
     }
 
     private function getSecureResourceService(): SecureResourceServiceInterface
