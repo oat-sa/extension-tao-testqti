@@ -41,13 +41,11 @@ class GenericLomOntologyExtractorTest extends TestCase
         $this->ontologyMock = $this->createMock(Ontology::class);
         $this->propertyMapperMock = $this->createMock(PropertyMapper::class);
         $this->metadataLomServiceMock = $this->createMock(MetadataLomService::class);
-        $this->checksumGeneratorMock = $this->createMock(ChecksumGenerator::class);
 
         $this->subject = new GenericLomOntologyExtractor(
             $this->ontologyMock,
             $this->propertyMapperMock,
             $this->metadataLomServiceMock,
-            $this->checksumGeneratorMock
         );
     }
 
