@@ -13,13 +13,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2017-2024 (original work) Open Assessment Technologies SA;
  */
 /**
  * @author Christophe Noël <christophe@taotesting.com>
  */
 define([
-
     'jquery',
     'taoQtiTest/controller/creator/helpers/categorySelector'
 ], function($, categorySelectorFactory) {
@@ -33,18 +32,21 @@ define([
                 id: 'preset1.1',
                 label: 'preset1.1',
                 qtiCategory: 'x-tao-option-preset1.1',
+                altCategories: ['x-tao-option-preset1-1'],
                 description: 'Description of preset1.1'
             },
             {
                 id: 'preset1.2',
                 label: 'preset1.2',
                 qtiCategory: 'x-tao-option-preset1.2',
+                altCategories: ['x-tao-option-preset1-2'],
                 description: 'Description of preset1.2'
             },
             {
                 id: 'preset1.3',
                 label: 'preset1.3',
                 qtiCategory: 'x-tao-option-preset1.3',
+                altCategories: ['x-tao-option-preset1-3'],
                 description: 'Description of preset1.3'
             }
         ]
@@ -56,18 +58,21 @@ define([
                 id: 'preset2.1',
                 label: 'preset2.1',
                 qtiCategory: 'x-tao-option-preset2.1',
+                altCategories: [],
                 description: 'Description of preset2.1'
             },
             {
                 id: 'preset2.2',
                 label: 'preset2.2',
                 qtiCategory: 'x-tao-option-preset2.2',
+                altCategories: [],
                 description: 'Description of preset2.2'
             },
             {
                 id: 'preset2.3',
                 label: 'preset2.3',
                 qtiCategory: 'x-tao-option-preset2.3',
+                altCategories: [],
                 description: 'Description of preset2.3'
             }
         ]
@@ -126,7 +131,7 @@ define([
             categorySelector = categorySelectorFactory($container),
             selected = [
                 'x-tao-option-preset1.1',
-                'x-tao-option-preset1.2',
+                'x-tao-option-preset1-2', // use the alternative category
                 'x-tao-option-preset2.3',
                 'custom1',
                 'custom2'
@@ -151,7 +156,8 @@ define([
         var $container = $('#qunit-fixture'),
             categorySelector = categorySelectorFactory($container),
             selected = [
-                'x-tao-option-preset1.1',
+                'x-tao-option-preset1-1', // use the alternative category
+                'x-tao-option-preset1-3', // use the alternative category
                 'x-tao-option-preset2.3',
                 'custom1',
                 'custom3'
@@ -170,7 +176,7 @@ define([
 
         assert.equal($container.find('input[value="x-tao-option-preset1.1"]').prop('checked'), true, 'preset 1.1 is checked');
         assert.equal($container.find('input[value="x-tao-option-preset1.2"]').prop('checked'), false, 'preset 1.2 is NOT checked');
-        assert.equal($container.find('input[value="x-tao-option-preset1.3"]').prop('checked'), false, 'preset 1.3 is NOT checked');
+        assert.equal($container.find('input[value="x-tao-option-preset1.3"]').prop('checked'), true, 'preset 1.3 is checked');
         assert.equal($container.find('input[value="x-tao-option-preset2.1"]').prop('checked'), false, 'preset 2.1 is NOT checked');
         assert.equal($container.find('input[value="x-tao-option-preset2.2"]').prop('checked'), false, 'preset 2.2 is NOT checked');
         assert.equal($container.find('input[value="x-tao-option-preset2.3"]').prop('checked'), true, 'preset 2.3 is checked');
@@ -198,7 +204,8 @@ define([
         var $container = $('#qunit-fixture'),
             categorySelector = categorySelectorFactory($container),
             selected = [
-                'x-tao-option-preset1.1',
+                'x-tao-option-preset1-1', // use the alternative category
+                'x-tao-option-preset1-3', // use the alternative category
                 'x-tao-option-preset2.3',
                 'custom1',
                 'custom3'
@@ -226,6 +233,7 @@ define([
             switch (changeCounter) {
                 case 1: {
                     expectedSelected = [
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom3'
@@ -242,6 +250,7 @@ define([
                 case 2: {
                     expectedSelected = [
                         'x-tao-option-preset1.1',
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom3'
@@ -259,6 +268,7 @@ define([
                     expectedSelected = [
                         'x-tao-option-preset1.1',
                         'x-tao-option-preset1.2',
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom3'
@@ -279,6 +289,7 @@ define([
                 case 4: {
                     expectedSelected = [
                         'x-tao-option-preset1.1',
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom3'
@@ -299,6 +310,7 @@ define([
                 case 5: {
                     expectedSelected = [
                         'x-tao-option-preset1.1',
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom3'
@@ -318,6 +330,7 @@ define([
                 case 6: {
                     expectedSelected = [
                         'x-tao-option-preset1.1',
+                        'x-tao-option-preset1.3',
                         'x-tao-option-preset2.3',
                         'custom1',
                         'custom2',
