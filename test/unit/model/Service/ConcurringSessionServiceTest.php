@@ -275,7 +275,10 @@ class ConcurringSessionServiceTest extends TestCase
     {
         $this->featureFlagChecker
             ->method('isEnabled')
-            ->withConsecutive(['FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS'], ['FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE'])
+            ->withConsecutive(
+                ['FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS'],
+                ['FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE']
+            )
             ->willReturn(true);
 
         $otherDeliveryResource = $this->createMock(core_kernel_classes_Resource::class);
