@@ -171,7 +171,7 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(RuntimeService::SERVICE_ID),
                     service(DeliveryExecutionService::SERVICE_ID),
                     service(FeatureFlagChecker::class),
-                    service(StateServiceInterface::class),
+                    service(StateServiceInterface::SERVICE_ID),
                 ]
             );
     }
