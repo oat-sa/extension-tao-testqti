@@ -24,7 +24,6 @@ namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
 use oat\oatbox\service\ServiceManager;
-use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
@@ -37,7 +36,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
 use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
-use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use qtism\common\datatypes\QtiDuration;
 use qtism\data\AssessmentItemRef;
@@ -59,6 +57,7 @@ class ConcurringSessionService
     private RuntimeService $runtimeService;
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
+    private StateServiceInterface $stateService;
     private ?PHPSession $currentSession;
 
     public function __construct(
@@ -67,6 +66,7 @@ class ConcurringSessionService
         RuntimeService $runtimeService,
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
+        StateServiceInterface $stateService,
         PHPSession $currentSession = null
     ) {
         $this->logger = $logger;
@@ -75,18 +75,19 @@ class ConcurringSessionService
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->currentSession = $currentSession ?? PHPSession::singleton();
+        $this->stateService = $stateService;
     }
 
     public function pauseActiveDeliveryExecutionsForUser($activeExecution): void
     {
         if ($activeExecution instanceof DeliveryExecution) {
-            $this->getConcurringSessionService()->pauseConcurrentSessions($activeExecution);
+            $this->pauseConcurrentSessions($activeExecution);
 
             if ($activeExecution->getState()->getUri() === DeliveryExecution::STATE_PAUSED) {
-                $this->getConcurringSessionService()->adjustTimers($activeExecution);
+                $this->adjustTimers($activeExecution);
             }
 
-            $this->getConcurringSessionService()->clearConcurringSession($activeExecution);
+            $this->clearConcurringSession($activeExecution);
             $this->resetDeliveryExecutionState($activeExecution);
         }
     }
@@ -228,34 +229,14 @@ class ConcurringSessionService
             return;
         }
 
-        $this->getStateService()->pause($activeExecution);
+        $this->stateService->pause($activeExecution);
     }
 
     private function isDeliveryExecutionStateResetEnabled(): bool
     {
-        return !$this->getFeatureFlagChecker()->isEnabled(
+        return !$this->featureFlagChecker->isEnabled(
             static::FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE
         );
-    }
-
-    private function getStateService(): StateServiceInterface
-    {
-        return $this->getPsrContainer()->get(StateServiceInterface::SERVICE_ID);
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagChecker
-    {
-        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
-    }
-
-    private function getConcurringSessionService(): ConcurringSessionService
-    {
-        return $this->getPsrContainer()->get(ConcurringSessionService::class);
-    }
-
-    private function getPsrContainer(): ContainerInterface
-    {
-        return $this->getServiceManager()->getContainer();
     }
 
     private function storeItemDuration(
