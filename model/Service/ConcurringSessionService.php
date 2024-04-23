@@ -28,6 +28,7 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
+use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
@@ -43,12 +44,20 @@ use Throwable;
 class ConcurringSessionService
 {
     private const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
-
+    /**
+     * @var string Controls whether a delivery execution state should be kept as is or reset each time it starts.
+     *             `false` – the state will be reset on each restart.
+     *             `true` – the state will be maintained upon a restart.
+     *
+     * phpcs:disable Generic.Files.LineLength
+     */
+    private const FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE = 'FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE';
     private LoggerInterface $logger;
     private QtiRunnerService $qtiRunnerService;
     private RuntimeService $runtimeService;
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
+    private StateServiceInterface $stateService;
     private ?PHPSession $currentSession;
 
     public function __construct(
@@ -57,6 +66,7 @@ class ConcurringSessionService
         RuntimeService $runtimeService,
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
+        StateServiceInterface $stateService,
         PHPSession $currentSession = null
     ) {
         $this->logger = $logger;
@@ -65,6 +75,21 @@ class ConcurringSessionService
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->currentSession = $currentSession ?? PHPSession::singleton();
+        $this->stateService = $stateService;
+    }
+
+    public function pauseActiveDeliveryExecutionsForUser($activeExecution): void
+    {
+        if ($activeExecution instanceof DeliveryExecution) {
+            $this->pauseConcurrentSessions($activeExecution);
+
+            if ($activeExecution->getState()->getUri() === DeliveryExecution::STATE_PAUSED) {
+                $this->adjustTimers($activeExecution);
+            }
+
+            $this->clearConcurringSession($activeExecution);
+            $this->resetDeliveryExecutionState($activeExecution);
+        }
     }
 
     public function pauseConcurrentSessions(DeliveryExecution $activeExecution): void
@@ -192,6 +217,26 @@ class ConcurringSessionService
                 }
             }
         }
+    }
+
+    private function resetDeliveryExecutionState(DeliveryExecution $activeExecution = null): void
+    {
+        if (
+            null === $activeExecution
+            || !$this->isDeliveryExecutionStateResetEnabled()
+            || $activeExecution->getState()->getUri() === DeliveryExecution::STATE_PAUSED
+        ) {
+            return;
+        }
+
+        $this->stateService->pause($activeExecution);
+    }
+
+    private function isDeliveryExecutionStateResetEnabled(): bool
+    {
+        return !$this->featureFlagChecker->isEnabled(
+            static::FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE
+        );
     }
 
     private function storeItemDuration(
