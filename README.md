@@ -60,3 +60,4 @@ Environment variables
 |-----------------------------------------------|-------------------------------------------------------------------------------------|
 | FEATURE_FLAG_FORCE_DISPLAY_TEST_ITEM_FEEDBACK | Even if itemSessionControl `showFeedback` option is false, show item feedback modal |
 | FEATURE_FLAG_PAUSE_CONCURRENT_SESSIONS        | When set, forces restoring the timers state from the browser storage on test init   |
+| FEATURE_FLAG_MAINTAIN_RESTARTED_DELIVERY_EXECUTION_STATE | Typed environment variable, controlling whether a delivery execution state should be kept as is or reset each time it starts. If `"false"` the state will be reset on each restart. Default behavior. If `"true"` the state will be maintained upon a restart |
