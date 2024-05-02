@@ -1529,9 +1529,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     private function getMappedProperties(
-        bool                      $importMetadata,
-        DOMDocument               $domManifest,
-        stdClass                  $reportCtx,
+        bool $importMetadata,
+        DOMDocument $domManifest,
+        stdClass $reportCtx,
         core_kernel_classes_Class $testClass,
         core_kernel_classes_Class $targetItemClass
     ): array {
