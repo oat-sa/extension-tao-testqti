@@ -31,12 +31,8 @@
  */
 class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_FormContainer
 {
-    // --- ASSOCIATIONS ---
+    private const METADATA_FORM_ELEMENT_NAME = 'metadata';
 
-
-    // --- ATTRIBUTES ---
-
-    // --- OPERATIONS ---
     /**
      * (non-PHPdoc)
      * @see tao_helpers_form_FormContainer::initForm()
@@ -99,18 +95,41 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             )
         ]);
 
+
         $this->form->addElement($fileElt);
 
-        /*
-        $disableValidationElt = tao_helpers_form_FormFactory::getElement("disable_validation", 'Checkbox');
-        $disableValidationElt->setDescription(__("Disable validation"));
-        $disableValidationElt->setOptions(array("on" => ""));
-        $this->form->addElement($disableValidationElt);
-        */
-        $this->form->createGroup('file', __('Import a QTI/APIP Content Package'), ['source']);
+        $this->form->createGroup(
+            'file',
+            __('Import a QTI/APIP Content Package'),
+            [
+                'source',
+            ]
+        );
 
+        $this->addMetadataImportElement();
         $qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
         $qtiSentElt->setValue(1);
         $this->form->addElement($qtiSentElt);
+    }
+
+    private function isMetadataDisabled(): bool
+    {
+        return isset($this->options[taoQtiTest_models_classes_import_TestImport::DISABLED_FIELDS]) &&
+        in_array(
+            taoQtiTest_models_classes_import_TestImport::METADATA_FIELD,
+            $this->options[taoQtiTest_models_classes_import_TestImport::DISABLED_FIELDS]
+        );
+    }
+
+    private function addMetadataImportElement()
+    {
+        if (!$this->isMetadataDisabled()) {
+            $metadataImport = tao_helpers_form_FormFactory::getElement(self::METADATA_FORM_ELEMENT_NAME, 'Checkbox');
+            $metadataImport->setOptions([self::METADATA_FORM_ELEMENT_NAME => __('Import metadata or fail')]);
+            $metadataImport->setDescription(__('Metadata import'));
+            $metadataImport->setLevel(1);
+            $this->form->addElement($metadataImport);
+            $this->form->addToGroup('file', self::METADATA_FORM_ELEMENT_NAME);
+        }
     }
 }

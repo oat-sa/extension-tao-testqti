@@ -27,6 +27,7 @@ use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
+use oat\taoQtiItem\model\import\QtiPackageImport;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
@@ -354,7 +355,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Class $targetClass,
         $file,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        array $form = []
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -422,7 +424,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $folder,
                                 $alreadyImportedQtiResources,
                                 $overwriteTest,
-                                $itemClassUri
+                                $itemClassUri,
+                                $form[QtiPackageImport::METADATA_IMPORT_ELEMENT_NAME] ?? false
                             );
                             $report->add($importTestReport);
 
@@ -542,7 +545,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $folder,
         array $ignoreQtiResources = [],
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        bool $importMetadata = false
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -575,7 +579,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $domManifest->load($folder . 'imsmanifest.xml');
 
         $metadataValues = $this->getMetadataImporter()->extract($domManifest);
-        $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
 
         // Note: without this fix, metadata guardians do not work.
         $this->getMetadataImporter()->setMetadataValues($metadataValues);
@@ -589,8 +592,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $reportCtx->overwrittenItems = [];
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = $metadataValues[$qtiTestResourceIdentifier] ?? [];
-        $reportCtx->metaMetadata = $metaMetadataValues;
         $reportCtx->createdClasses = [];
+
+
 
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
         $reportCtx->uriResource = $testResource->getUri();
@@ -632,13 +636,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 }
 
                 $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
-                $mappedProperties = $this->getMetaMetadataImporter()
-                    ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
                 // add real label without saving (to not pass it separately to item importer)
                 $targetItemClass->label = $testLabel;
 
                 $reportCtx->itemClass = $targetItemClass;
+
+                $mappedProperties = $this->getMappedProperties(
+                    $importMetadata,
+                    $domManifest,
+                    $reportCtx,
+                    $testClass,
+                    $targetItemClass
+                );
+
                 // -- Load all items related to test.
                 $itemError = false;
 
@@ -1515,5 +1526,22 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getMetaMetadataImporter(): MetaMetadataImportMapper
     {
         return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
+    }
+
+    private function getMappedProperties(
+        bool                      $importMetadata,
+        DOMDocument               $domManifest,
+        stdClass                  $reportCtx,
+        core_kernel_classes_Class $testClass,
+        core_kernel_classes_Class $targetItemClass
+    ): array {
+        if ($importMetadata === true) {
+            $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
+            $reportCtx->metaMetadata = $metaMetadataValues;
+            return $this->getMetaMetadataImporter()
+                ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
+        }
+
+        return [];
     }
 }

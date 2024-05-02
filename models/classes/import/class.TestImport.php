@@ -22,8 +22,10 @@
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
+use oat\taoQtiTest\models\classes\metadata\MetadataLomService;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
 
@@ -44,6 +46,9 @@ class taoQtiTest_models_classes_import_TestImport implements
     use EventManagerAwareTrait;
     use ImportHandlerHelperTrait;
 
+    public const DISABLED_FIELDS = 'disabledFields';
+    public const METADATA_FIELD = 'metadataImport';
+
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
@@ -59,7 +64,7 @@ class taoQtiTest_models_classes_import_TestImport implements
      */
     public function getForm()
     {
-        $form = new taoQtiTest_models_classes_import_TestImportForm();
+        $form = new taoQtiTest_models_classes_import_TestImportForm([], $this->getFormOptions());
 
         return $form->getForm();
     }
@@ -78,7 +83,8 @@ class taoQtiTest_models_classes_import_TestImport implements
             // The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
-            $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
+            $report = taoQtiTest_models_classes_QtiTestService::singleton()
+                ->importMultipleTests($class, $uploadedFile, false, null, $form);
 
             helpers_TimeOutHelper::reset();
 
@@ -92,5 +98,19 @@ class taoQtiTest_models_classes_import_TestImport implements
         } catch (Exception $e) {
             return common_report_Report::createFailure($e->getMessage());
         }
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagChecker
+    {
+        return $this->serviceLocator->getContainer()->get(FeatureFlagChecker::class);
+    }
+
+    private function getFormOptions(): array
+    {
+        $options = [];
+        if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
+            $options[self::DISABLED_FIELDS] = [self::METADATA_FIELD];
+        }
+        return $options;
     }
 }

@@ -27,6 +27,8 @@ use DOMNodeList;
 
 class MetadataLomService
 {
+    public const FEATURE_FLAG = 'FEATURE_FLAG_METADATA_LOM_SERVICE';
+
     public function addPropertiesToMetadataBlock(array $properties, DOMDocument $manifest): void
     {
         /** @var DOMNodeList $metadataBlock */
