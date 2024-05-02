@@ -717,7 +717,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
                                             $reportCtx->overwrittenItems,
-                                            $mappedProperties['itemProperties']
+                                            $mappedProperties['itemProperties'],
+                                            $importMetadata
                                         );
 
                                         $reportCtx->createdClasses = array_merge(
