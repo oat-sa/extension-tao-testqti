@@ -34,6 +34,7 @@ use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
+use oat\taoQtiTest\models\classes\metadata\MetadataLomService;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\Directory;
@@ -50,8 +51,6 @@ use ZipArchive;
 
 abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestExporterInterface
 {
-    public const FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION = 'FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION';
-
     /** The QTISM XmlDocument representing the Test to be exported. */
     private XmlDocument $testDocument;
 
@@ -178,7 +177,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
 
-        if ($this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_LOM_ONTOLOGY_EXTRACTION)) {
+        if ($this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
             $this->genericLomOntologyExtractor()->extract(
                 array_merge([$this->getItem()], $this->getItems()),
                 $this->getManifest()
