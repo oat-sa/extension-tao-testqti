@@ -717,7 +717,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
                                             $reportCtx->overwrittenItems,
-                                            $mappedProperties['itemProperties'],
+                                            $mappedProperties['itemProperties'] ?? [],
                                             $importMetadata
                                         );
 
@@ -802,7 +802,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
                             $this->getServiceManager()->getContainer()->get(MappedMetadataInjector::class)->inject(
-                                $mappedProperties['testProperties'],
+                                $mappedProperties['testProperties'] ?? [],
                                 $metadataValues[$qtiTestResourceIdentifier],
                                 $testResource
                             );
