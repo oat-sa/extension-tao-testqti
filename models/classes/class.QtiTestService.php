@@ -29,8 +29,12 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
+use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
+use oat\taoQtiItem\model\qti\metadata\importer\MetaMetadataImportMapper;
+use oat\taoQtiItem\model\qti\metadata\importer\PropertyDoesNotExistException;
 use oat\taoQtiItem\model\qti\metadata\MetadataGuardianResource;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
+use oat\taoQtiItem\model\qti\metadata\ontology\MappedMetadataInjector;
 use oat\taoQtiItem\model\qti\Resource;
 use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
@@ -50,6 +54,8 @@ use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
+use oat\oatbox\reporting\Report;
+use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 
 /**
  * the QTI TestModel service.
@@ -349,7 +355,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         core_kernel_classes_Class $targetClass,
         $file,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        array $form = []
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -417,7 +424,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $folder,
                                 $alreadyImportedQtiResources,
                                 $overwriteTest,
-                                $itemClassUri
+                                $itemClassUri,
+                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false
                             );
                             $report->add($importTestReport);
 
@@ -537,7 +545,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $folder,
         array $ignoreQtiResources = [],
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        bool $importMetadata = false
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -585,6 +594,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $reportCtx->testMetadata = $metadataValues[$qtiTestResourceIdentifier] ?? [];
         $reportCtx->createdClasses = [];
 
+
+
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
         $reportCtx->uriResource = $testResource->getUri();
 
@@ -630,6 +641,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $targetItemClass->label = $testLabel;
 
                 $reportCtx->itemClass = $targetItemClass;
+
+                $mappedProperties = $this->getMappedProperties(
+                    $importMetadata,
+                    $domManifest,
+                    $reportCtx,
+                    $testClass,
+                    $targetItemClass
+                );
+
                 // -- Load all items related to test.
                 $itemError = false;
 
@@ -679,7 +699,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             );
                                         }
                                     }
-
                                     // Skip if $qtiFile already imported (multiple assessmentItemRef "hrefing" the same
                                     // file).
                                     if (array_key_exists($qtiFile, $alreadyImportedTestItemFiles) === false) {
@@ -697,7 +716,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             $this->useMetadataValidators,
                                             $this->itemMustExist,
                                             $this->itemMustBeOverwritten,
-                                            $reportCtx->overwrittenItems
+                                            $reportCtx->overwrittenItems,
+                                            $mappedProperties['itemProperties'] ?? [],
+                                            $importMetadata
                                         );
 
                                         $reportCtx->createdClasses = array_merge(
@@ -780,6 +801,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
+                            $this->getServiceManager()->getContainer()->get(MappedMetadataInjector::class)->inject(
+                                $mappedProperties['testProperties'] ?? [],
+                                $metadataValues[$qtiTestResourceIdentifier],
+                                $testResource
+                            );
 
                             // 5. if $targetClass does not contain any instances
                             // (because everything resolved by class lookups),
@@ -833,6 +859,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 $msg = __("Error found in the IMS QTI Test:\n%s", $finalErrorString);
                 $report->add(common_report_Report::createFailure($msg));
+            } catch (PropertyDoesNotExistException $e) {
+                $reportCtx->itemClass = $targetItemClass;
+                $report->add(Report::createError($e->getMessage()));
             } catch (CatEngineNotFoundException $e) {
                 $report->add(
                     new common_report_Report(
@@ -1411,6 +1440,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->metadataImporter;
     }
 
+    private function getMetaMetadataExtractor(): MetaMetadataExtractor
+    {
+        return $this->getPsrContainer()->get(MetaMetadataExtractor::class);
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataExtractor::class);
+    }
+
     private function getSecureResourceService(): SecureResourceServiceInterface
     {
         return $this->getServiceLocator()->get(SecureResourceServiceInterface::SERVICE_ID);
@@ -1487,5 +1522,27 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
+    }
+
+    private function getMetaMetadataImporter(): MetaMetadataImportMapper
+    {
+        return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
+    }
+
+    private function getMappedProperties(
+        bool $importMetadata,
+        DOMDocument $domManifest,
+        stdClass $reportCtx,
+        core_kernel_classes_Class $testClass,
+        core_kernel_classes_Class $targetItemClass
+    ): array {
+        if ($importMetadata === true) {
+            $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
+            $reportCtx->metaMetadata = $metaMetadataValues;
+            return $this->getMetaMetadataImporter()
+                ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
+        }
+
+        return [];
     }
 }

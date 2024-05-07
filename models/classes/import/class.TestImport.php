@@ -22,10 +22,14 @@
 use oat\oatbox\event\EventManagerAwareTrait;
 use oat\oatbox\PhpSerializable;
 use oat\oatbox\PhpSerializeStateless;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\import\ImportHandlerHelperTrait;
 use oat\tao\model\import\TaskParameterProviderInterface;
+use oat\tao\model\upload\UploadService;
+use oat\taoQtiTest\models\classes\metadata\MetadataLomService;
 use oat\taoQtiTest\models\event\QtiTestImportEvent;
 use Zend\ServiceManager\ServiceLocatorAwareInterface;
+use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 
 /**
  * Import handler for QTI packages
@@ -44,6 +48,9 @@ class taoQtiTest_models_classes_import_TestImport implements
     use EventManagerAwareTrait;
     use ImportHandlerHelperTrait;
 
+    public const DISABLED_FIELDS = 'disabledFields';
+    public const METADATA_FIELD = 'metadataImport';
+
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
@@ -59,7 +66,7 @@ class taoQtiTest_models_classes_import_TestImport implements
      */
     public function getForm()
     {
-        $form = new taoQtiTest_models_classes_import_TestImportForm();
+        $form = new taoQtiTest_models_classes_import_TestImportForm([], $this->getFormOptions());
 
         return $form->getForm();
     }
@@ -78,7 +85,8 @@ class taoQtiTest_models_classes_import_TestImport implements
             // The zip extraction is a long process that can exceed the 30s timeout
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
-            $report = taoQtiTest_models_classes_QtiTestService::singleton()->importMultipleTests($class, $uploadedFile);
+            $report = taoQtiTest_models_classes_QtiTestService::singleton()
+                ->importMultipleTests($class, $uploadedFile, false, null, $form);
 
             helpers_TimeOutHelper::reset();
 
@@ -92,5 +100,33 @@ class taoQtiTest_models_classes_import_TestImport implements
         } catch (Exception $e) {
             return common_report_Report::createFailure($e->getMessage());
         }
+    }
+    public function getTaskParameters(tao_helpers_form_Form $importForm)
+    {
+        $file = $this->getUploadService()->getUploadedFlyFile($importForm->getValue('importFile')
+            ?: $importForm->getValue('source')['uploaded_file']);
+
+        return [
+            'uploaded_file' => $file->getPrefix(), // because of Async, we need the full path of the uploaded file
+            TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue('metadata'),
+        ];
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagChecker
+    {
+        return $this->serviceLocator->getContainer()->get(FeatureFlagChecker::class);
+    }
+
+    private function getFormOptions(): array
+    {
+        $options = [];
+        if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
+            $options[self::DISABLED_FIELDS] = [self::METADATA_FIELD];
+        }
+        return $options;
+    }
+    private function getUploadService()
+    {
+        return $this->serviceLocator->get(UploadService::SERVICE_ID);
     }
 }
