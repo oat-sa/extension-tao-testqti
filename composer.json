@@ -66,7 +66,7 @@
     "oat-sa/generis" : ">=15.22",
     "oat-sa/tao-core": ">=54.0.0",
     "oat-sa/extension-tao-item" : ">=12.1.0",
-    "oat-sa/extension-tao-itemqti" : "dev-feat/aut-3590-add-metadata-check-on-import",
+    "oat-sa/extension-tao-itemqti" : ">=30.10.0",
     "oat-sa/extension-tao-test" : ">=16.0.0",
     "oat-sa/extension-tao-delivery" : ">=15.0.0",
     "oat-sa/extension-tao-outcome" : ">=13.0.0",
