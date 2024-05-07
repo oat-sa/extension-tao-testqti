@@ -27,7 +27,6 @@ use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
-use oat\taoQtiItem\model\import\QtiPackageImport;
 use oat\taoQtiItem\model\qti\ImportService;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\imsManifest\MetaMetadataExtractor;
@@ -56,6 +55,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoTests_models_classes_TestsService as TestService;
 use oat\oatbox\reporting\Report;
+use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 
 /**
  * the QTI TestModel service.
@@ -425,7 +425,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $alreadyImportedQtiResources,
                                 $overwriteTest,
                                 $itemClassUri,
-                                $form[QtiPackageImport::METADATA_IMPORT_ELEMENT_NAME] ?? false
+                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false
                             );
                             $report->add($importTestReport);
 

@@ -31,7 +31,7 @@
  */
 class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_FormContainer
 {
-    private const METADATA_FORM_ELEMENT_NAME = 'metadata';
+    public const METADATA_FORM_ELEMENT_NAME = 'metadata';
 
     /**
      * (non-PHPdoc)
