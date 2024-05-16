@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2023 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2023-2024 (original work) Open Assessment Technologies SA.
  */
 
 declare(strict_types=1);
@@ -33,6 +33,8 @@ use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
+use oat\taoQtiTest\models\TestSessionService;
 use oat\taoTests\models\runner\time\TimePoint;
 use PHPSession;
 use PHPUnit\Framework\TestCase;
@@ -49,6 +51,8 @@ class ConcurringSessionServiceTest extends TestCase
     private PHPSession $currentSession;
     private ConcurringSessionService $subject;
     private StateServiceInterface $stateService;
+    private TestSessionService $testSessionService;
+    private TimerAdjustmentServiceInterface $timerAdjustmentService;
 
     protected function setUp(): void
     {
@@ -58,6 +62,8 @@ class ConcurringSessionServiceTest extends TestCase
         $this->featureFlagChecker = $this->createMock(FeatureFlagCheckerInterface::class);
         $this->currentSession = $this->createMock(PHPSession::class);
         $this->stateService = $this->createMock(StateServiceInterface::class);
+        $this->testSessionService = $this->createMock(TestSessionService::class);
+        $this->timerAdjustmentService = $this->createMock(TimerAdjustmentServiceInterface::class);
 
         $this->subject = new ConcurringSessionService(
             $this->createMock(LoggerInterface::class),
@@ -66,7 +72,9 @@ class ConcurringSessionServiceTest extends TestCase
             $this->deliveryExecutionService,
             $this->featureFlagChecker,
             $this->stateService,
-            $this->currentSession
+            $this->currentSession,
+            $this->testSessionService,
+            $this->timerAdjustmentService
         );
     }
 
@@ -271,7 +279,7 @@ class ConcurringSessionServiceTest extends TestCase
         $this->subject->pauseConcurrentSessions($execution);
     }
 
-    public function testPauseActiveDeliveryExecutionsForUser()
+    public function testPauseActiveDeliveryExecutionsForUser(): void
     {
         $this->featureFlagChecker
             ->method('isEnabled')
@@ -421,5 +429,117 @@ class ConcurringSessionServiceTest extends TestCase
             ->with($context);
 
         $this->subject->pauseActiveDeliveryExecutionsForUser($execution);
+    }
+
+    public function testAdjustTimersAddsAPositiveAdjustment(): void
+    {
+        $execution = $this->createMock(DeliveryExecution::class);
+        $execution
+            ->expects($this->atLeastOnce())
+            ->method('getIdentifier')
+            ->willReturn('https://example.com/execution/1');
+        $execution
+            ->expects($this->atLeastOnce())
+            ->method('getOriginalIdentifier')
+            ->willReturn('https://example.com/execution/1');
+
+        $itemRef = $this->createMock(AssessmentItemRef::class);
+        $itemRef
+            ->expects($this->once())
+            ->method('getIdentifier')
+            ->willReturn('itemRef');
+
+        $duration = $this->createMock(QtiDuration::class);
+        $duration
+            ->expects($this->atLeastOnce())
+            ->method('getSeconds')
+            ->with(true)
+            ->willReturn(4);
+
+        $testSession = $this->createMock(TestSession::class);
+        $testSession
+            ->expects($this->exactly(2))
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
+        $testSession
+            ->expects($this->once())
+            ->method('getTimerTarget')
+            ->willReturn(TimePoint::TARGET_SERVER);
+        $testSession
+            ->expects($this->once())
+            ->method('getTimerDuration')
+            ->with('itemRef', TimePoint::TARGET_SERVER)
+            ->willReturn($duration);
+
+        $this->testSessionService
+            ->expects($this->once())
+            ->method('getTestSession')
+            ->with($execution)
+            ->willReturn($testSession);
+
+        $this->currentSession
+            ->expects($this->once())
+            ->method('hasAttribute')
+            ->with('itemDuration-https://example.com/execution/1')
+            ->willReturn(true);
+
+        $this->currentSession
+            ->expects($this->once())
+            ->method('getAttribute')
+            ->with('itemDuration-https://example.com/execution/1')
+            ->willReturn(1.5);
+
+        $this->currentSession
+            ->expects($this->once())
+            ->method('removeAttribute')
+            ->with('itemDuration-https://example.com/execution/1');
+
+        $this->timerAdjustmentService
+            ->expects($this->once())
+            ->method('increase')
+            ->with(
+                $testSession,
+                ceil(2.5),
+                TimerAdjustmentServiceInterface::TYPE_TIME_ADJUSTMENT
+            );
+
+        $testSession
+            ->expects($this->once())
+            ->method('suspend');
+
+        $this->testSessionService
+            ->expects($this->once())
+            ->method('persist')
+            ->with($testSession);
+
+        $this->subject->adjustTimers($execution);
+    }
+
+    public function testAdjustTimersSkipsAdjustmentIfNoTestSessionExists(): void
+    {
+        $execution = $this->createMock(DeliveryExecution::class);
+        $execution
+            ->method('getIdentifier')
+            ->willReturn('https://example.com/execution/1');
+
+        $this->testSessionService
+            ->expects($this->once())
+            ->method('getTestSession')
+            ->with($execution)
+            ->willReturn(null);
+
+        $this->currentSession
+            ->expects($this->never())
+            ->method('removeAttribute');
+
+        $this->timerAdjustmentService
+            ->expects($this->never())
+            ->method('increase');
+
+        $this->testSessionService
+            ->expects($this->never())
+            ->method('persist');
+
+        $this->subject->adjustTimers($execution);
     }
 }
