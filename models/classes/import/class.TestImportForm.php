@@ -31,6 +31,7 @@
  */
 class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_FormContainer
 {
+    public const FORM_NAME = 'export';
     public const METADATA_FORM_ELEMENT_NAME = 'metadata';
 
     /**
@@ -39,7 +40,7 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
      */
     public function initForm()
     {
-        $this->form = new tao_helpers_form_xhtml_Form('export');
+        $this->form = new tao_helpers_form_xhtml_Form(self::FORM_NAME);
 
         $this->form->setDecorators([
             'element' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div']),
@@ -51,6 +52,10 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             'actions-bottom' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar']),
             'actions-top' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
         ]);
+
+        $selectElt = \tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
+        $selectElt->setValue('<div class="item-select-container"></div>');
+        $this->form->addElement($selectElt);
 
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');
         $submitElt->setValue(
