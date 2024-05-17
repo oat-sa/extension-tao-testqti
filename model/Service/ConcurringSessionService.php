@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
@@ -44,6 +43,7 @@ use Throwable;
 class ConcurringSessionService
 {
     private const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
+
     /**
      * @var string Controls whether a delivery execution state should be kept as is or reset each time it starts.
      *             `false` – the state will be reset on each restart.
@@ -58,9 +58,9 @@ class ConcurringSessionService
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
     private StateServiceInterface $stateService;
+    private TestSessionService $testSessionService;
+    private TimerAdjustmentServiceInterface $timerAdjustmentService;
     private ?PHPSession $currentSession;
-    private ?TestSessionService $testSessionService;
-    private ?TimerAdjustmentServiceInterface $timerAdjustmentService;
 
     public function __construct(
         LoggerInterface $logger,
@@ -69,9 +69,9 @@ class ConcurringSessionService
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         StateServiceInterface $stateService,
-        PHPSession $currentSession = null,
-        TestSessionService $testSessionService = null,
-        TimerAdjustmentServiceInterface $timerAdjustmentService = null
+        TestSessionService $testSessionService,
+        TimerAdjustmentServiceInterface $timerAdjustmentService,
+        PHPSession $currentSession = null
     ) {
         $this->logger = $logger;
         $this->qtiRunnerService = $qtiRunnerService;
@@ -79,9 +79,9 @@ class ConcurringSessionService
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->stateService = $stateService;
-        $this->currentSession = $currentSession ?? PHPSession::singleton();
         $this->testSessionService = $testSessionService;
         $this->timerAdjustmentService = $timerAdjustmentService;
+        $this->currentSession = $currentSession ?? PHPSession::singleton();
     }
 
     public function pauseActiveDeliveryExecutionsForUser($activeExecution): void
@@ -172,7 +172,7 @@ class ConcurringSessionService
             )
         );
 
-        $testSession = $this->getTestSessionService()->getTestSession($execution);
+        $testSession = $this->testSessionService->getTestSession($execution);
 
         if ($testSession && $testSession->getCurrentAssessmentItemRef()) {
             $duration = $testSession->getTimerDuration(
@@ -216,14 +216,14 @@ class ConcurringSessionService
                 if ($delta > 0) {
                     $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
 
-                    $this->getTimerAdjustmentService()->increase(
+                    $this->timerAdjustmentService->increase(
                         $testSession,
                         $delta,
                         TimerAdjustmentServiceInterface::TYPE_TIME_ADJUSTMENT
                     );
 
                     $testSession->suspend();
-                    $this->getTestSessionService()->persist($testSession);
+                    $this->testSessionService->persist($testSession);
                 }
             }
         }
@@ -306,29 +306,5 @@ class ConcurringSessionService
             $sessionId,
             $execution->getUserIdentifier()
         );
-    }
-
-    private function getTimerAdjustmentService(): TimerAdjustmentServiceInterface
-    {
-        if (!$this->timerAdjustmentService instanceof TimerAdjustmentServiceInterface) {
-            /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-            $this->timerAdjustmentService = ServiceManager::getServiceManager()->get(
-                TimerAdjustmentServiceInterface::SERVICE_ID
-            );
-        }
-
-        return $this->timerAdjustmentService;
-    }
-
-    private function getTestSessionService(): TestSessionService
-    {
-        if (!$this->testSessionService instanceof TestSessionService) {
-            /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-            $this->testSessionService = ServiceManager::getServiceManager()->get(
-                TestSessionService::SERVICE_ID
-            );
-        }
-
-        return $this->testSessionService;
     }
 }
