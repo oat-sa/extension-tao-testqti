@@ -72,9 +72,9 @@ class ConcurringSessionServiceTest extends TestCase
             $this->deliveryExecutionService,
             $this->featureFlagChecker,
             $this->stateService,
-            $this->currentSession,
             $this->testSessionService,
-            $this->timerAdjustmentService
+            $this->timerAdjustmentService,
+            $this->currentSession
         );
     }
 
