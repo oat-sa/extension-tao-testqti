@@ -125,8 +125,8 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
     {
         if (!$this->isMetadataDisabled()) {
             $metadataImport = tao_helpers_form_FormFactory::getElement(self::METADATA_FORM_ELEMENT_NAME, 'Checkbox');
-            $metadataImport->setOptions([self::METADATA_FORM_ELEMENT_NAME => __('Import metadata or fail')]);
-            $metadataImport->setDescription(__('Metadata import'));
+            $metadataImport->setOptions([self::METADATA_FORM_ELEMENT_NAME => __('QTI metadata as properties')]);
+            $metadataImport->setDescription(__('Import'));
             $metadataImport->setLevel(1);
             $this->form->addElement($metadataImport);
             $this->form->addToGroup('file', self::METADATA_FORM_ELEMENT_NAME);
