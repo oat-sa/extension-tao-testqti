@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021-2023 (original work) Open Assessment Technologies SA;
- *
- * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
+ * Copyright (c) 2021-2024 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -47,7 +45,9 @@ use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestModelService;
+use oat\taoQtiTest\models\TestSessionService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
@@ -172,6 +172,8 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(DeliveryExecutionService::SERVICE_ID),
                     service(FeatureFlagChecker::class),
                     service(StateServiceInterface::SERVICE_ID),
+                    service(TestSessionService::SERVICE_ID),
+                    service(TimerAdjustmentServiceInterface::SERVICE_ID),
                 ]
             );
     }
