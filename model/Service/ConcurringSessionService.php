@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\model\Service;
 
 use common_Exception;
-use oat\oatbox\service\ServiceManager;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
@@ -33,7 +32,7 @@ use oat\taoDelivery\model\RuntimeService;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
-use oat\taoQtiTest\models\runner\time\TimerAdjustmentService;
+use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestSessionService;
 use PHPSession;
 use Psr\Log\LoggerInterface;
@@ -44,6 +43,7 @@ use Throwable;
 class ConcurringSessionService
 {
     private const PAUSE_REASON_CONCURRENT_TEST = 'PAUSE_REASON_CONCURRENT_TEST';
+
     /**
      * @var string Controls whether a delivery execution state should be kept as is or reset each time it starts.
      *             `false` – the state will be reset on each restart.
@@ -58,6 +58,8 @@ class ConcurringSessionService
     private DeliveryExecutionService $deliveryExecutionService;
     private FeatureFlagCheckerInterface $featureFlagChecker;
     private StateServiceInterface $stateService;
+    private TestSessionService $testSessionService;
+    private TimerAdjustmentServiceInterface $timerAdjustmentService;
     private ?PHPSession $currentSession;
 
     public function __construct(
@@ -67,6 +69,8 @@ class ConcurringSessionService
         DeliveryExecutionService $deliveryExecutionService,
         FeatureFlagCheckerInterface $featureFlagChecker,
         StateServiceInterface $stateService,
+        TestSessionService $testSessionService,
+        TimerAdjustmentServiceInterface $timerAdjustmentService,
         PHPSession $currentSession = null
     ) {
         $this->logger = $logger;
@@ -74,8 +78,10 @@ class ConcurringSessionService
         $this->runtimeService = $runtimeService;
         $this->deliveryExecutionService = $deliveryExecutionService;
         $this->featureFlagChecker = $featureFlagChecker;
-        $this->currentSession = $currentSession ?? PHPSession::singleton();
         $this->stateService = $stateService;
+        $this->testSessionService = $testSessionService;
+        $this->timerAdjustmentService = $timerAdjustmentService;
+        $this->currentSession = $currentSession ?? PHPSession::singleton();
     }
 
     public function pauseActiveDeliveryExecutionsForUser($activeExecution): void
@@ -166,9 +172,9 @@ class ConcurringSessionService
             )
         );
 
-        $testSession = $this->getTestSessionService()->getTestSession($execution);
+        $testSession = $this->testSessionService->getTestSession($execution);
 
-        if ($testSession->getCurrentAssessmentItemRef()) {
+        if ($testSession && $testSession->getCurrentAssessmentItemRef()) {
             $duration = $testSession->getTimerDuration(
                 $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
                 $testSession->getTimerTarget()
@@ -182,10 +188,10 @@ class ConcurringSessionService
                 )
             );
 
-            $ids = [
+            $ids = array_unique([
                 $execution->getIdentifier(),
                 $execution->getOriginalIdentifier()
-            ];
+            ]);
 
             foreach ($ids as $executionId) {
                 $key = "itemDuration-{$executionId}";
@@ -210,10 +216,14 @@ class ConcurringSessionService
                 if ($delta > 0) {
                     $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
 
-                    $this->getTimerAdjustmentService()->increase($testSession, $delta);
+                    $this->timerAdjustmentService->increase(
+                        $testSession,
+                        $delta,
+                        TimerAdjustmentServiceInterface::TYPE_TIME_ADJUSTMENT
+                    );
 
                     $testSession->suspend();
-                    $this->getTestSessionService()->persist($testSession);
+                    $this->testSessionService->persist($testSession);
                 }
             }
         }
@@ -296,22 +306,5 @@ class ConcurringSessionService
             $sessionId,
             $execution->getUserIdentifier()
         );
-    }
-
-    private function getTimerAdjustmentService(): TimerAdjustmentService
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceManager()->get(TimerAdjustmentService::SERVICE_ID);
-    }
-
-    private function getTestSessionService(): TestSessionService
-    {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getServiceManager()->get(TestSessionService::SERVICE_ID);
-    }
-
-    private function getServiceManager()
-    {
-        return ServiceManager::getServiceManager();
     }
 }
