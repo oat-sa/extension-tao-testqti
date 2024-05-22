@@ -122,7 +122,6 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
     {
         return isset($this->options[self::DISABLED_FIELDS])
             && in_array($filedName, $this->options[self::DISABLED_FIELDS]);
-
     }
 
     private function addMetadataImportElement(): void
@@ -148,6 +147,5 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             $this->form->addElement($itemClassDestination);
             $this->form->addElement($selectElt);
         }
-
     }
 }

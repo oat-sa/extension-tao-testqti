@@ -83,7 +83,9 @@ class taoQtiTest_models_classes_import_TestImport implements
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
             $report = taoQtiTest_models_classes_QtiTestService::singleton()
-                ->importMultipleTests($class, $uploadedFile,
+                ->importMultipleTests(
+                    $class,
+                    $uploadedFile,
                     false,
                     $form[TestImportForm::ITEM_CLASS_DESTINATION_FIELD] ?? null,
                     $form
