@@ -33,6 +33,7 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
 {
     public const FORM_NAME = 'export';
     public const METADATA_FORM_ELEMENT_NAME = 'metadata';
+    public const ITEM_CLASS_DESTINATION = 'itemClassDestination';
 
     /**
      * (non-PHPdoc)
@@ -53,8 +54,11 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             'actions-top' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
         ]);
 
-        $selectElt = \tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
+        $selectElt = tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
         $selectElt->setValue('<div class="item-select-container"></div>');
+
+        $itemClassDestination = tao_helpers_form_FormFactory::getElement('itemClassDestination', 'Hidden');
+        $this->form->addElement($itemClassDestination);
         $this->form->addElement($selectElt);
 
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');

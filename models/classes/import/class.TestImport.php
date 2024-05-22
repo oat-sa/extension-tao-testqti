@@ -86,7 +86,11 @@ class taoQtiTest_models_classes_import_TestImport implements
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
             $report = taoQtiTest_models_classes_QtiTestService::singleton()
-                ->importMultipleTests($class, $uploadedFile, false, null, $form);
+                ->importMultipleTests($class, $uploadedFile,
+                    false,
+                    $form[TestImportForm::ITEM_CLASS_DESTINATION] ?? null,
+                    $form
+                );
 
             helpers_TimeOutHelper::reset();
 
@@ -108,7 +112,12 @@ class taoQtiTest_models_classes_import_TestImport implements
 
         return [
             'uploaded_file' => $file->getPrefix(), // because of Async, we need the full path of the uploaded file
-            TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue('metadata'),
+            TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue(
+                TestImportForm::METADATA_FORM_ELEMENT_NAME
+            ),
+            TestImportForm::ITEM_CLASS_DESTINATION => $importForm->getValue(
+                TestImportForm::ITEM_CLASS_DESTINATION
+            )
         ];
     }
 
