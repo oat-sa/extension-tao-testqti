@@ -48,9 +48,6 @@ class taoQtiTest_models_classes_import_TestImport implements
     use EventManagerAwareTrait;
     use ImportHandlerHelperTrait;
 
-    public const DISABLED_FIELDS = 'disabledFields';
-    public const METADATA_FIELD = 'metadataImport';
-
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
@@ -88,7 +85,7 @@ class taoQtiTest_models_classes_import_TestImport implements
             $report = taoQtiTest_models_classes_QtiTestService::singleton()
                 ->importMultipleTests($class, $uploadedFile,
                     false,
-                    $form[TestImportForm::ITEM_CLASS_DESTINATION] ?? null,
+                    $form[TestImportForm::ITEM_CLASS_DESTINATION_FIELD] ?? null,
                     $form
                 );
 
@@ -115,8 +112,8 @@ class taoQtiTest_models_classes_import_TestImport implements
             TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue(
                 TestImportForm::METADATA_FORM_ELEMENT_NAME
             ),
-            TestImportForm::ITEM_CLASS_DESTINATION => $importForm->getValue(
-                TestImportForm::ITEM_CLASS_DESTINATION
+            TestImportForm::ITEM_CLASS_DESTINATION_FIELD => $importForm->getValue(
+                TestImportForm::ITEM_CLASS_DESTINATION_FIELD
             )
         ];
     }
@@ -130,7 +127,8 @@ class taoQtiTest_models_classes_import_TestImport implements
     {
         $options = [];
         if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
-            $options[self::DISABLED_FIELDS] = [self::METADATA_FIELD];
+            $options[taoQtiTest_models_classes_import_TestImportForm::DISABLED_FIELDS][] = taoQtiTest_models_classes_import_TestImportForm::METADATA_FIELD;
+            $options[taoQtiTest_models_classes_import_TestImportForm::DISABLED_FIELDS][] = taoQtiTest_models_classes_import_TestImportForm::ITEM_CLASS_DESTINATION_FIELD;
         }
         return $options;
     }

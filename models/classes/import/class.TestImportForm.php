@@ -19,6 +19,7 @@
  *                         (under the project TAO-TRANSFER);
  *               2009-2012 (update and modification) Public Research Centre Henri Tudor
  *                         (under the project TAO-SUSTAIN & TAO-DEV);
+ *               2024 (update and modification) Open Assessment Technologies SA
  */
 
 /**
@@ -33,7 +34,10 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
 {
     public const FORM_NAME = 'export';
     public const METADATA_FORM_ELEMENT_NAME = 'metadata';
-    public const ITEM_CLASS_DESTINATION = 'itemClassDestination';
+    public const DISABLED_FIELDS = 'disabledFields';
+
+    public const ITEM_CLASS_DESTINATION_FIELD = 'itemClassDestination';
+    public const METADATA_FIELD = 'metadataImport';
 
     /**
      * (non-PHPdoc)
@@ -54,19 +58,11 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             'actions-top' => new tao_helpers_form_xhtml_TagWrapper(['tag' => 'div', 'cssClass' => 'form-toolbar'])
         ]);
 
-        $selectElt = tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
-        $selectElt->setValue('<div class="item-select-container"></div>');
-
-        $itemClassDestination = tao_helpers_form_FormFactory::getElement('itemClassDestination', 'Hidden');
-        $this->form->addElement($itemClassDestination);
-        $this->form->addElement($selectElt);
-
         $submitElt = tao_helpers_form_FormFactory::getElement('import', 'Free');
         $submitElt->setValue(
             '<a href="#" class="form-submitter btn-success small"><span class="icon-import"></span> '
                 . __('Import') . '</a>'
         );
-
 
         $this->form->setActions([$submitElt], 'bottom');
     }
@@ -116,23 +112,22 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
         );
 
         $this->addMetadataImportElement();
+        $this->addItemDestinationPlacementComponent();
         $qtiSentElt = tao_helpers_form_FormFactory::getElement('import_sent_qti', 'Hidden');
         $qtiSentElt->setValue(1);
         $this->form->addElement($qtiSentElt);
     }
 
-    private function isMetadataDisabled(): bool
+    private function isFieldDisabled(string $filedName): bool
     {
-        return isset($this->options[taoQtiTest_models_classes_import_TestImport::DISABLED_FIELDS]) &&
-        in_array(
-            taoQtiTest_models_classes_import_TestImport::METADATA_FIELD,
-            $this->options[taoQtiTest_models_classes_import_TestImport::DISABLED_FIELDS]
-        );
+        return isset($this->options[self::DISABLED_FIELDS])
+            && in_array($filedName, $this->options[self::DISABLED_FIELDS]);
+
     }
 
-    private function addMetadataImportElement()
+    private function addMetadataImportElement(): void
     {
-        if (!$this->isMetadataDisabled()) {
+        if (!$this->isFieldDisabled(self::METADATA_FIELD)) {
             $metadataImport = tao_helpers_form_FormFactory::getElement(self::METADATA_FORM_ELEMENT_NAME, 'Checkbox');
             $metadataImport->setOptions([self::METADATA_FORM_ELEMENT_NAME => __('QTI metadata as properties')]);
             $metadataImport->setDescription(__('Import'));
@@ -140,5 +135,19 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             $this->form->addElement($metadataImport);
             $this->form->addToGroup('file', self::METADATA_FORM_ELEMENT_NAME);
         }
+    }
+
+    private function addItemDestinationPlacementComponent(): void
+    {
+        if (!$this->isFieldDisabled(self::ITEM_CLASS_DESTINATION_FIELD)) {
+            $selectElt = tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
+            $selectElt->setValue('<div class="item-select-container"></div>');
+
+            $itemClassDestination = tao_helpers_form_FormFactory::getElement(self::ITEM_CLASS_DESTINATION_FIELD, 'Hidden');
+
+            $this->form->addElement($itemClassDestination);
+            $this->form->addElement($selectElt);
+        }
+
     }
 }
