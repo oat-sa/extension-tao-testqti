@@ -147,7 +147,7 @@
 
 <!-- assessmentTest/testPart/itemSessionControl/showFeedback -->
             {{#if itemSessionShowFeedback}}
-                <div class="grid-row pseudo-label-box">
+                <div class="grid-row pseudo-label-box checkbox-row">
                     <div class="col-5">
                         <label for="testpart-show-feedback">{{__ 'Show Feedback'}}</label>
                     </div>
@@ -168,7 +168,7 @@
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/itemSessionControl/allowReview -->
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="testpart-show-allow-review">{{__ 'Allow Review'}}</label>
                 </div>
@@ -189,7 +189,7 @@
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/itemSessionControl/showSolution -->
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="testpart-show-solution">{{__ 'Show Solution'}}</label>
                 </div>
@@ -210,7 +210,7 @@
 
 <!-- assessmentTest/testPart/itemSessionControl/allowComment -->
             {{#if itemSessionAllowComment}}
-                <div class="grid-row pseudo-label-box">
+                <div class="grid-row pseudo-label-box checkbox-row">
                     <div class="col-5">
                         <label for="testpart-allow-comment">{{__ 'Allow Comment'}}</label>
                     </div>
@@ -231,7 +231,7 @@
 
 <!-- assessmentTest/testPart/itemSessionControl/allowSkipping -->
             {{#if itemSessionAllowSkipping}}
-                <div class="grid-row pseudo-label-box">
+                <div class="grid-row pseudo-label-box checkbox-row">
                     <div class="col-5">
                         <label for="testpart-allow-skipping">{{__ 'Allow Skipping'}}</label>
                     </div>
@@ -251,7 +251,7 @@
             {{/if}}
 
 <!-- assessmentTest/testPart/itemSessionControl/validateResponses -->
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="testpart-validate-responses">{{__ 'Validate Responses'}}</label>
                 </div>
@@ -312,7 +312,7 @@
                 </div>
 
     <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
-                <div class="grid-row pseudo-label-box">
+                <div class="grid-row pseudo-label-box checkbox-row">
                     <div class="col-5">
                         <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
                     </div>

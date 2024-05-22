@@ -36,7 +36,7 @@
 
 {{#if isSubsection}}
 <!-- assessmentTest/testPart/assessmentSection/required -->
-    <div class="grid-row pseudo-label-box">
+    <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
             <label for="section-required">{{__ 'Required'}}</label>
         </div>
@@ -57,7 +57,7 @@
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/fixed -->
-    <div class="grid-row pseudo-label-box">
+    <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
             <label for="section-fixed">{{__ 'Fixed'}}</label>
         </div>
@@ -77,7 +77,7 @@
 --}}
 
 <!-- assessmentTest/testPart/assessmentSection/visible -->
-    <div class="grid-row pseudo-label-box">
+    <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
             <label for="section-visible">{{__ 'Visible'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
@@ -96,7 +96,7 @@
     </div>
 
 <!-- assessmentTest/testPart/assessmentSection/keepTogether -->
-    <div class="grid-row pseudo-label-box">
+    <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
             <label for="section-keep-together">{{__ 'Keep Together'}}</label>
         </div>
@@ -158,7 +158,7 @@
 <!-- assessmentTest/testPart/assessmentSection/selection -->
     <div class="section-selection toggled">
 
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-enable-selection">{{__ 'Enable selection'}}</label>
             </div>
@@ -189,7 +189,7 @@
 
         {{#if hasSelectionWithReplacement}}
 <!-- assessmentTest/testPart/assessmentSection/selection/withReplacement -->
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-with-replacement">{{__ 'With Replacement'}}</label>
             </div>
@@ -215,7 +215,7 @@
 <!-- assessmentTest/testPart/assessmentSection/ordering -->
     <div class="section-ordering toggled">
 <!-- assessmentTest/testPart/assessmentSection/ordering/shuffle -->
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-shuffle">{{__ 'Shuffle'}}</label>
             </div>
@@ -266,7 +266,7 @@
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/showFeedback -->
         {{#if itemSessionShowFeedback}}
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="section-show-feedback">{{__ 'Show Feedback'}}</label>
                 </div>
@@ -287,7 +287,7 @@
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowReview -->
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-show-allow-review">{{__ 'Allow Review'}}</label>
             </div>
@@ -308,7 +308,7 @@
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/showSolution -->
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-show-solution">{{__ 'Show Solution'}}</label>
             </div>
@@ -329,7 +329,7 @@
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowComment -->
         {{#if itemSessionAllowComment}}
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="section-allow-comment">{{__ 'Allow Comment'}}</label>
                 </div>
@@ -350,7 +350,7 @@
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/allowSkipping -->
         {{#if itemSessionAllowSkipping}}
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="section-allow-skipping">{{__ 'Allow Skipping'}}</label>
                 </div>
@@ -370,7 +370,7 @@
         {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/itemSessionControl/validateResponses -->
-        <div class="grid-row pseudo-label-box">
+        <div class="grid-row pseudo-label-box checkbox-row">
             <div class="col-5">
                 <label for="section-validate-responses">{{__ 'Validate Responses'}}</label>
             </div>
@@ -432,7 +432,7 @@
             </div>
 
     <!-- assessmentTest/testPart/assessmentSection/timeLimits/allowLateSubmission -->
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="section-allow-late-submission">{{__ 'Late submission allowed'}}</label>
                 </div>

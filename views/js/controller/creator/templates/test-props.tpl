@@ -77,7 +77,7 @@
             </div>
 
     <!-- assessmentTest/timeLimits/allowLateSubmission -->
-            <div class="grid-row pseudo-label-box">
+            <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     {{__ 'Late submission allowed'}}
                 </div>
@@ -124,7 +124,7 @@
         </div>
 
 <!-- assessmentTest/scoring/categoryScore -->
-        <div class="grid-row test-category-score">
+        <div class="grid-row test-category-score checkbox-row">
             <div class="col-5">
                 <label for="test-category-score">{{__ 'Category score'}}</label>
             </div>
