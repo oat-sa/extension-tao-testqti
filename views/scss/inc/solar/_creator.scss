@@ -1,7 +1,143 @@
-@import "inc/solar/bootstrap";
+@import "inc/solar/mixins/bootstrap";
 
 body.solar-design {
     #test-creator {
+        .test-creator-test {
+            & > h1 {
+                color: var(--form-color);
+                background: var(--form-background);
+                font-size: var(--fontsize-heading-l);
+                font-weight: bold;
+                height: var(--label-height);
+                line-height: var(--label-height);
+                padding: 4px 48px;
+                margin: 0;
+
+                &:before {
+                    left: 16px;
+                    top: 4px;
+                    height: var(--label-height);
+                    line-height: var(--label-height);
+                }
+                .actions{
+                    margin-right: 16px;
+                    margin-top: 4px;
+                }
+                & > span:first-child {
+                    height: var(--label-height);
+                    line-height: var(--label-height);
+                }
+            }
+            .test-content {
+                padding: 16px 32px;
+            }
+            .testpart {
+                border-radius: var(--radius-large);
+                border: var(--border-thin) solid var(--color-border-default);
+
+                & > h1 {
+                    color: var(--form-color);
+                    background: var(--form-background);
+                    font-size: var(--fontsize-heading);
+                    font-weight: bold;
+                    margin: 0 0 8px 0;
+                    border-radius: var(--radius-large) var(--radius-large) 0 0;
+                    border: var(--border-thin) solid var(--color-border-default);
+                }
+            }
+            .button-add {
+                @include button-sd-setup();
+                @include button-sd-font();
+                @include button-sd-size();
+            }
+            [class^="btn-"], [class*=" btn-"], .button-add {
+                @include button-sd-secondary();
+            }
+            .testpart-content {
+                & > button {
+                    border: none;
+                }
+            }
+            .section {
+                & > h2 {
+                    color: var(--form-color);
+                    background: var(--form-background);
+                    font-size: var(--fontsize-heading);
+                    font-weight: bold;
+                }
+            }
+            .rublocks {
+                h3 {
+                    color: var(--form-color);
+                    background: var(--form-background);
+                    font-size: var(--fontsize-body-s);
+                    font-weight: bold;
+                }
+                .rubricblocks {
+                    & > li {
+                        border: none;
+                        border-radius: var(--radius-medium);
+                        color: var(--form-color);
+                        background: var(--sub-form-background);
+                        padding: 8px;
+
+                        .rubricblock-content {
+                            border: none;
+                            border-radius: 0;
+                            background: var(--form-background);
+                            padding: 0;
+                            margin: 34px 0 0 0;
+
+                            .container-editor {
+                                font-size: var(--fontsize-body);
+                                color: var(--input-color);
+                                background: var(--input-background);
+                                border: var(--border-thin) solid var(--input-border-color);
+                                border-radius: 0;
+                                padding: 8px;
+
+                                &:focus, &:active {
+                                    @include form-sd-focus();
+                                }
+                            }
+                        }
+                        .actions {
+                            right: 3px;
+                            top: 3px;
+                        }
+                    }
+                }
+            }
+            .itemrefs-wrapper {
+                border-radius: var(--radius-medium);
+                border: var(--border-thin) solid var(--action-bar-border-color);
+
+                h3 {
+                    font-size: var(--fontsize-heading);
+                    font-weight: bold;
+                }
+                .itemrefs {
+                    & > li:nth-child(2n) {
+                        background-color: var(--color-gs-light-alternative-bg);
+                    }
+                }
+                .itemref-placeholder {
+                    border: var(--border-thin) dashed var(--color-brand);
+                    color : var(--color-brand);
+                    background-color: var(--color-brand-light);
+                    border-radius: var(--radius-medium);
+                    font-size: var(--fontsize-body);
+
+                    &:before {
+                        font-size: var(--fontsize-body);
+                    }
+                    &:hover {
+                        color: var(--color-text-inverted);
+                        background-color: var(--color-brand-hover-invert);
+                    }
+                }
+            }
+        }
         .test-creator-items {
             border-right: var(--border-thin) solid var(--section-border-color);
 
@@ -148,6 +284,7 @@ body.solar-design {
                     @include button-sd-secondary();
                     margin: 16px auto;
                     display: inline-block;
+
                     &:hover {
                         text-decoration: none;
                     }
