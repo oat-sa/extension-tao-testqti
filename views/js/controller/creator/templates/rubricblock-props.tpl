@@ -67,7 +67,7 @@
     <div class="rubric-feedback toggled">
 
         <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/feedback/activated -->
-        <div class="grid-row rubric-feedback-activated">
+        <div class="grid-row rubric-feedback-activated checkbox-row">
             <div class="col-5">
                 <label for="activated">{{__ 'Activated'}}</label>
             </div>
