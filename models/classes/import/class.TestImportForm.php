@@ -127,7 +127,11 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
     private function addMetadataImportElement(): void
     {
         if (!$this->isFieldDisabled(self::METADATA_FIELD)) {
-            $metadataImport = tao_helpers_form_FormFactory::getElement(self::METADATA_FORM_ELEMENT_NAME, 'Checkbox');
+            $metadataImport = tao_helpers_form_FormFactory::getElement(
+                self::METADATA_FORM_ELEMENT_NAME,
+                'Checkbox'
+            );
+
             $metadataImport->setOptions([self::METADATA_FORM_ELEMENT_NAME => __('QTI metadata as properties')]);
             $metadataImport->setDescription(__('Import'));
             $metadataImport->setLevel(1);
@@ -142,7 +146,10 @@ class taoQtiTest_models_classes_import_TestImportForm extends tao_helpers_form_F
             $selectElt = tao_helpers_form_FormFactory::getElement('selectelt', 'Free');
             $selectElt->setValue('<div class="item-select-container"></div>');
 
-            $itemClassDestination = tao_helpers_form_FormFactory::getElement(self::ITEM_CLASS_DESTINATION_FIELD, 'Hidden');
+            $itemClassDestination = tao_helpers_form_FormFactory::getElement(
+                self::ITEM_CLASS_DESTINATION_FIELD,
+                'Hidden'
+            );
 
             $this->form->addElement($itemClassDestination);
             $this->form->addElement($selectElt);

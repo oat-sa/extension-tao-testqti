@@ -129,8 +129,8 @@ class taoQtiTest_models_classes_import_TestImport implements
     {
         $options = [];
         if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
-            $options[taoQtiTest_models_classes_import_TestImportForm::DISABLED_FIELDS][] = taoQtiTest_models_classes_import_TestImportForm::METADATA_FIELD;
-            $options[taoQtiTest_models_classes_import_TestImportForm::DISABLED_FIELDS][] = taoQtiTest_models_classes_import_TestImportForm::ITEM_CLASS_DESTINATION_FIELD;
+            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::METADATA_FIELD;
+            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::ITEM_CLASS_DESTINATION_FIELD;
         }
         return $options;
     }
