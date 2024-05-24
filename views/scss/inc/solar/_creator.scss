@@ -359,20 +359,9 @@ body.solar-design {
                 @include button-sd-secondary();
             }
             .duration-ctrl-wrapper, .incrementer-ctrl-wrapper {
-                .incrementer {
-                    padding-right: 16px;
-                    padding-left: 0;
-                }
                 input[type="text"] {
-                    height: var(--input-height);
                     width: calc(var(--input-height) + 16px) !important;
                     min-width: var(--input-height) !important;
-
-                    &, &:focus, &:active {
-                        border: 0;
-                        box-shadow: none;
-                        outline: none;
-                    }
                 }
             }
             .grid-row {
