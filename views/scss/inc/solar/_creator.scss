@@ -132,8 +132,8 @@ body.solar-design {
                         font-size: var(--fontsize-body);
                     }
                     &:hover {
-                        color: var(--color-text-inverted);
-                        background-color: var(--color-brand-hover-invert);
+                        color: var(--form-color);
+                        background: var(--color-gs-light-hover-bg);
                     }
                 }
             }
