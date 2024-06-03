@@ -115,11 +115,13 @@
             <div class="category-presets"></div>
         </div>
 
-        <h4 class="toggler closed" data-toggle="~ .testpart-item-session-control">{{__ 'Item Session Control'}}</h4>
+
+        {{#if showItemSessionControl}}
+            <h4 class="toggler closed" data-toggle="~ .testpart-item-session-control">{{__ 'Item Session Control'}}</h4>
 
 
-<!-- assessmentTest/testPart/itemSessionControl -->
-        <div class="testpart-item-session-control toggled">
+            <!-- assessmentTest/testPart/itemSessionControl -->
+            <div class="testpart-item-session-control toggled">
 
 <!-- assessmentTest/testPart/itemSessionControl/maxAttempts -->
             <div class="grid-row">
@@ -271,6 +273,7 @@
             </div>
 
         </div>
+        {{/if}}
 
         {{#if showTimeLimits}}
             <h4 class="toggler closed" data-toggle="~ .testpart-time-limits">{{__ 'Time Limits'}}</h4>

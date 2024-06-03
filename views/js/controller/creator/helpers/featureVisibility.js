@@ -54,6 +54,12 @@ define(['services/features'], function (features) {
         if (features.isVisible('taoQtiTest/creator/testPart/property/lateSubmission')) {
             model.lateSubmission = true;
         }
+        if (features.isVisible('taoQtiTest/creator/testPart/property/itemSessionControl')) {
+            model.showItemSessionControl = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/testPart/property/navigationWarnings')) {
+            model.showNavigationWarnings = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
