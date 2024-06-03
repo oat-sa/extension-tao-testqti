@@ -3,23 +3,24 @@
 
     <form autocomplete="off">
 
-<!-- assessmentTest/testPart/identifier -->
-        <div class="grid-row">
-            <div class="col-5">
-                <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-                <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
-            </div>
-            <div class="col-6">
-                <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'The test part identifier.'}}
+        {{#if showIdentifier}}
+            <!-- assessmentTest/testPart/identifier -->
+            <div class="grid-row">
+                <div class="col-5">
+                    <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                    <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
+                </div>
+                <div class="col-6">
+                    <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'The test part identifier.'}}
+                    </div>
                 </div>
             </div>
-        </div>
-
+        {{/if}}
 <!-- assessmentTest/testPart/navigationMode -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">

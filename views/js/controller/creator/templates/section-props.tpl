@@ -1,22 +1,24 @@
 <div id="section-props-{{identifier}}" class="section-props props clearfix">
     <h3>{{title}}</h3>
 
-<!-- assessmentTest/testPart/assessmentSection/identifier -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="section-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-            <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
-        </div>
-        <div class="col-6">
-            <input type="text" id="section-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'The identifier of the section.'}}
+    {{#if showIdentifier}}
+        <!-- assessmentTest/testPart/assessmentSection/identifier -->
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="section-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
+            </div>
+            <div class="col-6">
+                <input type="text" id="section-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'The identifier of the section.'}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/title -->
     <div class="grid-row">

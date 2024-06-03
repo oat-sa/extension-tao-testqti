@@ -28,6 +28,9 @@ define(['services/features'], function (features) {
         if (features.isVisible('taoQtiTest/creator/test/property/timeLimits')) {
             model.showTimeLimits = true;
         }
+        if (features.isVisible('taoQtiTest/creator/test/property/identifier')) {
+            model.showIdentifier = true;
+        }
     }
 
     /**
@@ -38,6 +41,9 @@ define(['services/features'], function (features) {
         const propertyNamespace = 'taoQtiTest/creator/testPart/property/';
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/testPart/property/identifier')) {
+            model.showIdentifier = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
@@ -59,6 +65,9 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
+        if (features.isVisible('taoQtiTest/creator/section/property/identifier')) {
+            model.showIdentifier = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
@@ -78,6 +87,9 @@ define(['services/features'], function (features) {
         const propertyNamespace = 'taoQtiTest/creator/itemRef/property/';
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/itemRef/property/identifier')) {
+            model.showIdentifier = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
