@@ -78,7 +78,8 @@
     </div>
 --}}
 
-<!-- assessmentTest/testPart/assessmentSection/visible -->
+    {{#if showVisible}}
+    <!-- assessmentTest/testPart/assessmentSection/visible -->
     <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
             <label for="section-visible">{{__ 'Visible'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
@@ -96,26 +97,29 @@
             </div>
         </div>
     </div>
+    {{/if}}
 
-<!-- assessmentTest/testPart/assessmentSection/keepTogether -->
-    <div class="grid-row pseudo-label-box checkbox-row">
-        <div class="col-5">
-            <label for="section-keep-together">{{__ 'Keep Together'}}</label>
-        </div>
+    {{#if showKeepTogether}}
+        <!-- assessmentTest/testPart/assessmentSection/keepTogether -->
+        <div class="grid-row pseudo-label-box checkbox-row">
+            <div class="col-5">
+                <label for="section-keep-together">{{__ 'Keep Together'}}</label>
+            </div>
 
-        <div class="col-6">
-            <label>
-                <input type="checkbox" name="section-keep-together" value="true" checked="checked"  data-bind="keepTogether" data-bind-encoder="boolean" />
-                <span class="icon-checkbox"></span>
-            </label>
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section.'}}
+            <div class="col-6">
+                <label>
+                    <input type="checkbox" name="section-keep-together" value="true" checked="checked"  data-bind="keepTogether" data-bind-encoder="boolean" />
+                    <span class="icon-checkbox"></span>
+                </label>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section.'}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
 
     {{#if hasBlueprint}}
     <div class="grid-row pseudo-label-box">

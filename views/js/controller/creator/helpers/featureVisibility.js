@@ -48,16 +48,16 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
-        if (features.isVisible('taoQtiTest/creator/testPart/property/identifier')) {
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
             model.showIdentifier = true;
         }
-        if (features.isVisible('taoQtiTest/creator/testPart/property/lateSubmission')) {
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
             model.lateSubmission = true;
         }
-        if (features.isVisible('taoQtiTest/creator/testPart/property/itemSessionControl')) {
+        if (features.isVisible(`${propertyNamespace}itemSessionControl`)) {
             model.showItemSessionControl = true;
         }
-        if (features.isVisible('taoQtiTest/creator/testPart/property/navigationWarnings')) {
+        if (features.isVisible(`${propertyNamespace}navigationWarnings`)) {
             model.showNavigationWarnings = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
@@ -80,13 +80,19 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
-        if (features.isVisible('taoQtiTest/creator/section/property/identifier')) {
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
             model.showIdentifier = true;
         }
-        if (features.isVisible('taoQtiTest/creator/section/property/lateSubmission')) {
+        if (features.isVisible(`${propertyNamespace}visible`)) {
+            model.showVisible = true;
+        }
+        if (features.isVisible(`${propertyNamespace}keepTogether`)) {
+            model.showKeepTogether = true;
+        }
+        if (features.isVisible(`${propertyNamespace}property/lateSubmission`)) {
             model.lateSubmission = true;
         }
-        if (features.isVisible('taoQtiTest/creator/section/property/validateResponses')) {
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
             model.validateResponsesVisible = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
@@ -109,10 +115,10 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
-        if (features.isVisible('taoQtiTest/creator/itemRef/property/identifier')) {
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
             model.showIdentifier = true;
         }
-        if (features.isVisible('taoQtiTest/creator/itemRef/property/lateSubmission')) {
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
             model.lateSubmission = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
