@@ -32,7 +32,10 @@ define(['services/features'], function (features) {
             model.showIdentifier = true;
         }
         if (features.isVisible('taoQtiTest/creator/test/property/lateSubmission')) {
-            model.showIdentifier = true;
+            model.lateSubmission = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/test/property/outcomeDeclarations')) {
+            model.showOutcomeDeclarations = true;
         }
     }
 
@@ -49,7 +52,7 @@ define(['services/features'], function (features) {
             model.showIdentifier = true;
         }
         if (features.isVisible('taoQtiTest/creator/testPart/property/lateSubmission')) {
-            model.showIdentifier = true;
+            model.lateSubmission = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
@@ -75,7 +78,7 @@ define(['services/features'], function (features) {
             model.showIdentifier = true;
         }
         if (features.isVisible('taoQtiTest/creator/section/property/lateSubmission')) {
-            model.showIdentifier = true;
+            model.lateSubmission = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
@@ -101,7 +104,7 @@ define(['services/features'], function (features) {
             model.showIdentifier = true;
         }
         if (features.isVisible('taoQtiTest/creator/itemRef/property/lateSubmission')) {
-            model.showIdentifier = true;
+            model.lateSubmission = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
