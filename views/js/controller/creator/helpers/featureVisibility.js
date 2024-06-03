@@ -86,6 +86,9 @@ define(['services/features'], function (features) {
         if (features.isVisible('taoQtiTest/creator/section/property/lateSubmission')) {
             model.lateSubmission = true;
         }
+        if (features.isVisible('taoQtiTest/creator/section/property/validateResponses')) {
+            model.validateResponsesVisible = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
