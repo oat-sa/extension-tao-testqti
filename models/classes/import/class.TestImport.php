@@ -48,9 +48,6 @@ class taoQtiTest_models_classes_import_TestImport implements
     use EventManagerAwareTrait;
     use ImportHandlerHelperTrait;
 
-    public const DISABLED_FIELDS = 'disabledFields';
-    public const METADATA_FIELD = 'metadataImport';
-
     /**
      * (non-PHPdoc)
      * @see tao_models_classes_import_ImportHandler::getLabel()
@@ -86,7 +83,13 @@ class taoQtiTest_models_classes_import_TestImport implements
             helpers_TimeOutHelper::setTimeOutLimit(helpers_TimeOutHelper::LONG);
 
             $report = taoQtiTest_models_classes_QtiTestService::singleton()
-                ->importMultipleTests($class, $uploadedFile, false, null, $form);
+                ->importMultipleTests(
+                    $class,
+                    $uploadedFile,
+                    false,
+                    $form[TestImportForm::ITEM_CLASS_DESTINATION_FIELD] ?? null,
+                    $form
+                );
 
             helpers_TimeOutHelper::reset();
 
@@ -108,7 +111,12 @@ class taoQtiTest_models_classes_import_TestImport implements
 
         return [
             'uploaded_file' => $file->getPrefix(), // because of Async, we need the full path of the uploaded file
-            TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue('metadata'),
+            TestImportForm::METADATA_FORM_ELEMENT_NAME => $importForm->getValue(
+                TestImportForm::METADATA_FORM_ELEMENT_NAME
+            ),
+            TestImportForm::ITEM_CLASS_DESTINATION_FIELD => $importForm->getValue(
+                TestImportForm::ITEM_CLASS_DESTINATION_FIELD
+            )
         ];
     }
 
@@ -121,7 +129,8 @@ class taoQtiTest_models_classes_import_TestImport implements
     {
         $options = [];
         if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
-            $options[self::DISABLED_FIELDS] = [self::METADATA_FIELD];
+            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::METADATA_FIELD;
+            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::ITEM_CLASS_DESTINATION_FIELD;
         }
         return $options;
     }
