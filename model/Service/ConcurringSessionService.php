@@ -168,7 +168,7 @@ class ConcurringSessionService
 
         $testSession = $this->getTestSessionService()->getTestSession($execution);
 
-        if ($testSession->getCurrentAssessmentItemRef()) {
+        if ($testSession && $testSession->getCurrentAssessmentItemRef()) {
             $duration = $testSession->getTimerDuration(
                 $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
                 $testSession->getTimerTarget()
