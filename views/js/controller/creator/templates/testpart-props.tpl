@@ -6,7 +6,7 @@
 <!-- assessmentTest/testPart/identifier -->
         <div class="grid-row">
             <div class="col-5">
-                <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                <label for="testpart-identifier">{{__ 'Test Part Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
                 <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
             </div>
             <div class="col-6">
