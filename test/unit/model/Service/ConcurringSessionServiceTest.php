@@ -422,4 +422,28 @@ class ConcurringSessionServiceTest extends TestCase
 
         $this->subject->pauseActiveDeliveryExecutionsForUser($execution);
     }
+
+    public function testAdjustTimersSkipsAdjustmentIfNoTestSessionExists(): void
+    {
+        $execution = $this->createMock(DeliveryExecution::class);
+        $execution
+            ->method('getIdentifier')
+            ->willReturn('https://example.com/execution/1');
+
+        $this->testSessionService
+            ->expects($this->once())
+            ->method('getTestSession')
+            ->with($execution)
+            ->willReturn(null);
+
+        $this->currentSession
+            ->expects($this->never())
+            ->method('removeAttribute');
+
+        $this->testSessionService
+            ->expects($this->never())
+            ->method('persist');
+
+        $this->subject->adjustTimers($execution);
+    }
 }

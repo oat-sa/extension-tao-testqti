@@ -167,54 +167,55 @@ class ConcurringSessionService
         );
 
         $testSession = $this->getTestSessionService()->getTestSession($execution);
+        if (!$testSession || !$testSession->getCurrentAssessmentItemRef()) {
+            return;
+        }
 
-        if ($testSession->getCurrentAssessmentItemRef()) {
-            $duration = $testSession->getTimerDuration(
-                $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
-                $testSession->getTimerTarget()
-            );
+        $duration = $testSession->getTimerDuration(
+            $testSession->getCurrentAssessmentItemRef()->getIdentifier(),
+            $testSession->getTimerTarget()
+        );
+
+        $this->logger->debug(
+            sprintf(
+                'Timer duration on execution %s timer adjustment = %f',
+                $execution->getIdentifier(),
+                $duration->getSeconds(true)
+            )
+        );
+
+        $ids = [
+            $execution->getIdentifier(),
+            $execution->getOriginalIdentifier()
+        ];
+
+        foreach ($ids as $executionId) {
+            $key = "itemDuration-{$executionId}";
+
+            if (!$this->currentSession->hasAttribute($key)) {
+                continue;
+            }
+
+            $oldDuration = $this->currentSession->getAttribute($key);
+            $this->currentSession->removeAttribute($key);
 
             $this->logger->debug(
                 sprintf(
-                    'Timer duration on execution %s timer adjustment = %f',
+                    'Timer duration on execution %s pause was %f',
                     $execution->getIdentifier(),
-                    $duration->getSeconds(true)
+                    $oldDuration
                 )
             );
 
-            $ids = [
-                $execution->getIdentifier(),
-                $execution->getOriginalIdentifier()
-            ];
+            $delta = (int) ceil($duration->getSeconds(true) - $oldDuration);
 
-            foreach ($ids as $executionId) {
-                $key = "itemDuration-{$executionId}";
+            if ($delta > 0) {
+                $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
 
-                if (!$this->currentSession->hasAttribute($key)) {
-                    continue;
-                }
+                $this->getTimerAdjustmentService()->increase($testSession, $delta);
 
-                $oldDuration = $this->currentSession->getAttribute($key);
-                $this->currentSession->removeAttribute($key);
-
-                $this->logger->debug(
-                    sprintf(
-                        'Timer duration on execution %s pause was %f',
-                        $execution->getIdentifier(),
-                        $oldDuration
-                    )
-                );
-
-                $delta = (int) ceil($duration->getSeconds(true) - $oldDuration);
-
-                if ($delta > 0) {
-                    $this->logger->debug(sprintf('Adjusting timers by %d s', $delta));
-
-                    $this->getTimerAdjustmentService()->increase($testSession, $delta);
-
-                    $testSession->suspend();
-                    $this->getTestSessionService()->persist($testSession);
-                }
+                $testSession->suspend();
+                $this->getTestSessionService()->persist($testSession);
             }
         }
     }
