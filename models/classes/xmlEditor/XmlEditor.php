@@ -23,9 +23,12 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\xmlEditor;
 
 use core_kernel_classes_Resource;
+use oat\generis\model\GenerisRdf;
 use oat\oatbox\service\ConfigurableService;
+use oat\oatbox\user\UserInterfaceModeService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use qtism\data\storage\xml\XmlDocument;
+use tao_models_classes_UserService;
 use taoQtiTest_models_classes_QtiTestService;
 
 class XmlEditor extends ConfigurableService implements XmlEditorInterface
@@ -59,6 +62,10 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
      */
     public function isLocked(): bool
     {
+        if ($this->getUserInterfaceMode() == GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE) {
+            return true;
+        }
+
         if (
             $this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)
             || $this->getFeatureFlagChecker()->isEnabled(self::LEGACY_FEATURE_FLAG_XML_EDITOR_ENABLED)
@@ -77,5 +84,21 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     private function getFeatureFlagChecker(): FeatureFlagChecker
     {
         return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
+    }
+    private function getUserInterfaceModeService(): UserInterfaceModeService
+    {
+        return $this->getServiceManager()->getContainer()->get(UserInterfaceModeService::class);
+    }
+
+    private function getUserService(): tao_models_classes_UserService
+    {
+        return $this->getServiceManager()->getContainer()->get(tao_models_classes_UserService::class);
+    }
+
+    private function getUserInterfaceMode(): string
+    {
+        return $this->getUserInterfaceModeService()->getUserInterfaceMode(
+            $this->getUserService()->getCurrentUser()
+        );
     }
 }
