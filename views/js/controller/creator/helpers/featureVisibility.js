@@ -69,6 +69,12 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
+        if (features.isVisible(`${propertyNamespace}weights`)) {
+            model.showWeights = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
+            model.showWeights = true;
+        }
     }
 
     /**
@@ -104,6 +110,9 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
+        if (features.isVisible(`${propertyNamespace}rubricBlocks/class`)) {
+            model.rubricBlocksClass = true;
+        }
     }
 
     /**
@@ -117,6 +126,9 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}identifier`)) {
             model.showIdentifier = true;
+        }
+        if (features.isVisible(`${propertyNamespace}reference`)) {
+            model.showReference = true;
         }
         if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
             model.lateSubmission = true;
