@@ -26,6 +26,7 @@ use core_kernel_classes_Resource;
 use oat\generis\model\GenerisRdf;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\user\implementation\UserSettingsService;
 use oat\tao\model\user\UserSettingsInterface;
 use qtism\data\storage\xml\XmlDocument;
@@ -63,7 +64,10 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     public function isLocked(): bool
     {
         $userSettings = $this->getUserSettingsService()->getCurrentUserSettings();
-        if ($userSettings->getSetting(UserSettingsInterface::INTERFACE_MODE) == GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE) {
+        if (
+            $this->getFeatureFlagChecker()->isEnabled(FeatureFlagCheckerInterface::FEATURE_FLAG_SOLAR_DESIGN_ENABLED)
+            && $userSettings->getSetting(UserSettingsInterface::INTERFACE_MODE) == GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE
+        ) {
             return true;
         }
 
