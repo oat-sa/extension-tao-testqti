@@ -26,6 +26,7 @@ use core_kernel_classes_Resource;
 use oat\generis\model\GenerisRdf;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\user\implementation\UserSettingsService;
 use oat\tao\model\user\UserSettingsInterface;
 use oat\tao\model\user\UserSettingsServiceInterface;
 use qtism\data\storage\xml\XmlDocument;
@@ -96,7 +97,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         return $this->getServiceManager()->getContainer()->get(tao_models_classes_UserService::class);
     }
 
-    public function getUserSettingsService()
+    public function getUserSettingsService(): UserSettingsService
     {
         return $this->getServiceManager()->getContainer()->get(UserSettingsServiceInterface::class);
     }
