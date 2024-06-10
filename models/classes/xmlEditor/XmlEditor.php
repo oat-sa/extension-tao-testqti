@@ -25,8 +25,9 @@ namespace oat\taoQtiTest\models\xmlEditor;
 use core_kernel_classes_Resource;
 use oat\generis\model\GenerisRdf;
 use oat\oatbox\service\ConfigurableService;
-use oat\oatbox\user\UserInterfaceModeService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\user\UserSettingsInterface;
+use oat\tao\model\user\UserSettingsServiceInterface;
 use qtism\data\storage\xml\XmlDocument;
 use tao_models_classes_UserService;
 use taoQtiTest_models_classes_QtiTestService;
@@ -95,10 +96,16 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         return $this->getServiceManager()->getContainer()->get(tao_models_classes_UserService::class);
     }
 
-    private function getUserInterfaceMode(): string
+    public function getUserSettingsService()
     {
-        return $this->getUserInterfaceModeService()->getUserInterfaceMode(
-            $this->getUserService()->getCurrentUser()
-        );
+        return $this->getServiceManager()->getContainer()->get(UserSettingsServiceInterface::class);
+    }
+
+    private function getUserInterfaceMode(): ?string
+    {
+        $userResource = $this->getUserService()->getCurrentUser();
+        $userSettings = $this->getUserSettingsService()->get($userResource);
+
+        return $userSettings->getSetting(UserSettingsInterface::INTERFACE_MODE);
     }
 }
