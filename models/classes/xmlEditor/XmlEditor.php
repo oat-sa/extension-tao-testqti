@@ -87,10 +87,6 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     {
         return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
-    private function getUserInterfaceModeService(): UserInterfaceModeService
-    {
-        return $this->getServiceManager()->getContainer()->get(UserInterfaceModeService::class);
-    }
 
     private function getUserService(): tao_models_classes_UserService
     {
