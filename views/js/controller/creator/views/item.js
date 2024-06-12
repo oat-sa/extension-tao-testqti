@@ -65,7 +65,7 @@ define([
             classUri: ITEM_URI,
             classes: [
                 {
-                    label: 'Item',
+                    label: __('Item'),
                     uri: ITEM_URI,
                     type: 'class'
                 }
@@ -85,6 +85,9 @@ define([
                 testItemProvider
                     .getItems(params)
                     .then(items => {
+                        if (items[0]?.label) {
+                            items[0].label = __(items[0].label);
+                        }
                         //and update the item list
                         this.update(items, params);
                     })
