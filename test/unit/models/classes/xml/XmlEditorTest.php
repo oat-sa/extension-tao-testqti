@@ -186,7 +186,7 @@ EOL;
     /**
      * @dataProvider getFeatureIsLockedData
      */
-    public function testIsLocked(array $options)
+    public function testIsLocked(array $options): void
     {
         $userSettings = $this->createMock(UserSettings::class);
         $userSettings->method('getSetting')
