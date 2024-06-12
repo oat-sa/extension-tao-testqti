@@ -65,7 +65,7 @@ define([
             classUri: ITEM_URI,
             classes: [
                 {
-                    label: 'Item',
+                    label: __('Item'),
                     uri: ITEM_URI,
                     type: 'class'
                 }
