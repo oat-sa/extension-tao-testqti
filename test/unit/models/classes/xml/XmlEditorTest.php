@@ -261,7 +261,6 @@ EOL;
                     'expectedLock' => true
                 ]
             ],
-
             'enabled with advanced interface mode' => [
                 'options' => [
                     'configFlag' => true,
@@ -272,7 +271,6 @@ EOL;
                     'expectedLock' => false
                 ]
             ],
-
             'unlocked because ignoring simple mode when solar disabled' => [
                 'options' => [
                     'configFlag' => true,
