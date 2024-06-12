@@ -63,7 +63,7 @@
     "oat-sa/lib-test-cat": "2.3.7",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.28.3",
-    "oat-sa/generis" : ">=15.22",
+    "oat-sa/generis" : "dev-feat/AUT-3625/content-creation-mode-switch",
     "oat-sa/tao-core": "dev-feat/AUT-3625/content-creation-mode-switch",
     "oat-sa/extension-tao-item" : ">=12.1.0",
     "oat-sa/extension-tao-itemqti" : ">=30.10.0",
