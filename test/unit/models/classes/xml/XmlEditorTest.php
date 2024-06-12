@@ -202,8 +202,8 @@ EOL;
 
         $this->featureFlagCheckerMock
             ->method('isEnabled')
-            ->withConsecutive([FeatureFlagCheckerInterface::FEATURE_FLAG_SOLAR_DESIGN_ENABLED], ['FEATURE_FLAG_XML_EDITOR_ENABLED'], ['XML_EDITOR_ENABLED'])
-            ->willReturnOnConsecutiveCalls($options['solarDesignEnabled'], $options['xmlEditorEnabled'], $options['legacyXmlEditorEnabled']);
+            ->withConsecutive(['FEATURE_FLAG_XML_EDITOR_ENABLED'], ['XML_EDITOR_ENABLED'])
+            ->willReturnOnConsecutiveCalls($options['xmlEditorEnabled'], $options['legacyXmlEditorEnabled']);
 
         $this->assertEquals($options['expectedLock'], $service->isLocked());
     }
@@ -216,7 +216,6 @@ EOL;
                     'configFlag' => false,
                     'xmlEditorEnabled' => false,
                     'legacyXmlEditorEnabled' => false,
-                    'solarDesignEnabled' => false,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
                     'expectedLock' => false
                 ]
@@ -226,7 +225,6 @@ EOL;
                     'configFlag' => true,
                     'xmlEditorEnabled' => true,
                     'legacyXmlEditorEnabled' => false,
-                    'solarDesignEnabled' => false,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
                     'expectedLock' => false
                 ]
@@ -236,7 +234,6 @@ EOL;
                     'configFlag' => true,
                     'xmlEditorEnabled' => false,
                     'legacyXmlEditorEnabled' => true,
-                    'solarDesignEnabled' => false,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
                     'expectedLock' => false
                 ]
@@ -246,7 +243,6 @@ EOL;
                     'configFlag' => true,
                     'xmlEditorEnabled' => false,
                     'legacyXmlEditorEnabled' => false,
-                    'solarDesignEnabled' => false,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
                     'expectedLock' => true
                 ]
@@ -256,7 +252,6 @@ EOL;
                     'configFlag' => true,
                     'xmlEditorEnabled' => true,
                     'legacyXmlEditorEnabled' => true,
-                    'solarDesignEnabled' => true,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE,
                     'expectedLock' => true
                 ]
@@ -266,18 +261,7 @@ EOL;
                     'configFlag' => true,
                     'xmlEditorEnabled' => true,
                     'legacyXmlEditorEnabled' => true,
-                    'solarDesignEnabled' => true,
                     'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
-                    'expectedLock' => false
-                ]
-            ],
-            'unlocked because ignoring simple mode when solar disabled' => [
-                'options' => [
-                    'configFlag' => true,
-                    'xmlEditorEnabled' => true,
-                    'legacyXmlEditorEnabled' => true,
-                    'solarDesignEnabled' => false,
-                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE,
                     'expectedLock' => false
                 ]
             ]
