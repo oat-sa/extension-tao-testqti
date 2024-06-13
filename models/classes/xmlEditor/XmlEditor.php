@@ -23,8 +23,12 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\xmlEditor;
 
 use core_kernel_classes_Resource;
+use oat\generis\model\GenerisRdf;
 use oat\oatbox\service\ConfigurableService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
+use oat\tao\model\user\implementation\UserSettingsService;
+use oat\tao\model\user\UserSettingsInterface;
 use qtism\data\storage\xml\XmlDocument;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -59,6 +63,14 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
      */
     public function isLocked(): bool
     {
+        $userSettings = $this->getUserSettingsService()->getCurrentUserSettings();
+        if (
+            $this->getFeatureFlagChecker()->isEnabled(FeatureFlagCheckerInterface::FEATURE_FLAG_SOLAR_DESIGN_ENABLED)
+            && $userSettings->getSetting(UserSettingsInterface::INTERFACE_MODE) == GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE
+        ) {
+            return true;
+        }
+
         if (
             $this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_XML_EDITOR_ENABLED)
             || $this->getFeatureFlagChecker()->isEnabled(self::LEGACY_FEATURE_FLAG_XML_EDITOR_ENABLED)
@@ -77,5 +89,10 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     private function getFeatureFlagChecker(): FeatureFlagChecker
     {
         return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
+    }
+
+    public function getUserSettingsService(): UserSettingsService
+    {
+        return $this->getServiceManager()->getContainer()->get(UserSettingsService::class);
     }
 }

@@ -26,8 +26,9 @@ define([
     'core/format',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'taoQtiTest/controller/creator/helpers/processingRule'
-], function (_, __, format, baseTypeHelper, outcomeHelper, processingRuleHelper) {
+    'taoQtiTest/controller/creator/helpers/processingRule',
+    'services/features'
+], function (_, __, format, baseTypeHelper, outcomeHelper, processingRuleHelper, features) {
     'use strict';
 
     /**
@@ -890,6 +891,10 @@ define([
      */
     function detectScoring(modelOverseer) {
         var model = modelOverseer.getModel();
+        let modes = processingModes;
+        if(!features.isVisible('taoQtiTest/creator/test/property/scoring/custom')) {
+            delete modes.custom;
+        }
         return {
             modes: processingModes,
             scoreIdentifier: defaultScoreIdentifier,

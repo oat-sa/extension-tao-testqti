@@ -2,38 +2,42 @@
 
     <h3>{{{dompurify label}}}</h3>
 
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/identifier -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="itemref-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-            <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
-        </div>
-        <div class="col-6">
-            <input type="text" name="itemref-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'The identifier of the item reference.'}}
+    {{#if showIdentifier}}
+        <!-- assessmentTest/testPart/assessmentSection/sectionPart/identifier -->
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="itemref-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
+            </div>
+            <div class="col-6">
+                <input type="text" name="itemref-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'The identifier of the item reference.'}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
 
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/href -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="itemref-href">{{__ 'Reference'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="itemref-href" data-bind="href" readonly="readonly" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'The reference.'}}
+    {{#if showReference}}
+        <!-- assessmentTest/testPart/assessmentSection/sectionPart/href -->
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="itemref-href">{{__ 'Reference'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+            </div>
+            <div class="col-6">
+                <input type="text" name="itemref-href" data-bind="href" readonly="readonly" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'The reference.'}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/required -->
     <div class="grid-row pseudo-label-box checkbox-row">
@@ -96,32 +100,33 @@
         <div class="category-presets"></div>
     </div>
 
-    <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
+    {{#if showWeights}}
+        <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 
-    <div class="itemref-weights toggled">
-        <div class="grid-row ">
-            <div class="col-9">
-                <strong>{{__ 'Identifier'}}</strong>
+        <div class="itemref-weights toggled">
+            <div class="grid-row ">
+                <div class="col-9">
+                    <strong>{{__ 'Identifier'}}</strong>
+                </div>
+                <div class="col-2">
+                    <strong>{{__ 'Value'}}</strong>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                        {{__ 'Controls the contribution of an individual item score to the overall test score.'}}
+                    </div>
+                </div>
             </div>
-            <div class="col-2">
-                <strong>{{__ 'Value'}}</strong>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                    {{__ 'Controls the contribution of an individual item score to the overall test score.'}}
+            <!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
+            <div data-bind-each="weights" data-bind-tmpl="itemrefweight"></div>
+            <div class="grid-row">
+                <div class="col-12">
+                    <a class="itemref-weight-add"><span class="icon-add"></span> {{__ 'add a new weight'}}</a>
                 </div>
             </div>
         </div>
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/weights -->
-        <div data-bind-each="weights" data-bind-tmpl="itemrefweight"></div>
-        <div class="grid-row">
-            <div class="col-12">
-                <a class="itemref-weight-add"><span class="icon-add"></span> {{__ 'add a new weight'}}</a>
-            </div>
-        </div>
-    </div>
-
+    {{/if}}
 
     <h4 class="toggler closed" data-toggle="~ .itemref-item-session-control">{{__ 'Item Session Control'}}</h4>
 
@@ -151,9 +156,9 @@
                 </div>
             </div>
         </div>
-
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showFeedback -->
+        
         {{#if itemSessionShowFeedback}}
+            <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showFeedback -->
             <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
                     <label for="itemref-show-feedback">{{__ 'Show Feedback'}}</label>
@@ -257,24 +262,26 @@
             </div>
         {{/if}}
 
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
-        <div class="grid-row pseudo-label-box checkbox-row">
-            <div class="col-5">
-                <label for="itemref-validate-responses">{{__ 'Validate Responses'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="itemref-validate-responses" value="true" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "The candidate is not allowed to submit invalid responses."}}
+        {{#if showValidateResponses}}
+            <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
+            <div class="grid-row pseudo-label-box checkbox-row">
+                <div class="col-5">
+                    <label for="itemref-validate-responses">{{__ 'Validate Responses'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="itemref-validate-responses" value="true" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "The candidate is not allowed to submit invalid responses."}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
     </div>
 
@@ -347,24 +354,26 @@
             </div>
         </div>
 
-<!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/allowLateSubmission -->
-        <div class="grid-row pseudo-label-box checkbox-row">
-            <div class="col-5">
-                <label for="itemref-allow-late-submission">{{__ 'Late submission allowed'}}</label>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input type="checkbox" name="itemref-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                    <span class="icon-checkbox"></span>
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."}}
+        {{#if showLateSubmission}}
+            <!-- assessmentTest/testPart/assessmentSection/sectionPart/timeLimits/allowLateSubmission -->
+            <div class="grid-row pseudo-label-box checkbox-row">
+                <div class="col-5">
+                    <label for="itemref-allow-late-submission">{{__ 'Late submission allowed'}}</label>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input type="checkbox" name="itemref-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                        <span class="icon-checkbox"></span>
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
     </div>
     {{/if}}
 </div>

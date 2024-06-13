@@ -27,6 +27,7 @@
     </div>
     -->
     <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/class -->
+    {{#if classVisible}}
     <div class="grid-row">
         <div class="col-5">
             <label for="class">{{__ 'Class'}}</label>
@@ -41,6 +42,7 @@
             </div>
         </div>
     </div>
+    {{/if}}
 
     <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/id -->
     <!--
