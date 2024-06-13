@@ -64,9 +64,11 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     public function isLocked(): bool
     {
         $userSettings = $this->getUserSettingsService()->getCurrentUserSettings();
+
         if (
-            $this->getFeatureFlagChecker()->isEnabled(FeatureFlagCheckerInterface::FEATURE_FLAG_SOLAR_DESIGN_ENABLED)
-            && $userSettings->getSetting(UserSettingsInterface::INTERFACE_MODE) == GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE
+            $userSettings->getSetting(
+                UserSettingsInterface::INTERFACE_MODE
+            ) === GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE
         ) {
             return true;
         }
@@ -83,10 +85,10 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
 
     private function getTestService(): taoQtiTest_models_classes_QtiTestService
     {
-        return $this->getServiceLocator()->get(taoQtiTest_models_classes_QtiTestService::class);
+        return $this->getServiceManager()->getContainer()->get(taoQtiTest_models_classes_QtiTestService::class);
     }
 
-    private function getFeatureFlagChecker(): FeatureFlagChecker
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
     {
         return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
