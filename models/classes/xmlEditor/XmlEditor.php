@@ -29,6 +29,7 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\user\implementation\UserSettingsService;
 use oat\tao\model\user\UserSettingsInterface;
+use oat\tao\model\user\UserSettingsServiceInterface;
 use qtism\data\storage\xml\XmlDocument;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -93,7 +94,7 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
 
-    public function getUserSettingsService(): UserSettingsService
+    public function getUserSettingsService(): UserSettingsServiceInterface
     {
         return $this->getServiceManager()->getContainer()->get(UserSettingsService::class);
     }
