@@ -70,9 +70,6 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
-            model.itemSessionLateSubmission = true;
-        }
         if (features.isVisible(`${propertyNamespace}weights`)) {
             model.showWeights = true;
         }
@@ -99,7 +96,7 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}keepTogether`)) {
             model.showKeepTogether = true;
         }
-        if (features.isVisible(`${propertyNamespace}property/lateSubmission`)) {
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
             model.lateSubmission = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
@@ -145,9 +142,6 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
-        }
-        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
-            model.itemSessionLateSubmission = true;
         }
     }
 
