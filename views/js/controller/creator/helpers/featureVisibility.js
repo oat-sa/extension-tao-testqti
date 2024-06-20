@@ -73,12 +73,6 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        if (features.isVisible(`${propertyNamespace}weights`)) {
-            model.showWeights = true;
-        }
-        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
-            model.showWeights = true;
-        }
     }
 
     /**
@@ -145,6 +139,12 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
+            model.validateResponsesVisible = true;
+        }
+        if (features.isVisible(`${propertyNamespace}weights`)) {
+            model.weightsVisible = true;
         }
     }
 

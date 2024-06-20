@@ -100,7 +100,7 @@
         <div class="category-presets"></div>
     </div>
 
-    {{#if showWeights}}
+    {{#if weightsVisible}}
         <h4 class="toggler closed" data-toggle="~ .itemref-weights">{{__ 'Weights'}}</h4>
 
         <div class="itemref-weights toggled">
@@ -262,7 +262,7 @@
             </div>
         {{/if}}
 
-        {{#if showValidateResponses}}
+        {{#if validateResponsesVisible}}
             <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/validateResponses -->
             <div class="grid-row pseudo-label-box checkbox-row">
                 <div class="col-5">
