@@ -311,24 +311,26 @@
                     </div>
                 </div>
 
-    <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
-                <div class="grid-row pseudo-label-box checkbox-row">
-                    <div class="col-5">
-                        <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
-                    </div>
-                    <div class="col-6">
-                        <label>
-                            <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                            <span class="icon-checkbox"></span>
-                        </label>
-                    </div>
-                    <div class="col-1 help">
-                        <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                        <div class="tooltip-content">
-                        {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
+                {{#if itemSessionLateSubmission}}
+                    <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
+                    <div class="grid-row pseudo-label-box checkbox-row">
+                        <div class="col-5">
+                            <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
+                        </div>
+                        <div class="col-6">
+                            <label>
+                                <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                                <span class="icon-checkbox"></span>
+                            </label>
+                        </div>
+                        <div class="col-1 help">
+                            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                            <div class="tooltip-content">
+                            {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {{/if}}
             </div>
         {{/if}}
     </form>

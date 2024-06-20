@@ -25,8 +25,12 @@ define(['services/features'], function (features) {
      * @param {Object} model
      */
     function addTestVisibilityProps(model) {
-        if (features.isVisible('taoQtiTest/creator/test/property/timeLimits')) {
+        const propertyNamespace = 'taoQtiTest/creator/test/property/';
+        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.itemSessionLateSubmission = true;
         }
     }
 
@@ -48,6 +52,9 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.itemSessionLateSubmission = true;
+        }
     }
 
     /**
@@ -68,6 +75,9 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.itemSessionLateSubmission = true;
+        }
     }
 
     /**
@@ -87,6 +97,9 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
+        }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.itemSessionLateSubmission = true;
         }
     }
 
