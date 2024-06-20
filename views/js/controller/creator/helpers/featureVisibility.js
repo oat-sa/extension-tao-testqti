@@ -52,6 +52,9 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}identifier`)) {
             model.showIdentifier = true;
         }
+        if (features.isVisible(`${propertyNamespace}submissionMode`)) {
+            model.submissionModeVisible = true;
+        }
         if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
             model.lateSubmission = true;
         }

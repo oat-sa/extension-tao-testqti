@@ -58,42 +58,44 @@
             </div>
         </div>
 
-<!-- assessmentTest/testPart/submissionMode -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                {{__ 'Submission'}} <abbr title="{{__ 'Required field'}}">*</abbr>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input
-                            type="radio"
-                            name="testpart-submission-mode"
-                            {{#equal submissionMode 0}}checked{{/equal}}
-                            value="0"
-                            data-bind="submissionMode"
-                            data-bind-encoder="number"
-                    />
-                    <span class="icon-radio"></span>
-                    {{__ 'Individual'}}
-                </label>
-                <label>
-                    <input
-                            type="radio"
-                            name="testpart-submission-mode"
-                            {{#equal submissionMode 1}}checked{{/equal}}
-                            value="1"
-                    />
-                    <span class="icon-radio"></span>
-                    {{__ 'Simultaneous'}}
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."}}
+        {{#if submissionModeVisible}}
+            <!-- assessmentTest/testPart/submissionMode -->
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    {{__ 'Submission'}} <abbr title="{{__ 'Required field'}}">*</abbr>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input
+                                type="radio"
+                                name="testpart-submission-mode"
+                                {{#equal submissionMode 0}}checked{{/equal}}
+                                value="0"
+                                data-bind="submissionMode"
+                                data-bind-encoder="number"
+                        />
+                        <span class="icon-radio"></span>
+                        {{__ 'Individual'}}
+                    </label>
+                    <label>
+                        <input
+                                type="radio"
+                                name="testpart-submission-mode"
+                                {{#equal submissionMode 1}}checked{{/equal}}
+                                value="1"
+                        />
+                        <span class="icon-radio"></span>
+                        {{__ 'Simultaneous'}}
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
         <div class="categories">
             <div class="grid-row">
