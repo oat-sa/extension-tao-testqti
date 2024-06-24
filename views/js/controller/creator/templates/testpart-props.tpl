@@ -3,23 +3,24 @@
 
     <form autocomplete="off">
 
-<!-- assessmentTest/testPart/identifier -->
-        <div class="grid-row">
-            <div class="col-5">
-                <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-                <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
-            </div>
-            <div class="col-6">
-                <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ 'The test part identifier.'}}
+        {{#if showIdentifier}}
+            <!-- assessmentTest/testPart/identifier -->
+            <div class="grid-row">
+                <div class="col-5">
+                    <label for="testpart-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                    <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
+                </div>
+                <div class="col-6">
+                    <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ 'The test part identifier.'}}
+                    </div>
                 </div>
             </div>
-        </div>
-
+        {{/if}}
 <!-- assessmentTest/testPart/navigationMode -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -57,42 +58,44 @@
             </div>
         </div>
 
-<!-- assessmentTest/testPart/submissionMode -->
-        <div class="grid-row pseudo-label-box">
-            <div class="col-5">
-                {{__ 'Submission'}} <abbr title="{{__ 'Required field'}}">*</abbr>
-            </div>
-            <div class="col-6">
-                <label>
-                    <input
-                            type="radio"
-                            name="testpart-submission-mode"
-                            {{#equal submissionMode 0}}checked{{/equal}}
-                            value="0"
-                            data-bind="submissionMode"
-                            data-bind-encoder="number"
-                    />
-                    <span class="icon-radio"></span>
-                    {{__ 'Individual'}}
-                </label>
-                <label>
-                    <input
-                            type="radio"
-                            name="testpart-submission-mode"
-                            {{#equal submissionMode 1}}checked{{/equal}}
-                            value="1"
-                    />
-                    <span class="icon-radio"></span>
-                    {{__ 'Simultaneous'}}
-                </label>
-            </div>
-            <div class="col-1 help">
-                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                <div class="tooltip-content">
-                {{__ "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."}}
+        {{#if submissionModeVisible}}
+            <!-- assessmentTest/testPart/submissionMode -->
+            <div class="grid-row pseudo-label-box">
+                <div class="col-5">
+                    {{__ 'Submission'}} <abbr title="{{__ 'Required field'}}">*</abbr>
+                </div>
+                <div class="col-6">
+                    <label>
+                        <input
+                                type="radio"
+                                name="testpart-submission-mode"
+                                {{#equal submissionMode 0}}checked{{/equal}}
+                                value="0"
+                                data-bind="submissionMode"
+                                data-bind-encoder="number"
+                        />
+                        <span class="icon-radio"></span>
+                        {{__ 'Individual'}}
+                    </label>
+                    <label>
+                        <input
+                                type="radio"
+                                name="testpart-submission-mode"
+                                {{#equal submissionMode 1}}checked{{/equal}}
+                                value="1"
+                        />
+                        <span class="icon-radio"></span>
+                        {{__ 'Simultaneous'}}
+                    </label>
+                </div>
+                <div class="col-1 help">
+                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                    <div class="tooltip-content">
+                    {{__ "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."}}
+                    </div>
                 </div>
             </div>
-        </div>
+        {{/if}}
 
         <div class="categories">
             <div class="grid-row">
@@ -114,11 +117,13 @@
             <div class="category-presets"></div>
         </div>
 
-        <h4 class="toggler closed" data-toggle="~ .testpart-item-session-control">{{__ 'Item Session Control'}}</h4>
+
+        {{#if showItemSessionControl}}
+            <h4 class="toggler closed" data-toggle="~ .testpart-item-session-control">{{__ 'Item Session Control'}}</h4>
 
 
-<!-- assessmentTest/testPart/itemSessionControl -->
-        <div class="testpart-item-session-control toggled">
+            <!-- assessmentTest/testPart/itemSessionControl -->
+            <div class="testpart-item-session-control toggled">
 
 <!-- assessmentTest/testPart/itemSessionControl/maxAttempts -->
             <div class="grid-row">
@@ -270,6 +275,7 @@
             </div>
 
         </div>
+        {{/if}}
 
         {{#if showTimeLimits}}
             <h4 class="toggler closed" data-toggle="~ .testpart-time-limits">{{__ 'Time Limits'}}</h4>
@@ -311,24 +317,26 @@
                     </div>
                 </div>
 
-    <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
-                <div class="grid-row pseudo-label-box checkbox-row">
-                    <div class="col-5">
-                        <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
-                    </div>
-                    <div class="col-6">
-                        <label>
-                            <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                            <span class="icon-checkbox"></span>
-                        </label>
-                    </div>
-                    <div class="col-1 help">
-                        <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                        <div class="tooltip-content">
-                        {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
+                {{#if lateSubmission}}
+                    <!-- assessmentTest/testPart/timeLimits/allowLateSubmission -->
+                    <div class="grid-row pseudo-label-box checkbox-row">
+                        <div class="col-5">
+                            <label for="testpart-allow-late-submission">{{__ 'Late submission allowed'}}</label>
+                        </div>
+                        <div class="col-6">
+                            <label>
+                                <input type="checkbox" name="section-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                                <span class="icon-checkbox"></span>
+                            </label>
+                        </div>
+                        <div class="col-1 help">
+                            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                            <div class="tooltip-content">
+                            {{__ "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."}}
+                            </div>
                         </div>
                     </div>
-                </div>
+                {{/if}}
             </div>
         {{/if}}
     </form>

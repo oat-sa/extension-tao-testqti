@@ -25,8 +25,18 @@ define(['services/features'], function (features) {
      * @param {Object} model
      */
     function addTestVisibilityProps(model) {
-        if (features.isVisible('taoQtiTest/creator/test/property/timeLimits')) {
+        const propertyNamespace = 'taoQtiTest/creator/test/property/';
+        if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/test/property/identifier')) {
+            model.showIdentifier = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/test/property/lateSubmission')) {
+            model.lateSubmission = true;
+        }
+        if (features.isVisible('taoQtiTest/creator/test/property/outcomeDeclarations')) {
+            model.showOutcomeDeclarations = true;
         }
     }
 
@@ -38,6 +48,21 @@ define(['services/features'], function (features) {
         const propertyNamespace = 'taoQtiTest/creator/testPart/property/';
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
+        }
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
+            model.showIdentifier = true;
+        }
+        if (features.isVisible(`${propertyNamespace}submissionMode`)) {
+            model.submissionModeVisible = true;
+        }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.lateSubmission = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl`)) {
+            model.showItemSessionControl = true;
+        }
+        if (features.isVisible(`${propertyNamespace}navigationWarnings`)) {
+            model.showNavigationWarnings = true;
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
@@ -59,6 +84,21 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
+            model.showIdentifier = true;
+        }
+        if (features.isVisible(`${propertyNamespace}visible`)) {
+            model.showVisible = true;
+        }
+        if (features.isVisible(`${propertyNamespace}keepTogether`)) {
+            model.showKeepTogether = true;
+        }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.lateSubmission = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
+            model.validateResponsesVisible = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
@@ -67,6 +107,9 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
+        }
+        if (features.isVisible(`${propertyNamespace}rubricBlocks/class`)) {
+            model.rubricBlocksClass = true;
         }
     }
 
@@ -79,6 +122,15 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}timeLimits`)) {
             model.showTimeLimits = true;
         }
+        if (features.isVisible(`${propertyNamespace}identifier`)) {
+            model.showIdentifier = true;
+        }
+        if (features.isVisible(`${propertyNamespace}reference`)) {
+            model.showReference = true;
+        }
+        if (features.isVisible(`${propertyNamespace}lateSubmission`)) {
+            model.lateSubmission = true;
+        }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/showFeedback`)) {
             model.itemSessionShowFeedback = true;
         }
@@ -87,6 +139,12 @@ define(['services/features'], function (features) {
         }
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
+        }
+        if (features.isVisible(`${propertyNamespace}itemSessionControl/validateResponses`)) {
+            model.validateResponsesVisible = true;
+        }
+        if (features.isVisible(`${propertyNamespace}weights`)) {
+            model.weightsVisible = true;
         }
     }
 

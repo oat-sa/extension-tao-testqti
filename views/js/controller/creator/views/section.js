@@ -397,6 +397,7 @@ define([
                         ) {
                             const index = $rubricBlock.data('bind-index');
                             const rubricModel = sectionModel.rubricBlocks[index] || {};
+                            rubricModel.classVisible = sectionModel.rubricBlocksClass;
 
                             $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                             rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
