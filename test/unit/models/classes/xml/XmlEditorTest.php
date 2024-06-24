@@ -23,8 +23,14 @@ namespace oat\taoQtiTest\test\unit\models\classes\xml;
 use common_ext_Extension;
 use common_ext_ExtensionsManager;
 use core_kernel_classes_Resource;
+use oat\generis\model\GenerisRdf;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
+use oat\tao\model\user\implementation\UserSettings;
+use oat\tao\model\user\implementation\UserSettingsService;
+use oat\tao\model\user\UserSettingsInterface;
 use oat\taoQtiTest\models\xmlEditor\XmlEditor;
+use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
@@ -52,6 +58,9 @@ class XmlEditorTest extends TestCase
     /** @var FeatureFlagChecker|MockObject */
     private $featureFlagCheckerMock;
 
+    /** @var UserSettingsService|MockObject */
+    private $userSettingsService;
+
     public function setUp(): void
     {
         $doc = new XmlDocument();
@@ -65,10 +74,12 @@ class XmlEditorTest extends TestCase
             ->with($this->testResourceMock)
             ->willReturn($this->xmlDoc);
         $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
+        $this->userSettingsService = $this->createMock(UserSettingsService::class);
 
         $this->serviceLocatorMock = $this->getServiceLocatorMock([
             taoQtiTest_models_classes_QtiTestService::class => $this->qtiTestServiceMock,
             FeatureFlagChecker::class => $this->featureFlagCheckerMock,
+            UserSettingsService::class => $this->userSettingsService
         ]);
     }
 
@@ -175,46 +186,85 @@ EOL;
     /**
      * @dataProvider getFeatureIsLockedData
      */
-    public function testIsLocked($configFlag, $newFeatureFlag, $legacyFeatureFlag, $expectedLock)
+    public function testIsLocked(array $options): void
     {
-        $service = new XmlEditor([XmlEditor::OPTION_XML_EDITOR_LOCK => $configFlag]);
+        $userSettings = $this->createMock(UserSettings::class);
+        $userSettings->method('getSetting')
+            ->with(UserSettingsInterface::INTERFACE_MODE)
+            ->willReturn($options['interfaceMode']);
+
+        $this->userSettingsService
+            ->method('getCurrentUserSettings')
+            ->willReturn($userSettings);
+
+        $service = new XmlEditor([XmlEditorInterface::OPTION_XML_EDITOR_LOCK => $options['configFlag']]);
         $service->setServiceLocator($this->serviceLocatorMock);
 
         $this->featureFlagCheckerMock
             ->method('isEnabled')
             ->withConsecutive(['FEATURE_FLAG_XML_EDITOR_ENABLED'], ['XML_EDITOR_ENABLED'])
-            ->willReturnOnConsecutiveCalls($newFeatureFlag, $legacyFeatureFlag);
+            ->willReturnOnConsecutiveCalls($options['xmlEditorEnabled'], $options['legacyXmlEditorEnabled']);
 
-        $this->assertEquals($expectedLock, $service->isLocked());
+        $this->assertEquals($options['expectedLock'], $service->isLocked());
     }
 
     public function getFeatureIsLockedData(): array
     {
         return [
             'unlocked by config' => [
-                false,
-                false,
-                false,
-                false
+                'options' => [
+                    'configFlag' => false,
+                    'xmlEditorEnabled' => false,
+                    'legacyXmlEditorEnabled' => false,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
+                    'expectedLock' => false
+                ]
             ],
             'unlocked by new feature flag' => [
-                true,
-                true,
-                false,
-                false
+                'options' => [
+                    'configFlag' => true,
+                    'xmlEditorEnabled' => true,
+                    'legacyXmlEditorEnabled' => false,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
+                    'expectedLock' => false
+                ]
             ],
             'unlocked by legacy feature flag' => [
-                true,
-                false,
-                true,
-                false
+                'options' => [
+                    'configFlag' => true,
+                    'xmlEditorEnabled' => false,
+                    'legacyXmlEditorEnabled' => true,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
+                    'expectedLock' => false
+                ]
             ],
             'locked' => [
-                true,
-                false,
-                false,
-                true
+                'options' => [
+                    'configFlag' => true,
+                    'xmlEditorEnabled' => false,
+                    'legacyXmlEditorEnabled' => false,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
+                    'expectedLock' => true
+                ]
             ],
+            'enabled but locked but simple interface' => [
+                'options' => [
+                    'configFlag' => true,
+                    'xmlEditorEnabled' => true,
+                    'legacyXmlEditorEnabled' => true,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_SIMPLE,
+                    'expectedLock' => true
+                ]
+            ],
+            'enabled with advanced interface mode' => [
+                'options' => [
+                    'configFlag' => true,
+                    'xmlEditorEnabled' => true,
+                    'legacyXmlEditorEnabled' => true,
+                    'interfaceMode' => GenerisRdf::PROPERTY_USER_INTERFACE_MODE_ADVANCED,
+                    'expectedLock' => false
+                ]
+            ]
         ];
     }
 }

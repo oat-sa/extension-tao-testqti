@@ -3,22 +3,24 @@
     <!-- test properties -->
     <h3 data-bind="title"></h3>
 
-<!-- assessmentTest/identifier -->
-    <div class="grid-row">
-        <div class="col-5">
-            <label for="test-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
-            <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
-        </div>
-        <div class="col-6">
-            <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'The principle identifier of the test.'}}
+    {{#if showIdentifier}}
+    <!-- assessmentTest/identifier -->
+        <div class="grid-row">
+            <div class="col-5">
+                <label for="test-identifier">{{__ 'Identifier'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+                <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
+            </div>
+            <div class="col-6">
+                <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                {{__ 'The principle identifier of the test.'}}
+                </div>
             </div>
         </div>
-    </div>
+    {{/if}}
 
 <!-- assessmentTest/title -->
     <div class="grid-row">
@@ -76,24 +78,26 @@
                 </div>
             </div>
 
-    <!-- assessmentTest/timeLimits/allowLateSubmission -->
-            <div class="grid-row pseudo-label-box checkbox-row">
-                <div class="col-5">
-                    {{__ 'Late submission allowed'}}
-                </div>
-                <div class="col-6">
-                    <label>
-                        <input type="checkbox" name="test-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
-                        <span class="icon-checkbox"></span>
-                    </label>
-                </div>
-                <div class="col-1 help">
-                    <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-                    <div class="tooltip-content">
-                    {{__ "Whether a candidate's response that is beyond the maximum duration should still be accepted."}}
+        {{#if lateSubmission}}
+            <!-- assessmentTest/timeLimits/allowLateSubmission -->
+                    <div class="grid-row pseudo-label-box checkbox-row">
+                        <div class="col-5">
+                            {{__ 'Late submission allowed'}}
+                        </div>
+                        <div class="col-6">
+                            <label>
+                                <input type="checkbox" name="test-allow-late-submission" value="true" data-bind="timeLimits.allowLateSubmission" data-bind-encoder="boolean" />
+                                <span class="icon-checkbox"></span>
+                            </label>
+                        </div>
+                        <div class="col-1 help">
+                            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                            <div class="tooltip-content">
+                            {{__ "Whether a candidate's response that is beyond the maximum duration should still be accepted."}}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+        {{/if}}
         </div>
     {{/if}}
 
@@ -187,17 +191,17 @@
         </div>
     </div>
 {{/with}}
+    {{#if showOutcomeDeclarations}}
+        <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
 
-    <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
-
-    <!-- assessmentTest/outcomeDeclarations -->
-    <div class="test-outcome-declarations panel toggled">
-        <div class="grid-row test-outcomes-generate">
-            <div class="col-12 align-right">
-                <button class="btn-info small" data-action="generate-outcomes"><span class="icon icon-reset"></span>{{__ 'Regenerate'}}</button>
+        <!-- assessmentTest/outcomeDeclarations -->
+        <div class="test-outcome-declarations panel toggled">
+            <div class="grid-row test-outcomes-generate">
+                <div class="col-12 align-right">
+                    <button class="btn-info small" data-action="generate-outcomes"><span class="icon icon-reset"></span>{{__ 'Regenerate'}}</button>
+                </div>
             </div>
+            <div class="outcome-declarations"></div>
         </div>
-        <div class="outcome-declarations"></div>
-    </div>
-
+    {{/if}}
 </div>

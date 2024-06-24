@@ -101,9 +101,10 @@ define([
             var $generate = $('[data-action="generate-outcomes"]', $view);
             var $title = $('.test-creator-test > h1 [data-bind=title]');
             var scoringState = JSON.stringify(testModel.scoring);
+            const weightVisible = features.isVisible('taoQtiTest/creator/test/property/scoring/weight')
 
             function changeScoring(scoring) {
-                var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
+                var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1 && weightVisible;
                 var newScoringState = JSON.stringify(scoring);
 
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
