@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -75,6 +75,23 @@ define([
     const logger = loggerFactory('taoQtiTest/controller/creator');
 
     /**
+     * We assume the ClientLibConfigRegistry is filled up with something like this:
+     * 'taoQtiTest/controller/creator/creator' => [
+     *     'provider' => 'qtiTest',
+     * ],
+     *
+     * Or, with something like this for allowing multiple buttons in case of several providers are available:
+     * 'taoQtiTest/controller/creator/creator' => [
+     *     'provider' => 'qtiTest',
+     *     'providers' => [
+     *         ['id' => 'qtiTest', 'label' => 'Preview'],
+     *         ['id' => 'xxxx', 'label' => 'xxxx'],
+     *         ...
+     *     ],
+     * ],
+     */
+
+    /**
      * The test creator controller is the main entry point
      * and orchestrates data retrieval and view/components loading.
      * @exports creator/controller
@@ -94,7 +111,7 @@ define([
         start(options) {
             const $container = $('#test-creator');
             const $saver = $('#saver');
-            const $previewer = $('#previewer');
+            const $menu = $('ul.test-editor-menu');
             const $back = $('#authoringBack');
 
             let creatorContext;
@@ -119,21 +136,36 @@ define([
             });
 
             //preview button
-            if (!Object.keys(options.labels).length) {
-                $previewer.attr('disabled', true).addClass('disabled');
-            }
-            $previewer.on('click', e => {
-                e.preventDefault();
-                if (!$previewer.hasClass('disabled')) {
-                    creatorContext.trigger('preview');
+            let previewId = 0;
+            const createPreviewButton = ({ id, label } = {}) => {
+                const btnIdx = previewId ? `-${previewId}` : '';
+                const $button = $(templates.menuButton({
+                    id: `previewer${btnIdx}`,
+                    testId: `preview-test${btnIdx}`,
+                    icon: 'preview',
+                    label: label || __('Preview'),
+                })).on('click', e => {
+                    e.preventDefault();
+                    if (!$(e.currentTarget).hasClass('disabled')) {
+                        creatorContext.trigger('preview', id, previewId);
+                    }
+                });
+                if (!Object.keys(options.labels).length) {
+                    $button.attr('disabled', true).addClass('disabled');
                 }
-            });
+                $menu.append($button)
+                previewId++;
+                return $button;
+            }
+            const previewButtons = options.providers ? options.providers.map(createPreviewButton) : [createPreviewButton()];
+
+
             const isTestContainsItems = () => {
                 if ($container.find('.test-content').find('.itemref').length) {
-                    $previewer.attr('disabled', false).removeClass('disabled');
+                    previewButtons.forEach($previewer => $previewer.attr('disabled', false).removeClass('disabled'));
                     return true;
                 } else {
-                    $previewer.attr('disabled', true).addClass('disabled');
+                    previewButtons.forEach($previewer => $previewer.attr('disabled', true).addClass('disabled'));
                     return false;
                 }
             };
@@ -222,12 +254,13 @@ define([
                     }
                 });
 
-                creatorContext.on('preview', function () {
+                creatorContext.on('preview', provider => {
                     if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
                         const saveUrl = options.routes.save;
                         const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                         const config = module.config();
-                        return previewerFactory(config.provider, decodeURIComponent(testUri), {
+                        const type = provider || config.provider || 'qtiTest';
+                        return previewerFactory(type, decodeURIComponent(testUri), {
                             readOnly: false,
                             fullPage: true,
                             pluginsOptions: config.pluginsOptions
