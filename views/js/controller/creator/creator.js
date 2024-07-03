@@ -138,12 +138,15 @@ define([
             //preview button
             let previewId = 0;
             const createPreviewButton = ({ id, label } = {}) => {
+                // configured labels will need to to be registered elsewhere for the translations
+                const translate = text => text && __(text);
+
                 const btnIdx = previewId ? `-${previewId}` : '';
                 const $button = $(templates.menuButton({
                     id: `previewer${btnIdx}`,
                     testId: `preview-test${btnIdx}`,
                     icon: 'preview',
-                    label: label || __('Preview'),
+                    label: translate(label) || __('Preview'),
                 })).on('click', e => {
                     e.preventDefault();
                     if (!$(e.currentTarget).hasClass('disabled')) {
