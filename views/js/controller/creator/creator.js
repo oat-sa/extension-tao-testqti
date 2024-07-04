@@ -142,12 +142,14 @@ define([
                 const translate = text => text && __(text);
 
                 const btnIdx = previewId ? `-${previewId}` : '';
-                const $button = $(templates.menuButton({
-                    id: `previewer${btnIdx}`,
-                    testId: `preview-test${btnIdx}`,
-                    icon: 'preview',
-                    label: translate(label) || __('Preview'),
-                })).on('click', e => {
+                const $button = $(
+                    templates.menuButton({
+                        id: `previewer${btnIdx}`,
+                        testId: `preview-test${btnIdx}`,
+                        icon: 'preview',
+                        label: translate(label) || __('Preview')
+                    })
+                ).on('click', e => {
                     e.preventDefault();
                     if (!$(e.currentTarget).hasClass('disabled')) {
                         creatorContext.trigger('preview', id, previewId);
@@ -156,12 +158,13 @@ define([
                 if (!Object.keys(options.labels).length) {
                     $button.attr('disabled', true).addClass('disabled');
                 }
-                $menu.append($button)
+                $menu.append($button);
                 previewId++;
                 return $button;
-            }
-            const previewButtons = options.providers ? options.providers.map(createPreviewButton) : [createPreviewButton()];
-
+            };
+            const previewButtons = options.providers
+                ? options.providers.map(createPreviewButton)
+                : [createPreviewButton()];
 
             const isTestContainsItems = () => {
                 if ($container.find('.test-content').find('.itemref').length) {
@@ -287,7 +290,9 @@ define([
                 if (creatorContext.isTestHasErrors()) {
                     event.preventDefault();
                     feedback().warning(
-                        __('The test cannot be saved because it currently contains invalid settings.\nPlease fix the invalid settings and try again.')
+                        __(
+                            'The test cannot be saved because it currently contains invalid settings.\nPlease fix the invalid settings and try again.'
+                        )
                     );
                 } else {
                     creatorContext.trigger('save');
