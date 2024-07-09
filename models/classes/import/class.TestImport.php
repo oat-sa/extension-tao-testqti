@@ -63,7 +63,7 @@ class taoQtiTest_models_classes_import_TestImport implements
      */
     public function getForm()
     {
-        $form = new taoQtiTest_models_classes_import_TestImportForm([], $this->getFormOptions());
+        $form = new taoQtiTest_models_classes_import_TestImportForm();
 
         return $form->getForm();
     }
@@ -118,21 +118,6 @@ class taoQtiTest_models_classes_import_TestImport implements
                 TestImportForm::ITEM_CLASS_DESTINATION_FIELD
             )
         ];
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagChecker
-    {
-        return $this->serviceLocator->getContainer()->get(FeatureFlagChecker::class);
-    }
-
-    private function getFormOptions(): array
-    {
-        $options = [];
-        if (!$this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
-            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::METADATA_FIELD;
-            $options[TestImportForm::DISABLED_FIELDS][] = TestImportForm::ITEM_CLASS_DESTINATION_FIELD;
-        }
-        return $options;
     }
     private function getUploadService()
     {
