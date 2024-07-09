@@ -177,12 +177,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
 
-        if ($this->getFeatureFlagChecker()->isEnabled(MetadataLomService::FEATURE_FLAG)) {
-            $this->genericLomOntologyExtractor()->extract(
-                array_merge([$this->getItem()], $this->getItems()),
-                $this->getManifest()
-            );
-        }
+        $this->genericLomOntologyExtractor()->extract(
+            array_merge([$this->getItem()], $this->getItems()),
+            $this->getManifest()
+        );
 
         // 4. Persist manifest in archive.
         $this->getZip()->addFromString('imsmanifest.xml', $this->getManifest()->saveXML());
@@ -364,10 +362,5 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
     {
         return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagChecker
-    {
-        return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
 }
