@@ -19,17 +19,11 @@
 <!-- test editor  -->
     <section class="test-creator-test test-creator-area test-creator-content">
         <div class="action-bar plain content-action-bar horizontal-action-bar">
-            <ul class="action-group plain clearfix authoring-back-box item-editor-menu">
+            <ul class="test-editor-menu action-group plain clearfix authoring-back-box item-editor-menu">
                 <li id="saver" class="btn-info small" data-testid="save-test">
                     <span class="li-inner">
                         <span class="icon-save"></span>
                         <?=__('Save')?>
-                    </span>
-                </li>
-                <li id="previewer" class="btn-info small" data-testid="preview-test">
-                    <span class="li-inner">
-                        <span class="icon-preview"></span>
-                        <?=__('Preview')?>
                     </span>
                 </li>
             </ul>
