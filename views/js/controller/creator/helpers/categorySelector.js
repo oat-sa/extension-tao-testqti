@@ -28,11 +28,12 @@ define([
     'lodash',
     'i18n',
     'core/eventifier',
+    'ui/dialog/confirm',
     'ui/tooltip',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'select2'
-], function ($, _, __, eventifier, tooltip, templates, featureVisibility) {
+], function ($, _, __, eventifier, confirmDialog, tooltip, templates, featureVisibility) {
     'use strict';
 
     let allPresets = [];
@@ -109,6 +110,7 @@ define([
                 $customCategoriesSelect
                     .select2({
                         width: '100%',
+                        containerCssClass: 'custom-categories',
                         tags: customCategories,
                         multiple: true,
                         tokenSeparators: [',', ' ', ';'],
@@ -118,6 +120,17 @@ define([
                         maximumInputLength: 32
                     })
                     .on('change', () => this.updateCategories());
+
+                // when clicking on a partial category, ask the user if it wants to apply it to all items
+                $container.find('.custom-categories').on('click', '.partial', e => {
+                    const $choice = $(e.target).closest('.select2-search-choice');
+                    const tag = $choice.text().trim();
+
+                    confirmDialog(__('Do you want to apply the category "%s" to all included items?', tag), () => {
+                        $choice.removeClass('partial');
+                        this.updateCategories();
+                    });
+                });
 
                 // enable help tooltips
                 tooltip.lookup($container);

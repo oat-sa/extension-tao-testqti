@@ -199,6 +199,47 @@ define([
         assert.equal($customCategories.eq(2).hasClass('partial'), true, 'custom2 is indeterminate');
     });
 
+    QUnit.test('The user can propagate a state by clicking on a category', function (assert) {
+        var $container = $('#qunit-fixture'),
+            categorySelector = categorySelectorFactory($container),
+            selected = [
+                'x-tao-option-preset1-1', // use the alternative category
+                'x-tao-option-preset1-3', // use the alternative category
+                'x-tao-option-preset2.3',
+                'custom1',
+                'custom3'
+            ],
+            indeterminate = ['x-tao-option-preset1.2', 'x-tao-option-preset2.2', 'custom2'],
+            $customCategories;
+
+        assert.expect(13);
+
+        categorySelector.createForm();
+        categorySelector.updateFormState(selected, indeterminate);
+
+        $customCategories = $container.find('.select2-search-choice');
+        assert.equal($customCategories.eq(0).text().trim(), 'custom1', 'custom1 has been rendered');
+        assert.equal($customCategories.eq(0).hasClass('partial'), false, 'custom1 is NOT indeterminate');
+        assert.equal($customCategories.eq(1).text().trim(), 'custom3', 'custom3 has been rendered');
+        assert.equal($customCategories.eq(1).hasClass('partial'), false, 'custom3 is NOT indeterminate');
+        assert.equal($customCategories.eq(2).text().trim(), 'custom2', 'custom2 has been rendered');
+        assert.equal($customCategories.eq(2).hasClass('partial'), true, 'custom2 is indeterminate');
+
+        assert.equal($('.modal').length, 0, 'no modal has been rendered');
+
+        $customCategories.eq(2).click();
+        assert.equal($('.modal').length, 1, 'a modal has been rendered');
+        $('.modal .modal-close').click();
+        assert.equal($('.modal').length, 0, 'the modal has been closed');
+        assert.equal($customCategories.eq(2).hasClass('partial'), true, 'custom2 is indeterminate');
+
+        $customCategories.eq(2).click();
+        assert.equal($('.modal').length, 1, 'a modal has been rendered');
+        $('.modal button.ok').click();
+        assert.equal($('.modal').length, 0, 'the modal has been closed');
+        assert.equal($customCategories.eq(2).hasClass('partial'), false, 'custom2 is NOT indeterminate');
+    });
+
     QUnit.test('Transmit the correct state following user selection', function(assert) {
         var ready = assert.async();
         var $container = $('#qunit-fixture'),
