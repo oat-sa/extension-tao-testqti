@@ -187,6 +187,12 @@
             }
         }
 
+        .custom-categories {
+            .partial {
+                cursor: pointer;
+            }
+        }
+
         .props {
             height: calc(100% - 65px);
             overflow-y: scroll;
