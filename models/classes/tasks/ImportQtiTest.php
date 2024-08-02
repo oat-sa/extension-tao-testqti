@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
- *
- *
+ * Copyright (c) 2016-2024 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\models\tasks;
@@ -52,7 +50,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     public const PARAM_ITEM_MUST_EXIST = 'item_must_exist';
     public const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
     public const PARAM_ITEM_CLASS_URI = 'item_class_uri';
-    public const PARAM_OVERWRITE_TEST = 'overwrite_test';
+    public const PARAM_OVERWRITE_TEST_URI = 'overwrite_test_uri';
 
     protected $service;
 
@@ -90,7 +88,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_ENABLE_VALIDATORS] ?? true,
             $params[self::PARAM_ITEM_MUST_EXIST] ?? false,
             $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] ?? false,
-            $params[self::PARAM_OVERWRITE_TEST] ?? false,
+            $params[self::PARAM_OVERWRITE_TEST_URI] ?? null,
             $params[self::PARAM_ITEM_CLASS_URI] ?? false
         );
 
@@ -123,7 +121,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $enableValidators = true,
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
-        $overwriteTest = false,
+        ?string $overwriteTestUri = null,
         ?string $itemClassUri = null
     ) {
         $action = new self();
@@ -143,7 +141,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_ENABLE_VALIDATORS => $enableValidators,
                 self::PARAM_ITEM_MUST_EXIST => $itemMustExist,
                 self::PARAM_ITEM_MUST_BE_OVERWRITTEN => $itemMustBeOverwritten,
-                self::PARAM_OVERWRITE_TEST => $overwriteTest,
+                self::PARAM_OVERWRITE_TEST_URI => $overwriteTestUri,
                 self::PARAM_ITEM_CLASS_URI => $itemClassUri,
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())

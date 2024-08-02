@@ -66,7 +66,7 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $enableMetadataValidators = true,
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
-        bool $overwriteTest = false,
+        ?string $overwriteTestUri = null,
         ?string $itemClassUri = null
     ) {
         try {
@@ -91,8 +91,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $importer->enableItemMustBeOverwritten();
             }
 
-            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTest, $itemClassUri);
+            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTestUri, $itemClassUri);
             helpers_TimeOutHelper::reset();
+
             return $report;
         } catch (common_exception_UserReadableException $e) {
             return new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
