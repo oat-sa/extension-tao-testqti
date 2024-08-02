@@ -38,7 +38,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private const PARAM_TEST_URI = 'testUri';
 
     private const ITEM_CLASS_URI = 'itemClassUri';
-    private const OVERWRITE_TEST = 'overwriteTest';
+    private const OVERWRITE_TEST_URI = 'overwriteTestUri';
 
     /**
      * @throws common_exception_NotImplemented
@@ -98,7 +98,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isMetadataValidatorsEnabled(),
                     $this->isItemMustExistEnabled(),
                     $this->isItemMustBeOverwrittenEnabled(),
-                    $this->isOverwriteTest(),
+                    $this->getOverwriteTestUri(),
                     $this->getItemClassUri()
                 );
 
@@ -117,9 +117,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 }
                 return $this->returnSuccess($data);
             } else {
-                throw new \common_exception_RestApi($report->getMessage());
+                throw new common_exception_RestApi($report->getMessage());
             }
-        } catch (\common_exception_RestApi $e) {
+        } catch (common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
     }
@@ -127,26 +127,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     protected function getItemClassUri(): ?string
     {
         return $this->getPostParameter(self::ITEM_CLASS_URI);
-    }
-
-    /**
-     * @throws common_exception_RestApi
-     */
-    protected function isOverwriteTest(): bool
-    {
-        $isOverwriteTest = $this->getPostParameter(self::OVERWRITE_TEST);
-
-        if (is_null($isOverwriteTest)) {
-            return false;
-        }
-
-        if (!in_array($isOverwriteTest, ['true', 'false'])) {
-            throw new \common_exception_RestApi(
-                'isOverwriteTest parameter should be boolean (true or false).'
-            );
-        }
-
-        return filter_var($isOverwriteTest, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
@@ -175,7 +155,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isMetadataValidatorsEnabled(),
                 $this->isItemMustExistEnabled(),
                 $this->isItemMustBeOverwrittenEnabled(),
-                $this->isOverwriteTest(),
+                $this->getOverwriteTestUri(),
                 $this->getItemClassUri()
             );
 
@@ -191,7 +171,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             }
 
             return $this->returnSuccess($result);
-        } catch (\common_exception_RestApi $e) {
+        } catch (common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
     }
@@ -295,16 +275,37 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         $mimeType = tao_helpers_File::getMimeType($fileData['tmp_name']);
 
         if (!in_array($mimeType, self::$accepted_types)) {
-            throw new \common_exception_RestApi(__('Wrong file mime type'));
+            throw new common_exception_RestApi(__('Wrong file mime type'));
         }
 
         return $fileData;
     }
 
     /**
+     * @return string|null
+     * @throws common_exception_RestApi
+     */
+    private function getOverwriteTestUri(): ?string
+    {
+        $overwriteTestUri = $this->getPostParameter(self::OVERWRITE_TEST_URI);
+
+        if (is_null($overwriteTestUri)) {
+            return null;
+        }
+
+        if (!is_string($overwriteTestUri)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::OVERWRITE_TEST_URI)
+            );
+        }
+
+        return $overwriteTestUri;
+    }
+
+    /**
      * Get class instance to import test
-     * @throws \common_exception_RestApi
      * @return \core_kernel_classes_Class
+     *@throws common_exception_RestApi
      */
     private function getTestClass()
     {
