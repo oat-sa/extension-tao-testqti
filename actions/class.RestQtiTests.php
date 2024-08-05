@@ -35,9 +35,17 @@ use Slim\Http\StatusCode;
 class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
     public const PARAM_PACKAGE_NAME = 'qtiPackage';
+
     private const PARAM_TEST_URI = 'testUri';
 
     private const ITEM_CLASS_URI = 'itemClassUri';
+
+    /**
+     * @deprecated Use taoQtiTest_actions_RestQtiTests::OVERWRITE_TEST_URI instead with the URI of the test to be
+     *             replaced
+     */
+    private const OVERWRITE_TEST = 'overwriteTest';
+
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
 
     /**
@@ -98,8 +106,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isMetadataValidatorsEnabled(),
                     $this->isItemMustExistEnabled(),
                     $this->isItemMustBeOverwrittenEnabled(),
+                    $this->isOverwriteTest(),
+                    $this->getItemClassUri(),
                     $this->getOverwriteTestUri(),
-                    $this->getItemClassUri()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -130,6 +139,26 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
+     * @throws common_exception_RestApi
+     */
+    protected function isOverwriteTest(): bool
+    {
+        $isOverwriteTest = $this->getPostParameter(self::OVERWRITE_TEST);
+
+        if (is_null($isOverwriteTest)) {
+            return false;
+        }
+
+        if (!in_array($isOverwriteTest, ['true', 'false'])) {
+            throw new \common_exception_RestApi(
+                'isOverwriteTest parameter should be boolean (true or false).'
+            );
+        }
+
+        return filter_var($isOverwriteTest, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
      * @inheritdoc
      */
     protected function getTaskName()
@@ -155,8 +184,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isMetadataValidatorsEnabled(),
                 $this->isItemMustExistEnabled(),
                 $this->isItemMustBeOverwrittenEnabled(),
-                $this->getOverwriteTestUri(),
-                $this->getItemClassUri()
+                $this->isOverwriteTest(),
+                $this->getItemClassUri(),
+                $this->getOverwriteTestUri()
             );
 
             $result = [

@@ -66,8 +66,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $enableMetadataValidators = true,
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
-        ?string $overwriteTestUri = null,
-        ?string $itemClassUri = null
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null,
+        ?string $overwriteTestUri = null
     ) {
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -91,7 +92,13 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $importer->enableItemMustBeOverwritten();
             }
 
-            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTestUri, $itemClassUri);
+            $report = $importer->importMultipleTests(
+                $class,
+                $uploadedFile,
+                $overwriteTest,
+                $itemClassUri,
+                $overwriteTestUri
+            );
             helpers_TimeOutHelper::reset();
 
             return $report;

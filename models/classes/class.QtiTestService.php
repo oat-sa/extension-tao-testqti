@@ -354,9 +354,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
         $file,
-        ?string $overwriteTestUri = null,
+        bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        array $form = []
+        array $form = [],
+        ?string $overwriteTestUri = null
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -423,9 +424,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $qtiManifestParser,
                                 $folder,
                                 $alreadyImportedQtiResources,
-                                $overwriteTestUri,
+                                $overwriteTest,
                                 $itemClassUri,
-                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false
+                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false,
+                                $overwriteTestUri,
                             );
                             $report->add($importTestReport);
 
@@ -544,9 +546,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         taoQtiTest_models_classes_ManifestParser $manifestParser,
         $folder,
         array $ignoreQtiResources = [],
-        ?string $overwriteTestUri = null,
+        bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        bool $importMetadata = false
+        bool $importMetadata = false,
+        ?string $overwriteTestUri = null
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -623,8 +626,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $testDefinition->includeAssessmentSectionRefs(true);
                 $testLabel = $testDefinition->getDocumentComponent()->getTitle();
 
-                if ($overwriteTestUri) {
+                if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
+
                     /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
                     foreach ($reportCtx->testMetadata as $singleMetadata) {
                         if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
@@ -632,8 +636,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->getTestService()->deleteTest(new core_kernel_classes_Resource($overwriteTestUri));
                     $this->deleteItemSubclassesByLabel($itemParentClass, $itemsClassLabel);
+                    $overwriteTestUri
+                        ? $this->getTestService()->deleteTest(new core_kernel_classes_Resource($overwriteTestUri))
+                        : $this->deleteTestsFromClassByLabel($testLabel, $testClass);
                 }
 
                 $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
@@ -904,6 +910,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return $report;
+    }
+
+    /**
+     * @throws common_Exception
+     */
+    private function deleteTestsFromClassByLabel(string $testLabel, core_kernel_classes_Resource $testClass): void
+    {
+        $testService = $this->getTestService();
+
+        foreach ($testClass->getInstances() as $testInstance) {
+            if ($testInstance->getLabel() === $testLabel) {
+                $testService->deleteTest($testInstance);
+            }
+        }
     }
 
     /**

@@ -43,8 +43,9 @@ class QtiTestImporter extends AbstractTestImporter
      * @param bool $enableValidators
      * @param bool $itemMustExist
      * @param bool $itemMustBeOverwritten
-     * @param string|null $overwriteTestUri
+     * @param bool $overwriteTest
      * @param string|null $itemClassUri
+     * @param string|null $overwriteTestUri
      * @return common_report_Report
      */
     public function import(
@@ -54,8 +55,9 @@ class QtiTestImporter extends AbstractTestImporter
         bool $enableValidators = true,
         bool $itemMustExist = false,
         bool $itemMustBeOverwritten = false,
-        ?string $overwriteTestUri = null,
-        ?string $itemClassUri = null
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null,
+        ?string $overwriteTestUri = null
     ) {
         return taoQtiTest_models_classes_CrudQtiTestsService::singleton()->importQtiTest(
             $file,
@@ -64,8 +66,9 @@ class QtiTestImporter extends AbstractTestImporter
             $enableValidators,
             $itemMustExist,
             $itemMustBeOverwritten,
-            $overwriteTestUri,
-            $itemClassUri
+            $overwriteTest,
+            $itemClassUri,
+            $overwriteTestUri
         );
     }
 }
