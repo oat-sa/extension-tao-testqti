@@ -70,7 +70,7 @@
     "oat-sa/extension-tao-test" : ">=16.0.0",
     "oat-sa/extension-tao-delivery" : ">=15.0.0",
     "oat-sa/extension-tao-outcome" : ">=13.0.0",
-    "league/flysystem": "~1.0",
+    "league/flysystem": "^2.0",
     "slim/slim": "^3.0"
   },
   "autoload": {
