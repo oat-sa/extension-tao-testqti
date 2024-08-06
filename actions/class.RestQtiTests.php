@@ -46,6 +46,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private const OVERWRITE_TEST = 'overwriteTest';
 
+    private const PACKAGE_LOCALE = 'packageLocale';
+    private const PACKAGE_LABEL = 'packageLabel';
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
 
     /**
@@ -108,6 +110,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isItemMustBeOverwrittenEnabled(),
                     $this->isOverwriteTest(),
                     $this->getItemClassUri(),
+                    $this->getPackageLocale(),
+                    $this->getPackageLabel(),
                     $this->getOverwriteTestUri(),
                 );
 
@@ -186,6 +190,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isItemMustBeOverwrittenEnabled(),
                 $this->isOverwriteTest(),
                 $this->getItemClassUri(),
+                $this->getPackageLocale(),
+                $this->getPackageLabel(),
                 $this->getOverwriteTestUri()
             );
 
@@ -264,27 +270,22 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * If parent class parameter is an uri of valid test class, new class will be created under it
      * If not parent class parameter is provided, class will be created under root class
      * Comment parameter is not mandatory, used to describe new created class
-     *
-     * @return \core_kernel_classes_Class
      */
-    public function createClass()
+    public function createClass(): void
     {
         try {
-            $class = $this->createSubClass(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+            $class = $this->createSubClass(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
 
-            $result = [
+            $this->returnSuccess([
                 'message' => __('Class successfully created.'),
                 'class-uri' => $class->getUri(),
-            ];
-
-            $this->returnSuccess($result);
-        } catch (\common_exception_ClassAlreadyExists $e) {
-            $result = [
+            ]);
+        } catch (common_exception_ClassAlreadyExists $e) {
+            $this->returnSuccess([
                 'message' => $e->getMessage(),
                 'class-uri' => $e->getClass()->getUri(),
-            ];
-            $this->returnSuccess($result);
-        } catch (\Exception $e) {
+            ]);
+        } catch (Exception $e) {
             $this->returnFailure($e);
         }
     }
@@ -312,6 +313,44 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
+     * @return string
+     * @throws common_exception_RestApi
+     */
+    private function getPackageLocale(): string
+    {
+        $packageLocale = $this->getPostParameter(self::PACKAGE_LOCALE, '');
+
+        if (!is_string($packageLocale)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::PACKAGE_LOCALE)
+            );
+        }
+
+        return $packageLocale;
+    }
+
+    /**
+     * @return string
+     * @throws common_exception_RestApi
+     */
+    private function getPackageLabel(): ?string
+    {
+        $packageLabel = $this->getPostParameter(self::PACKAGE_LABEL);
+
+        if (!$packageLabel) {
+            return null;
+        }
+
+        if (!is_string($packageLabel)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::PACKAGE_LABEL)
+            );
+        }
+
+        return $packageLabel;
+    }
+
+    /**
      * @return string|null
      * @throws common_exception_RestApi
      */
@@ -334,12 +373,12 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     /**
      * Get class instance to import test
-     * @return \core_kernel_classes_Class
+     * @return core_kernel_classes_Class
      *@throws common_exception_RestApi
      */
     private function getTestClass()
     {
-        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+        return $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
     }
 
     /**

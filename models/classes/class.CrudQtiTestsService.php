@@ -68,6 +68,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
+        ?string $locale = null,
+        ?string $label = null,
         ?string $overwriteTestUri = null
     ) {
         try {
@@ -97,6 +99,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $uploadedFile,
                 $overwriteTest,
                 $itemClassUri,
+                [],
+                $locale,
+                $label,
                 $overwriteTestUri
             );
             helpers_TimeOutHelper::reset();
