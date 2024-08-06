@@ -57,6 +57,8 @@ class QtiTestImporter extends AbstractTestImporter
         bool $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
+        ?string $locale = null,
+        ?string $label = null,
         ?string $overwriteTestUri = null
     ) {
         return taoQtiTest_models_classes_CrudQtiTestsService::singleton()->importQtiTest(
@@ -68,6 +70,8 @@ class QtiTestImporter extends AbstractTestImporter
             $itemMustBeOverwritten,
             $overwriteTest,
             $itemClassUri,
+            $locale,
+            $label,
             $overwriteTestUri
         );
     }
