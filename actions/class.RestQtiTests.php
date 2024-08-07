@@ -367,11 +367,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     {
         $overwriteTestUri = $this->getPostParameter(self::OVERWRITE_TEST_URI);
 
-        if (is_null($overwriteTestUri)) {
-            return null;
-        }
-
-        if (!is_string($overwriteTestUri)) {
+        if (!is_null($overwriteTestUri) && !is_string($overwriteTestUri)) {
             throw new common_exception_RestApi(
                 sprintf('%s parameter should be string', self::OVERWRITE_TEST_URI)
             );
