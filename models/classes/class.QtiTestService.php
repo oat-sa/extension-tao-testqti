@@ -806,8 +806,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $testResource->setLabel($newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle());
-                            $targetItemClass->setLabel($newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle());
+                            $testDefinitionTitle = $testDefinition->getDocumentComponent()->getTitle();
+                            $testResource->setLabel($newPackageLabel ?? $testDefinitionTitle);
+                            $targetItemClass->setLabel($newPackageLabel ?? $testDefinitionTitle);
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
