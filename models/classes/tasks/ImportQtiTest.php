@@ -55,8 +55,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      *             test to be replaced
      */
     public const PARAM_OVERWRITE_TEST = 'overwrite_test';
-    public const PARAM_LOCALE = 'locale';
-    public const PARAM_LABEL = 'label';
+    public const PARAM_NEW_PACKAGE_LABEL = 'new_package_label';
     public const PARAM_OVERWRITE_TEST_URI = 'overwrite_test_uri';
 
     protected $service;
@@ -97,8 +96,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] ?? false,
             $params[self::PARAM_OVERWRITE_TEST] ?? false,
             $params[self::PARAM_ITEM_CLASS_URI] ?? false,
-            $params[self::PARAM_LOCALE] ?? null,
-            $params[self::PARAM_LABEL] ?? null,
+            $params[self::PARAM_NEW_PACKAGE_LABEL] ?? null,
             $params[self::PARAM_OVERWRITE_TEST_URI] ?? null,
         );
 
@@ -133,8 +131,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        ?string $locale = null,
-        ?string $label = null,
+        ?string $newPackageLabel = null,
         ?string $overwriteTestUri = null
     ) {
         $action = new self();
@@ -156,8 +153,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_ITEM_MUST_BE_OVERWRITTEN => $itemMustBeOverwritten,
                 self::PARAM_OVERWRITE_TEST => $overwriteTest,
                 self::PARAM_ITEM_CLASS_URI => $itemClassUri,
-                self::PARAM_LOCALE => $locale,
-                self::PARAM_LABEL => $label,
+                self::PARAM_NEW_PACKAGE_LABEL => $newPackageLabel,
                 self::PARAM_OVERWRITE_TEST_URI => $overwriteTestUri,
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())

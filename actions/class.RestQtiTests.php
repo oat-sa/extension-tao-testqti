@@ -46,8 +46,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private const OVERWRITE_TEST = 'overwriteTest';
 
-    private const PACKAGE_LOCALE = 'packageLocale';
-    private const PACKAGE_LABEL = 'packageLabel';
+    private const SUBCLASS_LABEL = 'subclassLabel';
+    private const NEW_PACKAGE_LABEL = 'newPackageLabel';
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
 
     /**
@@ -110,8 +110,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isItemMustBeOverwrittenEnabled(),
                     $this->isOverwriteTest(),
                     $this->getItemClassUri(),
-                    $this->getPackageLocale(),
-                    $this->getPackageLabel(),
+                    $this->getNewPackageLabel(),
                     $this->getOverwriteTestUri(),
                 );
 
@@ -139,7 +138,18 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     protected function getItemClassUri(): ?string
     {
-        return $this->getPostParameter(self::ITEM_CLASS_URI);
+        $itemClassUri = $this->getPostParameter(self::ITEM_CLASS_URI);
+        $subclassLabel = $this->getSubclassLabel();
+
+        if ($subclassLabel) {
+            foreach ($this->getClass($itemClassUri)->getSubClasses() as $subclass) {
+                if ($subclass === $subclassLabel) {
+                    $itemClassUri = $subclass->getUri();
+                }
+            }
+        }
+
+        return $itemClassUri;
     }
 
     /**
@@ -190,8 +200,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isItemMustBeOverwrittenEnabled(),
                 $this->isOverwriteTest(),
                 $this->getItemClassUri(),
-                $this->getPackageLocale(),
-                $this->getPackageLabel(),
+                $this->getNewPackageLabel(),
                 $this->getOverwriteTestUri()
             );
 
@@ -316,13 +325,13 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * @return string
      * @throws common_exception_RestApi
      */
-    private function getPackageLocale(): string
+    private function getSubclassLabel(): string
     {
-        $packageLocale = $this->getPostParameter(self::PACKAGE_LOCALE, '');
+        $packageLocale = $this->getPostParameter(self::SUBCLASS_LABEL, '');
 
         if (!is_string($packageLocale)) {
             throw new common_exception_RestApi(
-                sprintf('%s parameter should be string', self::PACKAGE_LOCALE)
+                sprintf('%s parameter should be string', self::SUBCLASS_LABEL)
             );
         }
 
@@ -333,9 +342,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * @return string
      * @throws common_exception_RestApi
      */
-    private function getPackageLabel(): ?string
+    private function getNewPackageLabel(): ?string
     {
-        $packageLabel = $this->getPostParameter(self::PACKAGE_LABEL);
+        $packageLabel = $this->getPostParameter(self::NEW_PACKAGE_LABEL);
 
         if (!$packageLabel) {
             return null;
@@ -343,7 +352,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
         if (!is_string($packageLabel)) {
             throw new common_exception_RestApi(
-                sprintf('%s parameter should be string', self::PACKAGE_LABEL)
+                sprintf('%s parameter should be string', self::NEW_PACKAGE_LABEL)
             );
         }
 
@@ -373,12 +382,23 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     /**
      * Get class instance to import test
-     * @return core_kernel_classes_Class
-     *@throws common_exception_RestApi
+     *
+     * @throws common_exception_RestApi
      */
-    private function getTestClass()
+    private function getTestClass(): core_kernel_classes_Class
     {
-        return $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+        $testClass = $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+        $subclassLabel = $this->getSubclassLabel();
+
+        if ($subclassLabel) {
+            foreach ($testClass->getSubClasses() as $subClass) {
+                if ($subClass->getLabel() === $subclassLabel) {
+                    $testClass = $subClass;
+                }
+            }
+        }
+
+        return $testClass;
     }
 
     /**
