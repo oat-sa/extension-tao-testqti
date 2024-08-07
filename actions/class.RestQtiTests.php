@@ -319,20 +319,20 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     }
 
     /**
-     * @return string
+     * @return string|null
      * @throws common_exception_RestApi
      */
-    private function getSubclassLabel(): string
+    private function getSubclassLabel(): ?string
     {
-        $packageLocale = $this->getPostParameter(self::SUBCLASS_LABEL, '');
+        $subclassLabel = $this->getPostParameter(self::SUBCLASS_LABEL);
 
-        if (!is_string($packageLocale)) {
+        if ($subclassLabel !== null && !is_string($subclassLabel)) {
             throw new common_exception_RestApi(
                 sprintf('%s parameter should be string', self::SUBCLASS_LABEL)
             );
         }
 
-        return $packageLocale;
+        return $subclassLabel;
     }
 
     /**
@@ -343,7 +343,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     {
         $overwriteTestUri = $this->getPostParameter(self::OVERWRITE_TEST_URI);
 
-        if (!is_null($overwriteTestUri) && !is_string($overwriteTestUri)) {
+        if ($overwriteTestUri !== null && !is_string($overwriteTestUri)) {
             throw new common_exception_RestApi(
                 sprintf('%s parameter should be string', self::OVERWRITE_TEST_URI)
             );
