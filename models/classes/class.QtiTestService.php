@@ -357,8 +357,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         array $form = [],
-        ?string $locale = null,
-        ?string $label = null,
+        ?string $newPackageLabel = null,
         ?string $overwriteTestUri = null
     ) {
         $testClass = $targetClass;
@@ -429,8 +428,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $overwriteTest,
                                 $itemClassUri,
                                 !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false,
-                                $locale,
-                                $label,
+                                $newPackageLabel,
                                 $overwriteTestUri
                             );
                             $report->add($importTestReport);
@@ -553,8 +551,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         bool $importMetadata = false,
-        ?string $locale = null,
-        ?string $label = null,
+        ?string $newPackageLabel = null,
         ?string $overwriteTestUri = null
     ) {
         /** @var ImportService $itemImportService */
@@ -566,20 +563,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
-
-        if ($locale) {
-            foreach ($testClass->getSubClasses() as $subClass) {
-                if ($subClass->getLabel() === $locale) {
-                    $testClass = $subClass;
-                }
-            }
-
-            foreach ($itemParentClass->getSubClasses() as $subClass) {
-                if ($subClass->getLabel() === $locale) {
-                    $itemParentClass = $subClass;
-                }
-            }
-        }
 
         $testResource = $this->createInstance($testClass, self::IN_PROGRESS_LABEL);
         $qtiTestModelResource = $this->getResource(self::INSTANCE_TEST_MODEL_QTI);
@@ -643,12 +626,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $label ?? $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
 
-                    if (!$label) {
+                    if (!$newPackageLabel) {
                         /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $singleMetadata */
                         foreach ($reportCtx->testMetadata as $singleMetadata) {
                             if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
@@ -657,7 +640,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         }
                     }
 
-                    $this->deleteItemSubclassesByLabel($itemParentClass, $itemsClassLabel, $locale);
+                    $this->deleteItemSubclassesByLabel($itemParentClass, $itemsClassLabel);
                     $overwriteTestUri
                         ? $this->getTestService()->deleteTest(new core_kernel_classes_Resource($overwriteTestUri))
                         : $this->deleteTestsFromClassByLabel($testLabel, $testClass);
@@ -823,8 +806,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $testResource->setLabel($label ?? $testDefinition->getDocumentComponent()->getTitle());
-                            $targetItemClass->setLabel($label ?? $testDefinition->getDocumentComponent()->getTitle());
+                            $testResource->setLabel($newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle());
+                            $targetItemClass->setLabel($newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle());
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
@@ -1511,12 +1494,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 
-    private function deleteItemSubclassesByLabel(core_kernel_classes_Class $root, string $label, ?string $locale): void
+    private function deleteItemSubclassesByLabel(core_kernel_classes_Class $root, string $label): void
     {
         $itemTreeService = $this->getItemTreeService();
 
         foreach ($root->getSubClasses() as $subClass) {
-            if (!in_array($subClass->getLabel(), [$label, $locale], true)) {
+            if ($subClass->getLabel() !== $label) {
                 continue;
             }
 
