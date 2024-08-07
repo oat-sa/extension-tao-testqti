@@ -357,7 +357,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         array $form = [],
-        ?string $newPackageLabel = null,
         ?string $overwriteTestUri = null
     ) {
         $testClass = $targetClass;
@@ -428,7 +427,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $overwriteTest,
                                 $itemClassUri,
                                 !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false,
-                                $newPackageLabel,
                                 $overwriteTestUri
                             );
                             $report->add($importTestReport);
@@ -551,7 +549,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         bool $importMetadata = false,
-        ?string $newPackageLabel = null,
         ?string $overwriteTestUri = null
     ) {
         /** @var ImportService $itemImportService */
@@ -626,17 +623,15 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $newPackageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $testDefinition->getDocumentComponent()->getTitle();
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
 
-                    if (!$newPackageLabel) {
-                        /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $singleMetadata */
-                        foreach ($reportCtx->testMetadata as $singleMetadata) {
-                            if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
-                                $testLabel = $singleMetadata->getValue();
-                            }
+                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $singleMetadata */
+                    foreach ($reportCtx->testMetadata as $singleMetadata) {
+                        if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
+                            $testLabel = $singleMetadata->getValue();
                         }
                     }
 
@@ -806,9 +801,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $testDefinitionTitle = $testDefinition->getDocumentComponent()->getTitle();
-                            $testResource->setLabel($newPackageLabel ?? $testDefinitionTitle);
-                            $targetItemClass->setLabel($newPackageLabel ?? $testDefinitionTitle);
+                            $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            $targetItemClass->setLabel($reportCtx->itemClass->getLabel());
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
