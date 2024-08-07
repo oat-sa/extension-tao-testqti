@@ -47,7 +47,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
     private const OVERWRITE_TEST = 'overwriteTest';
 
     private const SUBCLASS_LABEL = 'subclassLabel';
-    private const NEW_PACKAGE_LABEL = 'newPackageLabel';
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
 
     /**
@@ -110,8 +109,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isItemMustBeOverwrittenEnabled(),
                     $this->isOverwriteTest(),
                     $this->getItemClassUri(),
-                    $this->getNewPackageLabel(),
-                    $this->getOverwriteTestUri(),
+                    $this->getOverwriteTestUri()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -143,7 +141,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
         if ($subclassLabel) {
             foreach ($this->getClass($itemClassUri)->getSubClasses() as $subclass) {
-                if ($subclass === $subclassLabel) {
+                if ($subclass->getLabel() === $subclassLabel) {
                     $itemClassUri = $subclass->getUri();
                 }
             }
@@ -200,7 +198,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isItemMustBeOverwrittenEnabled(),
                 $this->isOverwriteTest(),
                 $this->getItemClassUri(),
-                $this->getNewPackageLabel(),
                 $this->getOverwriteTestUri()
             );
 
@@ -336,27 +333,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         }
 
         return $packageLocale;
-    }
-
-    /**
-     * @return string
-     * @throws common_exception_RestApi
-     */
-    private function getNewPackageLabel(): ?string
-    {
-        $packageLabel = $this->getPostParameter(self::NEW_PACKAGE_LABEL);
-
-        if (!$packageLabel) {
-            return null;
-        }
-
-        if (!is_string($packageLabel)) {
-            throw new common_exception_RestApi(
-                sprintf('%s parameter should be string', self::NEW_PACKAGE_LABEL)
-            );
-        }
-
-        return $packageLabel;
     }
 
     /**
