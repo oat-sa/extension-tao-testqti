@@ -48,6 +48,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     private const SUBCLASS_LABEL = 'subclassLabel';
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
+    private const PACKAGE_LABEL = 'packageLabel';
 
     /**
      * @throws common_exception_NotImplemented
@@ -109,7 +110,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isItemMustBeOverwrittenEnabled(),
                     $this->isOverwriteTest(),
                     $this->getItemClassUri(),
-                    $this->getOverwriteTestUri()
+                    $this->getOverwriteTestUri(),
+                    $this->getPackageLabel()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -198,7 +200,8 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isItemMustBeOverwrittenEnabled(),
                 $this->isOverwriteTest(),
                 $this->getItemClassUri(),
-                $this->getOverwriteTestUri()
+                $this->getOverwriteTestUri(),
+                $this->getPackageLabel()
             );
 
             $result = [
@@ -350,6 +353,23 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         }
 
         return $overwriteTestUri;
+    }
+
+    /**
+     * @return string|null
+     * @throws common_exception_RestApi
+     */
+    private function getPackageLabel(): ?string
+    {
+        $packageLabel = $this->getPostParameter(self::PACKAGE_LABEL);
+
+        if ($packageLabel !== null && !is_string($packageLabel)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::PACKAGE_LABEL)
+            );
+        }
+
+        return $packageLabel;
     }
 
     /**

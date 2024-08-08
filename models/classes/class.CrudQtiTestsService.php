@@ -68,7 +68,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        ?string $overwriteTestUri = null
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -98,7 +99,8 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $overwriteTest,
                 $itemClassUri,
                 [],
-                $overwriteTestUri
+                $overwriteTestUri,
+                $packageLabel
             );
             helpers_TimeOutHelper::reset();
 

@@ -357,7 +357,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         array $form = [],
-        ?string $overwriteTestUri = null
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -427,7 +428,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $overwriteTest,
                                 $itemClassUri,
                                 !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false,
-                                $overwriteTestUri
+                                $overwriteTestUri,
+                                $packageLabel
                             );
                             $report->add($importTestReport);
 
@@ -549,7 +551,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
         bool $importMetadata = false,
-        ?string $overwriteTestUri = null
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
@@ -623,7 +626,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $packageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
@@ -801,8 +804,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
-                            $targetItemClass->setLabel($reportCtx->itemClass->getLabel());
+                            $definitionTitle = $testDefinition->getDocumentComponent()->getTitle();
+                            $testResource->setLabel($packageLabel ?? $definitionTitle);
+                            $targetItemClass->setLabel($packageLabel ?? $definitionTitle);
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
