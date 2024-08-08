@@ -55,6 +55,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
      */
     public const PARAM_OVERWRITE_TEST = 'overwrite_test';
     public const PARAM_OVERWRITE_TEST_URI = 'overwrite_test_uri';
+    public const PARAM_PACKAGE_LABEL = 'package_label';
 
     protected $service;
 
@@ -95,6 +96,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_OVERWRITE_TEST] ?? false,
             $params[self::PARAM_ITEM_CLASS_URI] ?? false,
             $params[self::PARAM_OVERWRITE_TEST_URI] ?? null,
+            $params[self::PARAM_PACKAGE_LABEL] ?? null,
         );
 
         return $report;
@@ -128,7 +130,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        ?string $overwriteTestUri = null
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -150,6 +153,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_OVERWRITE_TEST => $overwriteTest,
                 self::PARAM_ITEM_CLASS_URI => $itemClassUri,
                 self::PARAM_OVERWRITE_TEST_URI => $overwriteTestUri,
+                self::PARAM_PACKAGE_LABEL => $packageLabel,
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())
         );
