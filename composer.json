@@ -60,11 +60,11 @@
   "require": {
     "ext-dom": "*",
     "ext-zip": "*",
-    "oat-sa/lib-test-cat": "2.3.7",
+    "oat-sa/lib-test-cat": "2.4.0",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.28.3",
     "oat-sa/generis": ">=15.36.4",
-    "oat-sa/tao-core": ">=54.14.7",
+    "oat-sa/tao-core": ">=54.21.0",
     "oat-sa/extension-tao-item" : ">=12.1.0",
     "oat-sa/extension-tao-itemqti" : ">=30.12.0",
     "oat-sa/extension-tao-test" : ">=16.0.0",
