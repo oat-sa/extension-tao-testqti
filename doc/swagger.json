@@ -212,9 +212,23 @@
                         "required": false
                     },
                     {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Deprecated: use `overwriteTestUri` parameter with the URI of the test to be replaced. Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
                         "name": "overwriteTestUri",
                         "in": "formData",
                         "description": "Test URI, that can be used to replace existing test and avoid creating a new one with the same title and class",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "packageLabel",
+                        "in": "formData",
+                        "description": "Label for items folder and test label, which will be used instead of QTI test title",
                         "type": "string",
                         "required": false
                     },
@@ -351,9 +365,23 @@
                         "required": false
                     },
                     {
+                        "name": "overwriteTest",
+                        "in": "formData",
+                        "description": "Deprecated: use `overwriteTestUri` parameter with the URI of the test to be replaced. Flag that indicates if already existed tests and all related items are removed in a case they have the same title and class as uploaded tests. Can be used to replace existing test and avoid creating a new one with the same title and class. 'true' value counts as true, 'false' as false",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
                         "name": "overwriteTestUri",
                         "in": "formData",
                         "description": "Test URI, that can be used to replace existing test and avoid creating a new one with the same title and class",
+                        "type": "string",
+                        "required": false
+                    },
+                    {
+                        "name": "packageLabel",
+                        "in": "formData",
+                        "description": "Label for items folder and test label, which will be used instead of QTI test title",
                         "type": "string",
                         "required": false
                     },
