@@ -356,7 +356,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $file,
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        array $form = []
+        array $form = [],
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         $testClass = $targetClass;
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
@@ -425,7 +427,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $alreadyImportedQtiResources,
                                 $overwriteTest,
                                 $itemClassUri,
-                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false
+                                !empty($form[TestImportForm::METADATA_FORM_ELEMENT_NAME]) ?? false,
+                                $overwriteTestUri,
+                                $packageLabel
                             );
                             $report->add($importTestReport);
 
@@ -546,14 +550,20 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         array $ignoreQtiResources = [],
         bool $overwriteTest = false,
         ?string $itemClassUri = null,
-        bool $importMetadata = false
+        bool $importMetadata = false,
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
 
+        // The class where the items that belong to the test will be imported.
+        $itemParentClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
+
         // Create an RDFS resource in the knowledge base that will hold
         // the information about the imported QTI Test.
+
         $testResource = $this->createInstance($testClass, self::IN_PROGRESS_LABEL);
         $qtiTestModelResource = $this->getResource(self::INSTANCE_TEST_MODEL_QTI);
         $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
@@ -566,9 +576,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         // Create the report that will hold information about the import
         // of $qtiTestResource in TAO.
         $report = new common_report_Report(common_report_Report::TYPE_INFO);
-
-        // The class where the items that belong to the test will be imported.
-        $itemParentClass = $this->getClass($itemClassUri ?: TaoOntology::CLASS_URI_ITEM);
 
         // Load and validate the manifest
         $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($folder . 'imsmanifest.xml');
@@ -593,8 +600,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $reportCtx->itemQtiResources = [];
         $reportCtx->testMetadata = $metadataValues[$qtiTestResourceIdentifier] ?? [];
         $reportCtx->createdClasses = [];
-
-
 
         // 'uriResource' key is needed by javascript in tao/views/templates/form/import.tpl
         $reportCtx->uriResource = $testResource->getUri();
@@ -621,18 +626,22 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $packageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
 
-                if ($overwriteTest) {
+                if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
-                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $m */
+
+                    /** @var oat\taoQtiItem\model\qti\metadata\simple\SimpleMetadataValue $singleMetadata */
                     foreach ($reportCtx->testMetadata as $singleMetadata) {
                         if (($singleMetadata->getPath()[1] ?? '') === RDFS_LABEL) {
                             $testLabel = $singleMetadata->getValue();
                         }
                     }
 
-                    $this->deleteTestsFromClassByLabel($testLabel, $itemsClassLabel, $testClass, $itemParentClass);
+                    $this->deleteItemSubclassesByLabel($itemParentClass, $itemsClassLabel);
+                    $overwriteTestUri
+                        ? $this->getTestService()->deleteTest(new core_kernel_classes_Resource($overwriteTestUri))
+                        : $this->deleteTestsFromClassByLabel($testLabel, $testClass);
                 }
 
                 $targetItemClass = $itemParentClass->createSubClass(self::IN_PROGRESS_LABEL);
@@ -795,8 +804,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $testResource->setLabel($testDefinition->getDocumentComponent()->getTitle());
-                            $targetItemClass->setLabel($testDefinition->getDocumentComponent()->getTitle());
+                            $definitionTitle = $testDefinition->getDocumentComponent()->getTitle();
+                            $testResource->setLabel($packageLabel ?? $definitionTitle);
+                            $targetItemClass->setLabel($packageLabel ?? $definitionTitle);
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
@@ -908,15 +918,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     /**
      * @throws common_Exception
      */
-    private function deleteTestsFromClassByLabel(
-        string $testLabel,
-        string $itemsClassLabel,
-        core_kernel_classes_Resource $testClass,
-        core_kernel_classes_Class $itemClass
-    ): void {
+    private function deleteTestsFromClassByLabel(string $testLabel, core_kernel_classes_Resource $testClass): void
+    {
         $testService = $this->getTestService();
-
-        $this->deleteItemSubclassesByLabel($itemClass, $itemsClassLabel);
 
         foreach ($testClass->getInstances() as $testInstance) {
             if ($testInstance->getLabel() === $testLabel) {
@@ -1489,10 +1493,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $this->getSecureResourceService()->validatePermissions($ids, ['READ']);
     }
 
-    private function deleteItemSubclassesByLabel(
-        core_kernel_classes_Class $root,
-        string $label
-    ): void {
+    private function deleteItemSubclassesByLabel(core_kernel_classes_Class $root, string $label): void
+    {
         $itemTreeService = $this->getItemTreeService();
 
         foreach ($root->getSubClasses() as $subClass) {

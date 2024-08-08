@@ -19,6 +19,7 @@
  *
  */
 
+use oat\oatbox\log\LoggerAwareTrait;
 use oat\tao\model\TaoOntology;
 
 /**
@@ -32,6 +33,8 @@ use oat\tao\model\TaoOntology;
  */
 class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_CrudService
 {
+    use LoggerAwareTrait;
+
     /** (non-PHPdoc)
      * @see tao_models_classes_CrudSservice::getClassService()
      */
@@ -67,7 +70,9 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
         bool $overwriteTest = false,
-        ?string $itemClassUri = null
+        ?string $itemClassUri = null,
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         try {
             //The zip extraction is a long process that can exceed the 30s timeout
@@ -91,11 +96,39 @@ class taoQtiTest_models_classes_CrudQtiTestsService extends tao_models_classes_C
                 $importer->enableItemMustBeOverwritten();
             }
 
-            $report = $importer->importMultipleTests($class, $uploadedFile, $overwriteTest, $itemClassUri);
+            $report = $importer->importMultipleTests(
+                $class,
+                $uploadedFile,
+                $overwriteTest,
+                $itemClassUri,
+                [],
+                $overwriteTestUri,
+                $packageLabel
+            );
             helpers_TimeOutHelper::reset();
+
             return $report;
         } catch (common_exception_UserReadableException $e) {
+            $this->logException($e);
+
             return new common_report_Report(common_report_Report::TYPE_ERROR, __($e->getUserMessage()));
+        } catch (Throwable $exception) {
+            $this->logException($exception);
+
+            return new common_report_Report(common_report_Report::TYPE_ERROR, __('QTI test import failed'));
         }
+    }
+
+    private function logException(Throwable $exception): void
+    {
+        $this->logError(
+            sprintf(
+                'QTI test import failed: %s. File: %s, Line: %s. Stack trace: %s',
+                $exception->getMessage(),
+                $exception->getFile(),
+                $exception->getLine(),
+                $exception->getTraceAsString()
+            )
+        );
     }
 }
