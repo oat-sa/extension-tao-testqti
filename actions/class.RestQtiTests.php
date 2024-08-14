@@ -138,18 +138,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 
     protected function getItemClassUri(): ?string
     {
-        $itemClassUri = $this->getPostParameter(self::ITEM_CLASS_URI);
-        $subclassLabel = $this->getSubclassLabel();
-
-        if ($subclassLabel) {
-            foreach ($this->getClass($itemClassUri)->getSubClasses() as $subclass) {
-                if ($subclass->getLabel() === $subclassLabel) {
-                    $itemClassUri = $subclass->getUri();
-                }
-            }
-        }
-
-        return $itemClassUri;
+        return $this->getPostParameter(self::ITEM_CLASS_URI);
     }
 
     /**
@@ -325,23 +314,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * @return string|null
      * @throws common_exception_RestApi
      */
-    private function getSubclassLabel(): ?string
-    {
-        $subclassLabel = $this->getPostParameter(self::SUBCLASS_LABEL);
-
-        if ($subclassLabel !== null && !is_string($subclassLabel)) {
-            throw new common_exception_RestApi(
-                sprintf('%s parameter should be string', self::SUBCLASS_LABEL)
-            );
-        }
-
-        return $subclassLabel;
-    }
-
-    /**
-     * @return string|null
-     * @throws common_exception_RestApi
-     */
     private function getOverwriteTestUri(): ?string
     {
         $overwriteTestUri = $this->getPostParameter(self::OVERWRITE_TEST_URI);
@@ -379,18 +351,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private function getTestClass(): core_kernel_classes_Class
     {
-        $testClass = $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
-        $subclassLabel = $this->getSubclassLabel();
-
-        if ($subclassLabel) {
-            foreach ($testClass->getSubClasses() as $subClass) {
-                if ($subClass->getLabel() === $subclassLabel) {
-                    $testClass = $subClass;
-                }
-            }
-        }
-
-        return $testClass;
+        return $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
     }
 
     /**
