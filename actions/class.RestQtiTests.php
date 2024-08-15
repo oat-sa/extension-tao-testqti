@@ -46,7 +46,6 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      */
     private const OVERWRITE_TEST = 'overwriteTest';
 
-    private const SUBCLASS_LABEL = 'subclassLabel';
     private const OVERWRITE_TEST_URI = 'overwriteTestUri';
     private const PACKAGE_LABEL = 'packageLabel';
 
