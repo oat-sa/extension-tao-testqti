@@ -136,9 +136,19 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         }
     }
 
-    protected function getItemClassUri(): ?string
+    /**
+     * @throws common_exception_RestApi
+     */
+    protected function getItemClassUri(): string
     {
-        return $this->getPostParameter(self::ITEM_CLASS_URI);
+        $itemClassUri = $this->getPostParameter(self::ITEM_CLASS_URI, TaoOntology::CLASS_URI_ITEM);
+        $itemClass = $this->getClass($itemClassUri);
+
+        if (!$itemClass->exists()) {
+            throw new common_exception_RestApi('Class does not exist. Please use valid ' . self::ITEM_CLASS_URI);
+        }
+
+        return $itemClassUri;
     }
 
     /**
@@ -153,7 +163,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         }
 
         if (!in_array($isOverwriteTest, ['true', 'false'])) {
-            throw new \common_exception_RestApi(
+            throw new common_exception_RestApi(
                 'isOverwriteTest parameter should be boolean (true or false).'
             );
         }
