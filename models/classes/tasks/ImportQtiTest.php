@@ -94,7 +94,7 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_ITEM_MUST_EXIST] ?? false,
             $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] ?? false,
             $params[self::PARAM_OVERWRITE_TEST] ?? false,
-            $params[self::PARAM_ITEM_CLASS_URI] ?? false,
+            $params[self::PARAM_ITEM_CLASS_URI] ?? null,
             $params[self::PARAM_OVERWRITE_TEST_URI] ?? null,
             $params[self::PARAM_PACKAGE_LABEL] ?? null,
         );
