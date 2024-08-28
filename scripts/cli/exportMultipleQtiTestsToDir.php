@@ -183,7 +183,7 @@ class exportMultipleQtiTestsToDir extends ScriptAction
     {
         $i = 0;
         $fileName = \tao_helpers_File::getSafeFileName($testUri . '.zip');
-        while ($this->fileSystem->has($fileName)) {
+        while ($this->fileSystem->fileExists($fileName)) {
             $i++;
             $fileName = \tao_helpers_File::getSafeFileName($testUri . '_' . $i . '.zip');
         }
