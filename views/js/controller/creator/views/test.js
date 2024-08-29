@@ -104,12 +104,12 @@ define([
             const weightVisible = features.isVisible('taoQtiTest/creator/test/property/scoring/weight')
 
             function changeScoring(scoring) {
-                var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1 && weightVisible;
+                var noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
                 var newScoringState = JSON.stringify(scoring);
 
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
                 hider.toggle($categoryScoreLine, noOptions);
-                hider.toggle($weightIdentifierLine, noOptions);
+                hider.toggle($weightIdentifierLine, noOptions && weightVisible);
                 hider.hide($descriptions);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
 
