@@ -26,6 +26,7 @@ use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
 // phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 // phpcs:enable Generic.Files.LineLength
+use oat\taoQtiTest\models\Form\ServiceProvider\FormServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
@@ -185,6 +186,7 @@ return [
         ItemsReferencesServiceProvider::class,
         TestQtiServiceProvider::class,
         TestSessionStateServiceProvider::class,
-        MetadataServiceProvider::class
+        MetadataServiceProvider::class,
+        FormServiceProvider::class,
     ],
 ];
