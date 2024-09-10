@@ -67,6 +67,12 @@ class TranslationInstanceFormModifier extends AbstractFormModifier
             return;
         }
 
+        $elementValue = $uniqueIdElement->getRawValue();
+
+        if ($elementValue !== null) {
+            return;
+        }
+
         $instance = $this->ontology->getResource($form->getValue(self::FORM_INSTANCE_URI));
         $jsonTest = $this->testQtiService->getJsonTest($instance);
         $id = json_decode($jsonTest, true)['identifier'] ?? null;
