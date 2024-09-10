@@ -23,15 +23,11 @@
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
-// phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
-// phpcs:enable Generic.Files.LineLength
-use oat\taoQtiTest\models\Form\ServiceProvider\FormServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
+use oat\taoQtiTest\models\Translation\ServiceProvider\TranslationServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
-use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
-use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
@@ -39,6 +35,7 @@ use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
 use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
+use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
 use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
@@ -51,10 +48,14 @@ use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupDefaultTemplateConfiguration;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SetupStateOffloadQueue;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\update\Updater;
+
+// phpcs:disable Generic.Files.LineLength
+// phpcs:enable Generic.Files.LineLength
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;
@@ -187,6 +188,6 @@ return [
         TestQtiServiceProvider::class,
         TestSessionStateServiceProvider::class,
         MetadataServiceProvider::class,
-        FormServiceProvider::class,
+        TranslationServiceProvider::class,
     ],
 ];

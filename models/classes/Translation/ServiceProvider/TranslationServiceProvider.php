@@ -20,39 +20,37 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Form\ServiceProvider;
+namespace oat\taoQtiTest\models\Translation\ServiceProvider;
 
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
-use oat\tao\model\form\Modifier\FormModifierManager;
-use oat\taoQtiTest\models\Form\Modifier\TranslationInstanceFormModifier;
+use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
+use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
-
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-class FormServiceProvider implements ContainerServiceProviderInterface
+class TranslationServiceProvider implements ContainerServiceProviderInterface
 {
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
 
         $services
-            ->set(TranslationInstanceFormModifier::class, TranslationInstanceFormModifier::class)
+            ->set(TranslationFormModifier::class, TranslationFormModifier::class)
             ->args([
                 service(Ontology::SERVICE_ID),
                 service(taoQtiTest_models_classes_QtiTestService::class),
                 service(FeatureFlagChecker::class),
             ]);
 
-        $formModifierManager = $services->get(FormModifierManager::class);
-        $formModifierManager
+        $services
+            ->get(TranslationFormModifierProxy::class)
             ->call(
-                'add',
+                'addModifier',
                 [
-                    service(TranslationInstanceFormModifier::class),
-                    TranslationInstanceFormModifier::ID,
+                    service(TranslationFormModifier::class),
                 ]
             );
     }
