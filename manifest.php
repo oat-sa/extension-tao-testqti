@@ -23,6 +23,7 @@
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
+// phpcs:ignore Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
@@ -53,9 +54,6 @@ use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SetupStateOffloadQueue;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
 use oat\taoQtiTest\scripts\update\Updater;
-
-// phpcs:disable Generic.Files.LineLength
-// phpcs:enable Generic.Files.LineLength
 
 $extpath = __DIR__ . DIRECTORY_SEPARATOR;
 $taopath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'tao' . DIRECTORY_SEPARATOR;

@@ -29,6 +29,7 @@ use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
 use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class TranslationServiceProvider implements ContainerServiceProviderInterface
