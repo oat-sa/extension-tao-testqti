@@ -24,8 +24,11 @@ namespace oat\taoQtiTest\models\Translation\ServiceProvider;
 
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
+use oat\oatbox\log\LoggerService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
+use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
 use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
@@ -39,10 +42,17 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
         $services = $configurator->services();
 
         $services
+            ->set(QtiIdentifierRetriever::class, QtiIdentifierRetriever::class)
+            ->args([
+                service(taoQtiTest_models_classes_QtiTestService::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
             ->set(TranslationFormModifier::class, TranslationFormModifier::class)
             ->args([
                 service(Ontology::SERVICE_ID),
-                service(taoQtiTest_models_classes_QtiTestService::class),
+                service(QtiIdentifierRetriever::class),
                 service(FeatureFlagChecker::class),
             ]);
 
@@ -54,5 +64,15 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
                     service(TranslationFormModifier::class),
                 ]
             );
+
+        $services
+            ->set(TestCreatedEventListener::class, TestCreatedEventListener::class)
+            ->public()
+            ->args([
+                service(FeatureFlagChecker::class),
+                service(Ontology::SERVICE_ID),
+                service(QtiIdentifierRetriever::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
     }
 }
