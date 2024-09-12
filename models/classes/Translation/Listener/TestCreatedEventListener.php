@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\Translation\Listener;
 
 use oat\generis\model\data\Ontology;
-use oat\oatbox\event\Event;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
@@ -49,12 +48,9 @@ class TestCreatedEventListener
         $this->logger = $logger;
     }
 
-    public function populateTranslationProperties(Event $event): void
+    public function populateTranslationProperties(TestCreatedEvent $event): void
     {
-        if (
-            !$event instanceof TestCreatedEvent
-            || !$this->featureFlagChecker->isEnabled('FEATURE_TRANSLATION_ENABLED')
-        ) {
+        if (!$this->featureFlagChecker->isEnabled('FEATURE_TRANSLATION_ENABLED')) {
             return;
         }
 
