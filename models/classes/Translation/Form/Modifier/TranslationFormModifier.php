@@ -27,7 +27,7 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\form\Modifier\AbstractFormModifier;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
-use tao_helpers_form_Form as Form;
+use tao_helpers_form_Form;
 use tao_helpers_Uri;
 
 class TranslationFormModifier extends AbstractFormModifier
@@ -46,7 +46,7 @@ class TranslationFormModifier extends AbstractFormModifier
         $this->qtiIdentifierRetriever = $qtiIdentifierRetriever;
     }
 
-    public function modify(Form $form, array $options = []): void
+    public function modify(tao_helpers_form_Form $form, array $options = []): void
     {
         if (!$this->featureFlagChecker->isEnabled('FEATURE_TRANSLATION_ENABLED')) {
             return;

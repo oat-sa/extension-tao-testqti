@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\models\Translation\Service;
 use core_kernel_classes_Resource;
 use Psr\Log\LoggerInterface;
 use taoQtiTest_models_classes_QtiTestService;
+use Throwable;
 
 class QtiIdentifierRetriever
 {
@@ -41,13 +42,14 @@ class QtiIdentifierRetriever
     {
         try {
             $jsonTest = $this->qtiTestService->getJsonTest($test);
+            $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+
+            return $decodedTest['identifier'] ?? null;
         } catch (Throwable $exception) {
             $this->logger->error('An error occurred while retrieving test data: ' . $exception->getMessage());
 
             return null;
         }
-
-        return json_decode($jsonTest, true)['identifier'] ?? null;
     }
 }
 
