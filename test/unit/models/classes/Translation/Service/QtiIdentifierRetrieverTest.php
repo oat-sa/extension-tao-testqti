@@ -23,11 +23,13 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\Translation\Service;
 
 use core_kernel_classes_Resource;
+use Exception;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use taoQtiTest_models_classes_QtiTestService;
+use Throwable;
 
 class QtiIdentifierRetrieverTest extends TestCase
 {
@@ -37,6 +39,9 @@ class QtiIdentifierRetrieverTest extends TestCase
     /** @var taoQtiTest_models_classes_QtiTestService|MockObject */
     private taoQtiTest_models_classes_QtiTestService $qtiTestService;
 
+    /** @var LoggerInterface|MockObject */
+    private $logger;
+
     private QtiIdentifierRetriever $sut;
 
     protected function setUp(): void
@@ -44,11 +49,9 @@ class QtiIdentifierRetrieverTest extends TestCase
         $this->test = $this->createMock(core_kernel_classes_Resource::class);
 
         $this->qtiTestService = $this->createMock(taoQtiTest_models_classes_QtiTestService::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->sut = new QtiIdentifierRetriever(
-            $this->qtiTestService,
-            $this->createMock(LoggerInterface::class)
-        );
+        $this->sut = new QtiIdentifierRetriever($this->qtiTestService, $this->logger);
     }
 
     public function testRetrieve(): void
@@ -71,5 +74,23 @@ class QtiIdentifierRetrieverTest extends TestCase
             ->willReturn('[]');
 
         $this->assertEquals(null, $this->sut->retrieve($this->test));
+    }
+
+    public function testRetrieveException(): void
+    {
+        $this->qtiTestService
+            ->expects($this->once())
+            ->method('getJsonTest')
+            ->with($this->test)
+            ->willThrowException(new Exception('error'));
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with('An error occurred while retrieving test data: error');
+
+        $this->expectException(Throwable::class);
+
+        $this->sut->retrieve($this->test);
     }
 }

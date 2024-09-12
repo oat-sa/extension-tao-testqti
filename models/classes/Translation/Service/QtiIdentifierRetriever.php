@@ -48,7 +48,7 @@ class QtiIdentifierRetriever
         } catch (Throwable $exception) {
             $this->logger->error('An error occurred while retrieving test data: ' . $exception->getMessage());
 
-            return null;
+            throw $exception;
         }
     }
 }
