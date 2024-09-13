@@ -25,6 +25,8 @@ use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\QtiTestListenerService;
+use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
+use oat\taoTests\models\event\TestCreatedEvent;
 
 /**
  * Register a listener for state changes
@@ -47,6 +49,10 @@ class SetupEventListeners extends InstallAction
         $this->registerEvent(
             AfterAssessmentTestSessionClosedEvent::class,
             [QtiTestListenerService::SERVICE_ID, 'archiveState']
+        );
+        $this->registerEvent(
+            TestCreatedEvent::class,
+            [TestCreatedEventListener::class, 'populateTranslationProperties']
         );
     }
 }
