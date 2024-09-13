@@ -100,9 +100,9 @@ class TranslationPostCreationService
             foreach ($testPart['assessmentSections'] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] as $sectionPart) {
                     $item = $this->ontology->getResource($sectionPart['href']);
-                    $uniqueId = $item->getUniquePropertyValue($uniqueIdProperty);
+                    $uniqueId = (string) $item->getUniquePropertyValue($uniqueIdProperty);
 
-                    if ($uniqueId === null) {
+                    if (empty($uniqueId)) {
                         throw new ResourceTranslationException(
                             sprintf(
                                 'Item %s must have a unique identifier',
