@@ -55,10 +55,9 @@ class TestCreatedEventListener
         }
 
         $test = $this->ontology->getResource($event->getTestUri());
-
         $uniqueIdProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER);
 
-        if ($test->getOnePropertyValue($uniqueIdProperty) !== null) {
+        if (!empty((string) $test->getOnePropertyValue($uniqueIdProperty))) {
             $this->logger->info(
                 sprintf(
                     'The property "%s" for the test "%s" has already been set.',

@@ -26,9 +26,13 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\TaoOntology;
+use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
+use oat\tao\model\Translation\Service\TranslationCreationService;
 use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
 use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
+use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
 use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
@@ -74,5 +78,24 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
                 service(QtiIdentifierRetriever::class),
                 service(LoggerService::SERVICE_ID),
             ]);
+
+        $services
+            ->set(TranslationPostCreationService::class, TranslationPostCreationService::class)
+            ->args([
+                service(taoQtiTest_models_classes_QtiTestService::class),
+                service(Ontology::SERVICE_ID),
+                service(ResourceTranslationRepository::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->get(TranslationCreationService::class)
+            ->call(
+                'addPostCreation',
+                [
+                    TaoOntology::CLASS_URI_TEST,
+                    service(TranslationPostCreationService::class)
+                ]
+            );
     }
 }
