@@ -48,7 +48,7 @@ class TranslationFormModifier extends AbstractFormModifier
 
     public function modify(tao_helpers_form_Form $form, array $options = []): void
     {
-        if (!$this->featureFlagChecker->isEnabled('FEATURE_TRANSLATION_ENABLED')) {
+        if (!$this->featureFlagChecker->isEnabled('FEATURE_FLAG_TRANSLATION_ENABLED')) {
             return;
         }
 
