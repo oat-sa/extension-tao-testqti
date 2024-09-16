@@ -94,12 +94,19 @@ class TranslationPostCreationService
     private function collectItemUniqueIds(array $testData): array
     {
         $uniqueIdProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER);
+        $items = [];
         $uniqueIds = [];
 
         foreach ($testData['testParts'] as $testPart) {
             foreach ($testPart['assessmentSections'] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] as $sectionPart) {
-                    $item = $this->ontology->getResource($sectionPart['href']);
+                    if (!empty($items[$sectionPart['href']])) {
+                        continue;
+                    }
+
+                    $items[$sectionPart['href']] = $this->ontology->getResource($sectionPart['href']);
+                    $item = $items[$sectionPart['href']];
+
                     $uniqueId = (string) $item->getUniquePropertyValue($uniqueIdProperty);
 
                     if (empty($uniqueId)) {
