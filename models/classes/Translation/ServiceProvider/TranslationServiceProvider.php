@@ -35,7 +35,6 @@ use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
 use oat\taoQtiTest\models\Translation\Service\TestTranslator;
 use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
-use oat\taoQtiTest\models\Translation\Service\TranslationSynchronizer;
 use oat\taoQtiTest\models\Translation\Service\TranslationSyncService;
 use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
