@@ -27,7 +27,7 @@ use oat\tao\model\Translation\Exception\ResourceTranslationException;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class TranslationPostCreationService
+class TranslationSyncService
 {
     private TestTranslator $testTranslator;
     private LoggerInterface $logger;
@@ -43,9 +43,14 @@ class TranslationPostCreationService
         try {
             return $this->testTranslator->translate($test);
         } catch (Throwable $exception) {
-            $this->logger->error('An error occurred during test translation: ' . $exception->getMessage());
+            $message = sprintf(
+                'An error occurred while trying to synchronize the translation for test %s.',
+                $test->getUri()
+            );
 
-            throw new ResourceTranslationException('An error occurred during test translation.');
+            $this->logger->error(sprintf('%s. Error: %s', $message, $exception->getMessage()));
+
+            throw new ResourceTranslationException($message);
         }
     }
 }

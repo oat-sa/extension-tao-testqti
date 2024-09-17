@@ -29,10 +29,14 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
 use oat\tao\model\Translation\Service\TranslationCreationService;
+use oat\tao\model\Translation\Service\TranslationSyncService as TaoTranslationSyncService;
 use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
 use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
 use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
+use oat\taoQtiTest\models\Translation\Service\TestTranslator;
 use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
+use oat\taoQtiTest\models\Translation\Service\TranslationSynchronizer;
+use oat\taoQtiTest\models\Translation\Service\TranslationSyncService;
 use oat\taoTests\models\Translation\Form\Modifier\TranslationFormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
@@ -80,11 +84,35 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
             ]);
 
         $services
-            ->set(TranslationPostCreationService::class, TranslationPostCreationService::class)
+            ->set(TestTranslator::class, TestTranslator::class)
             ->args([
                 service(taoQtiTest_models_classes_QtiTestService::class),
                 service(Ontology::SERVICE_ID),
                 service(ResourceTranslationRepository::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->set(TranslationSyncService::class, TranslationSyncService::class)
+            ->args([
+                service(TestTranslator::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->get(TaoTranslationSyncService::class)
+            ->call(
+                'addSynchronizer',
+                [
+                    TaoOntology::CLASS_URI_TEST,
+                    service(TranslationSyncService::class),
+                ]
+            );
+
+        $services
+            ->set(TranslationPostCreationService::class, TranslationPostCreationService::class)
+            ->args([
+                service(TestTranslator::class),
                 service(LoggerService::SERVICE_ID),
             ]);
 
