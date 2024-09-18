@@ -61,16 +61,21 @@ class TestTranslator
     {
         $this->assertIsTest($test);
 
-        $jsonTest = $this->testQtiService->getJsonTest($test);
+        $originalTestUri = $test->getOnePropertyValue(
+            $this->ontology->getProperty(TaoOntology::PROPERTY_TRANSLATION_ORIGINAL_RESOURCE_URI)
+        );
+        $originalTest = $this->ontology->getResource($originalTestUri);
+
+        $jsonTest = $this->testQtiService->getJsonTest($originalTest);
         $testData = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
 
-        $uniqueIds = $this->collectItemUniqueIds($testData);
-        $translationUris = $this->getItemTranslationUris($test, $uniqueIds);
+        $itemUris = $this->collectItemUris($testData);
+        $translationUris = $this->getItemTranslationUris($test, $itemUris);
 
         $this->replaceOriginalItemsWithTranslations($testData, $translationUris);
 
         $this->testQtiService->saveJsonTest($test, json_encode($testData));
-        $this->updateTranslationCompletionStatus($test, $uniqueIds, $translationUris);
+        $this->updateTranslationCompletionStatus($test, $itemUris, $translationUris);
 
         return $test;
     }
@@ -93,11 +98,12 @@ class TestTranslator
         }
     }
 
-    private function collectItemUniqueIds(array $testData): array
+    private function collectItemUris(array $testData): array
     {
-        $uniqueIdProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER);
+        $uris = [];
+        /** @var core_kernel_classes_Resource[] $items */
         $items = [];
-        $uniqueIds = [];
+        $translationTypeProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_TRANSLATION_TYPE);
 
         foreach ($testData['testParts'] as $testPart) {
             foreach ($testPart['assessmentSections'] as $assessmentSection) {
@@ -107,39 +113,35 @@ class TestTranslator
                     }
 
                     $items[$sectionPart['href']] = $this->ontology->getResource($sectionPart['href']);
-                    $item = $items[$sectionPart['href']];
+                    $translationType = $items[$sectionPart['href']]->getOnePropertyValue($translationTypeProperty);
 
-                    $uniqueId = (string) $item->getOnePropertyValue($uniqueIdProperty);
-
-                    if (empty($uniqueId)) {
+                    if (empty($translationType)) {
                         throw new ResourceTranslationException(
-                            sprintf(
-                                'Item %s must have a unique identifier',
-                                $sectionPart['href']
-                            )
+                            sprintf('Item %s must have a translation type', $sectionPart['href'])
                         );
                     }
 
-                    $uniqueIds[] = $uniqueId;
+                    if ($translationType->getUri() === TaoOntology::PROPERTY_VALUE_TRANSLATION_TYPE_ORIGINAL) {
+                        $uris[] = $sectionPart['href'];
+                    }
                 }
             }
         }
 
-        return $uniqueIds;
+        return $uris;
     }
 
     /**
-     * @param string[] $uniqueIds
+     * @param string[] $originalItemUris
      * @return array<string, string>
      * @throws core_kernel_persistence_Exception
      */
-    private function getItemTranslationUris(core_kernel_classes_Resource $test, array $uniqueIds): array
+    private function getItemTranslationUris(core_kernel_classes_Resource $test, array $originalItemUris): array
     {
         $language = $test->getOnePropertyValue($this->ontology->getProperty(TaoOntology::PROPERTY_LANGUAGE));
         $translations = $this->resourceTranslationRepository->find(
             new ResourceTranslationQuery(
-                TaoOntology::CLASS_URI_ITEM,
-                $uniqueIds,
+                $originalItemUris,
                 $language->getUri()
             )
         );
