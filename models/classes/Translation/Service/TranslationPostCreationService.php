@@ -43,15 +43,17 @@ class TranslationPostCreationService
         try {
             return $this->testTranslator->translate($test);
         } catch (Throwable $exception) {
+            $message = sprintf('An error occurred while trying to translate the test %s.', $test->getUri());
+
             $this->logger->error(
                 sprintf(
-                    'An error occurred during test translation: (%s) %s',
+                    '%s. Error: (%s) %s',
+                    $message,
                     get_class($exception),
-                    $exception->getMessage()
-                )
+                    $exception->getMessage())
             );
 
-            throw new ResourceTranslationException('An error occurred during test translation.');
+            throw new ResourceTranslationException($message);
         }
     }
 }

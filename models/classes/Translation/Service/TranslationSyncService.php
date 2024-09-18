@@ -48,7 +48,13 @@ class TranslationSyncService
                 $test->getUri()
             );
 
-            $this->logger->error(sprintf('%s. Error: %s', $message, $exception->getMessage()));
+            $this->logger->error(
+                sprintf(
+                    '%s. Error: (%s) %s',
+                    $message,
+                    get_class($exception),
+                    $exception->getMessage())
+            );
 
             throw new ResourceTranslationException($message);
         }

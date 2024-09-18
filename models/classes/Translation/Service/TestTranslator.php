@@ -31,7 +31,6 @@ use oat\tao\model\Translation\Exception\ResourceTranslationException;
 use oat\tao\model\Translation\Query\ResourceTranslationQuery;
 use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
 use oat\taoTests\models\TaoTestOntology;
-use Psr\Log\LoggerInterface;
 use taoQtiTest_models_classes_QtiTestConverterException;
 use taoQtiTest_models_classes_QtiTestService;
 use taoQtiTest_models_classes_QtiTestServiceException;
@@ -45,8 +44,7 @@ class TestTranslator
     public function __construct(
         taoQtiTest_models_classes_QtiTestService $testQtiService,
         Ontology $ontology,
-        ResourceTranslationRepository $resourceTranslationRepository,
-        LoggerInterface $logger
+        ResourceTranslationRepository $resourceTranslationRepository
     ) {
         $this->testQtiService = $testQtiService;
         $this->ontology = $ontology;
@@ -111,7 +109,7 @@ class TestTranslator
                     $items[$sectionPart['href']] = $this->ontology->getResource($sectionPart['href']);
                     $item = $items[$sectionPart['href']];
 
-                    $uniqueId = (string) $item->getUniquePropertyValue($uniqueIdProperty);
+                    $uniqueId = (string) $item->getOnePropertyValue($uniqueIdProperty);
 
                     if (empty($uniqueId)) {
                         throw new ResourceTranslationException(
