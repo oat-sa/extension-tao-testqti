@@ -89,11 +89,7 @@ class TestTranslator
         foreach ($testData['testParts'] as &$testPart) {
             foreach ($testPart['assessmentSections'] as &$assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] as &$sectionPart) {
-                    $translationUri = $translationUris[$sectionPart['href']] ?? null;
-
-                    if ($translationUri !== null) {
-                        $sectionPart['href'] = $translationUri;
-                    }
+                    $sectionPart['href'] = $translationUris[$sectionPart['href']] ?? $sectionPart['href'];
                 }
             }
         }
