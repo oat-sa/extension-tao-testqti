@@ -72,7 +72,7 @@ class TranslationFormModifierTest extends TestCase
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
             ->willReturn(false);
 
         $this->form
@@ -99,7 +99,7 @@ class TranslationFormModifierTest extends TestCase
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
             ->willReturn(true);
 
         $this->form
@@ -128,7 +128,7 @@ class TranslationFormModifierTest extends TestCase
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
             ->willReturn(true);
 
         $this->form
@@ -166,7 +166,7 @@ class TranslationFormModifierTest extends TestCase
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
             ->willReturn(true);
 
         $this->form
