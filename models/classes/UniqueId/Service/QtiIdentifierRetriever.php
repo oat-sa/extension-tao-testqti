@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Translation\Service;
+namespace oat\taoQtiTest\models\UniqueId\Service;
 
 use core_kernel_classes_Resource;
 use Psr\Log\LoggerInterface;

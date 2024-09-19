@@ -24,7 +24,7 @@ namespace oat\taoQtiTest\test\unit\models\classes\Translation\Service;
 
 use core_kernel_classes_Resource;
 use Exception;
-use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
+use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

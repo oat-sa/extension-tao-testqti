@@ -20,56 +20,50 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Translation\Listener;
+namespace oat\taoQtiTest\models\UniqueId\Form\Modifier;
 
 use oat\generis\model\data\Ontology;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
+use oat\tao\model\form\Modifier\AbstractFormModifier;
 use oat\tao\model\TaoOntology;
-use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
-use oat\taoTests\models\event\TestCreatedEvent;
-use Psr\Log\LoggerInterface;
+use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
+use tao_helpers_form_Form;
+use tao_helpers_Uri;
 
-class TestCreatedEventListener
+class UniqueIdFormModifier extends AbstractFormModifier
 {
-    private FeatureFlagCheckerInterface $featureFlagChecker;
     private Ontology $ontology;
     private QtiIdentifierRetriever $qtiIdentifierRetriever;
-    private LoggerInterface $logger;
+    private FeatureFlagCheckerInterface $featureFlagChecker;
 
     public function __construct(
-        FeatureFlagCheckerInterface $featureFlagChecker,
         Ontology $ontology,
         QtiIdentifierRetriever $qtiIdentifierRetriever,
-        LoggerInterface $logger
+        FeatureFlagCheckerInterface $featureFlagChecker
     ) {
-        $this->featureFlagChecker = $featureFlagChecker;
         $this->ontology = $ontology;
+        $this->featureFlagChecker = $featureFlagChecker;
         $this->qtiIdentifierRetriever = $qtiIdentifierRetriever;
-        $this->logger = $logger;
     }
 
-    public function populateTranslationProperties(TestCreatedEvent $event): void
+    public function modify(tao_helpers_form_Form $form, array $options = []): void
     {
-        if (!$this->featureFlagChecker->isEnabled('FEATURE_FLAG_TRANSLATION_ENABLED')) {
+        if (!$this->featureFlagChecker->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
             return;
         }
 
-        $test = $this->ontology->getResource($event->getTestUri());
-        $uniqueIdProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER);
+        $encodedProperty = tao_helpers_Uri::encode(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER);
+        $uniqueIdValue = $form->getValue($encodedProperty);
 
-        if (!empty((string) $test->getOnePropertyValue($uniqueIdProperty))) {
-            $this->logger->info(
-                sprintf(
-                    'The property "%s" for the test "%s" has already been set.',
-                    $uniqueIdProperty->getUri(),
-                    $test->getUri()
-                )
-            );
-
+        if (!empty($uniqueIdValue)) {
             return;
         }
 
-        $identifier = $this->qtiIdentifierRetriever->retrieve($test);
-        $test->setPropertyValue($uniqueIdProperty, $identifier);
+        $instance = $this->ontology->getResource($form->getValue('uri'));
+        $identifier = $this->qtiIdentifierRetriever->retrieve($instance);
+
+        if ($identifier) {
+            $form->setValue($encodedProperty, $identifier);
+        }
     }
 }
