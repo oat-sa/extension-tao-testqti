@@ -52,7 +52,7 @@ class SetupEventListeners extends InstallAction
         );
         $this->registerEvent(
             TestCreatedEvent::class,
-            [TestCreatedEventListener::class, 'populateTranslationProperties']
+            [TestCreatedEventListener::class, 'populateUniqueId']
         );
     }
 }

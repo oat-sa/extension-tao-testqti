@@ -30,6 +30,7 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
             TestCreatedEvent::class,
             [TestCreatedEventListener::class, 'populateUniqueId']
         );
+        $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
     }
 
     public function down(Schema $schema): void
@@ -40,5 +41,6 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
             TestCreatedEvent::class,
             [TestCreatedEventListener::class, 'populateUniqueId']
         );
+        $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
     }
 }
