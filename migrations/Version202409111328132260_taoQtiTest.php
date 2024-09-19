@@ -7,7 +7,7 @@ namespace oat\taoQtiTest\migrations;
 use Doctrine\DBAL\Schema\Schema;
 use oat\oatbox\event\EventManager;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
 use oat\taoTests\models\event\TestCreatedEvent;
 
 /**
@@ -28,7 +28,7 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
         $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
         $eventManager->attach(
             TestCreatedEvent::class,
-            [TestCreatedEventListener::class, 'populateTranslationProperties']
+            [TestCreatedEventListener::class, 'populateUniqueId']
         );
     }
 
@@ -38,7 +38,7 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
         $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
         $eventManager->detach(
             TestCreatedEvent::class,
-            [TestCreatedEventListener::class, 'populateTranslationProperties']
+            [TestCreatedEventListener::class, 'populateUniqueId']
         );
     }
 }

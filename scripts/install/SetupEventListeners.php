@@ -25,7 +25,7 @@ use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\QtiTestListenerService;
-use oat\taoQtiTest\models\Translation\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
 use oat\taoTests\models\event\TestCreatedEvent;
 
 /**

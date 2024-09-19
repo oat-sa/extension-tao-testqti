@@ -26,8 +26,8 @@ use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\TaoOntology;
-use oat\taoQtiTest\models\Translation\Form\Modifier\TranslationFormModifier;
-use oat\taoQtiTest\models\Translation\Service\QtiIdentifierRetriever;
+use oat\taoQtiTest\models\UniqueId\Form\Modifier\UniqueIdFormModifier;
+use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use tao_helpers_form_Form;
@@ -49,7 +49,7 @@ class TranslationFormModifierTest extends TestCase
     /** @var FeatureFlagCheckerInterface|MockObject */
     private FeatureFlagCheckerInterface $featureFlagChecker;
 
-    private TranslationFormModifier $sut;
+    private UniqueIdFormModifier $sut;
 
     protected function setUp(): void
     {
@@ -60,7 +60,7 @@ class TranslationFormModifierTest extends TestCase
         $this->qtiIdentifierRetriever = $this->createMock(QtiIdentifierRetriever::class);
         $this->featureFlagChecker = $this->createMock(FeatureFlagCheckerInterface::class);
 
-        $this->sut = new TranslationFormModifier(
+        $this->sut = new UniqueIdFormModifier(
             $this->ontology,
             $this->qtiIdentifierRetriever,
             $this->featureFlagChecker

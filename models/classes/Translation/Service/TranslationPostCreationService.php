@@ -23,32 +23,37 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\Translation\Service;
 
 use core_kernel_classes_Resource;
+use oat\tao\model\Translation\Exception\ResourceTranslationException;
 use Psr\Log\LoggerInterface;
-use taoQtiTest_models_classes_QtiTestService;
 use Throwable;
 
-class QtiIdentifierRetriever
+class TranslationPostCreationService
 {
-    private taoQtiTest_models_classes_QtiTestService $qtiTestService;
+    private TestTranslator $testTranslator;
     private LoggerInterface $logger;
 
-    public function __construct(taoQtiTest_models_classes_QtiTestService $qtiTestService, LoggerInterface $logger)
+    public function __construct(TestTranslator $testTranslator, LoggerInterface $logger)
     {
-        $this->qtiTestService = $qtiTestService;
+        $this->testTranslator = $testTranslator;
         $this->logger = $logger;
     }
 
-    public function retrieve(core_kernel_classes_Resource $test): ?string
+    public function __invoke(core_kernel_classes_Resource $test): core_kernel_classes_Resource
     {
         try {
-            $jsonTest = $this->qtiTestService->getJsonTest($test);
-            $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
-
-            return $decodedTest['identifier'] ?? null;
+            return $this->testTranslator->translate($test);
         } catch (Throwable $exception) {
-            $this->logger->error('An error occurred while retrieving test data: ' . $exception->getMessage());
+            $message = sprintf('An error occurred while trying to translate the test %s.', $test->getUri());
 
-            throw $exception;
+            $this->logger->error(
+                sprintf(
+                    '%s. Error: (%s) %s',
+                    $message,
+                    get_class($exception),
+                    $exception->getMessage())
+            );
+
+            throw new ResourceTranslationException($message);
         }
     }
 }

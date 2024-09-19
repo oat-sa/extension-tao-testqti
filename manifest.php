@@ -28,6 +28,7 @@ use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\Custo
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\Translation\ServiceProvider\TranslationServiceProvider;
+use oat\taoQtiTest\models\UniqueId\ServiceProvider\UniqueIdServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
@@ -187,5 +188,6 @@ return [
         TestSessionStateServiceProvider::class,
         MetadataServiceProvider::class,
         TranslationServiceProvider::class,
+        UniqueIdServiceProvider::class,
     ],
 ];

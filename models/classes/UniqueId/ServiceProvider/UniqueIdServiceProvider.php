@@ -20,70 +20,59 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Translation\ServiceProvider;
+namespace oat\taoQtiTest\models\UniqueId\ServiceProvider;
 
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
-use oat\tao\model\TaoOntology;
-use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
-use oat\tao\model\Translation\Service\TranslationCreationService;
-use oat\tao\model\Translation\Service\TranslationSyncService as TaoTranslationSyncService;
-use oat\taoQtiTest\models\Translation\Service\TestTranslator;
-use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
-use oat\taoQtiTest\models\Translation\Service\TranslationSyncService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\taoQtiTest\models\UniqueId\Form\Modifier\UniqueIdFormModifier;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
+use oat\taoTests\models\Form\Modifier\FormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-class TranslationServiceProvider implements ContainerServiceProviderInterface
+class UniqueIdServiceProvider implements ContainerServiceProviderInterface
 {
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
 
         $services
-            ->set(TestTranslator::class, TestTranslator::class)
+            ->set(QtiIdentifierRetriever::class, QtiIdentifierRetriever::class)
             ->args([
                 service(taoQtiTest_models_classes_QtiTestService::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->set(UniqueIdFormModifier::class, UniqueIdFormModifier::class)
+            ->args([
                 service(Ontology::SERVICE_ID),
-                service(ResourceTranslationRepository::class),
-                service(LoggerService::SERVICE_ID),
+                service(QtiIdentifierRetriever::class),
+                service(FeatureFlagChecker::class),
             ]);
 
         $services
-            ->set(TranslationSyncService::class, TranslationSyncService::class)
-            ->args([
-                service(TestTranslator::class),
-                service(LoggerService::SERVICE_ID),
-            ]);
-
-        $services
-            ->get(TaoTranslationSyncService::class)
+            ->get(FormModifierProxy::class)
             ->call(
-                'addSynchronizer',
+                'addModifier',
                 [
-                    TaoOntology::CLASS_URI_TEST,
-                    service(TranslationSyncService::class),
+                    service(UniqueIdFormModifier::class),
                 ]
             );
 
         $services
-            ->set(TranslationPostCreationService::class, TranslationPostCreationService::class)
+            ->set(TestCreatedEventListener::class, TestCreatedEventListener::class)
+            ->public()
             ->args([
-                service(TestTranslator::class),
+                service(FeatureFlagChecker::class),
+                service(Ontology::SERVICE_ID),
+                service(QtiIdentifierRetriever::class),
                 service(LoggerService::SERVICE_ID),
             ]);
-
-        $services
-            ->get(TranslationCreationService::class)
-            ->call(
-                'addPostCreation',
-                [
-                    TaoOntology::CLASS_URI_TEST,
-                    service(TranslationPostCreationService::class)
-                ]
-            );
     }
 }
