@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\test\unit\models\classes\Translation\Form\Modifier;
+namespace oat\taoQtiTest\test\unit\models\classes\UniqueId\Form\Modifier;
 
 use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
@@ -33,7 +33,7 @@ use PHPUnit\Framework\TestCase;
 use tao_helpers_form_Form;
 use tao_helpers_Uri;
 
-class TranslationFormModifierTest extends TestCase
+class UniqueIdFormModifierTest extends TestCase
 {
     /** @var tao_helpers_form_Form|MockObject */
     private tao_helpers_form_Form $form;
@@ -67,12 +67,12 @@ class TranslationFormModifierTest extends TestCase
         );
     }
 
-    public function testModifyTranslationDisabled(): void
+    public function testModifyFeatureDisabled(): void
     {
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
             ->willReturn(false);
 
         $this->form
@@ -94,12 +94,12 @@ class TranslationFormModifierTest extends TestCase
         $this->sut->modify($this->form);
     }
 
-    public function testModifyTranslationEnabledButValueSet(): void
+    public function testModifyFeatureEnabledButValueSet(): void
     {
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
             ->willReturn(true);
 
         $this->form
@@ -123,12 +123,12 @@ class TranslationFormModifierTest extends TestCase
         $this->sut->modify($this->form);
     }
 
-    public function testModifyTranslationEnabledButNoIdentifier(): void
+    public function testModifyFeatureEnabledButNoIdentifier(): void
     {
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
             ->willReturn(true);
 
         $this->form
@@ -166,7 +166,7 @@ class TranslationFormModifierTest extends TestCase
         $this->featureFlagChecker
             ->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_TRANSLATION_ENABLED')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
             ->willReturn(true);
 
         $this->form

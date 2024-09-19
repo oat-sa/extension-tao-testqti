@@ -57,27 +57,27 @@ class TestTranslator
      * @throws core_kernel_persistence_Exception
      * @throws ResourceTranslationException
      */
-    public function translate(core_kernel_classes_Resource $test): core_kernel_classes_Resource
+    public function translate(core_kernel_classes_Resource $translationTest): core_kernel_classes_Resource
     {
-        $this->assertIsTest($test);
+        $this->assertIsTest($translationTest);
 
-        $originalTestUri = $test->getOnePropertyValue(
+        $originalTestUri = $translationTest->getOnePropertyValue(
             $this->ontology->getProperty(TaoOntology::PROPERTY_TRANSLATION_ORIGINAL_RESOURCE_URI)
         );
-        $originalTest = $this->ontology->getResource($originalTestUri);
+        $originalTest = $this->ontology->getResource($originalTestUri->getUri());
 
         $jsonTest = $this->testQtiService->getJsonTest($originalTest);
-        $testData = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+        $originalTestData = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
 
-        $itemUris = $this->collectItemUris($testData);
-        $translationUris = $this->getItemTranslationUris($test, $itemUris);
+        $originalItemUris = $this->collectItemUris($originalTestData);
+        $translationUris = $this->getItemTranslationUris($translationTest, $originalItemUris);
 
-        $this->replaceOriginalItemsWithTranslations($testData, $translationUris);
+        $translatedTestData = $this->doTranslation($originalTestData, $translationUris);
 
-        $this->testQtiService->saveJsonTest($test, json_encode($testData));
-        $this->updateTranslationCompletionStatus($test, $itemUris, $translationUris);
+        $this->testQtiService->saveJsonTest($translationTest, json_encode($translatedTestData));
+        $this->updateTranslationCompletionStatus($translationTest, $originalItemUris, $translationUris);
 
-        return $test;
+        return $translationTest;
     }
 
     private function assertIsTest(core_kernel_classes_Resource $resource): void
@@ -87,7 +87,7 @@ class TestTranslator
         }
     }
 
-    private function replaceOriginalItemsWithTranslations(array &$testData, array $translationUris): void
+    private function doTranslation(array $testData, array $translationUris): array
     {
         foreach ($testData['testParts'] as &$testPart) {
             foreach ($testPart['assessmentSections'] as &$assessmentSection) {
@@ -96,34 +96,22 @@ class TestTranslator
                 }
             }
         }
+
+        return $testData;
     }
 
     private function collectItemUris(array $testData): array
     {
         $uris = [];
-        /** @var core_kernel_classes_Resource[] $items */
-        $items = [];
-        $translationTypeProperty = $this->ontology->getProperty(TaoOntology::PROPERTY_TRANSLATION_TYPE);
 
         foreach ($testData['testParts'] as $testPart) {
             foreach ($testPart['assessmentSections'] as $assessmentSection) {
                 foreach ($assessmentSection['sectionParts'] as $sectionPart) {
-                    if (!empty($items[$sectionPart['href']])) {
+                    if (in_array($sectionPart['href'], $uris, true)) {
                         continue;
                     }
 
-                    $items[$sectionPart['href']] = $this->ontology->getResource($sectionPart['href']);
-                    $translationType = $items[$sectionPart['href']]->getOnePropertyValue($translationTypeProperty);
-
-                    if (empty($translationType)) {
-                        throw new ResourceTranslationException(
-                            sprintf('Item %s must have a translation type', $sectionPart['href'])
-                        );
-                    }
-
-                    if ($translationType->getUri() === TaoOntology::PROPERTY_VALUE_TRANSLATION_TYPE_ORIGINAL) {
-                        $uris[] = $sectionPart['href'];
-                    }
+                    $uris[] = $sectionPart['href'];
                 }
             }
         }
@@ -134,7 +122,6 @@ class TestTranslator
     /**
      * @param string[] $originalItemUris
      * @return array<string, string>
-     * @throws core_kernel_persistence_Exception
      */
     private function getItemTranslationUris(core_kernel_classes_Resource $test, array $originalItemUris): array
     {

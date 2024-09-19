@@ -40,7 +40,7 @@ use taoQtiTest_models_classes_QtiTestService;
 class TestTranslatorTest extends TestCase
 {
     /** @var core_kernel_classes_Resource|MockObject */
-    private $resource;
+    private $translationTest;
 
     /** @var taoQtiTest_models_classes_QtiTestService|MockObject */
     private $testQtiService;
@@ -55,7 +55,7 @@ class TestTranslatorTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->resource = $this->createMock(core_kernel_classes_Resource::class);
+        $this->translationTest = $this->createMock(core_kernel_classes_Resource::class);
 
         $this->testQtiService = $this->createMock(taoQtiTest_models_classes_QtiTestService::class);
         $this->ontology = $this->createMock(Ontology::class);
@@ -74,93 +74,99 @@ class TestTranslatorTest extends TestCase
             ->with(TaoOntology::CLASS_URI_TEST)
             ->willReturn($rootClass);
 
-        $this->resource
+        $this->translationTest
             ->expects($this->once())
             ->method('isInstanceOf')
             ->with($rootClass)
             ->willReturn(true);
 
-        $this->testQtiService
-            ->expects($this->once())
-            ->method('getJsonTest')
-            ->with($this->resource)
-            ->willReturn('{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"originResourceUri"}]}]}]}');
-
-        $translationResource = $this->createMock(core_kernel_classes_Resource::class);
-
-        $this->ontology
-            ->expects($this->once())
-            ->method('getResource')
-            ->with('originResourceUri')
-            ->willReturn($translationResource);
-
-        $uniqueIdProperty = $this->createMock(core_kernel_classes_Property::class);
+        $translationOriginalResourceUriProperty = $this->createMock(core_kernel_classes_Property::class);
         $languageProperty = $this->createMock(core_kernel_classes_Property::class);
-        $completionProperty = $this->createMock(core_kernel_classes_Property::class);
+        $translationCompletionProperty = $this->createMock(core_kernel_classes_Property::class);
 
         $this->ontology
             ->expects($this->exactly(3))
             ->method('getProperty')
             ->withConsecutive(
-                [TaoOntology::PROPERTY_UNIQUE_IDENTIFIER],
+                [TaoOntology::PROPERTY_TRANSLATION_ORIGINAL_RESOURCE_URI],
                 [TaoOntology::PROPERTY_LANGUAGE],
-                [TaoTestOntology::PROPERTY_TRANSLATION_COMPLETION]
+                [TaoTestOntology::PROPERTY_TRANSLATION_COMPLETION],
             )
-            ->willReturnOnConsecutiveCalls($uniqueIdProperty, $languageProperty, $completionProperty);
+            ->willReturnOnConsecutiveCalls(
+                $translationOriginalResourceUriProperty,
+                $languageProperty,
+                $translationCompletionProperty
+            );
 
-        $uniqueId = $this->createMock(core_kernel_classes_Resource::class);
-        $uniqueId
-            ->method('__toString')
-            ->willReturn('uniqueId');
-
-        $translationResource
-            ->expects($this->once())
-            ->method('getOnePropertyValue')
-            ->with($uniqueIdProperty)
-            ->willReturn($uniqueId);
-
-        $language = $this->createMock(core_kernel_classes_Resource::class);
-        $language
+        $originalTestUri = $this->createMock(core_kernel_classes_Resource::class);
+        $originalTestUri
             ->expects($this->once())
             ->method('getUri')
-            ->willReturn('languageUri');
+            ->willReturn('originalTestUri');
 
-        $this->resource
+        $translationLanguage = $this->createMock(core_kernel_classes_Resource::class);
+        $translationLanguage
             ->expects($this->once())
-            ->method('getOnePropertyValue')
-            ->with($languageProperty)
-            ->willReturn($language);
+            ->method('getUri')
+            ->willReturn('translationLanguageUri');
 
-        $translation = $this->createMock(ResourceTranslation::class);
+        $this->translationTest
+            ->expects($this->exactly(2))
+            ->method('getOnePropertyValue')
+            ->withConsecutive(
+                [$translationOriginalResourceUriProperty],
+                [$languageProperty]
+            )
+            ->willReturnOnConsecutiveCalls($originalTestUri, $translationLanguage);
+
+        $originalTest = $this->createMock(core_kernel_classes_Resource::class);
+
+        $this->ontology
+            ->expects($this->once())
+            ->method('getResource')
+            ->with('originalTestUri')
+            ->willReturn($originalTest);
+
+        $this->testQtiService
+            ->expects($this->once())
+            ->method('getJsonTest')
+            ->with($originalTest)
+            ->willReturn('{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"originalItemUri"}]}]}]}');
+
+        $translationResource = $this->createMock(ResourceTranslation::class);
 
         $this->resourceTranslationRepository
             ->expects($this->once())
             ->method('find')
-            ->willReturn(new ResourceCollection($translation));
+            ->with(new ResourceTranslationQuery(['originalItemUri'], 'translationLanguageUri'))
+            ->willReturn(new ResourceCollection($translationResource));
 
-        $translation
+        $translationResource
             ->expects($this->once())
             ->method('getOriginResourceUri')
-            ->willReturn('originResourceUri');
+            ->willReturn('originalItemUri');
 
-        $translation
+        $translationResource
             ->expects($this->once())
             ->method('getResourceUri')
-            ->willReturn('translationResourceUri');
+            ->willReturn('translationItemUri');
 
         $this->testQtiService
             ->expects($this->once())
             ->method('saveJsonTest')
             ->with(
-                $this->resource,
-                '{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"translationResourceUri"}]}]}]}'
+                $this->translationTest,
+                '{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"translationItemUri"}]}]}]}'
             );
 
-        $this->resource
+        $this->translationTest
             ->expects($this->once())
             ->method('editPropertyValues')
-            ->with($completionProperty, TaoTestOntology::PROPERTY_VALUE_TRANSLATION_COMPLETION_TRANSLATED);
+            ->with(
+                $translationCompletionProperty,
+                TaoTestOntology::PROPERTY_VALUE_TRANSLATION_COMPLETION_TRANSLATED
+            );
 
-        $this->assertEquals($this->resource, $this->sut->translate($this->resource));
+        $this->assertEquals($this->translationTest, $this->sut->translate($this->translationTest));
     }
 }

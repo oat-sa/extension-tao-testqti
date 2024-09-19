@@ -70,6 +70,6 @@ class TestCreatedEventListener
         }
 
         $identifier = $this->qtiIdentifierRetriever->retrieve($test);
-        $test->setPropertyValue($uniqueIdProperty, $identifier);
+        $test->editPropertyValues($uniqueIdProperty, $identifier);
     }
 }
