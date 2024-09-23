@@ -218,7 +218,7 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'printable',
-                    'label'         => __('Print out'),
+                    'label'         => __('Print Out'),
                     'qtiCategory'   => 'x-tao-printable',
                     'description'   => __('Allow a Test Taker to print out the item.'),
                     'order'         => 700,
