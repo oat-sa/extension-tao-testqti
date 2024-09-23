@@ -50,6 +50,7 @@ class PropertyMapperTest extends TestCase
         $property = $this->createMock(Property::class);
         $resourceMock = $this->createMock(Resource::class);
         $property->method('getUri')->willReturn('uri');
+        $property->method('getRange')->willReturn('range');
         $resourceMock->method('getUri')->willReturn('resource_uri');
 
         $property
