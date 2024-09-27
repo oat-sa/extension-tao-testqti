@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2024 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\models;
@@ -215,6 +215,13 @@ class QtiCategoryPresetProvider implements TestCategoryPresetProviderInterface
                     'description'   => __('Allows Test-taker to zoom in and out the item content.'),
                     'order'         => 700,
                     'pluginId'      => 'zoom'
+                ]),
+                TestCategoryPreset::fromArray([
+                    'id'            => 'printable',
+                    'label'         => __('Print Out'),
+                    'qtiCategory'   => 'x-tao-printable',
+                    'description'   => __('Allow a Test Taker to print out the item.'),
+                    'order'         => 700,
                 ]),
                 TestCategoryPreset::fromArray([
                     'id'            => 'apiptts',
