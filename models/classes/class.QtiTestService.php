@@ -812,7 +812,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
                             //todo: fix taoSetup to be aware of containers. This is only workaround.
-                            if ($this->getServiceManager()->getContainer()->has(MappedMetadataInjector::class)) {
+                            if ($this->getServiceManager()->getContainer()->has(MappedMetadataInjector::class) &&
+                                $importMetadata
+                            ) {
                                 $this->getServiceManager()->getContainer()->get(MappedMetadataInjector::class)->inject(
                                     $mappedProperties['testProperties'] ?? [],
                                     $metadataValues[$qtiTestResourceIdentifier] ?? [],
