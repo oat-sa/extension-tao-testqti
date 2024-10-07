@@ -167,7 +167,7 @@ class exportMultipleQtiTestsToDir extends ScriptAction
             $zip->close();
             $zipArchiveHandler = fopen($file, 'r');
             $fileName = $this->getFileName($testUri);
-            $this->fileSystem->put($fileName, $zipArchiveHandler);
+            $this->fileSystem->write($fileName, $zipArchiveHandler);
             fclose($zipArchiveHandler);
             $expReport->add(common_report_Report::createInfo($this->fileSystem->getId() . '/' . $fileName));
             $report = $expReport;

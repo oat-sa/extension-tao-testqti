@@ -35,7 +35,6 @@ use qtism\data\content\RubricBlock;
 use qtism\data\content\StylesheetCollection;
 use qtism\common\utils\Url;
 use oat\taoQtiItem\model\qti\Service;
-use League\Flysystem\FileExistsException;
 use oat\oatbox\filesystem\Directory;
 use oat\taoQtiTest\models\TestCategoryRulesService;
 use oat\taoQtiTest\models\QtiTestCompilerIndex;
@@ -793,14 +792,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
 
             if (in_array($mime, self::getPublicMimeTypes()) === true && $pathinfo['extension'] !== 'php') {
                 $publicPathFile = $testDefinitionDir->getRelPath($file);
-                try {
-                    common_Logger::d('Public ' . $file->getPrefix() . '(' . $mime . ') to ' . $publicPathFile);
-                    $publicCompiledDocDir->getFile($publicPathFile)->write($file->readStream());
-                } catch (FileExistsException $e) {
-                    common_Logger::w(
-                        'File ' . $publicPathFile . ' copied twice to public test folder during compilation'
-                    );
-                }
+                common_Logger::d('Public ' . $file->getPrefix() . '(' . $mime . ') to ' . $publicPathFile);
+                $publicCompiledDocDir->getFile($publicPathFile)->write($file->readStream());
             }
         }
     }

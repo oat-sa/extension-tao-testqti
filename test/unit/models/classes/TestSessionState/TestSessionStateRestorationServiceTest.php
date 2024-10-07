@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-use League\Flysystem\FileNotFoundException;
+use League\Flysystem\UnableToReadFile;
 use oat\oatbox\extension\AbstractAction;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\QueueDispatcher;
@@ -83,7 +83,7 @@ class TestSessionStateRestorationServiceTest extends TestCase
         $deliveryExecution->expects(self::once())->method('getUserIdentifier')
             ->willReturn(Uuid::uuid4()->toString());
         $this->stateMigrationMock->expects(self::once())->method('restore')
-            ->willThrowException(new FileNotFoundException(''));
+            ->willThrowException(new UnableToReadFile(''));
 
         $this->expectException(RestorationImpossibleException::class);
         $this->subject->restore($deliveryExecution);

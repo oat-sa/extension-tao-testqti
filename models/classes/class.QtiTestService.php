@@ -18,7 +18,6 @@
  * Copyright (c) 2013-2023 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
-use League\Flysystem\FileExistsException;
 use oat\generis\model\data\event\ResourceCreated;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
@@ -1265,7 +1264,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param boolean $preventOverride Prevent data to be overriden Default is (boolean) true.
      *
      * @return Directory the content directory
-     * @throws FileExistsException
      * @throws XmlStorageException
      * @throws common_Exception
      * @throws common_exception_Error
