@@ -32,7 +32,7 @@ use common_persistence_AdvKeyValuePersistence;
 use common_persistence_KeyValuePersistence;
 use common_session_SessionManager;
 use Exception;
-use League\Flysystem\FileNotFoundException;
+use League\Flysystem\FilesystemException;
 use oat\libCat\result\ItemResult;
 use oat\libCat\result\ResultVariable;
 use oat\oatbox\event\EventManager;
@@ -187,7 +187,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             $this->dataCache[$cacheKey] = $jsonContent;
             return $this->dataCache[$cacheKey];
-        } catch (FileNotFoundException $e) {
+        } catch (FilesystemException $e) {
             throw new tao_models_classes_FileNotFoundException(
                 $path . ' for item reference ' . $itemRef
             );
