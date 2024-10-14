@@ -64,7 +64,7 @@ class PropertyMapper
 
     private function isIgnoredForCollectionGathering(Property $property): bool
     {
-        return in_array($property->getUri(), $this->getIgnoredProperties());
+        return in_array($property->getUri(), $this->getIgnoredProperties()) || $property->getRange() === null;
     }
 
     private function getIgnoredProperties(): array

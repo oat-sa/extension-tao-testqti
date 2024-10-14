@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2023 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA;
  */
 
 use League\Flysystem\FileExistsException;
@@ -501,7 +501,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             // 2. Restore overwritten item contents.
             foreach ($data->overwrittenItems as $overwrittenItemId => $backupName) {
-                common_Logger::d("Restoring content for item '${overwrittenItemId}'...");
+                common_Logger::d("Restoring content for item '{$overwrittenItemId}'...");
                 @Service::singleton()->restoreContentByRdfItem(
                     new core_kernel_classes_Resource($overwrittenItemId),
                     $backupName
@@ -785,7 +785,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                     // If items did not produce errors, we import the test definition.
                     if ($itemError === false) {
-                        common_Logger::i("Importing test with manifest identifier '${qtiTestResourceIdentifier}'...");
+                        common_Logger::i("Importing test with manifest identifier '{$qtiTestResourceIdentifier}'...");
 
                         // Second step is to take care of the test definition and the related media (auxiliary files).
 
@@ -812,10 +812,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             // Metadata will be set as property values.
                             $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
                             //todo: fix taoSetup to be aware of containers. This is only workaround.
-                            if ($this->getServiceManager()->getContainer()->has(MappedMetadataInjector::class)) {
+                            if (
+                                $this->getServiceManager()->getContainer()->has(MappedMetadataInjector::class)
+                                && $importMetadata
+                            ) {
                                 $this->getServiceManager()->getContainer()->get(MappedMetadataInjector::class)->inject(
                                     $mappedProperties['testProperties'] ?? [],
-                                    $metadataValues[$qtiTestResourceIdentifier],
+                                    $metadataValues[$qtiTestResourceIdentifier] ?? [],
                                     $testResource
                                 );
                             }
@@ -1451,7 +1454,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getMetaMetadataExtractor(): MetaMetadataExtractor
     {
         return $this->getPsrContainer()->get(MetaMetadataExtractor::class);
-        return $this->getServiceManager()->getContainer()->get(MetaMetadataExtractor::class);
     }
 
     private function getSecureResourceService(): SecureResourceServiceInterface
