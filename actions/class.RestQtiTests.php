@@ -35,10 +35,19 @@ use Slim\Http\StatusCode;
 class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
 {
     public const PARAM_PACKAGE_NAME = 'qtiPackage';
+
     private const PARAM_TEST_URI = 'testUri';
 
     private const ITEM_CLASS_URI = 'itemClassUri';
+
+    /**
+     * @deprecated Use taoQtiTest_actions_RestQtiTests::OVERWRITE_TEST_URI instead with the URI of the test to be
+     *             replaced
+     */
     private const OVERWRITE_TEST = 'overwriteTest';
+
+    private const OVERWRITE_TEST_URI = 'overwriteTestUri';
+    private const PACKAGE_LABEL = 'packageLabel';
 
     /**
      * @throws common_exception_NotImplemented
@@ -99,7 +108,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                     $this->isItemMustExistEnabled(),
                     $this->isItemMustBeOverwrittenEnabled(),
                     $this->isOverwriteTest(),
-                    $this->getItemClassUri()
+                    $this->getItemClassUri(),
+                    $this->getOverwriteTestUri(),
+                    $this->getPackageLabel()
                 );
 
             if ($report->getType() === common_report_Report::TYPE_SUCCESS) {
@@ -117,16 +128,26 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 }
                 return $this->returnSuccess($data);
             } else {
-                throw new \common_exception_RestApi($report->getMessage());
+                throw new common_exception_RestApi($report->getMessage());
             }
-        } catch (\common_exception_RestApi $e) {
+        } catch (common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
     }
 
-    protected function getItemClassUri(): ?string
+    /**
+     * @throws common_exception_RestApi
+     */
+    protected function getItemClassUri(): string
     {
-        return $this->getPostParameter(self::ITEM_CLASS_URI);
+        $itemClassUri = $this->getPostParameter(self::ITEM_CLASS_URI, TaoOntology::CLASS_URI_ITEM);
+        $itemClass = $this->getClass($itemClassUri);
+
+        if (!$itemClass->exists()) {
+            throw new common_exception_RestApi('Class does not exist. Please use valid ' . self::ITEM_CLASS_URI);
+        }
+
+        return $itemClassUri;
     }
 
     /**
@@ -141,7 +162,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         }
 
         if (!in_array($isOverwriteTest, ['true', 'false'])) {
-            throw new \common_exception_RestApi(
+            throw new common_exception_RestApi(
                 'isOverwriteTest parameter should be boolean (true or false).'
             );
         }
@@ -176,7 +197,9 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
                 $this->isItemMustExistEnabled(),
                 $this->isItemMustBeOverwrittenEnabled(),
                 $this->isOverwriteTest(),
-                $this->getItemClassUri()
+                $this->getItemClassUri(),
+                $this->getOverwriteTestUri(),
+                $this->getPackageLabel()
             );
 
             $result = [
@@ -191,7 +214,7 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
             }
 
             return $this->returnSuccess($result);
-        } catch (\common_exception_RestApi $e) {
+        } catch (common_exception_RestApi $e) {
             return $this->returnFailure($e);
         }
     }
@@ -254,27 +277,22 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * If parent class parameter is an uri of valid test class, new class will be created under it
      * If not parent class parameter is provided, class will be created under root class
      * Comment parameter is not mandatory, used to describe new created class
-     *
-     * @return \core_kernel_classes_Class
      */
-    public function createClass()
+    public function createClass(): void
     {
         try {
-            $class = $this->createSubClass(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+            $class = $this->createSubClass(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
 
-            $result = [
+            $this->returnSuccess([
                 'message' => __('Class successfully created.'),
                 'class-uri' => $class->getUri(),
-            ];
-
-            $this->returnSuccess($result);
-        } catch (\common_exception_ClassAlreadyExists $e) {
-            $result = [
+            ]);
+        } catch (common_exception_ClassAlreadyExists $e) {
+            $this->returnSuccess([
                 'message' => $e->getMessage(),
                 'class-uri' => $e->getClass()->getUri(),
-            ];
-            $this->returnSuccess($result);
-        } catch (\Exception $e) {
+            ]);
+        } catch (Exception $e) {
             $this->returnFailure($e);
         }
     }
@@ -295,20 +313,54 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         $mimeType = tao_helpers_File::getMimeType($fileData['tmp_name']);
 
         if (!in_array($mimeType, self::$accepted_types)) {
-            throw new \common_exception_RestApi(__('Wrong file mime type'));
+            throw new common_exception_RestApi(__('Wrong file mime type'));
         }
 
         return $fileData;
     }
 
     /**
-     * Get class instance to import test
-     * @throws \common_exception_RestApi
-     * @return \core_kernel_classes_Class
+     * @return string|null
+     * @throws common_exception_RestApi
      */
-    private function getTestClass()
+    private function getOverwriteTestUri(): ?string
     {
-        return $this->getClassFromRequest(new \core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
+        $overwriteTestUri = $this->getPostParameter(self::OVERWRITE_TEST_URI);
+
+        if ($overwriteTestUri !== null && !is_string($overwriteTestUri)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::OVERWRITE_TEST_URI)
+            );
+        }
+
+        return $overwriteTestUri;
+    }
+
+    /**
+     * @return string|null
+     * @throws common_exception_RestApi
+     */
+    private function getPackageLabel(): ?string
+    {
+        $packageLabel = $this->getPostParameter(self::PACKAGE_LABEL);
+
+        if ($packageLabel !== null && !is_string($packageLabel)) {
+            throw new common_exception_RestApi(
+                sprintf('%s parameter should be string', self::PACKAGE_LABEL)
+            );
+        }
+
+        return $packageLabel;
+    }
+
+    /**
+     * Get class instance to import test
+     *
+     * @throws common_exception_RestApi
+     */
+    private function getTestClass(): core_kernel_classes_Class
+    {
+        return $this->getClassFromRequest(new core_kernel_classes_Class(TaoOntology::CLASS_URI_TEST));
     }
 
     /**

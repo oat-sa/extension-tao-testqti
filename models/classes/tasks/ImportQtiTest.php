@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2018 (original work) Open Assessment Technologies SA;
- *
- *
+ * Copyright (c) 2016-2024 (original work) Open Assessment Technologies SA;
  */
 
 namespace oat\taoQtiTest\models\tasks;
@@ -34,7 +32,6 @@ use oat\tao\model\import\ImportersService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\tao\model\taskQueue\Task\TaskInterface;
-use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\import\QtiTestImporter;
 
 /**
@@ -52,7 +49,13 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
     public const PARAM_ITEM_MUST_EXIST = 'item_must_exist';
     public const PARAM_ITEM_MUST_BE_OVERWRITTEN = 'item_must_be_overwritten';
     public const PARAM_ITEM_CLASS_URI = 'item_class_uri';
+    /**
+     * @deprecated Use oat\taoQtiTest\models\tasks\ImportQtiTest::PARAM_OVERWRITE_TEST_URI instead with the URI of the
+     *             test to be replaced
+     */
     public const PARAM_OVERWRITE_TEST = 'overwrite_test';
+    public const PARAM_OVERWRITE_TEST_URI = 'overwrite_test_uri';
+    public const PARAM_PACKAGE_LABEL = 'package_label';
 
     protected $service;
 
@@ -91,7 +94,9 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
             $params[self::PARAM_ITEM_MUST_EXIST] ?? false,
             $params[self::PARAM_ITEM_MUST_BE_OVERWRITTEN] ?? false,
             $params[self::PARAM_OVERWRITE_TEST] ?? false,
-            $params[self::PARAM_ITEM_CLASS_URI] ?? false
+            $params[self::PARAM_ITEM_CLASS_URI] ?? null,
+            $params[self::PARAM_OVERWRITE_TEST_URI] ?? null,
+            $params[self::PARAM_PACKAGE_LABEL] ?? null,
         );
 
         return $report;
@@ -123,8 +128,10 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
         $enableValidators = true,
         $itemMustExist = false,
         $itemMustBeOverwritten = false,
-        $overwriteTest = false,
-        ?string $itemClassUri = null
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null,
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
     ) {
         $action = new self();
         $action->setServiceLocator(ServiceManager::getServiceManager());
@@ -145,6 +152,8 @@ class ImportQtiTest extends AbstractTaskAction implements \JsonSerializable
                 self::PARAM_ITEM_MUST_BE_OVERWRITTEN => $itemMustBeOverwritten,
                 self::PARAM_OVERWRITE_TEST => $overwriteTest,
                 self::PARAM_ITEM_CLASS_URI => $itemClassUri,
+                self::PARAM_OVERWRITE_TEST_URI => $overwriteTestUri,
+                self::PARAM_PACKAGE_LABEL => $packageLabel,
             ],
             __('Import QTI TEST into "%s"', $class->getLabel())
         );

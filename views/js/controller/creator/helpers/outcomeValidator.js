@@ -27,7 +27,7 @@ define([
      * The RegEx that validates outcome identifiers
      * @type {RegExp}
      */
-    var identifierValidator = /^[a-zA-Z_][a-zA-Z0-9_\.-]*$/;
+    var identifierValidator = /^[a-zA-Z_][a-zA-Z0-9_-]*$/;
 
     /**
      * Checks the validity of an identifier

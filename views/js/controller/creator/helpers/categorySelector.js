@@ -114,9 +114,10 @@ define([
                         tags: customCategories,
                         multiple: true,
                         tokenSeparators: [',', ' ', ';'],
-                        formatNoMatches: function () {
-                            return __('Enter a custom category');
-                        },
+                        createSearchChoice: (category) => category.match(/^[a-zA-Z_][a-zA-Z0-9_-]*$/)
+                            ? { id: category, text: category }
+                            : null,
+                        formatNoMatches: () => __('Category name not allowed'),
                         maximumInputLength: 32
                     })
                     .on('change', () => this.updateCategories());
