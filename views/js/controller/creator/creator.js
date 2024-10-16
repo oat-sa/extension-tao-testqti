@@ -164,13 +164,13 @@ define([
             };
 
             let previewButtons;
-            
-            if(options.translation) {
+
+            if (options.translation) {
                 previewButtons = [
-                    createPreviewButton({label: 'Preview original', uri: options.originResourceUri }), 
-                    createPreviewButton({label: 'Preview translation' })
+                    createPreviewButton({ label: 'Preview original', uri: options.originResourceUri }),
+                    createPreviewButton({ label: 'Preview translation' })
                 ];
-            }else{
+            } else {
                 previewButtons = options.providers
                     ? options.providers.map(createPreviewButton)
                     : [createPreviewButton()];
