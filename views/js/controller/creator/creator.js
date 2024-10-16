@@ -126,6 +126,7 @@ define([
             options.labels = options.labels || {};
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.guidedNavigation = options.guidedNavigation === true;
+            options.translation = options.translation === true;
 
             categorySelector.setPresets(options.categoriesPresets);
 
@@ -219,6 +220,8 @@ define([
             binder = DataBindController.takeControl($container, binderOptions).get(model => {
                 creatorContext = qtiTestCreatorFactory($container, {
                     uri: options.uri,
+                    translation: options.translation,
+                    originResourceUri: options.originResourceUri,
                     labels: options.labels,
                     routes: options.routes,
                     guidedNavigation: options.guidedNavigation
