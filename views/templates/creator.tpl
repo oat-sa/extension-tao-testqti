@@ -76,6 +76,8 @@ requirejs.config({
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
                 identifier : '<?=get_data('identifierUrl')?>'
             },
+            translation : <?=get_data('translation')?>,
+            originResourceUri : <?=get_data('originResourceUri')?>,
             categoriesPresets : <?=get_data('categoriesPresets')?>,
             labels : <?=get_data('labels')?>,
             guidedNavigation : <?=get_data('guidedNavigation')?>
