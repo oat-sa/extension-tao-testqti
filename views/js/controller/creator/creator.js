@@ -126,6 +126,7 @@ define([
             options.labels = options.labels || {};
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.guidedNavigation = options.guidedNavigation === true;
+            options.translation = options.translation === true;
 
             categorySelector.setPresets(options.categoriesPresets);
 
@@ -135,9 +136,8 @@ define([
                 creatorContext.trigger('creatorclose');
             });
 
-            //preview button
             let previewId = 0;
-            const createPreviewButton = ({ id, label } = {}) => {
+            const createPreviewButton = ({ id, label, uri = '' } = {}) => {
                 // configured labels will need to to be registered elsewhere for the translations
                 const translate = text => text && __(text);
 
@@ -152,7 +152,7 @@ define([
                 ).on('click', e => {
                     e.preventDefault();
                     if (!$(e.currentTarget).hasClass('disabled')) {
-                        creatorContext.trigger('preview', id, previewId);
+                        creatorContext.trigger('preview', id, uri);
                     }
                 });
                 if (!Object.keys(options.labels).length) {
@@ -162,9 +162,19 @@ define([
                 previewId++;
                 return $button;
             };
-            const previewButtons = options.providers
-                ? options.providers.map(createPreviewButton)
-                : [createPreviewButton()];
+
+            let previewButtons;
+
+            if (options.translation) {
+                previewButtons = [
+                    createPreviewButton({ label: 'Preview original', uri: options.originResourceUri }),
+                    createPreviewButton({ label: 'Preview translation' })
+                ];
+            } else {
+                previewButtons = options.providers
+                    ? options.providers.map(createPreviewButton)
+                    : [createPreviewButton()];
+            }
 
             const isTestContainsItems = () => {
                 if ($container.find('.test-content').find('.itemref').length) {
@@ -219,6 +229,8 @@ define([
             binder = DataBindController.takeControl($container, binderOptions).get(model => {
                 creatorContext = qtiTestCreatorFactory($container, {
                     uri: options.uri,
+                    translation: options.translation,
+                    originResourceUri: options.originResourceUri,
                     labels: options.labels,
                     routes: options.routes,
                     guidedNavigation: options.guidedNavigation
@@ -260,10 +272,10 @@ define([
                     }
                 });
 
-                creatorContext.on('preview', provider => {
+                creatorContext.on('preview', (provider, uri) => {
                     if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
                         const saveUrl = options.routes.save;
-                        const testUri = saveUrl.slice(saveUrl.indexOf('uri=') + 4);
+                        const testUri = uri || saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                         const config = module.config();
                         const type = provider || config.provider || 'qtiTest';
                         return previewerFactory(type, decodeURIComponent(testUri), {
