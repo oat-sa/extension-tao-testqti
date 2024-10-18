@@ -100,6 +100,12 @@
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         @include vendor-prefix(flex, 0 1 auto, property, (-ms-, -webkit-, ''));
         height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .action-bar {
+            flex: 0 0 auto;
+        }
 
         .duration-group {
             @include flex-container(nowrap, row);
@@ -136,7 +142,6 @@
         }
         .item-selection {
             position: relative;
-            height: calc(100% - 65px);
             overflow: hidden;
         }
     }
