@@ -22,17 +22,17 @@ define([
     'module',
     'jquery',
     'lodash',
-    'helpers',
     'i18n',
-    'services/features',
     'ui/feedback',
     'core/databindcontroller',
+    'services/translation',
     'taoQtiTest/controller/creator/qtiTestCreator',
     'taoQtiTest/controller/creator/views/item',
     'taoQtiTest/controller/creator/views/test',
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/views/section',
     'taoQtiTest/controller/creator/views/itemref',
+    'taoQtiTest/controller/creator/views/translation',
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
@@ -48,17 +48,17 @@ define([
     module,
     $,
     _,
-    helpers,
     __,
-    features,
     feedback,
     DataBindController,
+    translationService,
     qtiTestCreatorFactory,
     itemView,
     testView,
     testPartView,
     sectionView,
     itemrefView,
+    translationView,
     Dom2QtiEncoder,
     templates,
     qtiTestHelper,
@@ -127,6 +127,9 @@ define([
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.guidedNavigation = options.guidedNavigation === true;
             options.translation = options.translation === true;
+
+            const saveUrl = options.routes.save || '';
+            options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));
 
             categorySelector.setPresets(options.categoriesPresets);
 
@@ -246,6 +249,9 @@ define([
 
                 //once model is loaded, we set up the test view
                 testView(creatorContext);
+                if (options.translation) {
+                    translationView(creatorContext);
+                }
 
                 //listen for changes to update available actions
                 testPartView.listenActionState();
@@ -260,10 +266,27 @@ define([
                         $saver.prop('disabled', true).addClass('disabled');
                         binder.save(
                             function () {
-                                $saver.prop('disabled', false).removeClass('disabled');
-                                feedback().success(__('Test Saved'));
-                                isTestContainsItems();
-                                creatorContext.trigger('saved');
+                                Promise.resolve()
+                                    .then(() => {
+                                        if (options.translation) {
+                                            const config = creatorContext.getModelOverseer().getConfig();
+                                            const progress = config.translationStatus;
+                                            const progressUri = translationService.translationProgress[progress];
+                                            if (progressUri) {
+                                                return translationService.updateTranslation(
+                                                    options.testUri,
+                                                    progressUri
+                                                );
+                                            }
+                                        }
+                                    })
+                                    .then(() => {
+                                        $saver.prop('disabled', false).removeClass('disabled');
+
+                                        feedback().success(__('Test Saved'));
+                                        isTestContainsItems();
+                                        creatorContext.trigger('saved');
+                                    });
                             },
                             function () {
                                 $saver.prop('disabled', false).removeClass('disabled');
@@ -274,11 +297,9 @@ define([
 
                 creatorContext.on('preview', (provider, uri) => {
                     if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
-                        const saveUrl = options.routes.save;
-                        const testUri = uri || saveUrl.slice(saveUrl.indexOf('uri=') + 4);
                         const config = module.config();
                         const type = provider || config.provider || 'qtiTest';
-                        return previewerFactory(type, decodeURIComponent(testUri), {
+                        return previewerFactory(type, uri || options.testUri, {
                             readOnly: false,
                             fullPage: true,
                             pluginsOptions: config.pluginsOptions
