@@ -21,6 +21,36 @@
     {{/if}}
 
 <!-- assessmentTest/testPart/assessmentSection/title -->
+{{#if translation}}
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="section-origin-title">{{__ 'Original Title'}}</label>
+        </div>
+        <div class="col-6">
+            <input type="text" id="section-origin-title" value="{{originTitle}}" readonly />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+            {{__ 'The original title of the section.'}}
+            </div>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="section-title">{{__ 'Translated title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+        </div>
+        <div class="col-6">
+            <input type="text" id="section-title" data-bind="title" data-validate="$notEmpty" />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+            {{__ 'The translated section title.'}}
+            </div>
+        </div>
+    </div>
+{{else}}
     <div class="grid-row">
         <div class="col-5">
             <label for="section-title">{{__ 'Title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
@@ -35,7 +65,7 @@
             </div>
         </div>
     </div>
-
+{{/if}}
 {{#if isSubsection}}
 <!-- assessmentTest/testPart/assessmentSection/required -->
     <div class="grid-row pseudo-label-box checkbox-row">
@@ -438,7 +468,7 @@
                     </div>
                 </div>
             </div>
-            
+
             {{#if lateSubmission}}
             <!-- assessmentTest/testPart/assessmentSection/timeLimits/allowLateSubmission -->
                 <div class="grid-row pseudo-label-box checkbox-row">

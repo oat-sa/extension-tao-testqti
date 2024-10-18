@@ -230,92 +230,124 @@ define([
 
             //set up the databinder
             binder = DataBindController.takeControl($container, binderOptions).get(model => {
-                creatorContext = qtiTestCreatorFactory($container, {
-                    uri: options.uri,
-                    translation: options.translation,
-                    originResourceUri: options.originResourceUri,
-                    labels: options.labels,
-                    routes: options.routes,
-                    guidedNavigation: options.guidedNavigation
-                });
-                creatorContext.setTestModel(model);
-                modelOverseer = creatorContext.getModelOverseer();
-
-                //detect the scoring mode
-                scoringHelper.init(modelOverseer);
-
-                //register validators
-                validators.registerValidators(modelOverseer);
-
-                //once model is loaded, we set up the test view
-                testView(creatorContext);
-                if (options.translation) {
-                    translationView(creatorContext);
-                }
-
-                //listen for changes to update available actions
-                testPartView.listenActionState();
-                sectionView.listenActionState();
-                subsectionView.listenActionState();
-                itemrefView.listenActionState();
-
-                changeTracker($container.get()[0], creatorContext, '.content-wrap');
-
-                creatorContext.on('save', function () {
-                    if (!$saver.hasClass('disabled')) {
-                        $saver.prop('disabled', true).addClass('disabled');
-                        binder.save(
-                            function () {
-                                Promise.resolve()
-                                    .then(() => {
-                                        if (options.translation) {
-                                            const config = creatorContext.getModelOverseer().getConfig();
-                                            const progress = config.translationStatus;
-                                            const progressUri = translationService.translationProgress[progress];
-                                            if (progressUri) {
-                                                return translationService.updateTranslation(
-                                                    options.testUri,
-                                                    progressUri
-                                                );
-                                            }
-                                        }
-                                    })
-                                    .then(() => {
-                                        $saver.prop('disabled', false).removeClass('disabled');
-
-                                        feedback().success(__('Test Saved'));
-                                        isTestContainsItems();
-                                        creatorContext.trigger('saved');
-                                    });
-                            },
-                            function () {
-                                $saver.prop('disabled', false).removeClass('disabled');
-                            }
-                        );
-                    }
-                });
-
-                creatorContext.on('preview', (provider, uri) => {
-                    if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
-                        const config = module.config();
-                        const type = provider || config.provider || 'qtiTest';
-                        return previewerFactory(type, uri || options.testUri, {
-                            readOnly: false,
-                            fullPage: true,
-                            pluginsOptions: config.pluginsOptions
-                        }).catch(err => {
-                            logger.error(err);
-                            feedback().error(
-                                __('Test Preview is not installed, please contact to your administrator.')
+                Promise.resolve()
+                    .then(() => {
+                        if (options.translation) {
+                            let getUrl = options.routes.get || '';
+                            getUrl = getUrl.replace(
+                                getUrl.slice(getUrl.indexOf('uri=') + 4),
+                                encodeURIComponent(options.originResourceUri)
                             );
+                            return new Promise((resolve, reject) => $.getJSON(getUrl).done(resolve).fail(reject));
+                        }
+                    })
+                    .catch(err => {
+                        logger.error(err);
+                        feedback().error(__('An error occurred while loading the original test.'));
+                    })
+                    .then(originModel => {
+                        creatorContext = qtiTestCreatorFactory($container, {
+                            uri: options.uri,
+                            translation: options.translation,
+                            originResourceUri: options.originResourceUri,
+                            labels: options.labels,
+                            routes: options.routes,
+                            guidedNavigation: options.guidedNavigation
                         });
-                    }
-                });
 
-                creatorContext.on('creatorclose', () => {
-                    creatorContext.trigger('exit');
-                    window.history.back();
-                });
+                        if (originModel && options.translation) {
+                            model.translation = true;
+                            model.originTitle = originModel.title;
+                            model.testParts.forEach((testPart, testPartIndex) => {
+                                const originTestPart = originModel.testParts[testPartIndex];
+                                testPart.assessmentSections.forEach((section, sectionIndex) => {
+                                    const originSection = originTestPart.assessmentSections[sectionIndex];
+                                    section.translation = true;
+                                    section.originTitle = originSection.title;
+                                });
+                            });
+                        }
+
+                        creatorContext.setTestModel(model);
+                        modelOverseer = creatorContext.getModelOverseer();
+
+                        //detect the scoring mode
+                        scoringHelper.init(modelOverseer);
+
+                        //register validators
+                        validators.registerValidators(modelOverseer);
+
+                        //once model is loaded, we set up the test view
+                        testView(creatorContext);
+                        if (options.translation) {
+                            translationView(creatorContext);
+                        }
+
+                        //listen for changes to update available actions
+                        testPartView.listenActionState();
+                        sectionView.listenActionState();
+                        subsectionView.listenActionState();
+                        itemrefView.listenActionState();
+
+                        changeTracker($container.get()[0], creatorContext, '.content-wrap');
+
+                        creatorContext.on('save', function () {
+                            if (!$saver.hasClass('disabled')) {
+                                $saver.prop('disabled', true).addClass('disabled');
+                                binder.save(
+                                    function () {
+                                        Promise.resolve()
+                                            .then(() => {
+                                                if (options.translation) {
+                                                    const config = creatorContext.getModelOverseer().getConfig();
+                                                    const progress = config.translationStatus;
+                                                    const progressUri =
+                                                        translationService.translationProgress[progress];
+                                                    if (progressUri) {
+                                                        return translationService.updateTranslation(
+                                                            options.testUri,
+                                                            progressUri
+                                                        );
+                                                    }
+                                                }
+                                            })
+                                            .then(() => {
+                                                $saver.prop('disabled', false).removeClass('disabled');
+
+                                                feedback().success(__('Test Saved'));
+                                                isTestContainsItems();
+                                                creatorContext.trigger('saved');
+                                            });
+                                    },
+                                    function () {
+                                        $saver.prop('disabled', false).removeClass('disabled');
+                                    }
+                                );
+                            }
+                        });
+
+                        creatorContext.on('preview', (provider, uri) => {
+                            if (isTestContainsItems() && !creatorContext.isTestHasErrors()) {
+                                const config = module.config();
+                                const type = provider || config.provider || 'qtiTest';
+                                return previewerFactory(type, uri || options.testUri, {
+                                    readOnly: false,
+                                    fullPage: true,
+                                    pluginsOptions: config.pluginsOptions
+                                }).catch(err => {
+                                    logger.error(err);
+                                    feedback().error(
+                                        __('Test Preview is not installed, please contact to your administrator.')
+                                    );
+                                });
+                            }
+                        });
+
+                        creatorContext.on('creatorclose', () => {
+                            creatorContext.trigger('exit');
+                            window.history.back();
+                        });
+                    });
             });
 
             //the save button triggers binder's save action.
