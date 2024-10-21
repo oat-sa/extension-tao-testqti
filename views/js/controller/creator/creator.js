@@ -256,14 +256,50 @@ define([
                         });
 
                         if (originModel && options.translation) {
-                            model.translation = true;
-                            model.originTitle = originModel.title;
-                            model.testParts.forEach((testPart, testPartIndex) => {
-                                const originTestPart = originModel.testParts[testPartIndex];
-                                testPart.assessmentSections.forEach((section, sectionIndex) => {
-                                    const originSection = originTestPart.assessmentSections[sectionIndex];
-                                    section.translation = true;
-                                    section.originTitle = originSection.title;
+                            const setTranslationOrigin = (fragment, origin) => {
+                                fragment.translation = true;
+                                if (origin && 'undefined' !== typeof origin.title) {
+                                    fragment.originTitle = origin.title;
+                                }
+                            };
+                            const registerIdentifier = (fragment, registry) => {
+                                if (fragment && 'undefined' !== typeof fragment.identifier) {
+                                    registry[fragment.identifier] = fragment;
+                                }
+                            };
+                            const recurseSections = (section, cb) => {
+                                cb(section);
+                                if (section.sectionParts) {
+                                    section.sectionParts.forEach(sectionPart => recurseSections(sectionPart, cb));
+                                }
+                            };
+
+                            // register all identifiers from the origin model,
+                            // they will be used to find the corresponding fragment in the translation model.
+                            const originIdentifiers = {};
+                            originModel.testParts.forEach(testPart => {
+                                registerIdentifier(testPart, originIdentifiers);
+                                testPart.assessmentSections.forEach(section => {
+                                    recurseSections(section, sectionPart =>
+                                        registerIdentifier(sectionPart, originIdentifiers)
+                                    );
+                                });
+                            });
+
+                            // set the translation origin for all fragments in the translation model
+                            setTranslationOrigin(model, originModel);
+                            model.testParts.forEach(testPart => {
+                                const originTestPart = originIdentifiers[testPart.identifier];
+                                if (originTestPart) {
+                                    setTranslationOrigin(testPart, originTestPart);
+                                }
+                                testPart.assessmentSections.forEach(section => {
+                                    recurseSections(section, sectionPart => {
+                                        const originSectionPart = originIdentifiers[sectionPart.identifier];
+                                        if (originSectionPart) {
+                                            setTranslationOrigin(sectionPart, originSectionPart);
+                                        }
+                                    });
                                 });
                             });
                         }
