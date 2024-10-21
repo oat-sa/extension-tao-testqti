@@ -139,27 +139,32 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          * @private
          */
         function propValidation() {
-            $view.on('validated.group', function(e, isValid){
+            $view.on('validated.group', function (e, isValid) {
                 const $warningIconSelector = $('span.icon-warning');
                 const $test = $('.tlb-button-on').parents('.test-creator-test');
 
                 // finds error current element if any
-                let errors = $(e.currentTarget).find('span.validate-error');
-                let currentTargetId = `[id="${$(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6)}"]`;
-                
-                if(e.namespace === 'group'){
+                const errors = $(e.currentTarget).find('span.validate-error');
+                const currentTargetId = $(e.currentTarget).find('span[data-bind="identifier"]').attr('id');
+                const currentTargetIdSelector = `[id="${currentTargetId && currentTargetId.slice(6)}"]`;
+
+                if (e.namespace === 'group') {
                     if (isValid && errors.length === 0) {
                         //remove warning icon if validation fails
-                        if($(e.currentTarget).hasClass('test-props')){
-                         $($test).find($warningIconSelector).first().css('display', 'none');
+                        if ($(e.currentTarget).hasClass('test-props')) {
+                            $($test).find($warningIconSelector).first().css('display', 'none');
                         }
-                        $(currentTargetId).find($warningIconSelector).first().css('display', 'none');
+                        if (currentTargetId) {
+                            $(currentTargetIdSelector).find($warningIconSelector).first().css('display', 'none');
+                        }
                     } else {
-                       //add warning icon if validation fails
-                        if($(e.currentTarget).hasClass('test-props')){
+                        //add warning icon if validation fails
+                        if ($(e.currentTarget).hasClass('test-props')) {
                             $($test).find($warningIconSelector).first().css('display', 'inline');
                         }
-                        $(currentTargetId).find($warningIconSelector).first().css('display', 'inline');
+                        if (currentTargetId) {
+                            $(currentTargetIdSelector).find($warningIconSelector).first().css('display', 'inline');
+                        }
                     }
                 }
             });
