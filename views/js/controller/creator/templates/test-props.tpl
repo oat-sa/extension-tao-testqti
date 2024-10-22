@@ -26,20 +26,6 @@
 {{#if translation}}
     <div class="grid-row">
         <div class="col-5">
-            <label for="test-origin-title">{{__ 'Original Title'}}</label>
-        </div>
-        <div class="col-6">
-            <input type="text" name="test-origin-title" value="{{originTitle}}" readonly />
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-            {{__ 'The original title of the test.'}}
-            </div>
-        </div>
-    </div>
-    <div class="grid-row">
-        <div class="col-5">
             <label for="test-title">{{__ 'Translated title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
         <div class="col-6">
@@ -49,6 +35,20 @@
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
             {{__ 'The translated test title.'}}
+            </div>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="test-origin-title">{{__ 'Original title'}}</label>
+        </div>
+        <div class="col-6">
+            <input type="text" name="test-origin-title" value="{{originTitle}}" readonly />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+                {{__ 'The original title of the test.'}}
             </div>
         </div>
     </div>
