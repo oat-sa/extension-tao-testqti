@@ -479,10 +479,24 @@
                     margin-bottom: 20px;
                     clear: both;
 
-                    .rubricblock-binding {
+                    .rubricblock-binding, .rubricblock-origin, .rubricblock-title {
                         display: none;
                     }
-                    .rubricblock-content {
+                    &.translation {
+                        .rubricblock-origin, .rubricblock-title {
+                            display: block;
+                        }
+                    }
+                    .rubricblock-title {
+                        font-weight: bold;
+                        min-height: 30px;
+                        padding: 8px 0;
+                    }
+                    .rubricblock-wrapper .rubricblock-title {
+                        position: absolute;
+                        top: 0;
+                    }
+                    .rubricblock-content, .rubricblock-origin-content {
                         @include border-radius;
                         background-color: $uiGeneralContentBg;
                         padding: 4px;
@@ -493,6 +507,12 @@
                         .grid-row{
                             display: block;
                         }
+                    }
+                    .rubricblock-origin-content {
+                        background-color: whiten($uiGeneralContentBg, .3);
+                        text-shadow: 1px 1px 0 white(.8);
+                        opacity: .55;
+                        margin: 0;
                     }
                     .actions{
                         position: absolute;

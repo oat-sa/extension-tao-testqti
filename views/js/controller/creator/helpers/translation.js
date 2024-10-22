@@ -36,8 +36,20 @@ define([], function () {
      */
     function setTranslationOrigin(fragment, origin) {
         fragment.translation = true;
-        if (origin && 'undefined' !== typeof origin.title) {
+        if (!origin) {
+            return;
+        }
+        if ('undefined' !== typeof origin.title) {
             fragment.originTitle = origin.title;
+        }
+        if (Array.isArray(fragment.rubricBlocks) && Array.isArray(origin.rubricBlocks)) {
+            fragment.rubricBlocks.forEach((rubricBlock, rubricBlockIndex) => {
+                const originRubricBlock = origin.rubricBlocks[rubricBlockIndex];
+                if (originRubricBlock) {
+                    rubricBlock.translation = true;
+                    rubricBlock.originContent = originRubricBlock.content;
+                }
+            });
         }
     }
 
