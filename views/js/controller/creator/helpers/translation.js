@@ -78,17 +78,11 @@ define(['jquery', 'services/translation'], function ($, translationService) {
          * Get the language of the translation.
          * @param {object} data
          * @returns {object}
-         * @returns {string} object.uri
-         * @returns {string} object.code
+         * @returns {string} object.value
+         * @returns {string} object.literal
          */
         getTranslationLanguage(data) {
-            const language = data && translationService.getTranslationsLanguage(data.resources)[0];
-            if (language) {
-                return {
-                    uri: language.value,
-                    code: language.literal
-                };
-            }
+            return data && translationService.getTranslationsLanguage(data.resources)[0];
         },
 
         /**
