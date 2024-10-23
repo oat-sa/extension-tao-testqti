@@ -47,31 +47,6 @@ define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator
     }
 
     /**
-     * Set the translation origin for a fragment in the translation model.
-     * @param {object} fragment -  The fragment.
-     * @param {string} fragment.identifier - The fragment identifier.
-     * @param {object} origin - The origin model.
-     */
-    function setTranslationOrigin(fragment, origin) {
-        fragment.translation = true;
-        if (!origin) {
-            return;
-        }
-        if ('undefined' !== typeof origin.title) {
-            fragment.originTitle = origin.title;
-        }
-        if (Array.isArray(fragment.rubricBlocks) && Array.isArray(origin.rubricBlocks)) {
-            fragment.rubricBlocks.forEach((rubricBlock, rubricBlockIndex) => {
-                const originRubricBlock = origin.rubricBlocks[rubricBlockIndex];
-                if (originRubricBlock) {
-                    rubricBlock.translation = true;
-                    rubricBlock.originContent = originRubricBlock.content;
-                }
-            });
-        }
-    }
-
-    /**
      * Get JSON data from a URL.
      * @param {string} url - The URL to get the JSON data from.
      * @returns {Promise}
@@ -148,10 +123,61 @@ define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator
          * Update the model from the origin.
          * @param {object} model - The model to update.
          * @param {string} originUrl - The origin URL.
-         * @returns {Promise}
+         * @returns {Promise<object>} - The origin model.
          */
         updateModelFromOrigin(model, originUrl) {
-            return getJSON(originUrl).then(originModel => this.updateModelForTranslation(model, originModel));
+            return getJSON(originUrl).then(originModel => {
+                this.updateModelForTranslation(model, originModel);
+                return originModel;
+            });
+        },
+
+        /**
+         * Register the model identifiers.
+         * @param {object} model
+         * @returns {object} - The model identifiers.
+         */
+        registerModelIdentifiers(model) {
+            const identifiers = {};
+            function registerIdentifier(fragment) {
+                if (fragment && 'undefined' !== typeof fragment.identifier) {
+                    identifiers[fragment.identifier] = fragment;
+                }
+            }
+
+            model.testParts.forEach(testPart => {
+                registerIdentifier(testPart);
+                testPart.assessmentSections.forEach(section => {
+                    recurseSections(section, sectionPart => registerIdentifier(sectionPart));
+                });
+            });
+
+            return identifiers;
+        },
+
+        /**
+         * Set the translation origin for a fragment in the translation model.
+         * @param {object} model -  The model fragment.
+         * @param {string} model.identifier - The model fragment identifier.
+         * @param {object} originModel - The origin model.
+         */
+        setTranslationFromOrigin(model, originModel) {
+            model.translation = true;
+            if (!originModel) {
+                return;
+            }
+            if ('undefined' !== typeof originModel.title) {
+                model.originTitle = originModel.title;
+            }
+            if (Array.isArray(model.rubricBlocks) && Array.isArray(originModel.rubricBlocks)) {
+                model.rubricBlocks.forEach((rubricBlock, rubricBlockIndex) => {
+                    const originRubricBlock = originModel.rubricBlocks[rubricBlockIndex];
+                    if (originRubricBlock) {
+                        rubricBlock.translation = true;
+                        rubricBlock.originContent = originRubricBlock.content;
+                    }
+                });
+            }
         },
 
         /**
@@ -160,31 +186,18 @@ define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator
          * @param {object} originModel
          */
         updateModelForTranslation(model, originModel) {
-            const originIdentifiers = {};
-            function registerIdentifier(fragment) {
-                if (fragment && 'undefined' !== typeof fragment.identifier) {
-                    originIdentifiers[fragment.identifier] = fragment;
-                }
-            }
-
-            originModel.testParts.forEach(testPart => {
-                registerIdentifier(testPart);
-                testPart.assessmentSections.forEach(section => {
-                    recurseSections(section, sectionPart => registerIdentifier(sectionPart));
-                });
-            });
-
-            setTranslationOrigin(model, originModel);
+            const originIdentifiers = this.registerModelIdentifiers(originModel);
+            this.setTranslationFromOrigin(model, originModel);
             model.testParts.forEach(testPart => {
                 const originTestPart = originIdentifiers[testPart.identifier];
                 if (originTestPart) {
-                    setTranslationOrigin(testPart, originTestPart);
+                    this.setTranslationFromOrigin(testPart, originTestPart);
                 }
                 testPart.assessmentSections.forEach(section => {
                     recurseSections(section, sectionPart => {
                         const originSectionPart = originIdentifiers[sectionPart.identifier];
                         if (originSectionPart) {
-                            setTranslationOrigin(sectionPart, originSectionPart);
+                            this.setTranslationFromOrigin(sectionPart, originSectionPart);
                         }
                     });
                 });

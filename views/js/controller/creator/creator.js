@@ -238,7 +238,9 @@ define([
                     .then(() => {
                         if (options.translation) {
                             return Promise.all([
-                                translationHelper.updateModelFromOrigin(model, options.routes.getOrigin),
+                                translationHelper
+                                    .updateModelFromOrigin(model, options.routes.getOrigin)
+                                    .then(originModel => (options.originModel = originModel)),
                                 translationHelper
                                     .getTranslationConfig(options.testUri, options.originResourceUri)
                                     .then(translationConfig => Object.assign(options, translationConfig))
@@ -268,6 +270,7 @@ define([
                             translationLanguageUri: options.translationLanguageUri,
                             translationLanguageCode: options.translationLanguageCode,
                             originResourceUri: options.originResourceUri,
+                            originModel: options.originModel,
                             labels: options.labels,
                             routes: options.routes,
                             guidedNavigation: options.guidedNavigation
