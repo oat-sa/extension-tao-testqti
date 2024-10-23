@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\TestSessionState;
 
 use common_exception_NoContent;
 use common_exception_NotFound;
-use League\Flysystem\FilesystemException;
+use oat\oatbox\filesystem\FilesystemException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
