@@ -1,4 +1,4 @@
-<div id="test-creator" data-content-target="wide">
+<div class="<?=get_data('translation') !== 'false' ? 'side-by-side-authoring' : ''?>" id="test-creator" data-content-target="wide">
 
 <!-- left section: items selection -->
     <section class="test-creator-sidebar test-creator-area test-creator-items">

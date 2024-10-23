@@ -1,6 +1,7 @@
 <li id='{{identifier}}' data-uri='{{href}}' class='itemref'>
     <span class='title truncate'>{{{dompurify label}}}</span>
     <span class="icon-warning configuration-issue"></span>
+    <div class="translation-status"></div>
     <div class="actions">
         <div class="tlb">
             <div class="tlb-top">

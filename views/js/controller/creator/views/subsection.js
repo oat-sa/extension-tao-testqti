@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2021-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 define([
@@ -33,7 +33,9 @@ define([
     'ui/dialog/confirm',
     'taoQtiTest/controller/creator/helpers/subsection',
     'taoQtiTest/controller/creator/helpers/validators',
-    'services/features'
+    'taoQtiTest/controller/creator/helpers/translation',
+    'services/features',
+    'tpl!taoQtiTest/controller/creator/templates/translation-status'
 ], function (
     $,
     _,
@@ -51,7 +53,9 @@ define([
     confirmDialog,
     subsectionsHelper,
     validators,
-    servicesFeatures
+    translationHelper,
+    servicesFeatures,
+    translationStatusTpl
 ) {
     'use strict';
     /**
@@ -214,15 +218,15 @@ define([
                 if (!subsectionModel.sectionParts[index]) {
                     subsectionModel.sectionParts[index] = {};
                 }
+                const itemRef = subsectionModel.sectionParts[index];
 
-                itemRefView.setUp(
-                    creatorContext,
-                    subsectionModel.sectionParts[index],
-                    subsectionModel,
-                    sectionModel,
-                    $itemRef
-                );
+                itemRefView.setUp(creatorContext, itemRef, subsectionModel, sectionModel, $itemRef);
                 $itemRef.find('.title').text(config.labels[uri.encode($itemRef.data('uri'))]);
+
+                if (itemRef.translation) {
+                    const badgeInfo = translationHelper.getTranslationStatusBadgeInfo(itemRef.translationStatus);
+                    $itemRef.find('.translation-status').html(translationStatusTpl(badgeInfo));
+                }
             });
         }
 

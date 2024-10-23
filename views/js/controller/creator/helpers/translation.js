@@ -15,7 +15,25 @@
  *
  * Copyright (c) 2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
-define(['jquery', 'services/translation'], function ($, translationService) {
+define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator/helpers/testModel'], function (
+    $,
+    __,
+    translationService,
+    testModelHelper
+) {
+    const translationStatusLabels = {
+        translating: __('In progress'),
+        translated: __('Translation completed'),
+        pending: __('Pending'),
+        none: __('No translation')
+    };
+    const translationStatusIcons = {
+        translating: 'remove',
+        translated: 'success',
+        pending: 'info',
+        none: 'warning'
+    };
+
     /**
      * Process all sections and subsections in the model.
      * @param {object} section
@@ -61,6 +79,25 @@ define(['jquery', 'services/translation'], function ($, translationService) {
     const getJSON = url => new Promise((resolve, reject) => $.getJSON(url).done(resolve).fail(reject));
 
     return {
+        /**
+         * Get the translation status badge info.
+         * @param {string} translationStatus - The translation status.
+         * @returns {object}
+         * @returns {string} object.status - The translation status.
+         * @returns {string} object.label - A translated label for the translation status.
+         * @returns {string} object.icon - The icon for the translation status.
+         */
+        getTranslationStatusBadgeInfo(translationStatus) {
+            if (!translationStatus) {
+                translationStatus = 'none';
+            }
+            return {
+                status: translationStatus,
+                label: translationStatusLabels[translationStatus],
+                icon: translationStatusIcons[translationStatus]
+            };
+        },
+
         /**
          * Get the status of the translation.
          * @param {object} data
@@ -152,6 +189,58 @@ define(['jquery', 'services/translation'], function ($, translationService) {
                     });
                 });
             });
+        },
+
+        /**
+         * List the URI of all items in the model.
+         * @param {object} model
+         * @returns {string[]}
+         */
+        listItemRefs(model) {
+            const itemRefs = [];
+            testModelHelper.eachItemInTest(model, itemRef => {
+                itemRefs.push(itemRef.href);
+            });
+            return itemRefs;
+        },
+
+        /**
+         * Get the translation status of the resource for a given language.
+         * @param {string} resourceUri - The resource URI.
+         * @param {string} languageUri - The language URI.
+         * @returns {Promise<string[]>} - The status of the translation.
+         */
+        getResourceTranslationStatus(resourceUri, languageUri) {
+            const languageKey = translationService.metadata.language;
+            return translationService
+                .getTranslations(
+                    resourceUri,
+                    translation =>
+                        translation &&
+                        translation.metadata &&
+                        translation.metadata[languageKey] &&
+                        translation.metadata[languageKey].value == languageUri
+                )
+                .then(data => translationService.getTranslationsProgress(data.resources));
+        },
+
+        /**
+         * Gets the status of the items in the model.
+         * @param {object} model - The model.
+         * @param {string} languageUri - The language URI.
+         * @returns {Promise<object>} - The status of the items, the key is the item URI and the value is the status.
+         */
+        getItemsTranslationStatus(model, languageUri) {
+            return Promise.all(
+                this.listItemRefs(model).map(item =>
+                    this.getResourceTranslationStatus(item, languageUri).then(status => [item, status])
+                )
+            ).then(items =>
+                items.reduce((acc, [item, status]) => {
+                    acc[item] = status[0];
+                    return acc;
+                }, {})
+            );
         }
     };
 });

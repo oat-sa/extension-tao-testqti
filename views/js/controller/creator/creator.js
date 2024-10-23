@@ -38,6 +38,7 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/translation',
+    'taoQtiTest/controller/creator/helpers/testModel',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
@@ -65,6 +66,7 @@ define([
     qtiTestHelper,
     scoringHelper,
     translationHelper,
+    testModelHelper,
     categorySelector,
     validators,
     changeTracker,
@@ -240,7 +242,18 @@ define([
                                 translationHelper
                                     .getTranslationConfig(options.testUri, options.originResourceUri)
                                     .then(translationConfig => Object.assign(options, translationConfig))
-                            ]);
+                            ])
+                                .then(() =>
+                                    translationHelper.getItemsTranslationStatus(model, options.translationLanguageUri)
+                                )
+                                .then(itemsStatus => {
+                                    testModelHelper.eachItemInTest(model, itemRef => {
+                                        const itemRefUri = itemRef.href;
+                                        if (itemsStatus[itemRefUri]) {
+                                            itemRef.translationStatus = itemsStatus[itemRefUri];
+                                        }
+                                    });
+                                });
                         }
                     })
                     .catch(err => {
