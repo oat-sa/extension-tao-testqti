@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
-define([], function () {
+define(['jquery', 'services/translation'], function ($, translationService) {
     /**
      * Process all sections and subsections in the model.
      * @param {object} section
@@ -53,7 +53,76 @@ define([], function () {
         }
     }
 
+    /**
+     * Get JSON data from a URL.
+     * @param {string} url - The URL to get the JSON data from.
+     * @returns {Promise}
+     */
+    const getJSON = url => new Promise((resolve, reject) => $.getJSON(url).done(resolve).fail(reject));
+
     return {
+        /**
+         * Get the status of the translation.
+         * @param {object} data
+         * @returns {string}
+         */
+        getTranslationStatus(data) {
+            const translation = data && translationService.getTranslationsProgress(data.resources)[0];
+            if (!translation || translation == 'pending') {
+                return 'translating';
+            }
+            return translation;
+        },
+
+        /**
+         * Get the language of the translation.
+         * @param {object} data
+         * @returns {object}
+         * @returns {string} object.uri
+         * @returns {string} object.code
+         */
+        getTranslationLanguage(data) {
+            const language = data && translationService.getTranslationsLanguage(data.resources)[0];
+            if (language) {
+                return {
+                    uri: language.value,
+                    code: language.literal
+                };
+            }
+        },
+
+        /**
+         * Get the translation configuration.
+         * @param {string} testUri - The test URI.
+         * @param {string} originTestUri - The origin test URI.
+         * @returns {Promise}
+         */
+        getTranslationConfig(testUri, originTestUri) {
+            return translationService
+                .getTranslations(originTestUri, translation => translation.resourceUri === testUri)
+                .then(data => {
+                    const translation = this.getTranslationStatus(data);
+                    const language = this.getTranslationLanguage(data);
+
+                    const config = { translationStatus: translation };
+                    if (language) {
+                        config.translationLanguageUri = language.value;
+                        config.translationLanguageCode = language.literal;
+                    }
+                    return config;
+                });
+        },
+
+        /**
+         * Update the model from the origin.
+         * @param {object} model - The model to update.
+         * @param {string} originUrl - The origin URL.
+         * @returns {Promise}
+         */
+        updateModelFromOrigin(model, originUrl) {
+            return getJSON(originUrl).then(originModel => this.updateModelForTranslation(model, originModel));
+        },
+
         /**
          * Set the translation origin for all fragments in the translation model.
          * @param {object} model

@@ -46,8 +46,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $testModel = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
 
         // Add support for translation and side-by-side view
+        $originResourceUri = $this->getRequestParameter('originResourceUri');
         $this->setData('translation', $this->getRequestParameter('translation') ?? "false");
-        $this->setData('originResourceUri', json_encode($this->getRequestParameter('originResourceUri')));
+        $this->setData('originResourceUri', json_encode($originResourceUri));
 
         $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
         foreach ($items as $item) {
@@ -63,6 +64,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->setData('categoriesPresets', json_encode($categoriesPresetService->getAvailablePresets($runtimeConfig)));
 
         $this->setData('loadUrl', _url('getTest', null, null, ['uri' => $testUri]));
+        $this->setData('loadOriginUrl', _url('getTest', null, null, ['uri' => $originResourceUri]));
         $this->setData('saveUrl', _url('saveTest', null, null, ['uri' => $testUri]));
 
         if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {

@@ -71,6 +71,7 @@ requirejs.config({
         'taoQtiTest/controller/creator/creator' : {
             routes : {
                 get  : '<?=get_data('loadUrl')?>',
+                getOrigin  : '<?=get_data('loadOriginUrl')?>',
                 save  : '<?=get_data('saveUrl')?>',
                 blueprintsById : '<?=get_data('blueprintsByIdUrl')?>',
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',

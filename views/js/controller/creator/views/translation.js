@@ -15,11 +15,7 @@
  *
  * Copyright (c) 2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
-define(['jquery', 'services/translation', 'taoQtiTest/controller/creator/templates/index'], function (
-    $,
-    translationService,
-    templates
-) {
+define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function ($, templates) {
     'use strict';
 
     /**
@@ -36,32 +32,14 @@ define(['jquery', 'services/translation', 'taoQtiTest/controller/creator/templat
             return;
         }
 
-        const { uri: resourceUri, originResourceUri } = config;
+        const $container = $('.test-creator-props');
+        const template = templates.properties.translation;
+        const $view = $(template(config)).appendTo($container);
 
-        translationService
-            .getTranslations(originResourceUri, translation => translation.resourceUri === resourceUri)
-            .then(data => {
-                const language = data && translationService.getTranslationsLanguage(data.resources)[0];
-                let translation = data && translationService.getTranslationsProgress(data.resources)[0];
-                if (!translation || translation == 'pending') {
-                    translation = 'translating';
-                }
-                config.translationStatus = translation;
-                if (language) {
-                    config.translationLanguageUri = language.value;
-                    config.translationLanguageCode = language.literal;
-                }
-
-                const $container = $('.test-creator-props');
-                const template = templates.properties.translation;
-                const $view = $(template(config)).appendTo($container);
-
-                $view.on('change', '[name="translationStatus"]', e => {
-                    const input = e.target;
-                    config.translationStatus = input.value;
-                });
-            })
-            .catch(error => creatorContext.trigger('error', error));
+        $view.on('change', '[name="translationStatus"]', e => {
+            const input = e.target;
+            config.translationStatus = input.value;
+        });
     }
 
     return translationView;

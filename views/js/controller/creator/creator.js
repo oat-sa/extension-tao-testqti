@@ -235,31 +235,30 @@ define([
                 Promise.resolve()
                     .then(() => {
                         if (options.translation) {
-                            let getUrl = options.routes.get || '';
-                            getUrl = getUrl.replace(
-                                getUrl.slice(getUrl.indexOf('uri=') + 4),
-                                encodeURIComponent(options.originResourceUri)
-                            );
-                            return new Promise((resolve, reject) => $.getJSON(getUrl).done(resolve).fail(reject));
+                            return Promise.all([
+                                translationHelper.updateModelFromOrigin(model, options.routes.getOrigin),
+                                translationHelper
+                                    .getTranslationConfig(options.testUri, options.originResourceUri)
+                                    .then(translationConfig => Object.assign(options, translationConfig))
+                            ]);
                         }
                     })
                     .catch(err => {
                         logger.error(err);
                         feedback().error(__('An error occurred while loading the original test.'));
                     })
-                    .then(originModel => {
+                    .then(() => {
                         creatorContext = qtiTestCreatorFactory($container, {
                             uri: options.uri,
                             translation: options.translation,
+                            translationStatus: options.translationStatus,
+                            translationLanguageUri: options.translationLanguageUri,
+                            translationLanguageCode: options.translationLanguageCode,
                             originResourceUri: options.originResourceUri,
                             labels: options.labels,
                             routes: options.routes,
                             guidedNavigation: options.guidedNavigation
                         });
-
-                        if (originModel && options.translation) {
-                            translationHelper.updateModelForTranslation(model, originModel);
-                        }
 
                         creatorContext.setTestModel(model);
                         modelOverseer = creatorContext.getModelOverseer();
