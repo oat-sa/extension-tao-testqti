@@ -30,6 +30,7 @@ define([
     'taoQtiTest/controller/creator/views/testpart',
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
+    'taoQtiTest/controller/creator/helpers/translation',
     'taoQtiTest/controller/creator/helpers/featureVisibility'
 ], function (
     $,
@@ -43,6 +44,7 @@ define([
     testPartView,
     templates,
     qtiTestHelper,
+    translationHelper,
     featureVisibility
 ) {
     'use strict';
@@ -226,6 +228,15 @@ define([
                 .on('add.binder', '.testparts', (e, $testPart, added) => {
                     if (e.namespace === 'binder' && $testPart.hasClass('testpart')) {
                         const partModel = testModel.testParts[added.index];
+
+                        if (testModel.translation) {
+                            const originIdentifiers = translationHelper.registerModelIdentifiers(config.originModel);
+                            const originTestPart = originIdentifiers[partModel.identifier];
+                            const section = partModel.assessmentSections[0];
+                            const originSection = originIdentifiers[section.identifier];
+                            translationHelper.setTranslationFromOrigin(partModel, originTestPart);
+                            translationHelper.setTranslationFromOrigin(section, originSection);
+                        }
 
                         //initialize the new test part
                         testPartView.setUp(creatorContext, partModel, $testPart);

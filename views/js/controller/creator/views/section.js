@@ -230,11 +230,7 @@ define([
 
                 itemRefView.setUp(creatorContext, itemRef, sectionModel, partModel, $itemRef);
                 $itemRef.find('.title').text(config.labels[uri.encode($itemRef.data('uri'))]);
-
-                if (itemRef.translation) {
-                    const badgeInfo = translationHelper.getTranslationStatusBadgeInfo(itemRef.translationStatus);
-                    $itemRef.find('.translation-status').html(translationStatusTpl(badgeInfo));
-                }
+                showItemTranslationStatus(itemRef, $itemRef);
             });
         }
 
@@ -312,17 +308,47 @@ define([
                             const index = $itemRef.data('bind-index');
                             const itemRefModel = sectionModel.sectionParts[index];
 
-                            //initialize the new item ref
-                            itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
+                            return Promise.resolve()
+                                .then(() => {
+                                    if (sectionModel.translation) {
+                                        itemRefModel.translation = true;
+                                        return translationHelper
+                                            .getResourceTranslationStatus(
+                                                itemRefModel.href,
+                                                config.translationLanguageUri
+                                            )
+                                            .then(
+                                                translationStatus =>
+                                                    (itemRefModel.translationStatus = translationStatus[0])
+                                            );
+                                    }
+                                })
+                                .then(() => {
+                                    //initialize the new item ref
+                                    itemRefView.setUp(creatorContext, itemRefModel, sectionModel, partModel, $itemRef);
+                                    showItemTranslationStatus(itemRefModel, $itemRef);
 
-                            /**
-                             * @event modelOverseer#item-add
-                             * @param {Object} itemRefModel
-                             */
-                            modelOverseer.trigger('item-add', itemRefModel);
+                                    /**
+                                     * @event modelOverseer#item-add
+                                     * @param {Object} itemRefModel
+                                     */
+                                    modelOverseer.trigger('item-add', itemRefModel);
+                                });
                         }
                     }
                 );
+        }
+
+        /**
+         * Show the translation status of the item ref in the view (if translation is enabled).
+         * @param {object} itemRef
+         * @param {string} $itemRef
+         */
+        function showItemTranslationStatus(itemRef, $itemRef) {
+            if (itemRef.translation) {
+                const badgeInfo = translationHelper.getTranslationStatusBadgeInfo(itemRef.translationStatus);
+                $itemRef.find('.translation-status').html(translationStatusTpl(badgeInfo));
+            }
         }
 
         /**
@@ -408,6 +434,16 @@ define([
                             const index = $rubricBlock.data('bind-index');
                             const rubricModel = sectionModel.rubricBlocks[index] || {};
                             rubricModel.classVisible = sectionModel.rubricBlocksClass;
+
+                            if (sectionModel.translation) {
+                                const originIdentifiers = translationHelper.registerModelIdentifiers(
+                                    config.originModel
+                                );
+                                const originSection = originIdentifiers[sectionModel.identifier];
+                                const originRubricModel = originSection.rubricBlocks[index];
+                                rubricModel.translation = true;
+                                rubricModel.originContent = (originRubricModel && originRubricModel.content) || [];
+                            }
 
                             $('.rubricblock-binding', $rubricBlock).html('<p>&nbsp;</p>');
                             rubricBlockView.setUp(creatorContext, rubricModel, $rubricBlock);
@@ -635,6 +671,12 @@ define([
                         if ($section.data('movedCategories')) {
                             subsectionModel.categories = $section.data('movedCategories');
                             $section.removeData('movedCategories');
+                        }
+
+                        if (sectionModel.translation) {
+                            const originIdentifiers = translationHelper.registerModelIdentifiers(config.originModel);
+                            const originSection = originIdentifiers[subsectionModel.identifier];
+                            translationHelper.setTranslationFromOrigin(subsectionModel, originSection);
                         }
 
                         //initialize the new subsection
