@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -54,7 +54,7 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             $container.children('.props').hide().trigger('propclose.propview');
             $view = $(template(model)).appendTo($container).filter('.props');
 
-            //start listening for DOM compoenents inside the view
+            //start listening for DOM components inside the view
             ui.startDomComponent($view);
 
             //start the data binding
@@ -66,7 +66,7 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             $view.trigger('propopen.propview');
 
             // contains identifier from model, needed for validation on keyup for identifiers
-            // jQuesy selector for Id with dots don't work
+            // jQuery selector for Id with dots don't work
             // dots are allowed for id by default see taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier
             // need to use attr
             const $identifier = $view.find(`[id="props-${model.identifier}"]`);
@@ -140,7 +140,7 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          */
         function propValidation() {
             $view.on('validated.group', function (e, isValid) {
-                const $warningIconSelector = $('span.icon-warning');
+                const warningIconSelector = 'span.configuration-issue';
                 const $test = $('.tlb-button-on').parents('.test-creator-test');
 
                 // finds error current element if any
@@ -152,18 +152,18 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
                     if (isValid && errors.length === 0) {
                         //remove warning icon if validation fails
                         if ($(e.currentTarget).hasClass('test-props')) {
-                            $($test).find($warningIconSelector).first().css('display', 'none');
+                            $test.find(warningIconSelector).first().css('display', 'none');
                         }
                         if (currentTargetId) {
-                            $(currentTargetIdSelector).find($warningIconSelector).first().css('display', 'none');
+                            $(currentTargetIdSelector).find(warningIconSelector).first().css('display', 'none');
                         }
                     } else {
                         //add warning icon if validation fails
                         if ($(e.currentTarget).hasClass('test-props')) {
-                            $($test).find($warningIconSelector).first().css('display', 'inline');
+                            $test.find(warningIconSelector).first().css('display', 'inline');
                         }
                         if (currentTargetId) {
-                            $(currentTargetIdSelector).find($warningIconSelector).first().css('display', 'inline');
+                            $(currentTargetIdSelector).find(warningIconSelector).first().css('display', 'inline');
                         }
                     }
                 }

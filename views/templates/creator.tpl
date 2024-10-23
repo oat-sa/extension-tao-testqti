@@ -29,7 +29,7 @@
             </ul>
         </div>
         <h1><span data-bind="title"></span>
-            <span class="icon-warning"></span>
+            <span class="icon-warning configuration-issue"></span>
             <div class="actions">
                 <div class="tlb">
                     <div class="tlb-top">
