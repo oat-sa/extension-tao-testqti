@@ -2,7 +2,7 @@
 
 <!-- assessmentTest/testPart/assessmentSection/title -->
     <h2><span class="title-index"></span> <span data-bind="title">{{title}}</span>
-        <span class="icon-warning"></span>
+        <span class="icon-warning configuration-issue"></span>
         <div class="actions">
             <div class="tlb">
                 <div class="tlb-top">

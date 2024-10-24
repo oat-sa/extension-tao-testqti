@@ -1,4 +1,4 @@
-<div id="test-creator" data-content-target="wide">
+<div class="<?=get_data('translation') !== 'false' ? 'side-by-side-authoring' : ''?>" id="test-creator" data-content-target="wide">
 
 <!-- left section: items selection -->
     <section class="test-creator-sidebar test-creator-area test-creator-items">
@@ -29,7 +29,7 @@
             </ul>
         </div>
         <h1><span data-bind="title"></span>
-            <span class="icon-warning"></span>
+            <span class="icon-warning configuration-issue"></span>
             <div class="actions">
                 <div class="tlb">
                     <div class="tlb-top">
@@ -71,6 +71,7 @@ requirejs.config({
         'taoQtiTest/controller/creator/creator' : {
             routes : {
                 get  : '<?=get_data('loadUrl')?>',
+                getOrigin  : '<?=get_data('loadOriginUrl')?>',
                 save  : '<?=get_data('saveUrl')?>',
                 blueprintsById : '<?=get_data('blueprintsByIdUrl')?>',
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
