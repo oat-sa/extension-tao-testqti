@@ -219,22 +219,19 @@ define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator
 
         /**
          * Get the translation status of the resource for a given language.
-         * @param {string} resourceUri - The resource URI.
+         * @param {string|string[]} resourceUri - The resource URI or the list of resource URIs.
          * @param {string} languageUri - The language URI.
-         * @returns {Promise<string[]>} - The status of the translation.
+         * @returns {Promise<Array[string[]]>} - The status of the translation, as an array of pairs [resourceUri, status].
          */
         getResourceTranslationStatus(resourceUri, languageUri) {
-            const languageKey = translationService.metadata.language;
-            return translationService
-                .getTranslations(
-                    resourceUri,
-                    translation =>
-                        translation &&
-                        translation.metadata &&
-                        translation.metadata[languageKey] &&
-                        translation.metadata[languageKey].value == languageUri
-                )
-                .then(data => translationService.getTranslationsProgress(data.resources));
+            return translationService.getTranslations(resourceUri, languageUri).then(data => {
+                if (!Array.isArray(resourceUri)) {
+                    resourceUri = [resourceUri];
+                }
+                return translationService
+                    .getTranslationsProgress(data.resources)
+                    .map((status, index) => [resourceUri[index], status]);
+            });
         },
 
         /**
@@ -244,13 +241,9 @@ define(['jquery', 'i18n', 'services/translation', 'taoQtiTest/controller/creator
          * @returns {Promise<object>} - The status of the items, the key is the item URI and the value is the status.
          */
         getItemsTranslationStatus(model, languageUri) {
-            return Promise.all(
-                this.listItemRefs(model).map(item =>
-                    this.getResourceTranslationStatus(item, languageUri).then(status => [item, status])
-                )
-            ).then(items =>
-                items.reduce((acc, [item, status]) => {
-                    acc[item] = status[0];
+            return this.getResourceTranslationStatus(this.listItemRefs(model), languageUri).then(items =>
+                items.reduce((acc, [itemUri, status]) => {
+                    acc[itemUri] = status;
                     return acc;
                 }, {})
             );

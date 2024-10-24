@@ -318,8 +318,9 @@ define([
                                                 config.translationLanguageUri
                                             )
                                             .then(
-                                                translationStatus =>
-                                                    (itemRefModel.translationStatus = translationStatus[0])
+                                                ([translationStatus]) =>
+                                                    (itemRefModel.translationStatus =
+                                                        translationStatus && translationStatus[1])
                                             );
                                     }
                                 })
