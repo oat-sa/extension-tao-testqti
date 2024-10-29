@@ -581,30 +581,56 @@
 
     &.side-by-side-authoring {
         .itemrefs-wrapper {
-                .itemrefs {
-                    &>li {
-                        height: 50px;
-                        line-height: 26px;
+            .itemrefs {
+                & > li {
+                    height: 50px;
+                    line-height: 26px;
 
-                        .translation-status {
-                            line-height: 14px;
-                            [class^="icon-"], [class*=" icon-"] {
-                                @include font-size(14);
-                                padding-inline-end: 4px;
-                                position: relative;
-                                top: 2px;
-                            }
-                            .text {
-                                @include font-size(12.5);
-                            }
-                            .translation-translating { color: $warning; }
-                            .translation-translated { color: $success; }
-                            .translation-pending { color: $warning; }
-                            .translation-none { color: $error; }
+                    .actions {
+                        .tlb-group {
+                            min-width: 30px;
                         }
+                    }
+                    .translation-status {
+                        line-height: 14px;
+                        [class^="icon-"], [class*=" icon-"] {
+                            @include font-size(14);
+                            padding-inline-end: 4px;
+                            position: relative;
+                            top: 2px;
+                        }
+                        .text {
+                            @include font-size(12.5);
+                        }
+                        .translation-translating { color: $warning; }
+                        .translation-translated { color: $success; }
+                        .translation-pending { color: $warning; }
+                        .translation-none { color: $error; }
                     }
                 }
             }
+        }
+        .testpart-adder,
+        .section-adder,
+        .add-subsection,
+        .tlb-separator,
+        .rublock-adder,
+        [data-testid^="move-"],
+        [data-testid^="remove-"] {
+            display: none;
+        }
+        .test-creator-test {
+            .testpart {
+                .actions .tlb-group {
+                    min-width: 30px;
+                }
+            }
+            .rublocks {
+                .rubricblocks > li .actions {
+                    display: none;
+                }
+            }
+        }
     }
 
 
