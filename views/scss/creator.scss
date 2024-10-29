@@ -580,6 +580,9 @@
     }
 
     &.side-by-side-authoring {
+        .test-creator-items {
+            display: none;
+        }
         .itemrefs-wrapper {
             .itemrefs {
                 & > li {
