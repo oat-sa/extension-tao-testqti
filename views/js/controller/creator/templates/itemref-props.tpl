@@ -38,7 +38,7 @@
             </div>
         </div>
     {{/if}}
-
+{{#unless translation}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/required -->
     <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
@@ -376,4 +376,5 @@
         {{/if}}
     </div>
     {{/if}}
+{{/unless}}
 </div>

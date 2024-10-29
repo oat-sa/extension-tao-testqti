@@ -64,8 +64,7 @@
             </div>
         </div>
     </div>
-{{/if}}
-{{#if isSubsection}}
+    {{#if isSubsection}}
 <!-- assessmentTest/testPart/assessmentSection/required -->
     <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
@@ -84,7 +83,7 @@
             </div>
         </div>
     </div>
-{{/if}}
+    {{/if}}
 
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/fixed -->
@@ -490,4 +489,5 @@
             {{/if}}
         </div>
     {{/if}}
+{{/if}}
 </div>

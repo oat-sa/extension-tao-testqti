@@ -21,6 +21,7 @@
                 </div>
             </div>
         {{/if}}
+    {{#unless translation}}
 <!-- assessmentTest/testPart/navigationMode -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -339,5 +340,6 @@
                 {{/if}}
             </div>
         {{/if}}
+    {{/unless}}
     </form>
 </div>

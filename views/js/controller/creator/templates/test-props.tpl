@@ -67,7 +67,6 @@
             </div>
         </div>
     </div>
-{{/if}}
 
     {{#if showTimeLimits}}
         <h4 class="toggler closed" data-toggle="~ .test-time-limits">{{__ 'Time Limits'}}</h4>
@@ -135,7 +134,7 @@
     <h4 class="toggler closed" data-toggle="~ .test-scoring">{{__ "Scoring"}}</h4>
 
 <!-- assessmentTest/scoring -->
-{{#with scoring}}
+    {{#with scoring}}
     <div class="test-scoring toggled">
 
 <!-- assessmentTest/scoring/outcomeProcessing -->
@@ -221,7 +220,7 @@
             </div>
         </div>
     </div>
-{{/with}}
+    {{/with}}
     {{#if showOutcomeDeclarations}}
         <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
 
@@ -235,4 +234,5 @@
             <div class="outcome-declarations"></div>
         </div>
     {{/if}}
+{{/if}}
 </div>
