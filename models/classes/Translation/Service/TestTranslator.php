@@ -69,7 +69,7 @@ class TestTranslator
         $jsonTest = $this->testQtiService->getJsonTest($originalTest);
         $originalTestData = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
 
-        $originalItemUris = $this->collectItemUris($originalTestData); //sectionPart['qti-type'] = 'assessmentItemRef' // assessmentSection
+        $originalItemUris = $this->collectItemUris($originalTestData);
         $translationUris = $this->getItemTranslationUris($translationTest, $originalItemUris);
 
         $translatedTestData = $this->doTranslation($originalTestData, $translationUris);
