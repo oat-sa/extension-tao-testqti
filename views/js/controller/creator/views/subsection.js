@@ -324,7 +324,7 @@ define([
                                             .then(
                                                 ([translationStatus]) =>
                                                     (itemRefModel.translationStatus =
-                                                        translationStatus && translationStatus[1])
+                                                        translationStatus && translationStatus.status)
                                             );
                                     }
                                 })

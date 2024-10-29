@@ -246,7 +246,10 @@ define([
                                     .then(translationConfig => Object.assign(options, translationConfig))
                             ])
                                 .then(() =>
-                                    translationHelper.getItemsTranslationStatus(model, options.translationLanguageUri)
+                                    translationHelper.getItemsTranslationStatus(
+                                        options.originModel,
+                                        options.translationLanguageUri
+                                    )
                                 )
                                 .then(itemsStatus => {
                                     testModelHelper.eachItemInTest(model, itemRef => {
