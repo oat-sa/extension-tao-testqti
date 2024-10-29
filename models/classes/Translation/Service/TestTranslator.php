@@ -91,9 +91,12 @@ class TestTranslator
     {
         foreach ($testData['testParts'] as &$testPart) {
             foreach ($testPart['assessmentSections'] as &$assessmentSection) {
-                foreach ($assessmentSection['sectionParts'] as &$sectionPart) {
-                    $sectionPart['href'] = $translationUris[$sectionPart['href']] ?? $sectionPart['href'];
-                }
+                $this->recursiveSectionParts(
+                    $assessmentSection['sectionParts'],
+                    function (&$sectionPart) use ($translationUris) {
+                        $sectionPart['href'] = $translationUris[$sectionPart['href']] ?? $sectionPart['href'];
+                    }
+                );
             }
         }
 
@@ -106,17 +109,31 @@ class TestTranslator
 
         foreach ($testData['testParts'] as $testPart) {
             foreach ($testPart['assessmentSections'] as $assessmentSection) {
-                foreach ($assessmentSection['sectionParts'] as $sectionPart) {
-                    if (in_array($sectionPart['href'], $uris, true)) {
-                        continue;
+                $this->recursiveSectionParts(
+                    $assessmentSection['sectionParts'],
+                    function ($sectionPart) use (&$uris) {
+                        $uris[$sectionPart['href']] = $sectionPart['href'];
                     }
-
-                    $uris[] = $sectionPart['href'];
-                }
+                );
             }
         }
 
-        return $uris;
+        return array_values($uris);
+    }
+
+    private function recursiveSectionParts(&$sectionParts, callable $itemAction): void
+    {
+        foreach ($sectionParts as &$sectionPart) {
+            if ($sectionPart['qti-type'] === 'assessmentSection') {
+                $this->recursiveSectionParts($sectionPart['sectionParts'], $itemAction);
+
+                continue;
+            }
+
+            if ($sectionPart['qti-type'] === 'assessmentItemRef') {
+                $itemAction($sectionPart);
+            }
+        }
     }
 
     /**

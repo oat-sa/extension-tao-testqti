@@ -39,6 +39,39 @@ use taoQtiTest_models_classes_QtiTestService;
 
 class TestTranslatorTest extends TestCase
 {
+    private const TEST_PARTS_ORIGINAL = [
+        'testParts' => [
+            [
+                'assessmentSections' => [
+                    [
+                        'sectionParts' => [
+                            [
+                                'qti-type' => 'assessmentItemRef',
+                                'href' => 'originalItemUri'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+    private const TEST_PARTS_TRANSLATION = [
+        'testParts' => [
+            [
+                'assessmentSections' => [
+                    [
+                        'sectionParts' => [
+                            [
+                                'qti-type' => 'assessmentItemRef',
+                                'href' => 'translationItemUri'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+    
     /** @var core_kernel_classes_Resource|MockObject */
     private $translationTest;
 
@@ -131,7 +164,7 @@ class TestTranslatorTest extends TestCase
             ->expects($this->once())
             ->method('getJsonTest')
             ->with($originalTest)
-            ->willReturn('{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"originalItemUri"}]}]}]}');
+            ->willReturn(json_encode(self::TEST_PARTS_ORIGINAL));
 
         $translationResource = $this->createMock(ResourceTranslation::class);
 
@@ -154,10 +187,7 @@ class TestTranslatorTest extends TestCase
         $this->testQtiService
             ->expects($this->once())
             ->method('saveJsonTest')
-            ->with(
-                $this->translationTest,
-                '{"testParts":[{"assessmentSections":[{"sectionParts":[{"href":"translationItemUri"}]}]}]}'
-            );
+            ->with($this->translationTest, json_encode(self::TEST_PARTS_TRANSLATION));
 
         $this->translationTest
             ->expects($this->once())
