@@ -138,6 +138,9 @@ define([
             categorySelector.setPresets(options.categoriesPresets);
 
             //back button
+            if (options.translation) {
+                $menu.prepend($back);
+            }
             $back.on('click', e => {
                 e.preventDefault();
                 creatorContext.trigger('creatorclose');
