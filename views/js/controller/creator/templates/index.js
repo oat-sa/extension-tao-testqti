@@ -1,4 +1,3 @@
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -14,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2021 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -32,11 +31,11 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/itemref-props',
     'tpl!taoQtiTest/controller/creator/templates/itemref-props-weight',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock-props',
+    'tpl!taoQtiTest/controller/creator/templates/translation-props',
     'tpl!taoQtiTest/controller/creator/templates/category-presets',
     'tpl!taoQtiTest/controller/creator/templates/subsection',
     'tpl!taoQtiTest/controller/creator/templates/menu-button'
-],
-function(
+], function (
     defaults,
     testPart,
     section,
@@ -49,36 +48,37 @@ function(
     itemRefProps,
     itemRefPropsWeight,
     rubricBlockProps,
+    translationProps,
     categoryPresets,
     subsection,
     menuButton
-){
+) {
     'use strict';
 
-    const applyTemplateConfiguration = (template) => (config) => template(defaults(config));
+    const applyTemplateConfiguration = template => config => template(defaults(config));
 
     /**
      * Expose all the templates used by the test creator
      * @exports taoQtiTest/controller/creator/templates/index
      */
     return {
-        testpart    : applyTemplateConfiguration(testPart),
-        section     : applyTemplateConfiguration(section),
-        itemref     : applyTemplateConfiguration(itemRef),
-        rubricblock : applyTemplateConfiguration(rubricBlock),
-        outcomes    : applyTemplateConfiguration(outcomes),
-        subsection  : applyTemplateConfiguration(subsection),
-        menuButton  : applyTemplateConfiguration(menuButton),
-        properties  : {
-            test            : applyTemplateConfiguration(testProps),
-            testpart        : applyTemplateConfiguration(testPartProps),
-            section         : applyTemplateConfiguration(sectionProps),
-            itemref         : applyTemplateConfiguration(itemRefProps),
-            itemrefweight   : applyTemplateConfiguration(itemRefPropsWeight),
-            rubricblock     : applyTemplateConfiguration(rubricBlockProps),
-            categorypresets : applyTemplateConfiguration(categoryPresets),
-            subsection  : applyTemplateConfiguration(sectionProps)
-
+        testpart: applyTemplateConfiguration(testPart),
+        section: applyTemplateConfiguration(section),
+        itemref: applyTemplateConfiguration(itemRef),
+        rubricblock: applyTemplateConfiguration(rubricBlock),
+        outcomes: applyTemplateConfiguration(outcomes),
+        subsection: applyTemplateConfiguration(subsection),
+        menuButton: applyTemplateConfiguration(menuButton),
+        properties: {
+            test: applyTemplateConfiguration(testProps),
+            testpart: applyTemplateConfiguration(testPartProps),
+            section: applyTemplateConfiguration(sectionProps),
+            itemref: applyTemplateConfiguration(itemRefProps),
+            itemrefweight: applyTemplateConfiguration(itemRefPropsWeight),
+            rubricblock: applyTemplateConfiguration(rubricBlockProps),
+            translation: applyTemplateConfiguration(translationProps),
+            categorypresets: applyTemplateConfiguration(categoryPresets),
+            subsection: applyTemplateConfiguration(sectionProps)
         }
     };
 });

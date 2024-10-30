@@ -11,7 +11,7 @@
                 <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
             </div>
             <div class="col-6">
-                <input type="text" name="test-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                <input type="text" name="test-identifier"{{#if translation}} readonly{{/if}} data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -23,6 +23,36 @@
     {{/if}}
 
 <!-- assessmentTest/title -->
+{{#if translation}}
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="test-title">{{__ 'Translated title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+        </div>
+        <div class="col-6">
+            <input type="text" name="test-title" data-bind="title" data-validate="$notEmpty" />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+            {{__ 'The translated test title.'}}
+            </div>
+        </div>
+    </div>
+    <div class="grid-row">
+        <div class="col-5">
+            <label for="test-origin-title">{{__ 'Original title'}}</label>
+        </div>
+        <div class="col-6">
+            <input type="text" name="test-origin-title" value="{{originTitle}}" readonly />
+        </div>
+        <div class="col-1 help">
+            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">
+                {{__ 'The original title of the test.'}}
+            </div>
+        </div>
+    </div>
+{{else}}
     <div class="grid-row">
         <div class="col-5">
             <label for="test-title">{{__ 'Title'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
@@ -104,7 +134,7 @@
     <h4 class="toggler closed" data-toggle="~ .test-scoring">{{__ "Scoring"}}</h4>
 
 <!-- assessmentTest/scoring -->
-{{#with scoring}}
+    {{#with scoring}}
     <div class="test-scoring toggled">
 
 <!-- assessmentTest/scoring/outcomeProcessing -->
@@ -190,7 +220,7 @@
             </div>
         </div>
     </div>
-{{/with}}
+    {{/with}}
     {{#if showOutcomeDeclarations}}
         <h4 class="toggler closed" data-toggle="~ .test-outcome-declarations">{{__ 'Outcome declarations'}}</h4>
 
@@ -204,4 +234,5 @@
             <div class="outcome-declarations"></div>
         </div>
     {{/if}}
+{{/if}}
 </div>

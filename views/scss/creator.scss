@@ -100,6 +100,12 @@
         @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         @include vendor-prefix(flex, 0 1 auto, property, (-ms-, -webkit-, ''));
         height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .action-bar {
+            flex: 0 0 auto;
+        }
 
         .duration-group {
             @include flex-container(nowrap, row);
@@ -136,7 +142,6 @@
         }
         .item-selection {
             position: relative;
-            height: calc(100% - 65px);
             overflow: hidden;
         }
     }
@@ -191,6 +196,10 @@
             .partial {
                 cursor: pointer;
             }
+        }
+
+        .translation-props {
+            margin-top: 16px;
         }
 
         .props {
@@ -470,10 +479,24 @@
                     margin-bottom: 20px;
                     clear: both;
 
-                    .rubricblock-binding {
+                    .rubricblock-binding, .rubricblock-origin, .rubricblock-title {
                         display: none;
                     }
-                    .rubricblock-content {
+                    &.translation {
+                        .rubricblock-origin, .rubricblock-title {
+                            display: block;
+                        }
+                    }
+                    .rubricblock-title {
+                        font-weight: bold;
+                        min-height: 30px;
+                        padding: 8px 0;
+                    }
+                    .rubricblock-wrapper .rubricblock-title {
+                        position: absolute;
+                        top: 0;
+                    }
+                    .rubricblock-content, .rubricblock-origin-content {
                         @include border-radius;
                         background-color: $uiGeneralContentBg;
                         padding: 4px;
@@ -484,6 +507,12 @@
                         .grid-row{
                             display: block;
                         }
+                    }
+                    .rubricblock-origin-content {
+                        background-color: whiten($uiGeneralContentBg, .3);
+                        text-shadow: 1px 1px 0 white(.8);
+                        opacity: .55;
+                        margin: 0;
                     }
                     .actions{
                         position: absolute;
@@ -545,6 +574,74 @@
                 &:hover {
                     background-color: whiten($uiClickableHoverBg, .9);
                     @include transition;
+                }
+            }
+        }
+    }
+
+    &.side-by-side-authoring {
+        .test-creator-items {
+            display: none;
+        }
+        .test-editor-menu {
+            position: relative;
+
+            #authoringBack {
+                position: absolute;
+                left: 0;
+            }
+            li:nth-child(2) {
+                @include responsive('margin-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+            }
+        }
+        .itemrefs-wrapper {
+            .itemrefs {
+                & > li {
+                    height: 50px;
+                    line-height: 26px;
+
+                    .actions {
+                        .tlb-group {
+                            min-width: 28px;
+                        }
+                    }
+                    .translation-status {
+                        line-height: 14px;
+                        [class^="icon-"], [class*=" icon-"] {
+                            @include font-size(14);
+                            padding-inline-end: 4px;
+                            position: relative;
+                            top: 2px;
+                        }
+                        .text {
+                            @include font-size(12.5);
+                        }
+                        .translation-translating { color: $warning; }
+                        .translation-translated { color: $success; }
+                        .translation-pending { color: $warning; }
+                        .translation-none { color: $error; }
+                    }
+                }
+            }
+        }
+        .testpart-adder,
+        .section-adder,
+        .add-subsection,
+        .tlb-separator,
+        .rublock-adder,
+        [data-testid^="move-"],
+        [data-testid^="remove-"] {
+            display: none;
+        }
+        .test-creator-test {
+            .testpart {
+                .actions .tlb-group {
+                    min-width: 28px;
+                }
+            }
+            .rublocks {
+                .rubricblocks > li .actions {
+                    display: none;
                 }
             }
         }
@@ -775,7 +872,7 @@
 
         }
     }
-    span.icon-warning {
+    span.configuration-issue {
         color: $error;
         margin-left: 0.5em;
         display: none;
