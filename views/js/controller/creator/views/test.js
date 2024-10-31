@@ -22,6 +22,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'module',
     'ui/hider',
     'ui/feedback',
     'services/features',
@@ -36,6 +37,7 @@ define([
     $,
     _,
     __,
+    module,
     hider,
     feedback,
     features,
@@ -63,6 +65,11 @@ define([
 
         //add feature visibility properties to testModel
         featureVisibility.addTestVisibilityProps(testModel);
+
+        const moduleConfig = module.config();
+        if(moduleConfig.readonlyTestIdentifier || testModel.translation) {
+            testModel.readonlyTestIdentifier = true;
+        }
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
