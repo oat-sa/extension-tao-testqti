@@ -22,7 +22,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'module',
+    'context',
     'ui/hider',
     'ui/feedback',
     'services/features',
@@ -37,7 +37,7 @@ define([
     $,
     _,
     __,
-    module,
+    context,
     hider,
     feedback,
     features,
@@ -66,8 +66,8 @@ define([
         //add feature visibility properties to testModel
         featureVisibility.addTestVisibilityProps(testModel);
 
-        const moduleConfig = module.config();
-        if(moduleConfig.readonlyTestIdentifier || testModel.translation) {
+        const {featureFlags} = context;
+        if(featureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
             testModel.readonlyTestIdentifier = true;
         }
 
