@@ -242,28 +242,31 @@ define([
                 Promise.resolve()
                     .then(() => {
                         if (options.translation) {
-                            return Promise.all([
-                                translationHelper
-                                    .updateModelFromOrigin(model, options.routes.getOrigin)
-                                    .then(originModel => (options.originModel = originModel)),
-                                translationHelper
-                                    .getTranslationConfig(options.testUri, options.originResourceUri)
-                                    .then(translationConfig => Object.assign(options, translationConfig))
-                            ])
-                                .then(() =>
-                                    translationHelper.getItemsTranslationStatus(
-                                        options.originModel,
-                                        options.translationLanguageUri
+                            return translationService.syncTranslation(options.originResourceUri).then(() => {
+                                feedback().success(__('The translation has been synchronized with the original test.'));
+                                Promise.all([
+                                    translationHelper
+                                        .updateModelFromOrigin(model, options.routes.getOrigin)
+                                        .then(originModel => (options.originModel = originModel)),
+                                    translationHelper
+                                        .getTranslationConfig(options.testUri, options.originResourceUri)
+                                        .then(translationConfig => Object.assign(options, translationConfig))
+                                ])
+                                    .then(() =>
+                                        translationHelper.getItemsTranslationStatus(
+                                            options.originModel,
+                                            options.translationLanguageUri
+                                        )
                                     )
-                                )
-                                .then(itemsStatus => {
-                                    testModelHelper.eachItemInTest(model, itemRef => {
-                                        const itemRefUri = itemRef.href;
-                                        if (itemsStatus[itemRefUri]) {
-                                            itemRef.translationStatus = itemsStatus[itemRefUri];
-                                        }
+                                    .then(itemsStatus => {
+                                        testModelHelper.eachItemInTest(model, itemRef => {
+                                            const itemRefUri = itemRef.href;
+                                            if (itemsStatus[itemRefUri]) {
+                                                itemRef.translationStatus = itemsStatus[itemRefUri];
+                                            }
+                                        });
                                     });
-                                });
+                            });
                         }
                     })
                     .catch(err => {
