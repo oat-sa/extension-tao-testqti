@@ -26,9 +26,11 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\taoQtiTest\models\UniqueId\Form\Modifier\UniqueIdFormModifier;
-use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreationListener;
 use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
+use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierSetter;
 use oat\taoTests\models\Form\Modifier\FormModifierProxy;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
@@ -66,13 +68,20 @@ class UniqueIdServiceProvider implements ContainerServiceProviderInterface
             );
 
         $services
-            ->set(TestCreatedEventListener::class, TestCreatedEventListener::class)
+            ->set(QtiIdentifierSetter::class, QtiIdentifierSetter::class)
+            ->args([
+                service(taoQtiTest_models_classes_QtiTestService::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->set(TestCreationListener::class, TestCreationListener::class)
             ->public()
             ->args([
                 service(FeatureFlagChecker::class),
                 service(Ontology::SERVICE_ID),
-                service(QtiIdentifierRetriever::class),
-                service(LoggerService::SERVICE_ID),
+                service(IdentifierGeneratorProxy::class),
+                service(QtiIdentifierSetter::class),
             ]);
     }
 }

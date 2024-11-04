@@ -6,13 +6,14 @@ namespace oat\taoQtiTest\migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use oat\oatbox\event\EventManager;
+use oat\tao\model\resources\Event\InstanceCopiedEvent;
 use oat\tao\scripts\tools\migrations\AbstractMigration;
-use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\classes\event\TestImportedEvent;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreationListener;
 use oat\taoTests\models\event\TestCreatedEvent;
+use oat\taoTests\models\event\TestDuplicatedEvent;
 
 /**
- * Auto-generated Migration: Please modify to your needs!
- *
  * phpcs:disable Squiz.Classes.ValidClassName
  */
 final class Version202409111328132260_taoQtiTest extends AbstractMigration
@@ -26,10 +27,24 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
     {
         /** @var EventManager $eventManager */
         $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
+
         $eventManager->attach(
             TestCreatedEvent::class,
-            [TestCreatedEventListener::class, 'populateUniqueId']
+            [TestCreationListener::class, 'populateUniqueId']
         );
+        $eventManager->attach(
+            TestDuplicatedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $eventManager->attach(
+            TestImportedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $eventManager->attach(
+            InstanceCopiedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+
         $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
     }
 
@@ -37,9 +52,22 @@ final class Version202409111328132260_taoQtiTest extends AbstractMigration
     {
         /** @var EventManager $eventManager */
         $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
+
         $eventManager->detach(
             TestCreatedEvent::class,
-            [TestCreatedEventListener::class, 'populateUniqueId']
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $eventManager->detach(
+            TestDuplicatedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $eventManager->detach(
+            TestImportedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $eventManager->detach(
+            InstanceCopiedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
         );
         $this->getServiceManager()->register(EventManager::SERVICE_ID, $eventManager);
     }

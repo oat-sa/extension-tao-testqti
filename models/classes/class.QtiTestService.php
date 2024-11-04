@@ -40,6 +40,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -906,7 +907,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             // phpcs:enable Generic.Files.LineLength
             $report->setMessage($msg);
-            $this->getEventManager()->trigger(new ResourceCreated($testResource));
+            $eventManager = $this->getEventManager();
+
+            $eventManager->trigger(new ResourceCreated($testResource));
+            $eventManager->trigger(new TestImportedEvent($testResource->getUri()));
         } else {
             $report->setType(common_report_Report::TYPE_ERROR);
             // phpcs:disable Generic.Files.LineLength
