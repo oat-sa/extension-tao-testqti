@@ -66,8 +66,8 @@ define([
         //add feature visibility properties to testModel
         featureVisibility.addTestVisibilityProps(testModel);
 
-        const {featureFlags} = context;
-        if(featureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
+        const { featureFlags } = context;
+        if (featureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
             testModel.readonlyTestIdentifier = true;
         }
 
