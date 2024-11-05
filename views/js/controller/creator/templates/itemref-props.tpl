@@ -1,4 +1,5 @@
 <div id="itemref-props-{{identifier}}" class="itemref-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
 
     <h3>{{{dompurify label}}}</h3>
 

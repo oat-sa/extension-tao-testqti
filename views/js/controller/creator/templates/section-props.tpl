@@ -1,4 +1,6 @@
 <div id="section-props-{{identifier}}" class="section-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
+
     <h3>{{title}}</h3>
 
     {{#if showIdentifier}}
