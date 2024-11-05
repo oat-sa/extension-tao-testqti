@@ -25,6 +25,7 @@ use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
 // phpcs:ignore Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
+use oat\taoQtiTest\models\IdentifierGenerator\ServiceProvider\IdentifierGeneratorServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\Translation\ServiceProvider\TranslationServiceProvider;
@@ -189,5 +190,6 @@ return [
         MetadataServiceProvider::class,
         TranslationServiceProvider::class,
         UniqueIdServiceProvider::class,
+        IdentifierGeneratorServiceProvider::class,
     ],
 ];

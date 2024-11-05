@@ -27,7 +27,7 @@ use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\TaoOntology;
-use oat\taoQtiTest\models\UniqueId\Listener\TestCreatedEventListener;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreationListener;
 use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
 use oat\taoTests\models\event\TestCreatedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -57,7 +57,7 @@ class TestCreatedEventListenerTest extends TestCase
     /** @var LoggerInterface|MockObject */
     private LoggerInterface $logger;
 
-    private TestCreatedEventListener $sut;
+    private TestCreationListener $sut;
 
     protected function setUp(): void
     {
@@ -70,7 +70,7 @@ class TestCreatedEventListenerTest extends TestCase
         $this->qtiIdentifierRetriever = $this->createMock(QtiIdentifierRetriever::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->sut = new TestCreatedEventListener(
+        $this->sut = new TestCreationListener(
             $this->featureFlagChecker,
             $this->ontology,
             $this->qtiIdentifierRetriever,
