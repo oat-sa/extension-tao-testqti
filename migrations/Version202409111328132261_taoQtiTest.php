@@ -16,7 +16,7 @@ use oat\taoTests\models\event\TestDuplicatedEvent;
 /**
  * phpcs:disable Squiz.Classes.ValidClassName
  */
-final class Version202409111328132260_taoQtiTest extends AbstractMigration
+final class Version202409111328132261_taoQtiTest extends AbstractMigration
 {
     public function getDescription(): string
     {
