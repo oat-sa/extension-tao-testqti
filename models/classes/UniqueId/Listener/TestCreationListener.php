@@ -71,7 +71,15 @@ class TestCreationListener
 
         $test = $this->getEventTest($event);
 
-        if (!$test->isInstanceOf($this->ontology->getClass(TaoOntology::CLASS_URI_TEST))) {
+        if ($test->getRootId() !== TaoOntology::CLASS_URI_TEST) {
+            return;
+        }
+
+        $originalResourceUriProperty = $this->ontology->getProperty(
+            TaoOntology::PROPERTY_TRANSLATION_ORIGINAL_RESOURCE_URI
+        );
+
+        if (!empty($test->getOnePropertyValue($originalResourceUriProperty))) {
             return;
         }
 
