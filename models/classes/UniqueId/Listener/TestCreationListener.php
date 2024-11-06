@@ -75,14 +75,6 @@ class TestCreationListener
             return;
         }
 
-        $originalResourceUriProperty = $this->ontology->getProperty(
-            TaoOntology::PROPERTY_TRANSLATION_ORIGINAL_RESOURCE_URI
-        );
-
-        if (!empty($test->getOnePropertyValue($originalResourceUriProperty))) {
-            return;
-        }
-
         $identifier = $this->identifierGenerator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
 
         $test->editPropertyValues(

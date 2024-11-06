@@ -27,11 +27,13 @@ use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
-use oat\taoQtiTest\models\UniqueId\Form\Modifier\UniqueIdFormModifier;
+use oat\tao\model\TaoOntology;
+use oat\tao\model\Translation\Service\ResourceMetadataRetriever;
+use oat\tao\model\Translation\Service\TranslationCreationService;
+use oat\tao\model\UniqueId\Service\ResourceUniqueIdRetriever;
 use oat\taoQtiTest\models\UniqueId\Listener\TestCreationListener;
-use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierRetriever;
 use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierSetter;
-use oat\taoTests\models\Form\Modifier\FormModifierProxy;
+use oat\taoQtiTest\models\UniqueId\Service\UniqueIdSetter;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -42,30 +44,6 @@ class UniqueIdServiceProvider implements ContainerServiceProviderInterface
     public function __invoke(ContainerConfigurator $configurator): void
     {
         $services = $configurator->services();
-
-        $services
-            ->set(QtiIdentifierRetriever::class, QtiIdentifierRetriever::class)
-            ->args([
-                service(taoQtiTest_models_classes_QtiTestService::class),
-                service(LoggerService::SERVICE_ID),
-            ]);
-
-        $services
-            ->set(UniqueIdFormModifier::class, UniqueIdFormModifier::class)
-            ->args([
-                service(Ontology::SERVICE_ID),
-                service(QtiIdentifierRetriever::class),
-                service(FeatureFlagChecker::class),
-            ]);
-
-        $services
-            ->get(FormModifierProxy::class)
-            ->call(
-                'addModifier',
-                [
-                    service(UniqueIdFormModifier::class),
-                ]
-            );
 
         $services
             ->set(QtiIdentifierSetter::class, QtiIdentifierSetter::class)
@@ -83,5 +61,25 @@ class UniqueIdServiceProvider implements ContainerServiceProviderInterface
                 service(IdentifierGeneratorProxy::class),
                 service(QtiIdentifierSetter::class),
             ]);
+
+        $services
+            ->set(UniqueIdSetter::class, UniqueIdSetter::class)
+            ->args([
+                service(FeatureFlagChecker::class),
+                service(ResourceMetadataRetriever::class),
+                service(ResourceUniqueIdRetriever::class),
+                service(QtiIdentifierSetter::class),
+                service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->get(TranslationCreationService::class)
+            ->call(
+                'addPostCreation',
+                [
+                    TaoOntology::CLASS_URI_TEST,
+                    service(UniqueIdSetter::class),
+                ]
+            );
     }
 }
