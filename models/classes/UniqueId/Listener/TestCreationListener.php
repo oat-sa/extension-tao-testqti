@@ -30,8 +30,9 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\resources\Event\InstanceCopiedEvent;
 use oat\tao\model\TaoOntology;
+use oat\tao\model\Translation\Service\AbstractQtiIdentifierSetter;
 use oat\taoQtiTest\models\classes\event\TestImportedEvent;
-use oat\taoQtiTest\models\UniqueId\Service\QtiIdentifierSetter;
+use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
 use oat\taoTests\models\event\TestCreatedEvent;
 use oat\taoTests\models\event\TestDuplicatedEvent;
 
@@ -81,7 +82,10 @@ class TestCreationListener
             $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER),
             $identifier
         );
-        $this->qtiIdentifierSetter->set($test, $identifier);
+        $this->qtiIdentifierSetter->set([
+            AbstractQtiIdentifierSetter::OPTION_RESOURCE => $test,
+            AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => $identifier,
+        ]);
     }
 
     private function getEventTest(Event $event): core_kernel_classes_Resource

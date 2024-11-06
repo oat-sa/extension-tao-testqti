@@ -20,37 +20,31 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\UniqueId\Service;
+namespace oat\taoQtiTest\models\Qti\Identifier\Service;
 
-use core_kernel_classes_Resource;
+use oat\tao\model\Translation\Service\AbstractQtiIdentifierSetter;
 use Psr\Log\LoggerInterface;
 use taoQtiTest_models_classes_QtiTestService;
-use Throwable;
 
-class QtiIdentifierSetter
+class QtiIdentifierSetter extends AbstractQtiIdentifierSetter
 {
     private taoQtiTest_models_classes_QtiTestService $qtiTestService;
-    private LoggerInterface $logger;
 
     public function __construct(taoQtiTest_models_classes_QtiTestService $qtiTestService, LoggerInterface $logger)
     {
+        parent::__construct($logger);
+
         $this->qtiTestService = $qtiTestService;
-        $this->logger = $logger;
     }
 
-    public function set(core_kernel_classes_Resource $test, string $identifier): void
+    protected function applyIdentifier(array $options): void
     {
-        try {
-            $jsonTest = $this->qtiTestService->getJsonTest($test);
+        $test = $this->getResource($options);
+        $jsonTest = $this->qtiTestService->getJsonTest($test);
 
-            $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
-            $decodedTest['identifier'] = $identifier;
+        $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+        $decodedTest['identifier'] = $this->getIdentifier($options);
 
-            $this->qtiTestService->saveJsonTest($test, json_encode($decodedTest));
-        } catch (Throwable $exception) {
-            $this->logger->error('An error occurred while setting QTI test identifier: ' . $exception->getMessage());
-
-            throw $exception;
-        }
+        $this->qtiTestService->saveJsonTest($test, json_encode($decodedTest));
     }
 }
