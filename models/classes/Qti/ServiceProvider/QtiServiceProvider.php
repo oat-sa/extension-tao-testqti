@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\Qti\Identifier\ServiceProvider;
+namespace oat\taoQtiTest\models\Qti\ServiceProvider;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
@@ -30,7 +30,7 @@ use taoQtiTest_models_classes_QtiTestService;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
-class QtiIdentifierServiceProvider implements ContainerServiceProviderInterface
+class QtiServiceProvider implements ContainerServiceProviderInterface
 {
     public function __invoke(ContainerConfigurator $configurator): void
     {
