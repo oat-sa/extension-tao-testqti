@@ -12,7 +12,7 @@
                 <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
             </div>
             <div class="col-6">
-                <input type="text" name="test-identifier"{{#if translation}} readonly{{/if}} data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                <input type="text" name="test-identifier"{{#if readonlyTestIdentifier}} readonly{{/if}} data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
