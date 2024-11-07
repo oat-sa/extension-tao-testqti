@@ -9,9 +9,12 @@ use DOMDocument;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\fileReference\FileReferenceSerializer;
 use oat\generis\test\MockObject;
+use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\service\ApplicationService;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
@@ -21,6 +24,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class QtiTestServiceTest extends TestCase
 {
+    use ServiceManagerMockTrait;
+
     // phpcs:disable Generic.Files.LineLength
     private const TEST_TEMPLATE = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -53,6 +58,9 @@ XML;
     /** @var QtiTestService */
     private $sut;
 
+    /** @var IdentifierGeneratorInterface|M */
+    private IdentifierGeneratorInterface $identifierGenerator;
+
     /**
      * @before
      */
@@ -67,6 +75,7 @@ XML;
                 AssessmentTestXmlFactory::OPTION_CONFIGURATION_REGISTRY => $this->xmlTemplateOptionsRegistry
             ]
         );
+        $this->identifierGeneratorProxy = $this->createMock(IdentifierGeneratorInterface::class);
 
         $this->xmlTemplateOptionsRegistry
             ->method('getMap')
@@ -110,7 +119,23 @@ XML;
 
     public function testCreateContent(): void
     {
+        $identifierGeneratorProxy = $this->createMock(IdentifierGeneratorInterface::class);
+
+        $this->sut->setServiceManager(
+            $this->getServiceManagerMock([
+                IdentifierGeneratorProxy::class => $identifierGeneratorProxy,
+            ])
+        );
+
         $test = $this->createTestMock('https://example.com', '0label-with_sømę-exötïč_charæctêrß');
+
+        $identifierGeneratorProxy
+            ->expects($this->once())
+            ->method('generate')
+            ->with([
+                IdentifierGeneratorInterface::OPTION_RESOURCE => $test
+            ])
+            ->willReturn('QWERTYUI');
 
         /** @noinspection PhpUnhandledExceptionInspection */
         static::assertSame(

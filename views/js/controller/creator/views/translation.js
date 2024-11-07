@@ -15,7 +15,7 @@
  *
  * Copyright (c) 2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
-define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function ($, templates) {
+define(['jquery', 'uikitLoader', 'taoQtiTest/controller/creator/templates/index'], function ($, ui, templates) {
     'use strict';
 
     /**
@@ -35,6 +35,8 @@ define(['jquery', 'taoQtiTest/controller/creator/templates/index'], function ($,
         const $container = $('.test-creator-props');
         const template = templates.properties.translation;
         const $view = $(template(config)).appendTo($container);
+
+        ui.startDomComponent($view);
 
         $view.on('change', '[name="translationStatus"]', e => {
             const input = e.target;

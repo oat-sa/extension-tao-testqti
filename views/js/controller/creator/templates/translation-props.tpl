@@ -1,6 +1,7 @@
 <div class="translation-props clearfix">
 
     <!-- translation properties -->
+    <h3>{{__ 'Test translation status'}}</h3>
 
     {{!-- <h4 class="toggler opened" data-toggle="~ .test-translation">{{__ 'Translation'}}</h4> --}}
     <div class="test-translation">

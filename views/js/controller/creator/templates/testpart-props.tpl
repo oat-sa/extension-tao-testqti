@@ -1,4 +1,6 @@
 <div id="testpart-props-{{identifier}}" class="testpart-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
+
     <h3>{{identifier}}</h3>
 
     <form autocomplete="off">

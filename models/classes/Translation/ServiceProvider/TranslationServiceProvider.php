@@ -29,6 +29,8 @@ use oat\tao\model\TaoOntology;
 use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
 use oat\tao\model\Translation\Service\TranslationCreationService;
 use oat\tao\model\Translation\Service\TranslationSyncService as TaoTranslationSyncService;
+use oat\tao\model\Translation\Service\TranslationUniqueIdSetter;
+use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
 use oat\taoQtiTest\models\Translation\Service\TestTranslator;
 use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
 use oat\taoQtiTest\models\Translation\Service\TranslationSyncService;
@@ -77,12 +79,29 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
             ]);
 
         $services
+            ->get(TranslationUniqueIdSetter::class)
+            ->call(
+                'addQtiIdentifierSetter',
+                [
+                    service(QtiIdentifierSetter::class),
+                    TaoOntology::CLASS_URI_TEST,
+                ]
+            );
+
+        $services
             ->get(TranslationCreationService::class)
             ->call(
                 'addPostCreation',
                 [
                     TaoOntology::CLASS_URI_TEST,
                     service(TranslationPostCreationService::class)
+                ]
+            )
+            ->call(
+                'addPostCreation',
+                [
+                    TaoOntology::CLASS_URI_TEST,
+                    service(TranslationUniqueIdSetter::class),
                 ]
             );
     }

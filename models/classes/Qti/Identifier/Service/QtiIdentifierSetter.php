@@ -20,35 +20,31 @@
 
 declare(strict_types=1);
 
-namespace oat\taoQtiTest\models\UniqueId\Service;
+namespace oat\taoQtiTest\models\Qti\Identifier\Service;
 
-use core_kernel_classes_Resource;
+use oat\tao\model\Translation\Service\AbstractQtiIdentifierSetter;
 use Psr\Log\LoggerInterface;
 use taoQtiTest_models_classes_QtiTestService;
-use Throwable;
 
-class QtiIdentifierRetriever
+class QtiIdentifierSetter extends AbstractQtiIdentifierSetter
 {
     private taoQtiTest_models_classes_QtiTestService $qtiTestService;
-    private LoggerInterface $logger;
 
     public function __construct(taoQtiTest_models_classes_QtiTestService $qtiTestService, LoggerInterface $logger)
     {
+        parent::__construct($logger);
+
         $this->qtiTestService = $qtiTestService;
-        $this->logger = $logger;
     }
 
-    public function retrieve(core_kernel_classes_Resource $test): ?string
+    protected function applyIdentifier(array $options): void
     {
-        try {
-            $jsonTest = $this->qtiTestService->getJsonTest($test);
-            $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+        $test = $this->getResource($options);
+        $jsonTest = $this->qtiTestService->getJsonTest($test);
 
-            return $decodedTest['identifier'] ?? null;
-        } catch (Throwable $exception) {
-            $this->logger->error('An error occurred while retrieving test data: ' . $exception->getMessage());
+        $decodedTest = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+        $decodedTest['identifier'] = $this->getIdentifier($options);
 
-            throw $exception;
-        }
+        $this->qtiTestService->saveJsonTest($test, json_encode($decodedTest));
     }
 }

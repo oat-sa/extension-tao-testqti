@@ -18,13 +18,15 @@
  *
  * Copyright (c) 2013-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
+ * phpcs:disable Generic.Files.LineLength
  */
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
-// phpcs:ignore Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
+use oat\taoQtiTest\models\IdentifierGenerator\ServiceProvider\IdentifierGeneratorServiceProvider;
+use oat\taoQtiTest\models\Qti\ServiceProvider\QtiServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
 use oat\taoQtiTest\models\Translation\ServiceProvider\TranslationServiceProvider;
@@ -189,5 +191,7 @@ return [
         MetadataServiceProvider::class,
         TranslationServiceProvider::class,
         UniqueIdServiceProvider::class,
+        IdentifierGeneratorServiceProvider::class,
+        QtiServiceProvider::class,
     ],
 ];

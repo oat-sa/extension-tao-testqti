@@ -66,13 +66,15 @@ class TestTranslator
         );
         $originalTest = $this->ontology->getResource($originalTestUri->getUri());
 
-        $jsonTest = $this->testQtiService->getJsonTest($originalTest);
-        $originalTestData = json_decode($jsonTest, true, 512, JSON_THROW_ON_ERROR);
+        $jsonTranslationTest = $this->testQtiService->getJsonTest($translationTest);
+        $jsonOriginalTest = $this->testQtiService->getJsonTest($originalTest);
+        $translationTestData = json_decode($jsonTranslationTest, true, 512, JSON_THROW_ON_ERROR);
+        $originalTestData = json_decode($jsonOriginalTest, true, 512, JSON_THROW_ON_ERROR);
 
         $originalItemUris = $this->collectItemUris($originalTestData);
         $translationUris = $this->getItemTranslationUris($translationTest, $originalItemUris);
 
-        $translatedTestData = $this->doTranslation($originalTestData, $translationUris);
+        $translatedTestData = $this->doTranslation($translationTestData, $translationUris);
 
         $this->testQtiService->saveJsonTest($translationTest, json_encode($translatedTestData));
         $this->updateTranslationCompletionStatus($translationTest, $originalItemUris, $translationUris);

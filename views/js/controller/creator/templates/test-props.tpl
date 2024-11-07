@@ -1,4 +1,5 @@
 <div class="test-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
 
     <!-- test properties -->
     <h3 data-bind="title"></h3>
