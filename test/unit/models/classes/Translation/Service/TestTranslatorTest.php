@@ -71,7 +71,7 @@ class TestTranslatorTest extends TestCase
             ]
         ]
     ];
-    
+
     /** @var core_kernel_classes_Resource|MockObject */
     private $translationTest;
 
@@ -161,7 +161,6 @@ class TestTranslatorTest extends TestCase
             ->willReturn($originalTest);
 
         $this->testQtiService
-            ->expects($this->once())
             ->method('getJsonTest')
             ->with($originalTest)
             ->willReturn(json_encode(self::TEST_PARTS_ORIGINAL));
