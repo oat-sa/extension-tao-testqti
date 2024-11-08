@@ -48,6 +48,7 @@ use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use Psr\Container\ContainerInterface;
+use qtism\common\utils\Format;
 use qtism\data\AssessmentItemRef;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
@@ -1302,9 +1303,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $xmlBuilder = $this->getServiceLocator()->get(AssessmentTestXmlFactory::class);
 
             $testLabel = $test->getLabel();
-            $identifier = $this->getIdentifierGenerator()->generate([
-                IdentifierGeneratorInterface::OPTION_RESOURCE => $test,
-            ]);
+            $identifier = $this->createTestIdentifier($test);
             $xml = $xmlBuilder->create($identifier, $testLabel);
 
             if (!$file->write($xml)) {
@@ -1547,8 +1546,30 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return [];
     }
 
-    private function getIdentifierGenerator(): IdentifierGeneratorInterface
+    private function getIdentifierGenerator(): ?IdentifierGeneratorInterface
     {
-        return $this->getPsrContainer()->get(IdentifierGeneratorProxy::class);
+        try {
+            return $this->getPsrContainer()->get(IdentifierGeneratorProxy::class);
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
+    private function createTestIdentifier(core_kernel_classes_Resource $test): string
+    {
+        $generator = $this->getIdentifierGenerator();
+        $testLabel = $test->getLabel();
+
+        if ($generator) {
+            return $generator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
+        }
+
+        $identifier = null;
+
+        if (preg_match('/^\d/', $testLabel)) {
+            $identifier = 't_' . $testLabel;
+        }
+
+        return str_replace('_', '-', Format::sanitizeIdentifier($identifier));
     }
 }
