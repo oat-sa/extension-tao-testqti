@@ -13,6 +13,7 @@ use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\service\ApplicationService;
@@ -58,7 +59,7 @@ XML;
     /** @var QtiTestService */
     private $sut;
 
-    /** @var IdentifierGeneratorInterface|M */
+    /** @var IdentifierGeneratorInterface|MockObject */
     private IdentifierGeneratorInterface $identifierGenerator;
 
     /**
@@ -93,7 +94,9 @@ XML;
                 ]
             );
 
-        $serviceLocator = $this->creteServiceLocatorMock();
+        $this->identifierGenerator = $this->createMock(IdentifierGeneratorInterface::class);
+
+        $serviceLocator = $this->createServiceManagerMock();
 
         $this->xmlFactory->setServiceLocator($serviceLocator);
         $this->xmlTemplateOptionsRegistry->setServiceLocator($serviceLocator);
@@ -119,23 +122,15 @@ XML;
 
     public function testCreateContent(): void
     {
-        $identifierGeneratorProxy = $this->createMock(IdentifierGeneratorInterface::class);
-
-        $this->sut->setServiceManager(
-            $this->getServiceManagerMock([
-                IdentifierGeneratorProxy::class => $identifierGeneratorProxy,
-            ])
-        );
-
         $test = $this->createTestMock('https://example.com', '0label-with_sømę-exötïč_charæctêrß');
 
-        $identifierGeneratorProxy
+        $this->identifierGenerator
             ->expects($this->once())
             ->method('generate')
             ->with([
                 IdentifierGeneratorInterface::OPTION_RESOURCE => $test
             ])
-            ->willReturn('QWERTYUI');
+            ->willReturn('t-0label-with-sm-ext-charctr');
 
         /** @noinspection PhpUnhandledExceptionInspection */
         static::assertSame(
@@ -320,22 +315,29 @@ XML;
         return $directoryMock;
     }
 
-    private function creteServiceLocatorMock(): ServiceLocatorInterface
+    private function createServiceManagerMock(): ServiceManager
     {
-        $serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
-
-        $serviceLocatorMock
-            ->method('get')
-            ->willReturnMap(
-                [
-                    [ApplicationService::SERVICE_ID, $this->createApplicationServiceMock()],
-                    [FileReferenceSerializer::SERVICE_ID, $this->fileReferenceSerializerMock],
-                    [AssessmentTestXmlFactory::class, $this->xmlFactory],
-                    [DefaultConfigurationRegistry::class, $this->xmlTemplateOptionsRegistry],
-                ]
-            );
-
-        return $serviceLocatorMock;
+        return $this->getServiceManagerMock([
+            ApplicationService::SERVICE_ID => $this->createApplicationServiceMock(),
+            FileReferenceSerializer::SERVICE_ID => $this->fileReferenceSerializerMock,
+            AssessmentTestXmlFactory::class => $this->xmlFactory,
+            DefaultConfigurationRegistry::class => $this->xmlTemplateOptionsRegistry,
+            IdentifierGeneratorProxy::class => $this->identifierGenerator,
+        ]);
+//        $serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
+//
+//        $serviceLocatorMock
+//            ->method('get')
+//            ->willReturnMap(
+//                [
+//                    [ApplicationService::SERVICE_ID, $this->createApplicationServiceMock()],
+//                    [FileReferenceSerializer::SERVICE_ID, $this->fileReferenceSerializerMock],
+//                    [AssessmentTestXmlFactory::class, $this->xmlFactory],
+//                    [DefaultConfigurationRegistry::class, $this->xmlTemplateOptionsRegistry],
+//                ]
+//            );
+//
+//        return $serviceLocatorMock;
     }
 
     private function createModelMock(): Ontology
