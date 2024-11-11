@@ -21,10 +21,15 @@
 namespace oat\taoQtiTest\scripts\install;
 
 use oat\oatbox\extension\InstallAction;
+use oat\tao\model\resources\Event\InstanceCopiedEvent;
 use oat\taoDelivery\models\classes\execution\event\DeliveryExecutionState;
+use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\event\AfterAssessmentTestSessionClosedEvent;
 use oat\taoQtiTest\models\event\QtiTestStateChangeEvent;
 use oat\taoQtiTest\models\QtiTestListenerService;
+use oat\taoQtiTest\models\UniqueId\Listener\TestCreationListener;
+use oat\taoTests\models\event\TestCreatedEvent;
+use oat\taoTests\models\event\TestDuplicatedEvent;
 
 /**
  * Register a listener for state changes
@@ -47,6 +52,22 @@ class SetupEventListeners extends InstallAction
         $this->registerEvent(
             AfterAssessmentTestSessionClosedEvent::class,
             [QtiTestListenerService::SERVICE_ID, 'archiveState']
+        );
+        $this->registerEvent(
+            TestCreatedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $this->registerEvent(
+            TestDuplicatedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $this->registerEvent(
+            TestImportedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
+        );
+        $this->registerEvent(
+            InstanceCopiedEvent::class,
+            [TestCreationListener::class, 'populateUniqueId']
         );
     }
 }

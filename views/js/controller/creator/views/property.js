@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -54,7 +54,7 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             $container.children('.props').hide().trigger('propclose.propview');
             $view = $(template(model)).appendTo($container).filter('.props');
 
-            //start listening for DOM compoenents inside the view
+            //start listening for DOM components inside the view
             ui.startDomComponent($view);
 
             //start the data binding
@@ -66,7 +66,7 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
             $view.trigger('propopen.propview');
 
             // contains identifier from model, needed for validation on keyup for identifiers
-            // jQuesy selector for Id with dots don't work
+            // jQuery selector for Id with dots don't work
             // dots are allowed for id by default see taoQtiItem/qtiCreator/widgets/helpers/qtiIdentifier
             // need to use attr
             const $identifier = $view.find(`[id="props-${model.identifier}"]`);
@@ -139,27 +139,32 @@ define(['jquery', 'uikitLoader', 'core/databinder', 'taoQtiTest/controller/creat
          * @private
          */
         function propValidation() {
-            $view.on('validated.group', function(e, isValid){
-                const $warningIconSelector = $('span.icon-warning');
+            $view.on('validated.group', function (e, isValid) {
+                const warningIconSelector = 'span.configuration-issue';
                 const $test = $('.tlb-button-on').parents('.test-creator-test');
 
                 // finds error current element if any
-                let errors = $(e.currentTarget).find('span.validate-error');
-                let currentTargetId = `[id="${$(e.currentTarget).find('span[data-bind="identifier"]').attr('id').slice(6)}"]`;
-                
-                if(e.namespace === 'group'){
+                const errors = $(e.currentTarget).find('span.validate-error');
+                const currentTargetId = $(e.currentTarget).find('span[data-bind="identifier"]').attr('id');
+                const currentTargetIdSelector = `[id="${currentTargetId && currentTargetId.slice(6)}"]`;
+
+                if (e.namespace === 'group') {
                     if (isValid && errors.length === 0) {
                         //remove warning icon if validation fails
-                        if($(e.currentTarget).hasClass('test-props')){
-                         $($test).find($warningIconSelector).first().css('display', 'none');
+                        if ($(e.currentTarget).hasClass('test-props')) {
+                            $test.find(warningIconSelector).first().css('display', 'none');
                         }
-                        $(currentTargetId).find($warningIconSelector).first().css('display', 'none');
+                        if (currentTargetId) {
+                            $(currentTargetIdSelector).find(warningIconSelector).first().css('display', 'none');
+                        }
                     } else {
-                       //add warning icon if validation fails
-                        if($(e.currentTarget).hasClass('test-props')){
-                            $($test).find($warningIconSelector).first().css('display', 'inline');
+                        //add warning icon if validation fails
+                        if ($(e.currentTarget).hasClass('test-props')) {
+                            $test.find(warningIconSelector).first().css('display', 'inline');
                         }
-                        $(currentTargetId).find($warningIconSelector).first().css('display', 'inline');
+                        if (currentTargetId) {
+                            $(currentTargetIdSelector).find(warningIconSelector).first().css('display', 'inline');
+                        }
                     }
                 }
             });

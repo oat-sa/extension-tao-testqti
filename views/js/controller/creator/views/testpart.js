@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 /**
@@ -29,6 +29,7 @@ define([
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/testPartCategory',
     'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/translation',
     'taoQtiTest/controller/creator/helpers/featureVisibility'
 ], function (
     $,
@@ -40,9 +41,10 @@ define([
     qtiTestHelper,
     testPartCategory,
     categorySelectorFactory,
+    translationHelper,
     featureVisibility
 ) {
-    ('use strict');
+    'use strict';
 
     /**
      * Set up a test part: init action behaviors. Called for each test part.
@@ -56,6 +58,7 @@ define([
         const $actionContainer = $('h1', $testPart);
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
+        const config = modelOverseer.getConfig();
 
         //add feature visibility properties to testPartModel
         featureVisibility.addTestPartVisibilityProps(partModel);
@@ -157,6 +160,12 @@ define([
                     if (e.namespace === 'binder' && $section.hasClass('section')) {
                         const index = $section.data('bind-index');
                         const sectionModel = partModel.assessmentSections[index];
+
+                        if (partModel.translation) {
+                            const originIdentifiers = translationHelper.registerModelIdentifiers(config.originModel);
+                            const originSection = originIdentifiers[sectionModel.identifier];
+                            translationHelper.setTranslationFromOrigin(sectionModel, originSection);
+                        }
 
                         //initialize the new section
                         sectionView.setUp(creatorContext, sectionModel, partModel, $section);

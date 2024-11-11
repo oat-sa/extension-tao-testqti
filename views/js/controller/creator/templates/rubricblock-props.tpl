@@ -1,4 +1,5 @@
 <div class="rubricblock-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
 
     <h3>{{__ 'Rubric Block'}}: {{orderIndex}}</h3>
 

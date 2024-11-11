@@ -23,6 +23,8 @@ use oat\generis\model\data\event\ResourceCreated;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
@@ -40,6 +42,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -906,7 +909,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             // phpcs:enable Generic.Files.LineLength
             $report->setMessage($msg);
-            $this->getEventManager()->trigger(new ResourceCreated($testResource));
+            $eventManager = $this->getEventManager();
+
+            $eventManager->trigger(new ResourceCreated($testResource));
+            $eventManager->trigger(new TestImportedEvent($testResource->getUri()));
         } else {
             $report->setType(common_report_Report::TYPE_ERROR);
             // phpcs:disable Generic.Files.LineLength
@@ -1297,7 +1303,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $xmlBuilder = $this->getServiceLocator()->get(AssessmentTestXmlFactory::class);
 
             $testLabel = $test->getLabel();
-            $identifier = $this->createTestIdentifier($testLabel);
+            $identifier = $this->createTestIdentifier($test);
             $xml = $xmlBuilder->create($identifier, $testLabel);
 
             if (!$file->write($xml)) {
@@ -1328,20 +1334,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $test->editPropertyValues($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $directory);
 
         return $dir;
-    }
-
-    private function createTestIdentifier(string $testLabel): string
-    {
-        $identifier = null;
-
-        if (preg_match('/^\d/', $testLabel)) {
-            $identifier = 't_' . $testLabel;
-        }
-
-        $identifier = Format::sanitizeIdentifier($identifier);
-        $identifier = str_replace('_', '-', $identifier);
-
-        return $identifier;
     }
 
     /**
@@ -1552,5 +1544,32 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return [];
+    }
+
+    private function getIdentifierGenerator(): ?IdentifierGeneratorInterface
+    {
+        try {
+            return $this->getPsrContainer()->get(IdentifierGeneratorProxy::class);
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
+    private function createTestIdentifier(core_kernel_classes_Resource $test): string
+    {
+        $generator = $this->getIdentifierGenerator();
+        $testLabel = $test->getLabel();
+
+        if ($generator) {
+            return $generator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
+        }
+
+        $identifier = null;
+
+        if (preg_match('/^\d/', $testLabel)) {
+            $identifier = 't_' . $testLabel;
+        }
+
+        return str_replace('_', '-', Format::sanitizeIdentifier($identifier));
     }
 }
