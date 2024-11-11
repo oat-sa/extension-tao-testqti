@@ -1,4 +1,6 @@
 <div id="testpart-props-{{identifier}}" class="testpart-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
+
     <h3>{{identifier}}</h3>
 
     <form autocomplete="off">
@@ -11,7 +13,7 @@
                     <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
                 </div>
                 <div class="col-6">
-                    <input type="text" id="testpart-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                    <input type="text" id="testpart-identifier"{{#if translation}} readonly{{/if}} data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
                 </div>
                 <div class="col-1 help">
                     <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -21,6 +23,7 @@
                 </div>
             </div>
         {{/if}}
+    {{#unless translation}}
 <!-- assessmentTest/testPart/navigationMode -->
         <div class="grid-row pseudo-label-box">
             <div class="col-5">
@@ -339,5 +342,6 @@
                 {{/if}}
             </div>
         {{/if}}
+    {{/unless}}
     </form>
 </div>

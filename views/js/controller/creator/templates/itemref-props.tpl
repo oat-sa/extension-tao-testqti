@@ -1,4 +1,5 @@
 <div id="itemref-props-{{identifier}}" class="itemref-props props clearfix">
+    {{#if translation}}<hr />{{/if}}
 
     <h3>{{{dompurify label}}}</h3>
 
@@ -10,7 +11,7 @@
                 <span id="props-{{identifier}}" data-bind="identifier" style="display: none;">{{identifier}}</span>
             </div>
             <div class="col-6">
-                <input type="text" name="itemref-identifier" data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
+                <input type="text" name="itemref-identifier"{{#if translation}} readonly{{/if}} data-bind="identifier" data-validate="$notEmpty; $idFormat; $testIdAvailable(identifier={{identifier}});" />
             </div>
             <div class="col-1 help">
                 <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
@@ -38,7 +39,7 @@
             </div>
         </div>
     {{/if}}
-
+{{#unless translation}}
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/required -->
     <div class="grid-row pseudo-label-box checkbox-row">
         <div class="col-5">
@@ -156,7 +157,7 @@
                 </div>
             </div>
         </div>
-        
+
         {{#if itemSessionShowFeedback}}
             <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showFeedback -->
             <div class="grid-row pseudo-label-box checkbox-row">
@@ -376,4 +377,5 @@
         {{/if}}
     </div>
     {{/if}}
+{{/unless}}
 </div>

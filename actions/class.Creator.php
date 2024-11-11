@@ -1,22 +1,22 @@
 <?php
 
 /**
-* This program is free software; you can redistribute it and/or
-* modify it under the terms of the GNU General Public License
-* as published by the Free Software Foundation; under version 2
-* of the License (non-upgradable).
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*
-* Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
-*/
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ */
 
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
@@ -45,6 +45,11 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $testUri   =  $this->getRequestParameter('uri');
         $testModel = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
 
+        // Add support for translation and side-by-side view
+        $originResourceUri = $this->getRequestParameter('originResourceUri');
+        $this->setData('translation', $this->getRequestParameter('translation') ?? "false");
+        $this->setData('originResourceUri', json_encode($originResourceUri));
+
         $items = $testModel->getItems(new core_kernel_classes_Resource(tao_helpers_Uri::decode($testUri)));
         foreach ($items as $item) {
             $labels[$item->getUri()] = $item->getLabel();
@@ -59,6 +64,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->setData('categoriesPresets', json_encode($categoriesPresetService->getAvailablePresets($runtimeConfig)));
 
         $this->setData('loadUrl', _url('getTest', null, null, ['uri' => $testUri]));
+        $this->setData('loadOriginUrl', _url('getTest', null, null, ['uri' => $originResourceUri]));
         $this->setData('saveUrl', _url('saveTest', null, null, ['uri' => $testUri]));
 
         if (common_ext_ExtensionsManager::singleton()->isInstalled('taoBlueprints')) {
@@ -91,9 +97,9 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->setView('creator.tpl');
     }
 
-        /**
-         * Get json's test content, the uri of the test must be provided in parameter
-         */
+    /**
+     * Get json's test content, the uri of the test must be provided in parameter
+     */
     public function getTest()
     {
         $test = $this->getCurrentTest();
@@ -104,11 +110,11 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->response = $this->getPsrResponse()->withBody(stream_for($qtiTestService->getJsonTest($test)));
     }
 
-        /**
-         * Save a test, test uri and
-         * The request must use the POST method and contains
-         * the test uri and a json string that represents the QTI Test in the model parameter.
-         */
+    /**
+     * Save a test, test uri and
+     * The request must use the POST method and contains
+     * the test uri and a json string that represents the QTI Test in the model parameter.
+     */
     public function saveTest()
     {
         $saved = false;
