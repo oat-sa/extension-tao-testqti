@@ -8,6 +8,7 @@ use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\IdentifierGenerator\Generator\QtiIdentifierGenerator;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 class IdentifierGeneratorServiceProvider implements ContainerServiceProviderInterface

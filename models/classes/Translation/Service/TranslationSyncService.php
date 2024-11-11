@@ -53,7 +53,8 @@ class TranslationSyncService
                     '%s. Error: (%s) %s',
                     $message,
                     get_class($exception),
-                    $exception->getMessage())
+                    $exception->getMessage()
+                )
             );
 
             throw new ResourceTranslationException($message);
