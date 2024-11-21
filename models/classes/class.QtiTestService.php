@@ -629,7 +629,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $packageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $packageLabel ?? $this->getTestLabel($reportCtx->testMetadata);
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
@@ -807,9 +807,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $definitionTitle = $testDefinition->getDocumentComponent()->getTitle();
-                            $testResource->setLabel($packageLabel ?? $definitionTitle);
-                            $targetItemClass->setLabel($packageLabel ?? $definitionTitle);
+                            $testResource->setLabel($packageLabel ?? $testLabel);
+                            $targetItemClass->setLabel($packageLabel ?? $testLabel);
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
@@ -1570,5 +1569,18 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return str_replace('_', '-', Format::sanitizeIdentifier($identifier));
+    }
+
+    private function getTestLabel(array $testMetadata): string
+    {
+        $labelMetadata = array_filter($testMetadata, function ($metadata) {
+            return in_array(RDFS_LABEL, $metadata->getPath());
+        });
+
+        if (count($labelMetadata) > 1) {
+            common_Logger::w('Multiple labels found for test. Using the first one.');
+        }
+
+        return reset($labelMetadata)->getValue();
     }
 }
