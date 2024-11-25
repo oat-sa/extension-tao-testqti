@@ -1577,10 +1577,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return in_array(RDFS_LABEL, $metadata->getPath());
         });
 
-        if (count($labelMetadata) === 0) {
+        if (empty($labelMetadata)) {
             if ($testDefinition->getDocumentComponent() === null) {
                 throw new Exception('No metadata label found for test and no title in the test definition.');
             }
+
             common_Logger::w('No metadata label found for test. Using the title from the test definition.');
             return $testDefinition->getDocumentComponent()->getTitle();
         }
@@ -1588,7 +1589,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         if (count($labelMetadata) > 1) {
             common_Logger::w('Multiple labels found for test. Using the first one.');
         }
-
 
         return reset($labelMetadata)->getValue();
     }
