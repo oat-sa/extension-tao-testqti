@@ -629,7 +629,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $packageLabel ?? $this->getTestLabel($reportCtx->testMetadata);
+                $testLabel = $packageLabel ?? $this->getTestLabel($reportCtx->testMetadata, $testDefinition);
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
@@ -1571,15 +1571,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return str_replace('_', '-', Format::sanitizeIdentifier($identifier));
     }
 
-    private function getTestLabel(array $testMetadata): string
+    private function getTestLabel(array $testMetadata, XmlDocument $testDefinition): string
     {
         $labelMetadata = array_filter($testMetadata, function ($metadata) {
             return in_array(RDFS_LABEL, $metadata->getPath());
         });
 
+        if (count($labelMetadata) === 0) {
+            if ($testDefinition->getDocumentComponent() === null) {
+                throw new Exception('No metadata label found for test and no title in the test definition.');
+            }
+            common_Logger::w('No metadata label found for test. Using the title from the test definition.');
+            return $testDefinition->getDocumentComponent()->getTitle();
+        }
+
         if (count($labelMetadata) > 1) {
             common_Logger::w('Multiple labels found for test. Using the first one.');
         }
+
 
         return reset($labelMetadata)->getValue();
     }
