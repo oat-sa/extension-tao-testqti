@@ -27,10 +27,12 @@ use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\TaoOntology;
 use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
+use oat\tao\model\Translation\Service\ResourceTranslatableStatusRetriever;
 use oat\tao\model\Translation\Service\TranslationCreationService;
 use oat\tao\model\Translation\Service\TranslationSyncService as TaoTranslationSyncService;
 use oat\tao\model\Translation\Service\TranslationUniqueIdSetter;
 use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
+use oat\taoQtiTest\models\Translation\Service\ResourceTranslatableStatusHandler;
 use oat\taoQtiTest\models\Translation\Service\TestTranslator;
 use oat\taoQtiTest\models\Translation\Service\TranslationPostCreationService;
 use oat\taoQtiTest\models\Translation\Service\TranslationSyncService;
@@ -52,6 +54,13 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
                 service(Ontology::SERVICE_ID),
                 service(ResourceTranslationRepository::class),
                 service(LoggerService::SERVICE_ID),
+            ]);
+
+        $services
+            ->set(ResourceTranslatableStatusHandler::class, ResourceTranslatableStatusHandler::class)
+            ->args([
+                service(taoQtiTest_models_classes_QtiTestService::class),
+                service(Ontology::SERVICE_ID),
             ]);
 
         $services
@@ -102,6 +111,16 @@ class TranslationServiceProvider implements ContainerServiceProviderInterface
                 [
                     TaoOntology::CLASS_URI_TEST,
                     service(TranslationUniqueIdSetter::class),
+                ]
+            );
+
+        $services
+            ->get(ResourceTranslatableStatusRetriever::class)
+            ->call(
+                'addCallable',
+                [
+                    TaoOntology::CLASS_URI_TEST,
+                    service(ResourceTranslatableStatusHandler::class)
                 ]
             );
     }
