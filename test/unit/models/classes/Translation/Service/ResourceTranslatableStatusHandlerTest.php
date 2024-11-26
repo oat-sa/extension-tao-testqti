@@ -22,19 +22,11 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\models\classes\Translation\Service;
 
-use core_kernel_classes_Class;
-use core_kernel_classes_Property;
 use core_kernel_classes_Resource;
 use oat\generis\model\data\Ontology;
 use oat\tao\model\TaoOntology;
-use oat\tao\model\Translation\Entity\ResourceCollection;
 use oat\tao\model\Translation\Entity\ResourceTranslatableStatus;
-use oat\tao\model\Translation\Entity\ResourceTranslation;
-use oat\tao\model\Translation\Query\ResourceTranslationQuery;
-use oat\tao\model\Translation\Repository\ResourceTranslationRepository;
 use oat\taoQtiTest\models\Translation\Service\ResourceTranslatableStatusHandler;
-use oat\taoQtiTest\models\Translation\Service\TestTranslator;
-use oat\taoTests\models\TaoTestOntology;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use taoQtiTest_models_classes_QtiTestService;
@@ -61,6 +53,7 @@ class ResourceTranslatableStatusHandlerTest extends TestCase
         $this->status = new ResourceTranslatableStatus(
             'testUri',
             TaoOntology::CLASS_URI_TEST,
+            'languageUri',
             true,
             true
         );
