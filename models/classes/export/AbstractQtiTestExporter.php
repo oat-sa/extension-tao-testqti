@@ -178,7 +178,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
 
         $this->genericLomOntologyExtractor()->extract(
-            array_merge([$this->getItem()], $this->getItems()),
+            [$this->getItem()],
             $this->getManifest()
         );
 

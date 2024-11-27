@@ -22,6 +22,8 @@ use oat\generis\model\data\event\ResourceCreated;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
+use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
 use oat\tao\model\TaoOntology;
@@ -39,6 +41,7 @@ use oat\taoQtiItem\model\qti\Service;
 use oat\taoQtiTest\models\cat\AdaptiveSectionInjectionException;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
 use oat\taoQtiTest\models\cat\CatService;
+use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
@@ -625,7 +628,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
                 // If any, assessmentSectionRefs will be resolved and included as part of the main test definition.
                 $testDefinition->includeAssessmentSectionRefs(true);
-                $testLabel = $packageLabel ?? $testDefinition->getDocumentComponent()->getTitle();
+                $testLabel = $packageLabel ?? $this->getTestLabel($reportCtx->testMetadata, $testDefinition);
 
                 if ($overwriteTestUri || $overwriteTest) {
                     $itemsClassLabel = $testLabel;
@@ -803,13 +806,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
 
                             // 3. Give meaningful names to resources.
-                            $definitionTitle = $testDefinition->getDocumentComponent()->getTitle();
-                            $testResource->setLabel($packageLabel ?? $definitionTitle);
-                            $targetItemClass->setLabel($packageLabel ?? $definitionTitle);
+                            $testResource->setLabel($packageLabel ?? $testLabel);
+                            $targetItemClass->setLabel($packageLabel ?? $testLabel);
 
                             // 4. Import metadata for the resource (use same mechanics as item resources).
                             // Metadata will be set as property values.
-                            $this->getMetadataImporter()->inject($qtiTestResource->getIdentifier(), $testResource);
                             //todo: fix taoSetup to be aware of containers. This is only workaround.
                             if (
                                 $this->getServiceManager()->getContainer()->has(MappedMetadataInjector::class)
@@ -905,7 +906,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $msg = __("IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported.", $qtiTestResource->getIdentifier());
             // phpcs:enable Generic.Files.LineLength
             $report->setMessage($msg);
-            $this->getEventManager()->trigger(new ResourceCreated($testResource));
+            $eventManager = $this->getEventManager();
+
+            $eventManager->trigger(new ResourceCreated($testResource));
+            $eventManager->trigger(new TestImportedEvent($testResource->getUri()));
         } else {
             $report->setType(common_report_Report::TYPE_ERROR);
             // phpcs:disable Generic.Files.LineLength
@@ -1295,7 +1299,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $xmlBuilder = $this->getServiceLocator()->get(AssessmentTestXmlFactory::class);
 
             $testLabel = $test->getLabel();
-            $identifier = $this->createTestIdentifier($testLabel);
+            $identifier = $this->createTestIdentifier($test);
             $xml = $xmlBuilder->create($identifier, $testLabel);
 
             if (!$file->write($xml)) {
@@ -1326,20 +1330,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $test->editPropertyValues($this->getProperty(TestService::PROPERTY_TEST_CONTENT), $directory);
 
         return $dir;
-    }
-
-    private function createTestIdentifier(string $testLabel): string
-    {
-        $identifier = null;
-
-        if (preg_match('/^\d/', $testLabel)) {
-            $identifier = 't_' . $testLabel;
-        }
-
-        $identifier = Format::sanitizeIdentifier($identifier);
-        $identifier = str_replace('_', '-', $identifier);
-
-        return $identifier;
     }
 
     /**
@@ -1550,5 +1540,54 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return [];
+    }
+
+    private function getIdentifierGenerator(): ?IdentifierGeneratorInterface
+    {
+        try {
+            return $this->getPsrContainer()->get(IdentifierGeneratorProxy::class);
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
+    private function createTestIdentifier(core_kernel_classes_Resource $test): string
+    {
+        $generator = $this->getIdentifierGenerator();
+        $testLabel = $test->getLabel();
+
+        if ($generator) {
+            return $generator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
+        }
+
+        $identifier = null;
+
+        if (preg_match('/^\d/', $testLabel)) {
+            $identifier = 't_' . $testLabel;
+        }
+
+        return str_replace('_', '-', Format::sanitizeIdentifier($identifier));
+    }
+
+    private function getTestLabel(array $testMetadata, XmlDocument $testDefinition): string
+    {
+        $labelMetadata = array_filter($testMetadata, function ($metadata) {
+            return in_array(RDFS_LABEL, $metadata->getPath());
+        });
+
+        if (empty($labelMetadata)) {
+            if ($testDefinition->getDocumentComponent() === null) {
+                throw new Exception('No metadata label found for test and no title in the test definition.');
+            }
+
+            common_Logger::w('No metadata label found for test. Using the title from the test definition.');
+            return $testDefinition->getDocumentComponent()->getTitle();
+        }
+
+        if (count($labelMetadata) > 1) {
+            common_Logger::w('Multiple labels found for test. Using the first one.');
+        }
+
+        return reset($labelMetadata)->getValue();
     }
 }

@@ -18,19 +18,20 @@
  *
  * Copyright (c) 2013-2019 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
+ * phpcs:disable Generic.Files.LineLength
  */
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
-// phpcs:disable Generic.Files.LineLength
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
-// phpcs:enable Generic.Files.LineLength
+use oat\taoQtiTest\models\IdentifierGenerator\ServiceProvider\IdentifierGeneratorServiceProvider;
+use oat\taoQtiTest\models\Qti\ServiceProvider\QtiServiceProvider;
 use oat\taoQtiTest\models\render\ItemsReferencesServiceProvider;
 use oat\taoQtiTest\models\TestSessionState\Container\TestSessionStateServiceProvider;
+use oat\taoQtiTest\models\Translation\ServiceProvider\TranslationServiceProvider;
+use oat\taoQtiTest\models\UniqueId\ServiceProvider\UniqueIdServiceProvider;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
-use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
-use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\CreateTestSessionFilesystem;
 use oat\taoQtiTest\scripts\install\DisableBRSinTestAuthoring;
 use oat\taoQtiTest\scripts\install\RegisterCreatorServices;
@@ -38,6 +39,7 @@ use oat\taoQtiTest\scripts\install\RegisterFrontendPaths;
 use oat\taoQtiTest\scripts\install\RegisterQtiCategoryPresetProviders;
 use oat\taoQtiTest\scripts\install\RegisterQtiFlysystemManager;
 use oat\taoQtiTest\scripts\install\RegisterQtiPackageExporter;
+use oat\taoQtiTest\scripts\install\RegisterResultTransmissionEventHandlers;
 use oat\taoQtiTest\scripts\install\RegisterSectionPauseService;
 use oat\taoQtiTest\scripts\install\RegisterTestCategoryPresetProviderService;
 use oat\taoQtiTest\scripts\install\RegisterTestContainer;
@@ -50,6 +52,7 @@ use oat\taoQtiTest\scripts\install\SetLinearNextItemWarningConfig;
 use oat\taoQtiTest\scripts\install\SetSynchronisationService;
 use oat\taoQtiTest\scripts\install\SetupDefaultTemplateConfiguration;
 use oat\taoQtiTest\scripts\install\SetupEventListeners;
+use oat\taoQtiTest\scripts\install\SetupProvider;
 use oat\taoQtiTest\scripts\install\SetUpQueueTasks;
 use oat\taoQtiTest\scripts\install\SetupStateOffloadQueue;
 use oat\taoQtiTest\scripts\install\SyncChannelInstaller;
@@ -185,6 +188,10 @@ return [
         ItemsReferencesServiceProvider::class,
         TestQtiServiceProvider::class,
         TestSessionStateServiceProvider::class,
-        MetadataServiceProvider::class
+        MetadataServiceProvider::class,
+        TranslationServiceProvider::class,
+        UniqueIdServiceProvider::class,
+        IdentifierGeneratorServiceProvider::class,
+        QtiServiceProvider::class,
     ],
 ];
