@@ -53,7 +53,7 @@ class QtiFlysystemFileManagerTest extends GenerisPhpUnitTestRunner
     public function cleanUp()
     {
         foreach ($this->filesystem->listContents('/', true) as $file) {
-            $basename = $file['basename'];
+            $basename = basename($file['path']);
             if (strpos($basename, 'unittest') !== false) {
                 $this->filesystem->delete($file['path']);
             }
