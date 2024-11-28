@@ -62,7 +62,7 @@ class QtiFlysystemFile extends File implements QtiFile
 
     public function hasFilename()
     {
-        return $this->getFileSystem()->has($this->getPrefix() . self::FILENAME_MD_PREFIX);
+        return $this->getFileSystem()->fileExists($this->getPrefix() . self::FILENAME_MD_PREFIX);
     }
 
     public function getFilename()

@@ -63,14 +63,14 @@
     "oat-sa/lib-test-cat": "2.4.0",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.28.3",
-    "oat-sa/generis": ">=15.39.0",
-    "oat-sa/tao-core": ">=54.25.0",
+    "oat-sa/generis": ">=16.0.0",
+    "oat-sa/tao-core": ">=54.26.0",
     "oat-sa/extension-tao-item": ">=12.4.0",
     "oat-sa/extension-tao-itemqti": ">=30.23.0",
     "oat-sa/extension-tao-test": ">=16.3.0",
     "oat-sa/extension-tao-delivery": ">=15.0.0",
     "oat-sa/extension-tao-outcome": ">=13.0.0",
-    "league/flysystem": "~1.0",
+    "league/flysystem": "^3.0",
     "slim/slim": "^3.0"
   },
   "autoload": {
