@@ -275,7 +275,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             case QtiRunnerEmptyResponsesException::class:
             case QtiRunnerClosedException::class:
             case QtiRunnerPausedException::class:
-            case QtiRunnerInvalidResponsesException::class;
+            case QtiRunnerInvalidResponsesException::class:
                 return 200;
 
             case common_exception_NotImplemented::class:
