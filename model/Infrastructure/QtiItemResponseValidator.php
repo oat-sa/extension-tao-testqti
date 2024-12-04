@@ -48,6 +48,7 @@ class QtiItemResponseValidator
         if ($this->getResponseValidation($serviceContext)) {
             $serviceContext->getTestSession()->getCurrentAssessmentItemSession()->checkResponseValidityConstraints($responses);
         }
+
     }
 
     private function getResponseValidation(RunnerServiceContext $serviceContext): bool
@@ -59,7 +60,6 @@ class QtiItemResponseValidator
             ->getItemSessionControl()
             ->mustValidateResponses();
     }
-
 
     private function getAllowSkip(RunnerServiceContext $serviceContext): bool
     {
