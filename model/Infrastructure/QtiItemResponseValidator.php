@@ -27,7 +27,6 @@ use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
-use qtism\runtime\tests\AssessmentTestSession;
 
 class QtiItemResponseValidator
 {
@@ -36,34 +35,36 @@ class QtiItemResponseValidator
      * @throws common_exception_Error
      * @throws QtiRunnerEmptyResponsesException
      */
-    public function validate(AssessmentTestSession $testSession, State $responses): void
+    public function validate(RunnerServiceContext $serviceContext, State $responses): void
     {
-        if ($this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
+        if ($this->getAllowSkip($serviceContext) && $responses->containsNullOnly()) {
             return;
         }
 
-        if (!$this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
+        if (!$this->getAllowSkip($serviceContext) && $responses->containsNullOnly()) {
             throw new QtiRunnerEmptyResponsesException();
         }
 
-        if ($this->getResponseValidation($testSession)) {
-            $testSession->getCurrentAssessmentItemSession()
-                ->checkResponseValidityConstraints($responses);
+        if ($this->getResponseValidation($serviceContext)) {
+            $serviceContext->getTestSession()->getCurrentAssessmentItemSession()->checkResponseValidityConstraints($responses);
         }
     }
 
-    private function getResponseValidation(AssessmentTestSession $testSession): bool
+    private function getResponseValidation(RunnerServiceContext $serviceContext): bool
     {
-        return $testSession->getRoute()
+        return $serviceContext->getTestSession()
+            ->getRoute()
             ->current()
             ->getItemSessionControl()
             ->getItemSessionControl()
             ->mustValidateResponses();
     }
 
-    private function getAllowSkip(AssessmentTestSession $testSession): bool
+
+    private function getAllowSkip(RunnerServiceContext $serviceContext): bool
     {
-        return $testSession->getRoute()
+        return $serviceContext->getTestSession()
+            ->getRoute()
             ->current()
             ->getItemSessionControl()
             ->getItemSessionControl()

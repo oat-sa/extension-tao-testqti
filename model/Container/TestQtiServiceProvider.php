@@ -195,5 +195,9 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 ]
             )
             ->public();
+
+        $services
+            ->set(QtiItemResponseValidator::class, QtiItemResponseValidator::class)
+            ->public();
     }
 }
