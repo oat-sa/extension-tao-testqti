@@ -46,9 +46,10 @@ class QtiItemResponseValidator
         }
 
         if ($this->getResponseValidation($serviceContext)) {
-            $serviceContext->getTestSession()->getCurrentAssessmentItemSession()->checkResponseValidityConstraints($responses);
+            $serviceContext->getTestSession()
+                ->getCurrentAssessmentItemSession()
+                ->checkResponseValidityConstraints($responses);
         }
-
     }
 
     private function getResponseValidation(RunnerServiceContext $serviceContext): bool
