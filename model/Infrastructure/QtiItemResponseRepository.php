@@ -44,8 +44,8 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
     private QtiItemResponseValidator $itemResponseValidator;
 
     public function __construct(
-        QtiRunnerService         $runnerService,
-        FeatureFlagChecker       $featureFlagChecker,
+        QtiRunnerService $runnerService,
+        FeatureFlagChecker $featureFlagChecker,
         QtiItemResponseValidator $itemResponseValidator
     ) {
         $this->runnerService = $runnerService;
