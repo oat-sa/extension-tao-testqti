@@ -24,22 +24,33 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure;
 
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
+use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use qtism\runtime\tests\AssessmentItemSessionException;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
 class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 {
     /** @var QtiRunnerService */
     private $runnerService;
+    private FeatureFlagChecker $featureFlagChecker;
+    private QtiItemResponseValidator $itemResponseValidator;
 
-    public function __construct(QtiRunnerService $runnerService)
-    {
+    public function __construct(
+        QtiRunnerService         $runnerService,
+        FeatureFlagChecker       $featureFlagChecker,
+        QtiItemResponseValidator $itemResponseValidator
+    ) {
         $this->runnerService = $runnerService;
+        $this->featureFlagChecker = $featureFlagChecker;
+        $this->itemResponseValidator = $itemResponseValidator;
     }
 
     public function save(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
@@ -109,6 +120,19 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             $itemDefinition,
             $itemResponse->getResponse()
         );
+
+        if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
+            try {
+                $this->itemResponseValidator->validate($serviceContext, $responses);
+            } catch (AssessmentItemSessionException $e) {
+                throw new QtiRunnerInvalidResponsesException($e->getMessage());
+            } catch (QtiRunnerEmptyResponsesException $e) {
+                throw new QtiRunnerEmptyResponsesException($e->getMessage());
+            }
+
+            $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
+            return;
+        }
 
         if (
             $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
