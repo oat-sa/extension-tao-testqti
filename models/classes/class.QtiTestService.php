@@ -1545,8 +1545,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         if ($importMetadata === true) {
             $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
             $reportCtx->metaMetadata = $metaMetadataValues;
-            return $this->getMetaMetadataImporter()
+
+            $mappedMetadataValues = $this->getMetaMetadataImporter()
                 ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
+
+            if (empty($mappedMetadataValues)) {
+                $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+                $mappedMetadataValues = $this->getMetaMetadataImporter()->mapMetadataToProperties(
+                    $metadataValues,
+                    $targetItemClass,
+                    $testClass
+                );
+            }
+            return $mappedMetadataValues;
         }
 
         return [];
