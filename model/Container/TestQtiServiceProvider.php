@@ -34,6 +34,7 @@ use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
+use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
 use oat\taoQtiTest\model\Service\ConcurringSessionService;
@@ -63,7 +64,9 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
             ->public()
             ->args(
                 [
-                    service(QtiRunnerService::SERVICE_ID)
+                    service(QtiRunnerService::SERVICE_ID),
+                    service(FeatureFlagChecker::class),
+                    service(QtiItemResponseValidator::class),
                 ]
             );
 
@@ -176,5 +179,9 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(TimerAdjustmentServiceInterface::SERVICE_ID),
                 ]
             );
+
+        $services
+            ->set(QtiItemResponseValidator::class, QtiItemResponseValidator::class)
+            ->public();
     }
 }

@@ -47,6 +47,7 @@ use oat\taoQtiTest\model\Service\TimeoutCommand;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\model\Service\ToolsStateAwareInterface;
 use oat\taoQtiTest\models\cat\CatEngineNotFoundException;
+use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\container\QtiTestDeliveryContainer;
 use oat\taoQtiTest\models\runner\communicator\CommunicationService;
 use oat\taoQtiTest\models\runner\communicator\QtiCommunicationService;
@@ -274,6 +275,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             case QtiRunnerEmptyResponsesException::class:
             case QtiRunnerClosedException::class:
             case QtiRunnerPausedException::class:
+            case QtiRunnerInvalidResponsesException::class;
                 return 200;
 
             case common_exception_NotImplemented::class:
