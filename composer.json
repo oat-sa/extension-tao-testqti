@@ -67,7 +67,7 @@
     "oat-sa/tao-core": ">=54.27.0",
     "oat-sa/extension-tao-item": ">=12.4.0",
     "oat-sa/extension-tao-itemqti": ">=30.23.0",
-    "oat-sa/extension-tao-test": ">=16.4.3",
+    "oat-sa/extension-tao-test": ">=16.3.0",
     "oat-sa/extension-tao-delivery": ">=15.0.0",
     "oat-sa/extension-tao-outcome": ">=13.0.0",
     "league/flysystem": "^3.0",
