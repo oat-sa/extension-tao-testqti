@@ -42,6 +42,7 @@ use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
 use oat\taoQtiTest\model\Service\MoveService;
 use oat\taoQtiTest\model\Service\PauseService;
+use oat\taoQtiTest\model\Service\PluginManagerService;
 use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
@@ -50,6 +51,7 @@ use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestSessionService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use common_ext_ExtensionsManager as ExtensionsManager;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -182,6 +184,16 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
 
         $services
             ->set(QtiItemResponseValidator::class, QtiItemResponseValidator::class)
+            ->public();
+
+        $services
+            ->set(PluginManagerService::class, PluginManagerService::class)
+            ->args(
+                [
+                    service(Ontology::SERVICE_ID),
+                    service(ExtensionsManager::SERVICE_ID),
+                ]
+            )
             ->public();
     }
 }
