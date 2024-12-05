@@ -25,7 +25,7 @@ namespace oat\taoQtiTest\models\TestSessionState;
 
 use common_exception_NoContent;
 use common_exception_NotFound;
-use League\Flysystem\FileNotFoundException;
+use oat\oatbox\filesystem\FilesystemException;
 use oat\tao\model\state\StateMigration;
 use oat\tao\model\taskQueue\QueueDispatcherInterface;
 use oat\taoDelivery\model\execution\DeliveryExecution;
@@ -92,7 +92,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         try {
             $this->stateMigration->restore($userId, $sessionId);
             $this->dispatchBackupRemoval($userId, $sessionId, 'Test Session');
-        } catch (FileNotFoundException $e) {
+        } catch (FilesystemException $e) {
             throw new RestorationImpossibleException(
                 sprintf('[%s] impossible to reach archived test session', $sessionId)
             );
@@ -105,7 +105,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         try {
             $this->stateMigration->restore($userId, $extendedStorageId);
             $this->dispatchBackupRemoval($userId, $extendedStorageId, 'Extended');
-        } catch (FileNotFoundException $e) {
+        } catch (FilesystemException $e) {
             $this->logger->debug(
                 sprintf(
                     '[%s] Extended state restoration impossible for user %s',
@@ -122,7 +122,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         try {
             $this->stateMigration->restore($userId, $qtiItemStorageId);
             $this->dispatchBackupRemoval($userId, $qtiItemStorageId, 'TimeLine');
-        } catch (FileNotFoundException $e) {
+        } catch (FilesystemException $e) {
             $this->logger->debug(
                 sprintf(
                     '[%s] TimeLine state restoration impossible for user %s',
@@ -184,7 +184,7 @@ class TestSessionStateRestorationService implements TestSessionStateRestorationI
         try {
             $this->stateMigration->restore($userId, $callId);
             $this->dispatchBackupRemoval($userId, $callId, 'Test Item');
-        } catch (FileNotFoundException $e) {
+        } catch (FilesystemException $e) {
             $this->logger->debug(
                 sprintf(
                     '[%s] Test Item state restoration impossible for user %s',
