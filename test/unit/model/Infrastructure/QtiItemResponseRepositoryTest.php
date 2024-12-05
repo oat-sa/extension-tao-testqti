@@ -27,7 +27,6 @@ use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
-use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use PHPUnit\Framework\TestCase;
