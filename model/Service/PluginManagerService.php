@@ -29,7 +29,7 @@ use oat\oatbox\reporting\Report;
 
 class PluginManagerService
 {
-    CONST PLUGIN_MAP = [
+    private const PLUGIN_MAP = [
         'allowSkipping' => 'enable-allow-skipping',
         'validateResponses' => 'enable-validate-responses',
     ];

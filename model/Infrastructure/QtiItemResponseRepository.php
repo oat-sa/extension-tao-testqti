@@ -31,7 +31,6 @@ use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
-use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
@@ -123,11 +122,9 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
-                $this->itemResponseValidator->validate($serviceContext, $responses);
+                $this->itemResponseValidator->validate($serviceContext->getTestSession(), $responses);
             } catch (AssessmentItemSessionException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
-            } catch (QtiRunnerEmptyResponsesException $e) {
-                throw new QtiRunnerEmptyResponsesException($e->getMessage());
             }
 
             $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
