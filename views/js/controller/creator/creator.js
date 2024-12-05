@@ -208,13 +208,6 @@ define([
 
             Promise.resolve()
                 .then(() => {
-                    if (options.translation) {
-                        return translationService.syncTranslation(options.originResourceUri).then(() => {
-                            feedback().success(__('The translation has been synchronized with the original test.'));
-                        });
-                    }
-                })
-                .then(() => {
                     //Data Binding options
                     const binderOptions = _.merge(options.routes, {
                         filters: {
