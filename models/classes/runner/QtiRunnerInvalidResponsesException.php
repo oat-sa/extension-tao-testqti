@@ -15,32 +15,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
- */
-
-/**
- * @author Bertrand Chevrier <bertrand@taotesting.com>
+ * Copyright (c) 2024 (original work) Open Assessment Technologies SA ;
  */
 
 namespace oat\taoQtiTest\models\classes\runner;
 
-class QtiRunnerInvalidResponsesException extends \common_Exception implements \common_exception_UserReadableException
+use common_Exception;
+use common_exception_UserReadableException;
+
+class QtiRunnerInvalidResponsesException extends common_Exception implements common_exception_UserReadableException
 {
-    /**
-     * Create a new QtiRunnerEmptyResponseException object.
-     *
-     * @param string $message the message
-     */
     public function __construct($message = 'A response to this item is invalid', $code = 200)
     {
         parent::__construct($message, $code);
     }
 
-    /**
-     * Returns a translated human-readable message destinated to the end-user.
-     *
-     * @return string A human-readable message.
-     */
     public function getUserMessage()
     {
         return  __('A response to this item is invalid.');
