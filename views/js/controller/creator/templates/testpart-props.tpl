@@ -260,8 +260,8 @@
 
 <!-- assessmentTest/testPart/itemSessionControl/validateResponses -->
             <div class="grid-row pseudo-label-box checkbox-row">
-                <div class="col-5">
-                    <label for="testpart-validate-responses">{{__ 'Validate Responses'}}</label>
+                <div class="col-6">
+                    <label for="testpart-validate-responses">{{__ 'Enforce Item Constraints'}}</label>
                 </div>
                 <div class="col-6">
                     <label>
@@ -272,7 +272,7 @@
                 <div class="col-1 help">
                     <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
                     <div class="tooltip-content">
-                    {{__ "The candidate is not allowed to submit invalid responses."}}
+                    {{__ "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."}}
                     </div>
                 </div>
             </div>
