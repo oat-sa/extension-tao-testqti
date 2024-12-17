@@ -134,10 +134,10 @@
     <div class="itemref-item-session-control toggled">
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/maxAttempts -->
         <div class="grid-row">
-            <div class="col-5">
+            <div class="col-6">
                 <label for="itemref-max-attempts">{{__ 'Max Attempts'}}</label>
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <input
                         name="itemref-max-attempts"
                         type="text"
@@ -160,10 +160,10 @@
         {{#if itemSessionShowFeedback}}
             <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showFeedback -->
             <div class="grid-row pseudo-label-box checkbox-row">
-                <div class="col-5">
+                <div class="col-6">
                     <label for="itemref-show-feedback">{{__ 'Show Feedback'}}</label>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <label>
                         <input type="checkbox" name="itemref-show-feedback" value="true" data-bind="itemSessionControl.showFeedback" data-bind-encoder="boolean" />
                         <span class="icon-checkbox"></span>
@@ -181,10 +181,10 @@
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowReview -->
         <div class="grid-row pseudo-label-box checkbox-row">
-            <div class="col-5">
+            <div class="col-6">
                 <label for="itemref-show-allow-review">{{__ 'Allow Review'}}</label>
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <label>
                     <input type="checkbox" name="itemref-allow-review" value="true" checked="checked" data-bind="itemSessionControl.allowReview" data-bind-encoder="boolean" />
                     <span class="icon-checkbox"></span>
@@ -202,10 +202,10 @@
 {{!-- Property not yet available in delivery
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/showSolution -->
         <div class="grid-row pseudo-label-box checkbox-row">
-            <div class="col-5">
+            <div class="col-6">
                 <label for="itemref-show-solution">{{__ 'Show Solution'}}</label>
             </div>
-            <div class="col-6">
+            <div class="col-5">
                 <label>
                     <input type="checkbox" name="itemref-show-solution" value="true"  data-bind="itemSessionControl.showSolution" data-bind-encoder="boolean" />
                     <span class="icon-checkbox"></span>
@@ -223,10 +223,10 @@
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowComment -->
         {{#if itemSessionAllowComment}}
             <div class="grid-row pseudo-label-box checkbox-row">
-                <div class="col-5">
+                <div class="col-6">
                     <label for="itemref-allow-comment">{{__ 'Allow Comment'}}</label>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <label>
                         <input type="checkbox" name="itemref-allow-comment" value="true"  data-bind="itemSessionControl.allowComment" data-bind-encoder="boolean" />
                         <span class="icon-checkbox"></span>
@@ -244,10 +244,10 @@
 <!-- assessmentTest/testPart/assessmentSection/sectionPart/itemSessionControl/allowSkipping -->
         {{#if itemSessionAllowSkipping}}
             <div class="grid-row pseudo-label-box checkbox-row">
-                <div class="col-5">
+                <div class="col-6">
                     <label for="itemref-allow-skipping">{{__ 'Allow Skipping'}}</label>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <label>
                         <input type="checkbox" name="itemref-allow-skipping" value="true" checked="checked" data-bind="itemSessionControl.allowSkipping" data-bind-encoder="boolean" />
                         <span class="icon-checkbox"></span>
@@ -268,7 +268,7 @@
                 <div class="col-6">
                     <label for="itemref-validate-responses">{{__ 'Enforce Item Constraints'}}</label>
                 </div>
-                <div class="col-6">
+                <div class="col-5">
                     <label>
                         <input type="checkbox" name="itemref-validate-responses" value="true" data-bind="itemSessionControl.validateResponses" data-bind-encoder="boolean" />
                         <span class="icon-checkbox"></span>
