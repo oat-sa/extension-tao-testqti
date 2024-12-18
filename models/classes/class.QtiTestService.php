@@ -451,7 +451,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                     }
                 } else {
                     $msg = __("The 'imsmanifest.xml' file found in the archive is not valid.");
-                    $report->add(common_report_Report::createFailure($msg));
+                    $report->add(Report::createError($msg));
                 }
 
                 // Cleanup the folder where the archive was extracted.
@@ -618,7 +618,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         // -- Check if the file referenced by the test QTI resource exists.
         if (is_readable($expectedTestFile) === false) {
             $report->add(
-                common_report_Report::createFailure(
+                Report::createError(
                     __('No file found at location "%s".', $qtiTestResource->getFile())
                 )
             );
