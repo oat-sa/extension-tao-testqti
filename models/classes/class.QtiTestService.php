@@ -399,7 +399,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $file = $folder . 'imsmanifest.xml';
                 $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($file);
                 $this->propagate($qtiManifestParser);
-                $this->getManifestConverter()->convert($file, $qtiManifestParser);
+                $this->getManifestConverter()->convertToQti2($file, $qtiManifestParser);
                 // We validate manifest file against QTI 3.0
                 $qtiManifestParser->validate();
                 if ($qtiManifestParser->isValid() === true) {
@@ -623,7 +623,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             );
         } else {
             //Convert to QTI 2.2
-            $this->getTestConverter()->convert($expectedTestFile);
+            $this->getTestConverter()->convertToQti2($expectedTestFile);
             // -- Load the test in a QTISM flavour.
             $testDefinition = new XmlDocument();
 
