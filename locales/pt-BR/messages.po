@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2024-04-09 08:28\n"
+"PO-Revision-Date: 2024-12-19 10:28\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pt\n"
@@ -240,7 +240,7 @@ msgid "Black on White"
 msgstr "Preto em Branco"
 
 msgid "Bookmark question"
-msgstr ""
+msgstr "Marcar esta pergunta"
 
 msgid "Bookmark the current question for later review"
 msgstr ""
