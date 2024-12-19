@@ -1524,7 +1524,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "Der Eingabemodus bestimmt wann die Antworten des Kandidaten verarbeitet werden. Beim Test Teil im individuellen Modus ist es notwendig das der Kandidat seine Antworten auf Element-nach-Element Basis abgibt. Im Simultanmodus werden alle Antworten am Ende des Test Teil zusammen eingereicht."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"

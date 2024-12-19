@@ -1524,9 +1524,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "يحدد وضع الإرسال وقت إرسال أجوبة المرشح لمعالجتها. يتطلب قسم من الرائز في الوضع الفردي من المرشح إرسال أجوبته على أساس كل بند على حدة. في الوضع المتزامن ، يتم تقديم جميع أجوبة المرشح معًا في نهايةقسم من الرائز.."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr "لا يمكن حفظ الرائز لأنه يحتوي حاليا على إعدادات غير صالحة.\n"
-""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 "Please fix the invalid settings and try again."

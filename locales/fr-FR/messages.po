@@ -1524,7 +1524,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "Le mode de soumission détermine quand les réponses du candidat sont soumises par traitement de la réponse. Un testPart en mode individuel nécessite que le candidat soumette ses réponses sur une base 'item par item'. En mode simultané les réponses du candidat sont toutes soumises ensemble à la fin du testPart."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"

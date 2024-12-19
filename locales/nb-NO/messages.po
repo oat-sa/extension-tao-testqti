@@ -1523,7 +1523,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "Innleveringsmodusen avgjør når elevens svar blir sendt til vurdering. En prøvedel i individuell modus krever at eleven leverer svarene sine enkeltvis. I samtidig modus sendes alleelevenes svar sammen på slutten av prøvedelen."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
