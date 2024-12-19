@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.01\n"
-"PO-Revision-Date: 2024-12-19T15:26:00\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:19\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fi-FI\n"
@@ -14,9 +14,6 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "%s to answer %s"
-msgstr ""
-
-msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -77,9 +74,6 @@ msgid "After you complete the section it would be impossible to return to this s
 msgstr ""
 
 msgid "All"
-msgstr ""
-
-msgid "Allow a Test Taker to print out the item."
 msgstr ""
 
 msgid "Allow Comment"
@@ -146,9 +140,6 @@ msgid "An error occurred during the test initialization!"
 msgstr ""
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr ""
-
-msgid "An error occurred while loading the original test."
 msgstr ""
 
 msgid "An error occurred!"
@@ -259,10 +250,10 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr ""
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr ""
 
 msgid "Candidate"
@@ -274,16 +265,10 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
-msgid "Category name not allowed"
-msgstr ""
-
 msgid "Category score"
 msgstr ""
 
 msgid "Change the current color preset"
-msgstr ""
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
 msgstr ""
 
 msgid "Class"
@@ -361,9 +346,6 @@ msgstr ""
 msgid "Cut score (pass ratio)"
 msgstr ""
 
-msgid "Define the status of the translation."
-msgstr ""
-
 msgid "Disable validation"
 msgstr ""
 
@@ -412,9 +394,6 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
-msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr ""
-
 msgid "Don\'t save"
 msgstr ""
 
@@ -455,9 +434,6 @@ msgid "End test"
 msgstr ""
 
 msgid "End Test"
-msgstr ""
-
-msgid "Enforce Item Constraints"
 msgstr ""
 
 msgid "Enter a blueprint"
@@ -644,9 +620,6 @@ msgstr ""
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr ""
 
-msgid "In progress"
-msgstr ""
-
 msgid "In this part of the test navigation is not allowed."
 msgstr ""
 
@@ -698,10 +671,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -770,11 +743,11 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-#, tao-public
-msgid "Manage tests"
+msgid "Manage Tests"
 msgstr ""
 
-msgid "Manage Tests"
+#, tao-public
+msgid "Manage tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -831,7 +804,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
+msgid "Missed required parameter \'id\'"
 msgstr ""
 
 msgid "Missed required parameter \'id\'"
@@ -888,10 +861,10 @@ msgstr ""
 msgid "Next Section"
 msgstr ""
 
-msgid "NO"
+msgid "No"
 msgstr ""
 
-msgid "No"
+msgid "NO"
 msgstr ""
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
@@ -913,9 +886,6 @@ msgid "No outcome processing. Erase the existing rules, if any."
 msgstr ""
 
 msgid "No reference to any IMS QTI Item found."
-msgstr ""
-
-msgid "No translation"
 msgstr ""
 
 msgid "Non Linear"
@@ -981,9 +951,6 @@ msgstr ""
 msgid "Ordering"
 msgstr ""
 
-msgid "Original title"
-msgstr ""
-
 msgid "Outcome"
 msgstr ""
 
@@ -1008,9 +975,6 @@ msgstr ""
 msgid "Pause the test"
 msgstr ""
 
-msgid "Pending"
-msgstr ""
-
 msgid "Play"
 msgstr ""
 
@@ -1032,9 +996,6 @@ msgstr ""
 msgid "Previous"
 msgstr ""
 
-msgid "Print Out"
-msgstr ""
-
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
@@ -1050,16 +1011,10 @@ msgstr ""
 msgid "QTI Item Runner"
 msgstr ""
 
-msgid "QTI metadata as properties"
-msgstr ""
-
 msgid "QTI Test \"%s\" publishing failed."
 msgstr ""
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr ""
-
-msgid "QTI test import failed"
 msgstr ""
 
 msgid "QTI Test Metadata"
@@ -1161,10 +1116,10 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1302,9 +1257,6 @@ msgstr ""
 msgid "Start Test-part"
 msgstr ""
 
-msgid "Status"
-msgstr ""
-
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1377,9 +1329,6 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
-msgid "Test translation status"
-msgstr ""
-
 msgid "Test-Taker Tools"
 msgstr ""
 
@@ -1390,10 +1339,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1444,9 +1393,6 @@ msgstr ""
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
 
-msgid "The given target is not an instance of core_kernel_classes_Resource"
-msgstr ""
-
 msgid "The identifier of the item reference."
 msgstr ""
 
@@ -1466,12 +1412,6 @@ msgid "The navigation mode determines the general paths that the candidate may t
 msgstr ""
 
 msgid "The number of child elements to be selected."
-msgstr ""
-
-msgid "The original title of the section."
-msgstr ""
-
-msgid "The original title of the test."
 msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
@@ -1553,12 +1493,6 @@ msgstr ""
 msgid "The time limit has been reached for this part of the test."
 msgstr ""
 
-msgid "The translated section title."
-msgstr ""
-
-msgid "The translated test title."
-msgstr ""
-
 msgid "There are %s unanswered questions"
 msgstr ""
 
@@ -1620,15 +1554,6 @@ msgid "Toolbox"
 msgstr ""
 
 msgid "Total score"
-msgstr ""
-
-msgid "Translated title"
-msgstr ""
-
-msgid "Translation"
-msgstr ""
-
-msgid "Translation completed"
 msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
@@ -1758,10 +1683,10 @@ msgstr ""
 msgid "Yellow on Blue"
 msgstr ""
 
-msgid "YES"
+msgid "Yes"
 msgstr ""
 
-msgid "Yes"
+msgid "YES"
 msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
