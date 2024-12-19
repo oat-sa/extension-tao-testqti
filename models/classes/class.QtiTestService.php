@@ -403,7 +403,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $file = $folder . 'imsmanifest.xml';
                 $qtiManifestParser = new taoQtiTest_models_classes_ManifestParser($file);
                 $this->propagate($qtiManifestParser);
-                $this->getManifestConverter()->convertToQti2($file, $qtiManifestParser);
+                // For taoSetup PsrContainer is not available
+                // It is not required to perform manifest conversion in this process
+                // therefore we can skip it during taoSetup
+                if ($this->getPsrContainer()->has(ManifestConverter::class)) {
+                    $this->getManifestConverter()->convertToQti2($file, $qtiManifestParser);
+                }
                 // We validate manifest file against QTI 3.0
                 $qtiManifestParser->validate();
                 if ($qtiManifestParser->isValid() === true) {
@@ -628,7 +633,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             );
         } else {
             //Convert to QTI 2.2
-            $this->getTestConverter()->convertToQti2($expectedTestFile);
+            if ($this->getPsrContainer()->has(TestConverter::class)) {
+                $this->getTestConverter()->convertToQti2($expectedTestFile);
+            }
             // -- Load the test in a QTISM flavour.
             $testDefinition = new XmlDocument();
 
@@ -1635,8 +1642,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     /**
      * @param AssessmentSectionRef[] $testDefinition
      */
-    private function convertAssessmentSectionRefs(QtiComponentCollection $assessmentSectionRefs, string $folder)
+    private function convertAssessmentSectionRefs(QtiComponentCollection $assessmentSectionRefs, string $folder): void
     {
+        if(!$this->getPsrContainer()->has(AssessmentSectionConverter::class)) {
+            return;
+        }
+
         foreach ($assessmentSectionRefs as $assessmentSectionRef) {
             $file = $folder . $assessmentSectionRef->getHref();
             $this->getSectionConverter()->convertToQti2($file);
