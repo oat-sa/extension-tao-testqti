@@ -1460,7 +1460,6 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1768,3 +1767,8 @@ msgstr ""
 msgid "Zoom out"
 msgstr ""
 
+msgid "Enforce Item Constraints"
+msgstr ""
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
