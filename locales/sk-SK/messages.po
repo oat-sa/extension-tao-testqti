@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:23\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2024-12-19 16:02\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: sk-SK\n"
+"Language: sk\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: sk-SK\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: sk\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Slovak\n"
 
 msgid "%s to answer %s"
 msgstr ""
@@ -394,7 +401,7 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -804,7 +811,10 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \\'id\\'"
+msgstr ""
+
+msgid "Missed required parameter \\'id\\'"
 msgstr ""
 
 msgid "Missed test package file"
@@ -906,10 +916,10 @@ msgstr ""
 msgid "Offline"
 msgstr ""
 
-msgid "Ok"
+msgid "OK"
 msgstr ""
 
-msgid "OK"
+msgid "Ok"
 msgstr ""
 
 msgid "OK & End test"
@@ -1113,10 +1123,10 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1336,10 +1346,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1680,10 +1690,10 @@ msgstr ""
 msgid "Yellow on Blue"
 msgstr ""
 
-msgid "YES"
+msgid "Yes"
 msgstr ""
 
-msgid "Yes"
+msgid "YES"
 msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
@@ -1762,5 +1772,11 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
+msgstr ""
+
+msgid "Enforce Item Constraints"
+msgstr ""
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
 msgstr ""
 
