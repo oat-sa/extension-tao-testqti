@@ -1,27 +1,23 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2024-04-09 08:28\n"
+"Project-Id-Version: TAO 2025.01\n"
+"PO-Revision-Date: 2024-12-19T15:26:08\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: ja\n"
+"Language: ja-JP\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: ja-JP\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: ja\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Japanese\n"
 
 msgid "%s to answer %s"
 msgstr "%s から %s の回答"
+
+msgid "%title% - Translation (%lang%)"
+msgstr ""
 
 msgid "(Visual) Clear all active highlights"
 msgstr "（ビジュアル）アクティブなハイライトをクリア"
@@ -82,6 +78,9 @@ msgstr "このセクションを終了した後、このセクションに戻っ
 
 msgid "All"
 msgstr "すべて"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "コメントを許可"
@@ -148,6 +147,9 @@ msgstr "テスト初期化中にエラーが発生しました"
 
 msgid "An error occurred during the test, please content your administrator."
 msgstr "エラーが発生しました。管理者に連絡してください。"
+
+msgid "An error occurred while loading the original test."
+msgstr ""
 
 msgid "An error occurred!"
 msgstr "エラーが発生しました!"
@@ -257,10 +259,10 @@ msgstr "電卓（BODMAS）"
 msgid "Can not playback media file!"
 msgstr "メディアファイルが再生できない"
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr "キャンセル"
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr "キャンセル"
 
 msgid "Candidate"
@@ -272,11 +274,17 @@ msgstr "カーディナリティ"
 msgid "Categories"
 msgstr "カテゴリ"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "カテゴリスコア"
 
 msgid "Change the current color preset"
 msgstr "現在の色設定を変更"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "クラス"
@@ -353,6 +361,9 @@ msgstr "カットスコア"
 msgid "Cut score (pass ratio)"
 msgstr "カットスコア（合格得点率）"
 
+msgid "Define the status of the translation."
+msgstr ""
+
 msgid "Disable validation"
 msgstr "検証を無効にする"
 
@@ -401,6 +412,12 @@ msgstr "リネームしないでください"
 msgid "Do not show alert on timeout"
 msgstr "タイムアウト警告を非表示"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr "保存しないでください"
 
@@ -442,6 +459,9 @@ msgstr "テスト終了"
 
 msgid "End Test"
 msgstr "テスト終了"
+
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr "ブループリントの入力"
@@ -628,6 +648,9 @@ msgstr "IMS QTIのテストパッケージのインポートが完了しまし�
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMS QTIテストがIMSマニフェストファイル \"%s\"から正常にインポートされました"
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "このパートでは問題一覧は利用できません"
 
@@ -679,10 +702,10 @@ msgstr "アイテム・レスポンス識別子が現在のアイテムと一致
 msgid "Item Session Control"
 msgstr "アイテムセッションコントロール"
 
-msgid "items"
+msgid "Items"
 msgstr "アイテム"
 
-msgid "Items"
+msgid "items"
 msgstr "アイテム"
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -751,11 +774,11 @@ msgstr "ルーブリックブロックの管理"
 msgid "Manage test properties"
 msgstr "テスト管理"
 
-msgid "Manage Tests"
-msgstr "テスト管理"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "テスト管理"
+
+msgid "Manage Tests"
 msgstr "テスト管理"
 
 msgid "Mark for review"
@@ -812,8 +835,8 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr "分"
 
-msgid "Missed required parameter \\'id\\'"
-msgstr "必要なパラメータが不足しています \\'id\\'"
+msgid "Missed required parameter \'id\"
+msgstr ""
 
 msgid "Missed required parameter \\'id\\'"
 msgstr ""
@@ -869,10 +892,10 @@ msgstr "次へ"
 msgid "Next Section"
 msgstr "次のセクション"
 
-msgid "No"
+msgid "NO"
 msgstr "いいえ"
 
-msgid "NO"
+msgid "No"
 msgstr "いいえ"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
@@ -895,6 +918,9 @@ msgstr "結果処理を行いません。既存のルールがあればそれを
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "QTIアイテムのリファレンスが見つかりませんでした。"
+
+msgid "No translation"
+msgstr ""
 
 msgid "Non Linear"
 msgstr "非順次式"
@@ -959,6 +985,9 @@ msgstr "｜"
 msgid "Ordering"
 msgstr "出題順"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr "結果"
 
@@ -983,6 +1012,9 @@ msgstr "一時停止"
 msgid "Pause the test"
 msgstr "テストを一時停止"
 
+msgid "Pending"
+msgstr ""
+
 msgid "Play"
 msgstr "再生"
 
@@ -1004,6 +1036,9 @@ msgstr "カバーエリアをプレビュー"
 msgid "Previous"
 msgstr "前へ"
 
+msgid "Print Out"
+msgstr ""
+
 msgid "PROCEED & END ASSESSMENT"
 msgstr "進行と最終評価"
 
@@ -1019,11 +1054,17 @@ msgstr ""
 msgid "QTI Item Runner"
 msgstr "QTIアイテムランナー"
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTIテスト \"%s\" の公開ができませんでした"
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTIテスト\"%s\" の公開が完了しました"
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1124,10 +1165,10 @@ msgstr "採点者"
 msgid "Scoring"
 msgstr "採点方法"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "スクラッチパッド"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "スクラッチパッド"
 
 msgid "Scratchpad"
@@ -1265,6 +1306,9 @@ msgstr "速さ"
 msgid "Start Test-part"
 msgstr "テストパート開始"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr "ステップ1：ファイルをダウンロードする（利用可能な場合は下記を参照）。"
 
@@ -1337,6 +1381,9 @@ msgstr "テスト状況とレビューの仕組み"
 msgid "Test Status and Structure"
 msgstr "テスト状況と構成"
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "サポートツール"
 
@@ -1347,10 +1394,10 @@ msgstr "テスト"
 msgid "Text content"
 msgstr "テキストコンテンツ"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "テキスト読み上げ"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "テキスト読み上げ"
 
 msgid "that was being taken."
@@ -1401,6 +1448,9 @@ msgstr "ダウンロードは<strong>%d</strong>秒で利用可能になりま�
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "この識別子はテスト全体でユニークではありません : %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "アイテム参照用識別子"
 
@@ -1421,6 +1471,12 @@ msgstr "受験者が解答する順序をコントロールします。「順次
 
 msgid "The number of child elements to be selected."
 msgstr "選択出題される数"
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "結果 \"%s\" は存在しませんが、フィードバックブロックによって参照されます。"
@@ -1468,6 +1524,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1500,6 +1557,12 @@ msgstr "テストタイトル"
 
 msgid "The time limit has been reached for this part of the test."
 msgstr "テストパートは制限時間に達しました。"
+
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
 
 msgid "There are %s unanswered questions"
 msgstr "未回答のものが%s問あります。"
@@ -1563,6 +1626,15 @@ msgstr "ツールボックス"
 
 msgid "Total score"
 msgstr "合計スコア"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "本機をケーブルでインターネットに接続するか、無線LANの電波が届きやすい場所に移動してみてください。"
@@ -1691,11 +1763,11 @@ msgstr "行%1$d,列%2$dのXMLエラー \"%3$s\""
 msgid "Yellow on Blue"
 msgstr "ブルー地に黄色"
 
-msgid "Yes"
-msgstr "Yes"
-
 msgid "YES"
 msgstr "はい"
+
+msgid "Yes"
+msgstr "Yes"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "あなたはこのセクションの%s問のうち%s問を解答しました。"

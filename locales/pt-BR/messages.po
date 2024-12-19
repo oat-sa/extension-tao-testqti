@@ -1,27 +1,23 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2024-04-09 08:28\n"
+"Project-Id-Version: TAO 2025.01\n"
+"PO-Revision-Date: 2024-12-19T15:26:18\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: pt\n"
+"Language: pt-BR\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: pt-BR\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: pt-BR\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Portuguese, Brazilian\n"
 
 msgid "%s to answer %s"
 msgstr "%s para responder %s"
+
+msgid "%title% - Translation (%lang%)"
+msgstr ""
 
 msgid "(Visual) Clear all active highlights"
 msgstr "(Visual) Limpe todos os destaques ativos"
@@ -82,6 +78,9 @@ msgstr "Após completar a seção, será impossível retornar a esta seção par
 
 msgid "All"
 msgstr "Todos"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "Permitir Comentários"
@@ -148,6 +147,9 @@ msgstr "Ocorreu um erro durante a inicialização do teste!"
 
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Ocorreu um erro durante o teste, por favor, conteúdo o administrador."
+
+msgid "An error occurred while loading the original test."
+msgstr ""
 
 msgid "An error occurred!"
 msgstr "Ocorreu um erro!"
@@ -257,11 +259,11 @@ msgstr "Calculadora BODMAS"
 msgid "Can not playback media file!"
 msgstr "Não é possível reproduzir o arquivo de mídia!"
 
-msgid "CANCEL"
-msgstr "CANCELAR"
-
 msgid "Cancel"
 msgstr "cancelar"
+
+msgid "CANCEL"
+msgstr "CANCELAR"
 
 msgid "Candidate"
 msgstr "Candidato"
@@ -272,11 +274,17 @@ msgstr "Cardinalidade"
 msgid "Categories"
 msgstr "Categorias"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "Pontuação da categoria"
 
 msgid "Change the current color preset"
 msgstr "Alterar a predefinição de cor atual"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "Classe"
@@ -353,6 +361,9 @@ msgstr "Pontuação de corte"
 msgid "Cut score (pass ratio)"
 msgstr "Pontuação de corte (taxa de passo)"
 
+msgid "Define the status of the translation."
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Desativar validação"
 
@@ -401,6 +412,12 @@ msgstr "Não renomear."
 msgid "Do not show alert on timeout"
 msgstr "Não exibir alerta no tempo limite"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr "Não salvar"
 
@@ -442,6 +459,9 @@ msgstr "Finalizar teste"
 
 msgid "End Test"
 msgstr "Finalizar teste"
+
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr "Inserir um diagrama"
@@ -628,6 +648,9 @@ msgstr "Pacote de Teste IMS QTI importado com sucesso."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Teste IMS QTI referenciado como \"%s\" no arquivo IMS Manifest importado com sucesso."
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "Nesta parte da navegação de teste não é permitido."
 
@@ -679,11 +702,11 @@ msgstr "Identificador de resposta do item não corresponde ao item atual"
 msgid "Item Session Control"
 msgstr "Controle de sessão do item"
 
-msgid "items"
-msgstr "itens"
-
 msgid "Items"
 msgstr "Itens"
+
+msgid "items"
+msgstr "itens"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Os itens podem opcionalmente ser atribuídos a uma ou mais categorias."
@@ -751,11 +774,11 @@ msgstr "Gerenciar blocos de Rubrica"
 msgid "Manage test properties"
 msgstr "Gerenciar propriedades do teste"
 
-msgid "Manage Tests"
-msgstr "Gerenciar testes"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "Gerenciar testes"
+
+msgid "Manage Tests"
 msgstr "Gerenciar testes"
 
 msgid "Mark for review"
@@ -812,7 +835,7 @@ msgstr "Duração mínima para esta parte do teste."
 msgid "minutes"
 msgstr "Minutos"
 
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\"
 msgstr ""
 
 msgid "Missed required parameter \\'id\\'"
@@ -869,11 +892,11 @@ msgstr "Próximo"
 msgid "Next Section"
 msgstr "Próxima seção"
 
-msgid "No"
-msgstr "Não"
-
 msgid "NO"
 msgstr ""
+
+msgid "No"
+msgstr "Não"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Nenhum motor CAT configurado para CAT Endpoint \"%s\"."
@@ -895,6 +918,9 @@ msgstr "Sem processamento de resultado. Limpe as regras existentes, se houver."
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Nenhuma referência a qualquer item IMS QTI encontrado."
+
+msgid "No translation"
+msgstr ""
 
 msgid "Non Linear"
 msgstr "Não linear"
@@ -959,6 +985,9 @@ msgstr "ou"
 msgid "Ordering"
 msgstr "Ordem"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr "Resultado"
 
@@ -983,6 +1012,9 @@ msgstr "Suspender"
 msgid "Pause the test"
 msgstr "Pausar o teste"
 
+msgid "Pending"
+msgstr ""
+
 msgid "Play"
 msgstr "Reproduzir"
 
@@ -1004,6 +1036,9 @@ msgstr "Pré-visualizar a área coberta"
 msgid "Previous"
 msgstr "Anterior"
 
+msgid "Print Out"
+msgstr ""
+
 msgid "PROCEED & END ASSESSMENT"
 msgstr "CONTINUAR E FINALIZAR A AVALIAÇÃO"
 
@@ -1019,11 +1054,17 @@ msgstr "Driver de Teste QTI 2.1"
 msgid "QTI Item Runner"
 msgstr "Item Runner QTI"
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Falha na publicação do QTI Test \"%s."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Teste QTI \"%s\" publicado com sucesso."
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1124,11 +1165,11 @@ msgstr "Pontoador"
 msgid "Scoring"
 msgstr "Pontuação"
 
-msgid "Scratch Pad"
-msgstr "Painel de rascuho"
-
 msgid "Scratch pad"
 msgstr "Painel de rascunho"
+
+msgid "Scratch Pad"
+msgstr "Painel de rascuho"
 
 msgid "Scratchpad"
 msgstr "Painel de rascunho"
@@ -1265,6 +1306,9 @@ msgstr "Velocidade"
 msgid "Start Test-part"
 msgstr "Iniciar Teste-parte"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr "Passo 1: Baixar o arquivo (veja abaixo quando disponível)."
 
@@ -1337,6 +1381,9 @@ msgstr "Estado de teste e revisão da estrutura"
 msgid "Test Status and Structure"
 msgstr "Estado e estrutura do teste"
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Ferramentas do candidato"
 
@@ -1347,10 +1394,10 @@ msgstr "Testes"
 msgid "Text content"
 msgstr "Conteúdo do teste"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "Texto para voz"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "Texto para voz"
 
 msgid "that was being taken."
@@ -1401,6 +1448,9 @@ msgstr "O download estará disponível em <strong>%d</strong> segundos"
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Os seguintes identificadores não são originais únicos no teste: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "O identificador da referência do item."
 
@@ -1421,6 +1471,12 @@ msgstr "O modo de navegação determina os caminhos gerais que o candidato pode 
 
 msgid "The number of child elements to be selected."
 msgstr "O número de elementos a serem seleccionados."
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "O resultado \"%s não existe, mas é referenciado por um bloco de feedback!"
@@ -1468,6 +1524,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "O modo de envio determina quando as respostas do candidato são enviadas para o processo de resposta. Uma testPart no modo individual requer que o candidato envie suas respostas de acordo com o item. Ao mesmo tempo, as respostas do candidato são todas enviadas em conjunto no final do teste."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1500,6 +1557,12 @@ msgstr "O título do teste."
 
 msgid "The time limit has been reached for this part of the test."
 msgstr "O tempo limite foi atingido para esta parte do teste."
+
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
 
 msgid "There are %s unanswered questions"
 msgstr "Há %s perguntas não respondidas"
@@ -1563,6 +1626,15 @@ msgstr "Ferramentas"
 
 msgid "Total score"
 msgstr "Pontuação total"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "Tente conectar a máquina à internet via cabo ou mova para uma área com um sinal de Wi-Fi melhor."
@@ -1691,11 +1763,11 @@ msgstr "Erro XML na linha %1$d coluna %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr "Amarelo em azul"
 
-msgid "Yes"
-msgstr "sim"
-
 msgid "YES"
 msgstr ""
+
+msgid "Yes"
+msgstr "sim"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "Você respondeu %s de %s questão(ões) para esta seção do teste"

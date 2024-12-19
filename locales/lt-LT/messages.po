@@ -1,26 +1,22 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:19\n"
+"Project-Id-Version: TAO 2025.01\n"
+"PO-Revision-Date: 2024-12-19T15:26:10\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: lt\n"
+"Language: lt-LT\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: lt-LT\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: lt\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Lithuanian\n"
 
 msgid "%s to answer %s"
+msgstr ""
+
+msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -82,6 +78,9 @@ msgstr "Po to, kai užbaigsite šį skyrių, bus neįmanoma grįžti atgal į š
 
 msgid "All"
 msgstr "Visi"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "Leisti Komentuoti"
@@ -148,6 +147,9 @@ msgstr "Įvyko klaida testo paleidimo metu!"
 
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Įvyko klaida testo metu, prašome pranešti jūsų administratorių."
+
+msgid "An error occurred while loading the original test."
+msgstr ""
 
 msgid "An error occurred!"
 msgstr "Įvyko klaida!"
@@ -257,11 +259,11 @@ msgstr "Skaičiuotuvas BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr "ATŠAUKTI"
-
 msgid "Cancel"
 msgstr "Atšaukti"
+
+msgid "CANCEL"
+msgstr "ATŠAUKTI"
 
 msgid "Candidate"
 msgstr "Kandidatas"
@@ -272,11 +274,17 @@ msgstr "Kardinalumas"
 msgid "Categories"
 msgstr "Kategorijos"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "Kategorijos balai"
 
 msgid "Change the current color preset"
 msgstr "Pakeisti dabartinę spalvą"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "Klasė"
@@ -353,6 +361,9 @@ msgstr ""
 msgid "Cut score (pass ratio)"
 msgstr ""
 
+msgid "Define the status of the translation."
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Išjungti validavimą"
 
@@ -401,6 +412,12 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr ""
 
@@ -442,6 +459,9 @@ msgstr "Baigti darbą"
 
 msgid "End Test"
 msgstr "Baigti darbą"
+
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr ""
@@ -628,6 +648,9 @@ msgstr "IMS QTI Testų Paketas sėkmingai importuotas."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMS QTI Testas nurodytas kaip \"%s\" IMS Manifesto faile sėkmingai importuotas."
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "Šioje vieto testo naršymas nėra leidžiamas."
 
@@ -679,11 +702,11 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Elemento Sesijos Valdymas"
 
-msgid "items"
-msgstr "elementai"
-
 msgid "Items"
 msgstr "Klausimai"
+
+msgid "items"
+msgstr "elementai"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementai pasirinktinai gali būti paskirti vienai arba daugiau kategorijų."
@@ -751,11 +774,11 @@ msgstr "Tvarkyti Rubrikos Blokus"
 msgid "Manage test properties"
 msgstr "Tvarkyti testo savybes"
 
-msgid "Manage Tests"
-msgstr "Tvarkyti testus"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "Tvarkyti testus"
+
+msgid "Manage Tests"
 msgstr "Tvarkyti testus"
 
 msgid "Mark for review"
@@ -812,7 +835,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr "minutės"
 
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\"
 msgstr ""
 
 msgid "Missed required parameter \\'id\\'"
@@ -869,11 +892,11 @@ msgstr "Tęsti"
 msgid "Next Section"
 msgstr "Kitas skyrius"
 
-msgid "No"
-msgstr "Ne"
-
 msgid "NO"
 msgstr ""
+
+msgid "No"
+msgstr "Ne"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr ""
@@ -895,6 +918,9 @@ msgstr ""
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Joks šaltinis jokiam IMS QTI Elementui nerastas."
+
+msgid "No translation"
+msgstr ""
 
 msgid "Non Linear"
 msgstr "Ne Linijinis"
@@ -959,6 +985,9 @@ msgstr ""
 msgid "Ordering"
 msgstr "Eiliškumas"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr "Pasekmė"
 
@@ -983,6 +1012,9 @@ msgstr "Pristabdyti"
 msgid "Pause the test"
 msgstr ""
 
+msgid "Pending"
+msgstr ""
+
 msgid "Play"
 msgstr "Leisti"
 
@@ -1004,6 +1036,9 @@ msgstr "Peržiūrėti padengtą plotą"
 msgid "Previous"
 msgstr "Grįžti"
 
+msgid "Print Out"
+msgstr ""
+
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
@@ -1019,11 +1054,17 @@ msgstr "QTI 2.1 Testų Tvarkyklė"
 msgid "QTI Item Runner"
 msgstr "QTI Elemento Vykdytojas"
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTI Testo \"%s\" paskelbimas nesėkmingas."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI Testas \"%s\" sėkmingai paskelbtas."
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1124,10 +1165,10 @@ msgstr "Verintojas"
 msgid "Scoring"
 msgstr "Įvertinimas"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Juodraštis"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Juodraštis"
 
 msgid "Scratchpad"
@@ -1265,6 +1306,9 @@ msgstr ""
 msgid "Start Test-part"
 msgstr "Pradėti Testo dalį"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1337,6 +1381,9 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Testo Laikytojo Įrankiai"
 
@@ -1347,11 +1394,11 @@ msgstr "Testai"
 msgid "Text content"
 msgstr "Teksto turinys"
 
-msgid "Text to Speech"
-msgstr "Tekstas Balsu"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekstas Balsu"
 
 msgid "that was being taken."
 msgstr ""
@@ -1401,6 +1448,9 @@ msgstr ""
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Šie identifikatoriai nėra unikalūs visame teste : %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "Elemento šaltinio identifikatorius."
 
@@ -1421,6 +1471,12 @@ msgstr ""
 
 msgid "The number of child elements to be selected."
 msgstr "Skaičius elementų vaikų pasirinkti."
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr ""
@@ -1468,6 +1524,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
@@ -1499,6 +1556,12 @@ msgid "The test title."
 msgstr "Testo pavadinimas."
 
 msgid "The time limit has been reached for this part of the test."
+msgstr ""
+
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
 msgstr ""
 
 msgid "There are %s unanswered questions"
@@ -1563,6 +1626,15 @@ msgstr ""
 
 msgid "Total score"
 msgstr "Galutinis rezultatas"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
@@ -1691,11 +1763,11 @@ msgstr "XML klaida eilutės %1$d stulpelyje %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr ""
 
-msgid "Yes"
-msgstr "Taip"
-
 msgid "YES"
 msgstr ""
+
+msgid "Yes"
+msgstr "Taip"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
