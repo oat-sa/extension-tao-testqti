@@ -1,26 +1,22 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:19\n"
+"Project-Id-Version: TAO 2025.01\n"
+"PO-Revision-Date: 2024-12-19T15:26:14\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: nl\n"
+"Language: nl-NL\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: nl-NL\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: nl\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Dutch\n"
 
 msgid "%s to answer %s"
+msgstr ""
+
+msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -82,6 +78,9 @@ msgstr "Nadat u de sectie heeft afgesloten zal het onmogelijk zijn om terug te k
 
 msgid "All"
 msgstr "Alle"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "Sta commentaar toe"
@@ -148,6 +147,9 @@ msgstr "Er is een fout opgetreden tijdens de testinitialisatie!"
 
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Er is een fout opgetreden tijdens de test, neem contact op met uw beheerder."
+
+msgid "An error occurred while loading the original test."
+msgstr ""
 
 msgid "An error occurred!"
 msgstr ""
@@ -257,11 +259,11 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr "ANNULEREN"
-
 msgid "Cancel"
 msgstr "Annuleren"
+
+msgid "CANCEL"
+msgstr "ANNULEREN"
 
 msgid "Candidate"
 msgstr "Kandidaat"
@@ -272,11 +274,17 @@ msgstr "Kardinaalgetal"
 msgid "Categories"
 msgstr "Categorieën"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "Categorie score"
 
 msgid "Change the current color preset"
 msgstr "Verander het kleurcontrast"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "Klasse"
@@ -353,6 +361,9 @@ msgstr "Knip score"
 msgid "Cut score (pass ratio)"
 msgstr ""
 
+msgid "Define the status of the translation."
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Schakel validatie uit"
 
@@ -401,6 +412,12 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Toon geen waarschuwing op time-out"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr ""
 
@@ -442,6 +459,9 @@ msgstr "Test beëindigen"
 
 msgid "End Test"
 msgstr "Eindig toets"
+
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr "Voer een blauwdruk in"
@@ -628,6 +648,9 @@ msgstr "IMS QTI toets pakket is succesvol geïmporteerd."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMS QTI toets aangegeven als \"%s\" in het IMS Manifest bestand is succesvol geïmporteerd."
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "In dit gedeelte van de toets is navigeren niet toegestaan."
 
@@ -679,10 +702,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr "Item sessie controle"
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -751,11 +774,11 @@ msgstr "Beheer rubriek blokken"
 msgid "Manage test properties"
 msgstr "beheer toets eigenschappen"
 
-msgid "Manage Tests"
-msgstr "Beheer toetsen"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "Beheer toetsen"
+
+msgid "Manage Tests"
 msgstr "Beheer toetsen"
 
 msgid "Mark for review"
@@ -812,7 +835,7 @@ msgstr "Minimale duur voor dit deel van de toets."
 msgid "minutes"
 msgstr "minuten"
 
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\"
 msgstr ""
 
 msgid "Missed required parameter \\'id\\'"
@@ -869,11 +892,11 @@ msgstr ""
 msgid "Next Section"
 msgstr "Volgende sectie"
 
-msgid "No"
-msgstr "Nee"
-
 msgid "NO"
 msgstr ""
+
+msgid "No"
+msgstr "Nee"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Geen CAT-engine geconfigureerd voor CAT-eindpunt \"%s\"."
@@ -895,6 +918,9 @@ msgstr "Geen verwerking van resultaat. Verwijder de bestaande regels, indien aan
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Geen referentie gevonden naar enig IMS QTI item."
+
+msgid "No translation"
+msgstr ""
 
 msgid "Non Linear"
 msgstr "Niet lineair"
@@ -959,6 +985,9 @@ msgstr ""
 msgid "Ordering"
 msgstr "Sorteervolgorde"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr "Uitkomst"
 
@@ -983,6 +1012,9 @@ msgstr "Pauzeer"
 msgid "Pause the test"
 msgstr ""
 
+msgid "Pending"
+msgstr ""
+
 msgid "Play"
 msgstr ""
 
@@ -1004,6 +1036,9 @@ msgstr "Toon het bedekte gebied in voorvertoning"
 msgid "Previous"
 msgstr ""
 
+msgid "Print Out"
+msgstr ""
+
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
@@ -1019,11 +1054,17 @@ msgstr "QTI 2.1 Toets driver"
 msgid "QTI Item Runner"
 msgstr "QTI item starter"
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Publiceren van QTI toets \"%s\" mislukt."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI toets \"%s\" succesvol gepubliceerd"
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1124,10 +1165,10 @@ msgstr "Puntenteller"
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Notitieboekje"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Notitieboekje"
 
 msgid "Scratchpad"
@@ -1265,6 +1306,9 @@ msgstr ""
 msgid "Start Test-part"
 msgstr "Start Toets deel"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1337,6 +1381,9 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Kandidaten hulpmiddelen"
 
@@ -1347,11 +1394,11 @@ msgstr "Toetsen"
 msgid "Text content"
 msgstr "Tekst inhoud"
 
-msgid "Text to Speech"
-msgstr "Tekst naar spraak"
-
 msgid "Text To Speech"
 msgstr ""
+
+msgid "Text to Speech"
+msgstr "Tekst naar spraak"
 
 msgid "that was being taken."
 msgstr ""
@@ -1401,6 +1448,9 @@ msgstr ""
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "De volgende identificaties zijn niet uniek voor de test: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "De naam van de item referentie"
 
@@ -1421,6 +1471,12 @@ msgstr "De navigatie modus bepaalt de algemene pad die een kandidaat kan nemen. 
 
 msgid "The number of child elements to be selected."
 msgstr "Het aantal te selecteren onderliggende elementen"
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "De uitkomst \"%s\" bestaat niet, maar er wordt wel naar verwezen in een feedback blok!"
@@ -1501,6 +1557,12 @@ msgstr "De toets titel."
 msgid "The time limit has been reached for this part of the test."
 msgstr ""
 
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
+
 msgid "There are %s unanswered questions"
 msgstr ""
 
@@ -1563,6 +1625,15 @@ msgstr ""
 
 msgid "Total score"
 msgstr "Totaal score"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
@@ -1691,11 +1762,11 @@ msgstr "XML fout op regel %1$d kolom %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr "Geel op Blauw"
 
-msgid "Yes"
-msgstr "Ja"
-
 msgid "YES"
 msgstr ""
+
+msgid "Yes"
+msgstr "Ja"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr ""
