@@ -32,4 +32,9 @@ class TestConverter extends AbstractQtiConverter
     {
         return self::ROOT_ELEMENT;
     }
+
+    protected function customElementMapping(string $convertedTag, string $parentTag): ?string
+    {
+        return null;
+    }
 }
