@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.01\n"
-"PO-Revision-Date: 2024-12-19T15:26:20\n"
+"Project-Id-Version: TAO 2023.12\n"
+"PO-Revision-Date: 2023-12-01T07:53:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -14,9 +14,6 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "%s to answer %s"
-msgstr ""
-
-msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -78,9 +75,6 @@ msgstr "После прохождения этого раздела вы уже 
 
 msgid "All"
 msgstr "Все"
-
-msgid "Allow a Test Taker to print out the item."
-msgstr ""
 
 msgid "Allow Comment"
 msgstr "Разрешить комментирование"
@@ -147,9 +141,6 @@ msgstr "Во время инициализации теста возникла �
 
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Во время теста возникла ошибка, обратитесь к администратору."
-
-msgid "An error occurred while loading the original test."
-msgstr ""
 
 msgid "An error occurred!"
 msgstr "Возникла ошибка!"
@@ -259,11 +250,11 @@ msgstr "Калькулятор BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "Cancel"
-msgstr "Отмена"
-
 msgid "CANCEL"
 msgstr "ОТМЕНА"
+
+msgid "Cancel"
+msgstr "Отмена"
 
 msgid "Candidate"
 msgstr "Кандидат"
@@ -274,17 +265,11 @@ msgstr "Размерность"
 msgid "Categories"
 msgstr "Категории"
 
-msgid "Category name not allowed"
-msgstr ""
-
 msgid "Category score"
 msgstr "Балл по категории"
 
 msgid "Change the current color preset"
 msgstr "Изменить текущую настройку цветов"
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr ""
 
 msgid "Class"
 msgstr "Класс"
@@ -358,9 +343,6 @@ msgstr "Проходной балл"
 msgid "Cut score (pass ratio)"
 msgstr "Проходной балл (проходное соотношение)"
 
-msgid "Define the status of the translation."
-msgstr ""
-
 msgid "Disable validation"
 msgstr "Отключить валидацию"
 
@@ -409,9 +391,6 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Не отображать оповещение во время ожидания"
 
-msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr ""
-
 msgid "Don\'t save"
 msgstr ""
 
@@ -448,14 +427,11 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
-msgid "End test"
-msgstr "Завершить тест"
-
 msgid "End Test"
 msgstr "Завершить тест"
 
-msgid "Enforce Item Constraints"
-msgstr ""
+msgid "End test"
+msgstr "Завершить тест"
 
 msgid "Enter a blueprint"
 msgstr "Ввести макет"
@@ -641,9 +617,6 @@ msgstr "Пакет для тестирования IMS QTI успешно имп
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Тест IMS QTI, указанный в файле манифеста IMS как «%s», успешно импортирован."
 
-msgid "In progress"
-msgstr ""
-
 msgid "In this part of the test navigation is not allowed."
 msgstr "В этой части не допускается навигация по тесту."
 
@@ -828,9 +801,6 @@ msgstr "Минимальная длительность для этой част
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
 msgid "Missed required parameter \'id\'"
 msgstr ""
 
@@ -885,11 +855,11 @@ msgstr "Далее"
 msgid "Next Section"
 msgstr "Следующий раздел"
 
-msgid "NO"
-msgstr ""
-
 msgid "No"
 msgstr "Нет"
+
+msgid "NO"
+msgstr ""
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Для конечной точки CAT «%s» не настроено ядро CAT."
@@ -911,9 +881,6 @@ msgstr "Результаты не обрабатываются. Удалите �
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Не найдены ссылки на какие-либо элементы IMS QTI."
-
-msgid "No translation"
-msgstr ""
 
 msgid "Non Linear"
 msgstr "Нелинейн."
@@ -978,9 +945,6 @@ msgstr "или"
 msgid "Ordering"
 msgstr "Упорядочение"
 
-msgid "Original title"
-msgstr ""
-
 msgid "Outcome"
 msgstr "Результат"
 
@@ -1005,9 +969,6 @@ msgstr "Приостановить"
 msgid "Pause the test"
 msgstr ""
 
-msgid "Pending"
-msgstr ""
-
 msgid "Play"
 msgstr "Воспроизвести"
 
@@ -1029,9 +990,6 @@ msgstr "Предварительный просмотр покрываемой �
 msgid "Previous"
 msgstr "Назад"
 
-msgid "Print Out"
-msgstr ""
-
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
@@ -1047,17 +1005,11 @@ msgstr "Драйвер тестирования QTI 2.1"
 msgid "QTI Item Runner"
 msgstr "Лицо, проходящее элемент теста QTI"
 
-msgid "QTI metadata as properties"
-msgstr ""
-
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Не удалось опубликовать тест QTI «%s»."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Тест QTI «%s» успешно опубликован."
-
-msgid "QTI test import failed"
-msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1074,10 +1026,10 @@ msgstr "Пакет для тестирования QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
 msgid "Question %s"
@@ -1158,10 +1110,10 @@ msgstr "Счетчик баллов"
 msgid "Scoring"
 msgstr "Выставление баллов"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Блокнот"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Блокнот"
 
 msgid "Scratchpad"
@@ -1299,9 +1251,6 @@ msgstr ""
 msgid "Start Test-part"
 msgstr "Начать часть теста"
 
-msgid "Status"
-msgstr ""
-
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1374,9 +1323,6 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
-msgid "Test translation status"
-msgstr ""
-
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
 
@@ -1441,9 +1387,6 @@ msgstr "Загрузка будет доступна через <strong>%d</stro
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Следующие идентификаторы не уникальны в пределах теста: %s"
 
-msgid "The given target is not an instance of core_kernel_classes_Resource"
-msgstr ""
-
 msgid "The identifier of the item reference."
 msgstr "Идентификатор ссылки на элемент."
 
@@ -1464,12 +1407,6 @@ msgstr "В режиме навигации задаются общие пути 
 
 msgid "The number of child elements to be selected."
 msgstr "Количество дочерних элементов, которые можно выбрать."
-
-msgid "The original title of the section."
-msgstr ""
-
-msgid "The original title of the test."
-msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "Результата «%s» не существует, однако в блоке отзывов имеется ссылка на него!"
@@ -1550,12 +1487,6 @@ msgstr "Название теста."
 msgid "The time limit has been reached for this part of the test."
 msgstr "Время установленное для данной части теста истекло."
 
-msgid "The translated section title."
-msgstr ""
-
-msgid "The translated test title."
-msgstr ""
-
 msgid "There are %s unanswered questions"
 msgstr "У вас осталось %s неотвеченных вопросов"
 
@@ -1618,15 +1549,6 @@ msgstr ""
 
 msgid "Total score"
 msgstr "Суммарный балл"
-
-msgid "Translated title"
-msgstr ""
-
-msgid "Translation"
-msgstr ""
-
-msgid "Translation completed"
-msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
