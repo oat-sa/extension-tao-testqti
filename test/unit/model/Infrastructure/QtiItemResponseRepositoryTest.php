@@ -58,17 +58,17 @@ class QtiItemResponseRepositoryTest extends TestCase
      * @dataProvider saveDataProvider
      */
     public function testSave(
-        array  $state,
-        array  $response,
-        float  $duration,
-        float  $timestamp,
+        array $state,
+        array $response,
+        float $duration,
+        float $timestamp,
         string $itemHref,
         string $responseIdentifier,
-        int    $storeItemResponseCount,
-        bool   $shouldThrowException
-    ): void
-    {
-        $itemResponse = new ItemResponse('itemIdentifier',
+        int $storeItemResponseCount,
+        bool $shouldThrowException
+    ): void {
+        $itemResponse = new ItemResponse(
+            'itemIdentifier',
             $state,
             $response,
             $duration,
@@ -130,7 +130,13 @@ class QtiItemResponseRepositoryTest extends TestCase
             $this->itemResponseValidatorMock->expects($this->once())
                 ->method('validate')
                 ->with($assessmentTestSession, $stateMock)
-                ->willThrowException(new AssessmentItemSessionException('invalid', $assessmentItemSession, AssessmentItemSessionException::DURATION_OVERFLOW));
+                ->willThrowException(
+                    new AssessmentItemSessionException(
+                        'invalid',
+                        $assessmentItemSession,
+                        AssessmentItemSessionException::DURATION_OVERFLOW
+                    )
+                );
             $this->expectException(QtiRunnerInvalidResponsesException::class);
         }
 
@@ -162,5 +168,4 @@ class QtiItemResponseRepositoryTest extends TestCase
             ]
         ];
     }
-
 }
