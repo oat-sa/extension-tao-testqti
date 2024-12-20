@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-12-04 16:19\n"
+"PO-Revision-Date: 2024-12-19 16:02\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de\n"
@@ -1774,4 +1774,10 @@ msgstr "Heranzoomen"
 
 msgid "Zoom out"
 msgstr "Herauszoomen"
+
+msgid "Enforce Item Constraints"
+msgstr ""
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
