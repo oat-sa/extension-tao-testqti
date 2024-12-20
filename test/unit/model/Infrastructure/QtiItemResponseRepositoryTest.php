@@ -57,16 +57,15 @@ class QtiItemResponseRepositoryTest extends TestCase
      * @dataProvider saveDataProvider
      */
     public function testSave(
-        array  $state,
-        array  $response,
-        float  $duration,
-        float  $timestamp,
+        array $state,
+        array $response,
+        float $duration,
+        float $timestamp,
         string $itemHref,
         string $responseIdentifier,
-        int    $storeItemResponseCount,
-        bool   $shouldThrowException
-    ): void
-    {
+        int $storeItemResponseCount,
+        bool $shouldThrowException
+    ): void {
         $itemResponse = new ItemResponse(
             'itemIdentifier',
             $state,
