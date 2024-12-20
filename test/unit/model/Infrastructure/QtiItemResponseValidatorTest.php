@@ -54,8 +54,6 @@ class QtiItemResponseValidatorTest extends TestCase
         $this->routeItemSessionControl
             ->method('getItemSessionControl')
             ->willReturn($this->itemSessionControl);
-
-
     }
 
     /**
