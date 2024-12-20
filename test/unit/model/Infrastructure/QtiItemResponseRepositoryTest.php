@@ -27,6 +27,7 @@ use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
+use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use PHPUnit\Framework\TestCase;
@@ -34,6 +35,7 @@ use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionException;
+use qtism\runtime\tests\AssessmentTestSession;
 
 class QtiItemResponseRepositoryTest extends TestCase
 {
@@ -56,15 +58,16 @@ class QtiItemResponseRepositoryTest extends TestCase
      * @dataProvider saveDataProvider
      */
     public function testSave(
-        array $state,
-        array $response,
-        float $duration,
-        float $timestamp,
+        array  $state,
+        array  $response,
+        float  $duration,
+        float  $timestamp,
         string $itemHref,
         string $responseIdentifier,
-        int $storeItemResponseCount,
-        bool $shouldThrowException
-    ): void {
+        int    $storeItemResponseCount,
+        bool   $shouldThrowException
+    ): void
+    {
         $itemResponse = new ItemResponse('itemIdentifier',
             $state,
             $response,
@@ -75,6 +78,7 @@ class QtiItemResponseRepositoryTest extends TestCase
         $runnerServiceContextMock = $this->createMock(QtiRunnerServiceContext::class);
         $extendedAssessmentItemRefMock = $this->createMock(ExtendedAssessmentItemRef::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $stateMock = $this->createMock(State::class);
 
         $extendedAssessmentItemRefMock->expects($this->once())
@@ -112,6 +116,10 @@ class QtiItemResponseRepositoryTest extends TestCase
             ->method('isEnabled')
             ->willReturn(true);
 
+        $runnerServiceContextMock
+            ->method('getTestSession')
+            ->willReturn($assessmentTestSession);
+
         $this->itemResponseValidatorMock->expects($this->once())
             ->method('validate');
 
@@ -121,6 +129,7 @@ class QtiItemResponseRepositoryTest extends TestCase
         if ($shouldThrowException) {
             $this->itemResponseValidatorMock->expects($this->once())
                 ->method('validate')
+                ->with($assessmentTestSession, $stateMock)
                 ->willThrowException(new AssessmentItemSessionException('invalid', $assessmentItemSession, AssessmentItemSessionException::DURATION_OVERFLOW));
             $this->expectException(QtiRunnerInvalidResponsesException::class);
         }
