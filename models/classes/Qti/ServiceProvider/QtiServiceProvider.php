@@ -24,6 +24,10 @@ namespace oat\taoQtiTest\models\Qti\ServiceProvider;
 
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\log\LoggerService;
+use oat\taoQtiItem\model\qti\converter\CaseConversionService;
+use oat\taoQtiItem\model\ValidationService;
+use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
+use oat\taoQtiTest\models\Qti\Converter\TestConverter;
 use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
@@ -42,5 +46,21 @@ class QtiServiceProvider implements ContainerServiceProviderInterface
                 service(taoQtiTest_models_classes_QtiTestService::class),
                 service(LoggerService::SERVICE_ID),
             ]);
+
+        $services
+            ->set(TestConverter::class)
+            ->args([
+                service(CaseConversionService::class),
+                service(ValidationService::SERVICE_ID)
+            ])
+            ->public();
+
+        $services
+            ->set(AssessmentSectionConverter::class)
+            ->args([
+                service(CaseConversionService::class),
+                service(ValidationService::SERVICE_ID)
+            ])
+            ->public();
     }
 }
