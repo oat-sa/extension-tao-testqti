@@ -26,7 +26,6 @@ use oat\taoQtiItem\model\Export\Qti3Package\Exporter;
 use oat\taoQtiTest\models\export\QtiItemExporterTrait;
 use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 
-
 class QtiItemExporter implements QtiItemExporterInterface
 {
     use QtiItemExporterTrait;
