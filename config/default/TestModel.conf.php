@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2017 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2016-2024 (original work) Open Assessment Technologies SA;
  */
 
 use oat\taoQtiTest\models\compilation\CompilationService;
@@ -26,6 +26,7 @@ return new TestModelService([
         new oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport(),
         new oat\taoQtiTest\models\export\Formats\Package2p1\TestPackageExport(),
         new oat\taoQtiTest\models\export\Formats\Package2p2\TestPackageExport(),
+        new oat\taoQtiTest\models\export\Formats\Package3p0\TestPackageExport(),
     ],
     'importHandlers' => [
         new taoQtiTest_models_classes_import_TestImport()
