@@ -1640,7 +1640,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     private function convertAssessmentSectionRefs(QtiComponentCollection $assessmentSectionRefs, string $folder): void
     {
-        if(!$this->getPsrContainer()->has(AssessmentSectionConverter::class)) {
+        if (!$this->getPsrContainer()->has(AssessmentSectionConverter::class)) {
             return;
         }
 
