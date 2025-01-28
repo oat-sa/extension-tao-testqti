@@ -21,6 +21,7 @@
 
 namespace oat\taoQtiTest\models;
 
+use InvalidArgumentException;
 use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
 use qtism\data\storage\xml\XmlDocument;
@@ -28,6 +29,7 @@ use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\Directory;
 use qtism\data\AssessmentTest;
 use oat\oatbox\service\ConfigurableService;
+use taoItems_models_classes_TemplateRenderer;
 
 /**
  * Miscellaneous utility methods for the QtiTest extension.
@@ -54,7 +56,7 @@ class QtiTestUtils extends ConfigurableService
      * @param boolean $copy If set to false, the file will not be actually copied.
      * @param string $rename A new filename  e.g. 'file.css' to be used at storage time.
      * @return string The path were the file was copied/has to be copied (depending on the $copy argument).
-     * @throws \InvalidArgumentException If one of the above arguments is invalid.
+     * @throws InvalidArgumentException If one of the above arguments is invalid.
      * @throws \common_Exception
      */
     public function storeQtiResource(Directory $testContent, $qtiResource, $origin, $copy = true, $rename = '')
@@ -71,7 +73,7 @@ class QtiTestUtils extends ConfigurableService
         } elseif (is_string($qtiResource) === true) {
             $filePath = $qtiResource;
         } else {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 "The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object."
             );
         }
@@ -130,8 +132,16 @@ class QtiTestUtils extends ConfigurableService
      */
     public function emptyImsManifest($version = '2.1')
     {
-        $manifestFileName = ($version === '2.1') ? 'imsmanifest' : 'imsmanifestQti22';
-        $templateRenderer = new \taoItems_models_classes_TemplateRenderer(
+        $manifestFileName = match ($version) {
+            '2.1' => 'imsmanifest',
+            '2.2' => 'imsmanifestQti22',
+            '3.0' => 'imsmanifestQti30',
+            default => throw new InvalidArgumentException(
+                'Invalid version provided. Only "2.1", "2.2" and "3.0" are supported.'
+            ),
+        };
+
+        $templateRenderer = new taoItems_models_classes_TemplateRenderer(
             ROOT_PATH . 'taoQtiItem/model/qti/templates/' . $manifestFileName . '.tpl.php',
             [
                 'qtiItems' => [],
