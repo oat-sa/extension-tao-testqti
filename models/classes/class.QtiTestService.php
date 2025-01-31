@@ -1557,8 +1557,19 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $mappedMetadataValues = $this->getMetaMetadataImporter()
                 ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
+            $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+            $metadataValueUris = $this->getMetadataImporter()->metadataValueUris($metadataValues);
+            $notMatchingProperties = array_diff(
+                $metadataValueUris,
+                array_keys($mappedMetadataValues['testProperties'])
+            );
+            if (!empty($notMatchingProperties)) {
+                throw new taoQtiTest_models_classes_QtiTestServiceException(sprintf(
+                    __('Target class is missing the following metadata properties: %s'),
+                    implode(', ', $notMatchingProperties)
+                ));
+            }
             if (empty($mappedMetadataValues)) {
-                $metadataValues = $this->getMetadataImporter()->extract($domManifest);
                 $mappedMetadataValues = $this->getMetaMetadataImporter()->mapMetadataToProperties(
                     $metadataValues,
                     $targetItemClass,
