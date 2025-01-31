@@ -82,7 +82,8 @@ class CreatorItems extends ConfigurableService
         $propertyFilters = [];
 
         if ($this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_TRANSLATION_ENABLED')) {
-            $propertyFilters[TaoOntology::PROPERTY_TRANSLATION_TYPE] = TaoOntology::PROPERTY_VALUE_TRANSLATION_TYPE_ORIGINAL;
+            $propertyFilters[TaoOntology::PROPERTY_TRANSLATION_TYPE] =
+                TaoOntology::PROPERTY_VALUE_TRANSLATION_TYPE_ORIGINAL;
         }
 
         if (
@@ -135,5 +136,5 @@ class CreatorItems extends ConfigurableService
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
     {
         return $this->getServiceManager()->get(FeatureFlagChecker::class);
-    }    
+    }
 }
