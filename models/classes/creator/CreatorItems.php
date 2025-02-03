@@ -23,7 +23,10 @@ namespace oat\taoQtiTest\models\creator;
 
 use oat\generis\model\OntologyAwareTrait;
 use oat\oatbox\service\ConfigurableService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\resources\ResourceService;
+use oat\tao\model\TaoOntology;
 
 /**
  * This service let's you access the test creator's items
@@ -78,6 +81,11 @@ class CreatorItems extends ConfigurableService
     ) {
         $propertyFilters = [];
 
+        if ($this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_TRANSLATION_ENABLED')) {
+            $propertyFilters[TaoOntology::PROPERTY_TRANSLATION_TYPE] =
+                TaoOntology::PROPERTY_VALUE_TRANSLATION_TYPE_ORIGINAL;
+        }
+
         if (
             $this->hasOption(self::ITEM_MODEL_SEARCH_OPTION)
             && $this->getOption(self::ITEM_MODEL_SEARCH_OPTION) !== false
@@ -123,5 +131,10 @@ class CreatorItems extends ConfigurableService
     protected function getResourceService()
     {
         return $this->getServiceLocator()->get(ResourceService::SERVICE_ID);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getServiceManager()->get(FeatureFlagChecker::class);
     }
 }
