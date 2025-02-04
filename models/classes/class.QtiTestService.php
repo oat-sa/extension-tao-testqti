@@ -200,7 +200,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param array $mappedMetadataValues
      * @return array
      */
-    public function checkMissingClassProperties(array $metadataValues, array $mappedMetadataValues): array
+    private function checkMissingClassProperties(array $metadataValues, array $mappedMetadataValues): array
     {
         $metadataValueUris = $this->getMetadataImporter()->metadataValueUris($metadataValues);
         return array_diff(
