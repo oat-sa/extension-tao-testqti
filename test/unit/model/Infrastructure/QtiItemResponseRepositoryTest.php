@@ -26,8 +26,8 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
+use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
-use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use PHPUnit\Framework\TestCase;
@@ -46,12 +46,16 @@ class QtiItemResponseRepositoryTest extends TestCase
         $this->runnerServiceMock = $this->createMock(QtiRunnerService::class);
         $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
         $this->itemResponseValidatorMock = $this->createMock(QtiItemResponseValidator::class);
+        $this->interactionResponseValidator = $this->createMock(ExtraQtiInteractionResponseValidator::class);
 
         $this->subject = new QtiItemResponseRepository(
             $this->runnerServiceMock,
             $this->featureFlagCheckerMock,
-            $this->itemResponseValidatorMock
+            $this->itemResponseValidatorMock,
+            $this->interactionResponseValidator
         );
+
+        $this->runnerServiceMock->method('getItemData')->willReturn([]);
     }
 
     /**
@@ -65,7 +69,8 @@ class QtiItemResponseRepositoryTest extends TestCase
         string $itemHref,
         string $responseIdentifier,
         int $storeItemResponseCount,
-        bool $shouldThrowException
+        bool $qtiItemResponseValidatorShouldThrowException,
+        bool $interactionResponseValidatorShouldThrowException,
     ): void {
         $itemResponse = new ItemResponse(
             'itemIdentifier',
@@ -126,7 +131,7 @@ class QtiItemResponseRepositoryTest extends TestCase
         $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
             ->method('storeItemResponse');
 
-        if ($shouldThrowException) {
+        if ($qtiItemResponseValidatorShouldThrowException) {
             $this->itemResponseValidatorMock->expects($this->once())
                 ->method('validate')
                 ->with($assessmentTestSession, $stateMock)
@@ -140,10 +145,21 @@ class QtiItemResponseRepositoryTest extends TestCase
             $this->expectException(QtiRunnerInvalidResponsesException::class);
         }
 
+        if ($interactionResponseValidatorShouldThrowException) {
+            $this->interactionResponseValidator->expects($this->once())
+                ->method('validate')
+                ->with([], $stateMock)
+                ->willThrowException(
+                    new QtiRunnerInvalidResponsesException('mockedMessage')
+                );
+            $this->expectException(QtiRunnerInvalidResponsesException::class);
+            $this->expectExceptionMessage('mockedMessage');
+        }
+
         $this->subject->save($itemResponse, $runnerServiceContextMock);
     }
 
-    public function saveDataProvider()
+    public function saveDataProvider(): array
     {
         return [
             'happyPath with feature flag enabled' => [
@@ -154,9 +170,10 @@ class QtiItemResponseRepositoryTest extends TestCase
                 'itemHref' => 'itemHref',
                 'responseIdentifier' => 'itemIdentifier',
                 'storeItemResponseCount' => 1,
-                'shouldThrowException' => false
+                'qtiItemResponseValidatorShouldThrowException' => false,
+                'interactionResponseValidatorShouldThrowException' => false,
             ],
-            'validation throw an error, flag enabled' => [
+            'ItemResponseValidator throw an error, flag enabled' => [
                 'state' => ['state'],
                 'response' => ['response'],
                 'duration' => 1.0,
@@ -164,7 +181,19 @@ class QtiItemResponseRepositoryTest extends TestCase
                 'itemHref' => 'itemHref',
                 'responseIdentifier' => 'itemIdentifier',
                 'storeItemResponseCount' => 0,
-                'shouldThrowException' => true
+                'qtiItemResponseValidatorShouldThrowException' => true,
+                'interactionResponseValidatorShouldThrowException' => false,
+            ],
+            'extraInteractionResponseValidator throw an error, flag enabled' => [
+                'state' => ['state'],
+                'response' => ['response'],
+                'duration' => 1.0,
+                'timestamp' => 2.0,
+                'itemHref' => 'itemHref',
+                'responseIdentifier' => 'itemIdentifier',
+                'storeItemResponseCount' => 0,
+                'qtiItemResponseValidatorShouldThrowException' => false,
+                'interactionResponseValidatorShouldThrowException' => true,
             ]
         ];
     }

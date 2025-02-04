@@ -17,11 +17,12 @@
  *
  * Copyright (c) 2025 (original work) Open Assessment Technologies SA
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure\Validation;
 
-use OutOfBoundsException;
+use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use qtism\runtime\common\State;
 
 interface InteractionResponseValidationStrategy
@@ -29,9 +30,7 @@ interface InteractionResponseValidationStrategy
     public function isApplicable(array $itemData): bool;
 
     /**
-     * @param array $itemData
-     * @param State $responses
-     * @throws OutOfBoundsException
+     * @throws QtiRunnerInvalidResponsesException
      */
     public function validate(array $itemData, State $responses): void;
 }

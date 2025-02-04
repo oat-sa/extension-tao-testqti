@@ -17,12 +17,12 @@
  *
  * Copyright (c) 2025 (original work) Open Assessment Technologies SA
  */
+
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure\Validation;
 
-use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
-use OutOfBoundsException;
+use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use qtism\runtime\common\State;
 
 class ChoiceResponseValidationStrategy implements InteractionResponseValidationStrategy
@@ -62,8 +62,8 @@ class ChoiceResponseValidationStrategy implements InteractionResponseValidationS
 
             $diff = array_diff($userChoiceIds, $validChoiceIds);
             if ($diff !== []) {
-                throw new QtiRunnerItemResponseException(sprintf(
-                    'Choice identifiers: [%s] not found in the item',
+                throw new QtiRunnerInvalidResponsesException(sprintf(
+                    'Invalid choice identifiers: [%s]',
                     implode(',', $diff)
                 ));
             }
