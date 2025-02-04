@@ -195,6 +195,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Checks if target class has all the properties needed to import the metadata.
+     * @param array $metadataValues
+     * @param array $mappedMetadataValues
+     * @return array
+     */
+    private function checkMissingClassProperties(array $metadataValues, array $mappedMetadataValues): array
+    {
+        $metadataValueUris = $this->getMetadataImporter()->metadataValueUris($metadataValues);
+        return array_diff(
+            $metadataValueUris,
+            array_keys(array_merge($mappedMetadataValues['testProperties'], $mappedMetadataValues['itemProperties']))
+        );
+    }
+
+    /**
      * @inheritDoc
      */
     protected function setDefaultModel($test): void
@@ -1543,6 +1558,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
     }
 
+    /**
+     * @throws PropertyDoesNotExistException
+     * @throws \oat\tao\model\metadata\exception\MetadataImportException
+     */
     private function getMappedProperties(
         bool $importMetadata,
         DOMDocument $domManifest,
@@ -1557,8 +1576,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $mappedMetadataValues = $this->getMetaMetadataImporter()
                 ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
+            $metadataValues = $this->getMetadataImporter()->extract($domManifest);
+            $notMatchingProperties = $this->checkMissingClassProperties($metadataValues, $mappedMetadataValues);
+            if (!empty($notMatchingProperties)) {
+                $message['checksum_result'] = false;
+                $message['label'] = implode(', ', $notMatchingProperties);
+                throw new PropertyDoesNotExistException($message);
+            }
             if (empty($mappedMetadataValues)) {
-                $metadataValues = $this->getMetadataImporter()->extract($domManifest);
                 $mappedMetadataValues = $this->getMetaMetadataImporter()->mapMetadataToProperties(
                     $metadataValues,
                     $targetItemClass,
