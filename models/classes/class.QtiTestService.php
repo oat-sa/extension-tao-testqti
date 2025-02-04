@@ -195,6 +195,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Checks if target class has all the properties needed to import the metadata.
+     * @param array $metadataValues
+     * @param array $mappedMetadataValues
+     * @return array
+     */
+    public function checkMissingClassProperties(array $metadataValues, array $mappedMetadataValues): array
+    {
+        $metadataValueUris = $this->getMetadataImporter()->metadataValueUris($metadataValues);
+        return array_diff(
+            $metadataValueUris,
+            array_keys(array_merge($mappedMetadataValues['testProperties'], $mappedMetadataValues['itemProperties']))
+        );
+    }
+
+    /**
      * @inheritDoc
      */
     protected function setDefaultModel($test): void
@@ -1543,6 +1558,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->getServiceManager()->getContainer()->get(MetaMetadataImportMapper::class);
     }
 
+    /**
+     * @throws PropertyDoesNotExistException
+     * @throws \oat\tao\model\metadata\exception\MetadataImportException
+     */
     private function getMappedProperties(
         bool $importMetadata,
         DOMDocument $domManifest,
@@ -1558,16 +1577,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 ->mapMetaMetadataToProperties($metaMetadataValues, $targetItemClass, $testClass);
 
             $metadataValues = $this->getMetadataImporter()->extract($domManifest);
-            $metadataValueUris = $this->getMetadataImporter()->metadataValueUris($metadataValues);
-            $notMatchingProperties = array_diff(
-                $metadataValueUris,
-                array_keys($mappedMetadataValues['testProperties'])
-            );
+            $notMatchingProperties = $this->checkMissingClassProperties($metadataValues, $mappedMetadataValues);
             if (!empty($notMatchingProperties)) {
-                throw new taoQtiTest_models_classes_QtiTestServiceException(sprintf(
-                    __('Target class is missing the following metadata properties: %s'),
-                    implode(', ', $notMatchingProperties)
-                ));
+                throw new PropertyDoesNotExistException($notMatchingProperties);
             }
             if (empty($mappedMetadataValues)) {
                 $mappedMetadataValues = $this->getMetaMetadataImporter()->mapMetadataToProperties(
