@@ -1579,7 +1579,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $metadataValues = $this->getMetadataImporter()->extract($domManifest);
             $notMatchingProperties = $this->checkMissingClassProperties($metadataValues, $mappedMetadataValues);
             if (!empty($notMatchingProperties)) {
-                throw new PropertyDoesNotExistException($notMatchingProperties);
+                $message['checksum_result'] = false;
+                $message['label'] = implode(', ', $notMatchingProperties);
+                throw new PropertyDoesNotExistException($message);
             }
             if (empty($mappedMetadataValues)) {
                 $mappedMetadataValues = $this->getMetaMetadataImporter()->mapMetadataToProperties(
