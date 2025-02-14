@@ -35,13 +35,10 @@ use oat\taoTests\models\event\TestCreatedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class TestCreatingListenerTest extends TestCase
+class TestCreationListenerTest extends TestCase
 {
     /** @var core_kernel_classes_Resource|MockObject */
     private core_kernel_classes_Resource $resource;
-
-    /** @var FeatureFlagCheckerInterface|MockObject */
-    private FeatureFlagCheckerInterface $featureFlagChecker;
 
     /** @var Ontology|MockObject */
     private Ontology $ontology;
@@ -58,57 +55,15 @@ class TestCreatingListenerTest extends TestCase
     {
         $this->resource = $this->createMock(core_kernel_classes_Resource::class);
 
-        $this->featureFlagChecker = $this->createMock(FeatureFlagCheckerInterface::class);
         $this->ontology = $this->createMock(Ontology::class);
         $this->identifierGenerator = $this->createMock(IdentifierGeneratorInterface::class);
         $this->qtiIdentifierSetter = $this->createMock(QtiIdentifierSetter::class);
 
         $this->sut = new TestCreationListener(
-            $this->featureFlagChecker,
             $this->ontology,
             $this->identifierGenerator,
             $this->qtiIdentifierSetter
         );
-    }
-
-    public function testFeatureDisabled(): void
-    {
-        $this->ontology
-            ->expects($this->once())
-            ->method('getResource')
-            ->with('testUri')
-            ->willReturn($this->resource);
-
-        $this->resource
-            ->expects($this->once())
-            ->method('getRootId')
-            ->willReturn(TaoOntology::CLASS_URI_TEST);
-
-        $this->identifierGenerator
-            ->expects($this->once())
-            ->method('generate')
-            ->with([IdentifierGeneratorInterface::OPTION_RESOURCE => $this->resource])
-            ->willReturn('QWERTYUI');
-
-        $this->qtiIdentifierSetter
-            ->expects($this->once())
-            ->method('set')
-            ->with([
-                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
-                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
-            ]);
-
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(false);
-
-        $this->resource
-            ->expects($this->never())
-            ->method('editPropertyValues');
-
-        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
     }
 
     public function testIsNotTest(): void
@@ -131,10 +86,6 @@ class TestCreatingListenerTest extends TestCase
         $this->qtiIdentifierSetter
             ->expects($this->never())
             ->method('set');
-
-        $this->featureFlagChecker
-            ->expects($this->never())
-            ->method('isEnabled');
 
         $this->resource
             ->expects($this->never())
@@ -169,12 +120,6 @@ class TestCreatingListenerTest extends TestCase
                 AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
                 AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
             ]);
-
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(true);
 
         $property = $this->createMock(core_kernel_classes_Property::class);
 
