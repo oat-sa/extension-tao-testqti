@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA.
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA.
  */
 
 declare(strict_types=1);
@@ -73,69 +73,6 @@ class TestCreatingListenerTest extends TestCase
 
     public function testFeatureDisabled(): void
     {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(false);
-
-        $this->identifierGenerator
-            ->expects($this->never())
-            ->method('generate');
-
-        $this->resource
-            ->expects($this->never())
-            ->method($this->anything());
-
-        $this->qtiIdentifierSetter
-            ->expects($this->never())
-            ->method('set');
-
-        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
-    }
-
-    public function testIsNotTest(): void
-    {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(true);
-
-        $this->ontology
-            ->expects($this->once())
-            ->method('getResource')
-            ->with('testUri')
-            ->willReturn($this->resource);
-
-        $this->resource
-            ->expects($this->once())
-            ->method('getRootId')
-            ->willReturn('notTestRootId');
-
-        $this->identifierGenerator
-            ->expects($this->never())
-            ->method('generate');
-
-        $this->resource
-            ->expects($this->never())
-            ->method('editPropertyValues');
-
-        $this->qtiIdentifierSetter
-            ->expects($this->never())
-            ->method('set');
-
-        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
-    }
-
-    public function testSuccess(): void
-    {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(true);
-
         $this->ontology
             ->expects($this->once())
             ->method('getResource')
@@ -153,6 +90,92 @@ class TestCreatingListenerTest extends TestCase
             ->with([IdentifierGeneratorInterface::OPTION_RESOURCE => $this->resource])
             ->willReturn('QWERTYUI');
 
+        $this->qtiIdentifierSetter
+            ->expects($this->once())
+            ->method('set')
+            ->with([
+                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
+                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
+            ]);
+
+        $this->featureFlagChecker
+            ->expects($this->once())
+            ->method('isEnabled')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
+            ->willReturn(false);
+
+        $this->resource
+            ->expects($this->never())
+            ->method('editPropertyValues');
+
+        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
+    }
+
+    public function testIsNotTest(): void
+    {
+        $this->ontology
+            ->expects($this->once())
+            ->method('getResource')
+            ->with('testUri')
+            ->willReturn($this->resource);
+
+        $this->resource
+            ->expects($this->once())
+            ->method('getRootId')
+            ->willReturn('notTestRootId');
+
+        $this->identifierGenerator
+            ->expects($this->never())
+            ->method('generate');
+
+        $this->qtiIdentifierSetter
+            ->expects($this->never())
+            ->method('set');
+
+        $this->featureFlagChecker
+            ->expects($this->never())
+            ->method('isEnabled');
+
+        $this->resource
+            ->expects($this->never())
+            ->method('editPropertyValues');
+
+        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
+    }
+
+    public function testSuccess(): void
+    {
+        $this->ontology
+            ->expects($this->once())
+            ->method('getResource')
+            ->with('testUri')
+            ->willReturn($this->resource);
+
+        $this->resource
+            ->expects($this->once())
+            ->method('getRootId')
+            ->willReturn(TaoOntology::CLASS_URI_TEST);
+
+        $this->identifierGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with([IdentifierGeneratorInterface::OPTION_RESOURCE => $this->resource])
+            ->willReturn('QWERTYUI');
+
+        $this->qtiIdentifierSetter
+            ->expects($this->once())
+            ->method('set')
+            ->with([
+                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
+                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
+            ]);
+
+        $this->featureFlagChecker
+            ->expects($this->once())
+            ->method('isEnabled')
+            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
+            ->willReturn(true);
+
         $property = $this->createMock(core_kernel_classes_Property::class);
 
         $this->ontology
@@ -165,14 +188,6 @@ class TestCreatingListenerTest extends TestCase
             ->expects($this->once())
             ->method('editPropertyValues')
             ->with($property, 'QWERTYUI');
-
-        $this->qtiIdentifierSetter
-            ->expects($this->once())
-            ->method('set')
-            ->with([
-                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
-                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
-            ]);
 
         $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
     }

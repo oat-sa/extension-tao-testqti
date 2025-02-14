@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA.
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA.
  */
 
 declare(strict_types=1);
@@ -66,10 +66,6 @@ class TestCreationListener
             return;
         }
 
-        if (!$this->featureFlagChecker->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
-            return;
-        }
-
         $test = $this->getEventTest($event);
 
         if ($test->getRootId() !== TaoOntology::CLASS_URI_TEST) {
@@ -78,14 +74,17 @@ class TestCreationListener
 
         $identifier = $this->identifierGenerator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
 
-        $test->editPropertyValues(
-            $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER),
-            $identifier
-        );
         $this->qtiIdentifierSetter->set([
             AbstractQtiIdentifierSetter::OPTION_RESOURCE => $test,
             AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => $identifier,
         ]);
+
+        if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
+            $test->editPropertyValues(
+                $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER),
+                $identifier
+            );
+        }
     }
 
     private function getEventTest(Event $event): core_kernel_classes_Resource
