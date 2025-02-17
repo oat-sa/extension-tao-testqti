@@ -229,7 +229,7 @@ define([
                 const itemRef = sectionModel.sectionParts[index];
 
                 itemRefView.setUp(creatorContext, itemRef, sectionModel, partModel, $itemRef);
-                var $title = $itemRef.find('.title');
+                const $title = $itemRef.find('.title');
                 $title.text(config.labels[uri.encode($itemRef.data('uri'))]);
 
                 // fix for Safari, it forces a GPU repaint to prevent incorrect initial positioning.
