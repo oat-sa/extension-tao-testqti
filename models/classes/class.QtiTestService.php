@@ -242,6 +242,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
             $saved = $this->saveDoc($test, $doc);
 
+            # Update the test's updated_at property
+            $now = microtime(true);
+            $property = $this->getProperty(TaoOntology::PROPERTY_UPDATED_AT);
+            $test->editPropertyValues($property, $now);
+
             $this->getEventManager()->trigger(new TestUpdatedEvent($test->getUri()));
         }
         return $saved;
