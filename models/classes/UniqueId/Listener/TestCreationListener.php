@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA.
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA.
  */
 
 declare(strict_types=1);
@@ -26,7 +26,6 @@ use core_kernel_classes_Resource;
 use InvalidArgumentException;
 use oat\generis\model\data\Ontology;
 use oat\oatbox\event\Event;
-use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\resources\Event\InstanceCopiedEvent;
 use oat\tao\model\TaoOntology;
@@ -38,18 +37,15 @@ use oat\taoTests\models\event\TestDuplicatedEvent;
 
 class TestCreationListener
 {
-    private FeatureFlagCheckerInterface $featureFlagChecker;
     private Ontology $ontology;
     private IdentifierGeneratorInterface $identifierGenerator;
     private QtiIdentifierSetter $qtiIdentifierSetter;
 
     public function __construct(
-        FeatureFlagCheckerInterface $featureFlagChecker,
         Ontology $ontology,
         IdentifierGeneratorInterface $identifierGenerator,
         QtiIdentifierSetter $qtiIdentifierSetter
     ) {
-        $this->featureFlagChecker = $featureFlagChecker;
         $this->ontology = $ontology;
         $this->identifierGenerator = $identifierGenerator;
         $this->qtiIdentifierSetter = $qtiIdentifierSetter;
@@ -66,10 +62,6 @@ class TestCreationListener
             return;
         }
 
-        if (!$this->featureFlagChecker->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
-            return;
-        }
-
         $test = $this->getEventTest($event);
 
         if ($test->getRootId() !== TaoOntology::CLASS_URI_TEST) {
@@ -78,14 +70,15 @@ class TestCreationListener
 
         $identifier = $this->identifierGenerator->generate([IdentifierGeneratorInterface::OPTION_RESOURCE => $test]);
 
-        $test->editPropertyValues(
-            $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER),
-            $identifier
-        );
         $this->qtiIdentifierSetter->set([
             AbstractQtiIdentifierSetter::OPTION_RESOURCE => $test,
             AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => $identifier,
         ]);
+
+        $test->editPropertyValues(
+            $this->ontology->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER),
+            $identifier
+        );
     }
 
     private function getEventTest(Event $event): core_kernel_classes_Resource

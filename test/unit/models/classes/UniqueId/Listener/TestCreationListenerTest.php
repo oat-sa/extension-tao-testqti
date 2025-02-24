@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA.
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA.
  */
 
 declare(strict_types=1);
@@ -35,13 +35,10 @@ use oat\taoTests\models\event\TestCreatedEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class TestCreatingListenerTest extends TestCase
+class TestCreationListenerTest extends TestCase
 {
     /** @var core_kernel_classes_Resource|MockObject */
     private core_kernel_classes_Resource $resource;
-
-    /** @var FeatureFlagCheckerInterface|MockObject */
-    private FeatureFlagCheckerInterface $featureFlagChecker;
 
     /** @var Ontology|MockObject */
     private Ontology $ontology;
@@ -58,50 +55,19 @@ class TestCreatingListenerTest extends TestCase
     {
         $this->resource = $this->createMock(core_kernel_classes_Resource::class);
 
-        $this->featureFlagChecker = $this->createMock(FeatureFlagCheckerInterface::class);
         $this->ontology = $this->createMock(Ontology::class);
         $this->identifierGenerator = $this->createMock(IdentifierGeneratorInterface::class);
         $this->qtiIdentifierSetter = $this->createMock(QtiIdentifierSetter::class);
 
         $this->sut = new TestCreationListener(
-            $this->featureFlagChecker,
             $this->ontology,
             $this->identifierGenerator,
             $this->qtiIdentifierSetter
         );
     }
 
-    public function testFeatureDisabled(): void
-    {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(false);
-
-        $this->identifierGenerator
-            ->expects($this->never())
-            ->method('generate');
-
-        $this->resource
-            ->expects($this->never())
-            ->method($this->anything());
-
-        $this->qtiIdentifierSetter
-            ->expects($this->never())
-            ->method('set');
-
-        $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
-    }
-
     public function testIsNotTest(): void
     {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(true);
-
         $this->ontology
             ->expects($this->once())
             ->method('getResource')
@@ -117,25 +83,19 @@ class TestCreatingListenerTest extends TestCase
             ->expects($this->never())
             ->method('generate');
 
-        $this->resource
-            ->expects($this->never())
-            ->method('editPropertyValues');
-
         $this->qtiIdentifierSetter
             ->expects($this->never())
             ->method('set');
+
+        $this->resource
+            ->expects($this->never())
+            ->method('editPropertyValues');
 
         $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
     }
 
     public function testSuccess(): void
     {
-        $this->featureFlagChecker
-            ->expects($this->once())
-            ->method('isEnabled')
-            ->with('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-            ->willReturn(true);
-
         $this->ontology
             ->expects($this->once())
             ->method('getResource')
@@ -153,6 +113,14 @@ class TestCreatingListenerTest extends TestCase
             ->with([IdentifierGeneratorInterface::OPTION_RESOURCE => $this->resource])
             ->willReturn('QWERTYUI');
 
+        $this->qtiIdentifierSetter
+            ->expects($this->once())
+            ->method('set')
+            ->with([
+                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
+                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
+            ]);
+
         $property = $this->createMock(core_kernel_classes_Property::class);
 
         $this->ontology
@@ -165,14 +133,6 @@ class TestCreatingListenerTest extends TestCase
             ->expects($this->once())
             ->method('editPropertyValues')
             ->with($property, 'QWERTYUI');
-
-        $this->qtiIdentifierSetter
-            ->expects($this->once())
-            ->method('set')
-            ->with([
-                AbstractQtiIdentifierSetter::OPTION_RESOURCE => $this->resource,
-                AbstractQtiIdentifierSetter::OPTION_IDENTIFIER => 'QWERTYUI',
-            ]);
 
         $this->sut->populateUniqueId(new TestCreatedEvent('testUri'));
     }
