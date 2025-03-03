@@ -37,6 +37,8 @@ use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
 use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
+use oat\taoQtiTest\model\Infrastructure\Validation\ChoiceResponseValidationStrategy;
+use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
 use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
@@ -69,6 +71,7 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(QtiRunnerService::SERVICE_ID),
                     service(FeatureFlagChecker::class),
                     service(QtiItemResponseValidator::class),
+                    service(ExtraQtiInteractionResponseValidator::class),
                 ]
             );
 
@@ -195,5 +198,15 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                 ]
             )
             ->public();
+
+        $services->set(ChoiceResponseValidationStrategy::class, ChoiceResponseValidationStrategy::class);
+        $services
+            ->set(ExtraQtiInteractionResponseValidator::class, ExtraQtiInteractionResponseValidator::class)
+            ->public()
+            ->args(
+                [
+                    service(ChoiceResponseValidationStrategy::class)
+                ]
+            );
     }
 }
