@@ -27,6 +27,7 @@ namespace oat\taoQtiTest\model\Infrastructure;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
+use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
@@ -41,15 +42,18 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
     private $runnerService;
     private FeatureFlagChecker $featureFlagChecker;
     private QtiItemResponseValidator $itemResponseValidator;
+    private ExtraQtiInteractionResponseValidator $extraQtiInteractionResponseValidator;
 
     public function __construct(
         QtiRunnerService $runnerService,
         FeatureFlagChecker $featureFlagChecker,
-        QtiItemResponseValidator $itemResponseValidator
+        QtiItemResponseValidator $itemResponseValidator,
+        ExtraQtiInteractionResponseValidator $extraQtiInteractionResponseValidator
     ) {
         $this->runnerService = $runnerService;
         $this->featureFlagChecker = $featureFlagChecker;
         $this->itemResponseValidator = $itemResponseValidator;
+        $this->extraQtiInteractionResponseValidator = $extraQtiInteractionResponseValidator;
     }
 
     public function save(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
@@ -123,7 +127,11 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
                 $this->itemResponseValidator->validate($serviceContext->getTestSession(), $responses);
-            } catch (AssessmentItemSessionException $e) {
+                $this->extraQtiInteractionResponseValidator->validate(
+                    $this->runnerService->getItemData($serviceContext, $itemDefinition),
+                    $responses
+                );
+            } catch (AssessmentItemSessionException | QtiRunnerInvalidResponsesException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
 
