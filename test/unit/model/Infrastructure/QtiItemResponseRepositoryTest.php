@@ -175,8 +175,15 @@ class QtiItemResponseRepositoryTest extends TestCase
                         AssessmentItemSessionException::DURATION_OVERFLOW
                     )
                 );
+
+            $subjectPartialMock->expects($this->never())
+                ->method('blockEmptyResponse');
+
             $this->expectException(QtiRunnerInvalidResponsesException::class);
-        }
+        } elseif ($interactionResponseValidatorShouldThrowException) {
+            $this->itemResponseValidatorMock->expects($this->once())
+                ->method('validate')
+                ->with($assessmentTestSession, $stateMock);
 
         $this->subject->save($itemResponse, $runnerServiceContextMock);
     }
