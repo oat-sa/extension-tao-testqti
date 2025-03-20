@@ -194,9 +194,11 @@ class QtiItemResponseRepositoryTest extends TestCase
             }
         }
 
-        if (!$qtiItemResponseValidatorShouldThrowException &&
+        if (
+            !$qtiItemResponseValidatorShouldThrowException &&
             !$interactionResponseValidatorShouldThrowException &&
-            !$shouldThrowEmptyResponseException) {
+            !$shouldThrowEmptyResponseException
+        ) {
             $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
                 ->method('storeItemResponse');
         } else {
