@@ -15,16 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure;
 
-use common_exception_Error;
-use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
-use oat\taoQtiTest\models\runner\RunnerServiceContext;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -32,18 +29,14 @@ use qtism\runtime\tests\AssessmentTestSession;
 class QtiItemResponseValidator
 {
     /**
+     * @param AssessmentTestSession $testSession
+     * @param State $responses
      * @throws AssessmentItemSessionException
-     * @throws common_exception_Error
-     * @throws QtiRunnerEmptyResponsesException
      */
     public function validate(AssessmentTestSession $testSession, State $responses): void
     {
-        if ($this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
+        if ($responses->containsNullOnly()) {
             return;
-        }
-
-        if (!$this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
-            throw new QtiRunnerEmptyResponsesException();
         }
 
         if ($this->getResponseValidation($testSession)) {
@@ -59,14 +52,5 @@ class QtiItemResponseValidator
             ->getItemSessionControl()
             ->getItemSessionControl()
             ->mustValidateResponses();
-    }
-
-    private function getAllowSkip(AssessmentTestSession $testSession): bool
-    {
-        return $testSession->getRoute()
-            ->current()
-            ->getItemSessionControl()
-            ->getItemSessionControl()
-            ->doesAllowSkipping();
     }
 }

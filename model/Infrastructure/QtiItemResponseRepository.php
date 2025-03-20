@@ -134,9 +134,6 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             } catch (AssessmentItemSessionException | QtiRunnerInvalidResponsesException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
-
-            $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
-            return;
         }
 
         if (
