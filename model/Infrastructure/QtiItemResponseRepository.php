@@ -136,9 +136,7 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             }
         }
 
-        if (
-            $this->blockEmptyResponse($serviceContext, $responses)
-        ) {
+        if ($this->blockEmptyResponse($serviceContext, $responses)) {
             throw new QtiRunnerEmptyResponsesException();
         }
 

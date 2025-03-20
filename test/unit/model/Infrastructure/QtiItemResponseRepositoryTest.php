@@ -142,24 +142,6 @@ class QtiItemResponseRepositoryTest extends TestCase
             ->method('getTestSession')
             ->willReturn($assessmentTestSession);
 
-        $subjectPartialMock->expects($this->once())
-            ->method('blockEmptyResponse')
-            ->with($runnerServiceContextMock, $stateMock)
-            ->willReturn($blockEmptyResponse);
-
-        $this->itemResponseValidatorMock->expects($this->once())
-            ->method('validate');
-
-        if (!$qtiItemResponseValidatorShouldThrowException &&
-            !$interactionResponseValidatorShouldThrowException &&
-            !$shouldThrowEmptyResponseException) {
-            $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
-                ->method('storeItemResponse');
-        } else {
-            $this->runnerServiceMock->expects($this->never())
-                ->method('storeItemResponse');
-        }
-
         if ($qtiItemResponseValidatorShouldThrowException) {
             $this->itemResponseValidatorMock->expects($this->once())
                 ->method('validate')
@@ -171,22 +153,55 @@ class QtiItemResponseRepositoryTest extends TestCase
                         AssessmentItemSessionException::DURATION_OVERFLOW
                     )
                 );
-            $this->expectException(QtiRunnerInvalidResponsesException::class);
-        }
 
-        if ($interactionResponseValidatorShouldThrowException) {
+            $subjectPartialMock->expects($this->never())
+                ->method('blockEmptyResponse');
+
+            $this->expectException(QtiRunnerInvalidResponsesException::class);
+        } elseif ($interactionResponseValidatorShouldThrowException) {
+            $this->itemResponseValidatorMock->expects($this->once())
+                ->method('validate')
+                ->with($assessmentTestSession, $stateMock);
+
             $this->interactionResponseValidator->expects($this->once())
                 ->method('validate')
                 ->with([], $stateMock)
                 ->willThrowException(
                     new QtiRunnerInvalidResponsesException('mockedMessage')
                 );
+
+            $subjectPartialMock->expects($this->never())
+                ->method('blockEmptyResponse');
+
             $this->expectException(QtiRunnerInvalidResponsesException::class);
             $this->expectExceptionMessage('mockedMessage');
+        } else {
+            $this->itemResponseValidatorMock->expects($this->once())
+                ->method('validate')
+                ->with($assessmentTestSession, $stateMock);
+
+            $this->interactionResponseValidator->expects($this->once())
+                ->method('validate')
+                ->with([], $stateMock);
+
+            $subjectPartialMock->expects($this->once())
+                ->method('blockEmptyResponse')
+                ->with($runnerServiceContextMock, $stateMock)
+                ->willReturn($blockEmptyResponse);
+
+            if ($shouldThrowEmptyResponseException) {
+                $this->expectException(QtiRunnerEmptyResponsesException::class);
+            }
         }
 
-        if ($shouldThrowEmptyResponseException) {
-            $this->expectException(QtiRunnerEmptyResponsesException::class);
+        if (!$qtiItemResponseValidatorShouldThrowException &&
+            !$interactionResponseValidatorShouldThrowException &&
+            !$shouldThrowEmptyResponseException) {
+            $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
+                ->method('storeItemResponse');
+        } else {
+            $this->runnerServiceMock->expects($this->never())
+                ->method('storeItemResponse');
         }
 
         $subjectPartialMock->save($itemResponse, $runnerServiceContextMock);
