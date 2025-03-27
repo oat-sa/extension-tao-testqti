@@ -32,6 +32,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -137,12 +138,12 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 
     /**
      * @param RunnerServiceContext $serviceContext
-     * @param mixed $responses
+     * @param State $responses
      * @return bool
      * @throws \common_Exception
      * @throws \common_ext_ExtensionException
      */
-    protected function blockEmptyResponse(RunnerServiceContext $serviceContext, mixed $responses): bool
+    protected function blockEmptyResponse(RunnerServiceContext $serviceContext, State $responses): bool
     {
         return $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
             && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
