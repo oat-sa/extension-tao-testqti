@@ -126,19 +126,26 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             } catch (AssessmentItemSessionException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
-
-            $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
-            return;
         }
 
-        if (
-            $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
-            && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
-            && $this->runnerService->emptyResponse($serviceContext, $responses)
-        ) {
+        if ($this->blockEmptyResponse($serviceContext, $responses)) {
             throw new QtiRunnerEmptyResponsesException();
         }
 
         $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
+    }
+
+    /**
+     * @param RunnerServiceContext $serviceContext
+     * @param mixed $responses
+     * @return bool
+     * @throws \common_Exception
+     * @throws \common_ext_ExtensionException
+     */
+    protected function blockEmptyResponse(RunnerServiceContext $serviceContext, mixed $responses): bool
+    {
+        return $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
+            && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
+            && $this->runnerService->emptyResponse($serviceContext, $responses);
     }
 }
