@@ -36,9 +36,7 @@ define([
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
     'tpl!taoQtiItem/qtiCreator/tpl/outcomeEditor/listing',
-    'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/outcomeDeclaration/filter',
-    'taoQtiItem/qtiItem/core/Element',
     'taoQtiItem/qtiCreator/widgets/helpers/formElement'
 ], function (
     $,
@@ -58,9 +56,7 @@ define([
     baseTypeHelper,
     outcome,
     outcomeEditorListingTpl,
-    scoring,
     outcomeDeclarationFilter,
-    Element,
     formElement
 ) {
     /**
@@ -199,6 +195,14 @@ define([
                 ) {
                     testModel.outcomeDeclarations.push(newOutcome);
                 }
+
+                // Re-render the outcome declarations
+                renderOutcomeDeclarationList($view);
+
+                // Add the 'editing' class to the newly created outcome-container
+                const $newOutcomeContainer = $('.outcome-declarations-manual .outcome-container').last();
+                $newOutcomeContainer.addClass('editing');
+                $newOutcomeContainer.find('.identifier').focus();
             });
 
             $view.on('change.binder', (e, model) => {
