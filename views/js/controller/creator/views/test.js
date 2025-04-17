@@ -184,7 +184,16 @@ define([
             $addOutcomeDeclaration.on('click', (e) => {
                 e.preventDefault();
 
-                const newOutcome = outcome.createOutcome('SCORE', baseTypeHelper.FLOAT);
+                // Generate a unique identifier for the new outcome
+                const outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
+                const newOutcomeIdentifier = `OUTCOME_${outcomeCount + 1}`;
+                const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
+
+                // Validate if the newOutcomeIdentifier is unique among test outcome declarations
+                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === newOutcomeIdentifier);
+                if (!isUnique) {
+                    throw new Error(`Outcome identifier '${newOutcomeIdentifier}' already exists. Please use a unique identifier.`);
+                }
 
                 if (!Array.isArray(testModel.outcomeDeclarations)) {
                     testModel.outcomeDeclarations = [];
@@ -203,6 +212,36 @@ define([
                 const $newOutcomeContainer = $('.outcome-declarations-manual .outcome-container').last();
                 $newOutcomeContainer.addClass('editing');
                 $newOutcomeContainer.find('.identifier').focus();
+            });
+
+            // Add an event listener to validate the identifier input on blur, but only for elements in div class 'outcome-container editing'
+            $view.on('blur', '.outcome-container.editing .identifier', function () {
+                const $input = $(this);
+                const identifier = $input.val();
+
+                // Check if the identifier is unique
+                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === identifier);
+                if (!isUnique) {
+                    feedback().error(__('Outcome identifier must be unique. Please choose a different identifier.'));
+                    $input.focus();
+                }
+            });
+
+            // Disable the save button if the identifier is invalid
+            $view.on('blur', '.outcome-container.editing .identifier', function () {
+                const $input = $(this);
+                const identifier = $input.val();
+                const $saveButton = $('#saver');
+
+                // Check if the identifier is unique
+                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === identifier);
+                if (!isUnique || !identifier.trim()) {
+                    feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                    $input.focus();
+                    $saveButton.addClass('disabled').attr('disabled', true);
+                } else {
+                    $saveButton.removeClass('disabled').removeAttr('disabled');
+                }
             });
 
             $view.on('change.binder', (e, model) => {
@@ -316,8 +355,7 @@ define([
                 const readonly = readOnlyRpVariables.indexOf(id) >= 0;
                 let externalScoredDisabled = outcome.attr && outcome.attr('externalScoredDisabled');
                 const externalScored = {
-                    none: { label: __('None'), selected: !outcome.attr || !outcome.attr('externalScored') },
-                    human: { label: __('Human'), selected: outcome.attr && outcome.attr('externalScored') === outcome.externalScoredOptions.human },
+                    human: { label: __('Human'), selected: true },
                     externalMachine: {
                         label: __('External Machine'),
                         selected: outcome.attr && outcome.attr('externalScored') === outcome.externalScoredOptions.externalMachine
@@ -331,8 +369,8 @@ define([
                     interpretation: outcome.attr && outcome.attr('interpretation'),
                     longInterpretation: outcome.attr && outcome.attr('longInterpretation'),
                     externalScored: externalScored,
-                    normalMaximum: outcome.attr && outcome.attr('normalMaximum'),
-                    normalMinimum: outcome.attr && outcome.attr('normalMinimum'),
+                    normalMinimum: outcome.attr && outcome.attr('normalMinimum') !== undefined ? outcome.attr('normalMinimum') : 0,
+                    normalMaximum: outcome.attr && outcome.attr('normalMaximum') !== undefined ? outcome.attr('normalMaximum') : 0,
                     titleDelete: readonly
                         ? __('Cannot delete a variable currently used in response processing')
                         : __('Delete'),
