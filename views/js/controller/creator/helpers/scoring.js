@@ -405,7 +405,9 @@ define([
             }
 
             return outcomes;
-        }
+        },
+
+        outcomesRecipes: outcomesRecipes
     };
 
     /**
