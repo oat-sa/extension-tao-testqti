@@ -214,27 +214,24 @@ define([
                 $newOutcomeContainer.find('.identifier').focus();
             });
 
-            // Add an event listener to validate the identifier input on blur, but only for elements in div class 'outcome-container editing'
-            $view.on('blur', '.outcome-container.editing .identifier', function () {
-                const $input = $(this);
-                const identifier = $input.val();
-
-                // Check if the identifier is unique
-                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === identifier);
-                if (!isUnique) {
-                    feedback().error(__('Outcome identifier must be unique. Please choose a different identifier.'));
-                    $input.focus();
-                }
-            });
-
             // Disable the save button if the identifier is invalid
+            // Modify validation to skip check if the identifier has not changed
             $view.on('blur', '.outcome-container.editing .identifier', function () {
                 const $input = $(this);
                 const identifier = $input.val();
+                const originalIdentifier = $input.closest('.outcome-container').data('serial');
                 const $saveButton = $('#saver');
 
-                // Check if the identifier is unique
-                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === identifier);
+                // Skip validation if the identifier has not changed
+                if (identifier === originalIdentifier) {
+                    $saveButton.removeClass('disabled').removeAttr('disabled');
+                    return;
+                }
+
+                // Check if the identifier is unique among other outcome declarations
+                const isUnique = !testModel.outcomeDeclarations.some(outcome => 
+                    outcome.identifier === identifier && outcome.serial !== originalIdentifier
+                );
                 if (!isUnique || !identifier.trim()) {
                     feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                     $input.focus();
