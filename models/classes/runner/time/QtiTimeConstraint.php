@@ -229,9 +229,9 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
 
     /**
      * Serialize the constraint the expected way by the TestContext and the TestMap
-     * @return array
+     * @return array|null
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize()
     {
         $source = $this->getSource();
         $timeLimits = $source->getTimeLimits();
@@ -271,6 +271,6 @@ class QtiTimeConstraint extends TimeConstraint implements \JsonSerializable
                 ];
             }
         }
-        return [];
+        return null;
     }
 }
