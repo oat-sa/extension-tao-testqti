@@ -212,10 +212,15 @@ define([
 
             // Disable the save button if the identifier is invalid
             // Modify validation to skip check if the identifier has not changed
+            $view.on('focus', '.outcome-container.editing .identifier', function () {
+                const $input = $(this);
+                $input.data('originalValue', $input.val());
+            });
+
             $view.on('blur', '.outcome-container.editing .identifier', function () {
                 const $input = $(this);
                 const identifier = $input.val();
-                const originalIdentifier = $input.closest('.outcome-container').data('serial');
+                const originalIdentifier = $input.data('originalValue');
                 const $saveButton = $('#saver');
 
                 // Skip validation if the identifier has not changed
@@ -225,8 +230,8 @@ define([
                 }
 
                 // Check if the identifier is unique among other outcome declarations
-                const isUnique = !testModel.outcomeDeclarations.some(outcome => 
-                    outcome.identifier === identifier && outcome.serial !== originalIdentifier
+                const isUnique = !testModel.outcomeDeclarations.some(outcome =>
+                    outcome.identifier === identifier && outcome.serial
                 );
                 if (!isUnique || !identifier.trim()) {
                     feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
