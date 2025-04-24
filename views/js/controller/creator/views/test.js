@@ -178,28 +178,23 @@ define([
             });
 
             $addOutcomeDeclaration.on('click', (e) => {
-                e.preventDefault();
 
                 // Generate a unique identifier for the new outcome
-                const outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
-                const newOutcomeIdentifier = `OUTCOME_${outcomeCount + 1}`;
-                const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
+                let outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
+                let newOutcomeIdentifier;
 
-                // Validate if the newOutcomeIdentifier is unique among test outcome declarations
-                const isUnique = !testModel.outcomeDeclarations.some(outcome => outcome.identifier === newOutcomeIdentifier);
-                if (!isUnique) {
-                    throw new Error(`Outcome identifier '${newOutcomeIdentifier}' already exists. Please use a unique identifier.`);
-                }
+                do {
+                    outcomeCount++;
+                    newOutcomeIdentifier = `OUTCOME_${outcomeCount}`;
+                } while (testModel.outcomeDeclarations.some(outcome => outcome.identifier === newOutcomeIdentifier));
+
+                const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
 
                 if (!Array.isArray(testModel.outcomeDeclarations)) {
                     testModel.outcomeDeclarations = [];
                 }
 
-                if (!testModel.outcomeDeclarations.some(
-                    (outcome) => outcome.identifier === newOutcome.identifier)
-                ) {
-                    testModel.outcomeDeclarations.push(newOutcome);
-                }
+                testModel.outcomeDeclarations.push(newOutcome);
 
                 // Re-render the outcome declarations
                 renderOutcomeDeclarationList(testModel, $view);

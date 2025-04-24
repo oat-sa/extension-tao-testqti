@@ -20,7 +20,6 @@ define([
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
         const filteredOutcomes = outcomeDeclarationFilter.filterManualOutcomeDeclarations(testModel);
         const outcomesData = _.map(filteredOutcomes, function (outcome) {
-            const id = outcome.identifier || outcome.id; // Adjusted to handle different structures
             const readOnlyRpVariables = _.uniq(_.reduce(testModel.responseProcessing, (variables, rp) => {
                 const rpXml = rp.xml || '';
                 const $rp = $(rpXml);
@@ -44,16 +43,12 @@ define([
 
             return {
                 serial: outcome.serial,
-                identifier: id,
-                hidden: (id === 'SCORE' || id === 'MAXSCORE') && !features.isVisible('taoQtiItem/creator/interaction/response/outcomeDeclarations/scoreMaxScore'),
-                interpretation: outcome.attr && outcome.attr('interpretation'),
-                longInterpretation: outcome.attr && outcome.attr('longInterpretation'),
+                identifier: outcome.identifier,
+                interpretation: outcome.interpretation,
+                longInterpretation: outcome.longInterpretation,
                 externalScored: externalScored,
-                normalMinimum: outcome.attr && outcome.attr('normalMinimum') !== undefined ? outcome.attr('normalMinimum') : 0,
-                normalMaximum: outcome.attr && outcome.attr('normalMaximum') !== undefined ? outcome.attr('normalMaximum') : 0,
-                titleDelete: readonly
-                    ? __('Cannot delete a variable currently used in response processing')
-                    : __('Delete'),
+                normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
+                normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
                 titleEdit: readonly ? __('Cannot edit a variable currently used in response processing') : __('Edit'),
                 readonly: readonly,
                 externalScoredDisabled: externalScoredDisabled || 0
@@ -66,6 +61,7 @@ define([
             })
         );
 
+        let editedOutcomeDeclaration = {};
         formElement.initWidget($editorPanel);
 
         $editorPanel
@@ -73,7 +69,9 @@ define([
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 const $labelContainer = $outcomeContainer.find('.identifier-label');
                 const $identifierInput = $labelContainer.find('.identifier');
-
+                editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                    outcome => outcome.identifier === $outcomeContainer.find('input.identifier').val()
+                );
                 $outcomeContainer.addClass('editing');
                 $outcomeContainer.removeClass('editable');
 
@@ -83,14 +81,15 @@ define([
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 $outcomeContainer.removeClass('editing');
                 $outcomeContainer.addClass('editable');
-                formElement.removeChangeCallback($outcomeContainer);
             })
-            .on('click', '.deletable [data-role="delete"]', function () {
+            .on('click', '.deletable [data-role="delete"]', function (e) {
+                e.preventDefault();
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 $outcomeContainer.remove();
-                testModel.outcomeDeclarations = testModel.outcomeDeclarations.filter(
-                    outcome => outcome.identifier !== $outcomeContainer.find('.identifier').val()
-                );
+            })
+            .on('blur', 'input', function () {
+                const $input = $(this);
+                editedOutcomeDeclaration[$input.attr('name')] = $input.val().trim();
             });
     }
 
