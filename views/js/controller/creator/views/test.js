@@ -55,6 +55,8 @@ define([
     outcome,
     { renderOutcomeDeclarationList }
 ) {
+    const _ns = '.outcome-declarations-manual';
+
     /**
      * The TestView setup test related components and behavior
      *
@@ -177,8 +179,7 @@ define([
                     .trigger('scoring-change');
             });
 
-            $addOutcomeDeclaration.on('click', (e) => {
-
+            $addOutcomeDeclaration.on(`click${_ns}`, () => {
                 // Generate a unique identifier for the new outcome
                 let outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
                 let newOutcomeIdentifier;

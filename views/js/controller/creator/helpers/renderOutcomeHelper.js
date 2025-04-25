@@ -11,6 +11,7 @@ define([
     features,
     __) {
     'use strict';
+    const _ns = '.outcome-container';
 
     /**
      * Render the lists of the test outcomes into the outcome editor panel
@@ -20,18 +21,6 @@ define([
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
         const filteredOutcomes = outcomeDeclarationFilter.filterManualOutcomeDeclarations(testModel);
         const outcomesData = _.map(filteredOutcomes, function (outcome) {
-            const readOnlyRpVariables = _.uniq(_.reduce(testModel.responseProcessing, (variables, rp) => {
-                const rpXml = rp.xml || '';
-                const $rp = $(rpXml);
-                $rp.find('variable, setOutcomeValue').each(function () {
-                    const variableId = $(this).attr('identifier');
-                    if (variableId && variableId !== 'SCORE') {
-                        variables.push(variableId);
-                    }
-                });
-                return variables;
-            }, ['MAXSCORE']));
-            const readonly = readOnlyRpVariables.indexOf(id) >= 0;
             let externalScoredDisabled = outcome.attr && outcome.attr('externalScoredDisabled');
             const externalScored = {
                 human: { label: __('Human'), selected: true },
@@ -49,8 +38,8 @@ define([
                 externalScored: externalScored,
                 normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
                 normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
-                titleEdit: readonly ? __('Cannot edit a variable currently used in response processing') : __('Edit'),
-                readonly: readonly,
+                titleDelete: __('Delete'),
+                titleEdit: __('Edit'),
                 externalScoredDisabled: externalScoredDisabled || 0
             };
         });
@@ -65,7 +54,7 @@ define([
         formElement.initWidget($editorPanel);
 
         $editorPanel
-            .on('click', '.editable [data-role="edit"]', function () {
+            .on(`click${_ns}`, '.editable [data-role="edit"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 const $labelContainer = $outcomeContainer.find('.identifier-label');
                 const $identifierInput = $labelContainer.find('.identifier');
@@ -77,15 +66,17 @@ define([
 
                 $identifierInput.focus();
             })
-            .on('click', '.editing [data-role="edit"]', function () {
+            .on(`click${_ns}`, '.editing [data-role="edit"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 $outcomeContainer.removeClass('editing');
                 $outcomeContainer.addClass('editable');
             })
-            .on('click', '.deletable [data-role="delete"]', function (e) {
-                e.preventDefault();
+            .on(`click${_ns}`, '.deletable [data-role="delete"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
-                $outcomeContainer.remove();
+                $outcomeContainer.addClass('hidden');
+                testModel.outcomeDeclarations = testModel.outcomeDeclarations.filter(
+                    outcome => outcome.identifier !== $outcomeContainer.find('input.identifier').val()
+                );
             })
             .on('blur', 'input', function () {
                 const $input = $(this);
