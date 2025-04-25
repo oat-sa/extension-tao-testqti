@@ -157,7 +157,7 @@ define([
             function updateOutcomes() {
                 const $panel = $('.outcome-declarations', $view);
 
-                $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomesList() }));
+                $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomeDeclarationsReservedList() }));
             }
 
             $('[name=test-outcome-processing]', $view).select2({

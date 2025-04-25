@@ -1,11 +1,11 @@
 define([
-    'taoQtiTest/controller/creator/outcomeDeclaration/filter',
+    'taoQtiTest/controller/creator/helpers/outcome',
     'tpl!taoQtiItem/qtiCreator/tpl/outcomeEditor/listing',
     'taoQtiItem/qtiCreator/widgets/helpers/formElement',
     'services/features',
     'i18n',
 ], function (
-    outcomeDeclarationFilter,
+    outcomeHelper,
     outcomeEditorListingTpl,
     formElement,
     features,
@@ -16,11 +16,9 @@ define([
     /**
      * Render the lists of the test outcomes into the outcome editor panel
      * @param {Object} testModel
-     * @param {JQuery} $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
-        const filteredOutcomes = outcomeDeclarationFilter.filterManualOutcomeDeclarations(testModel);
-        const outcomesData = _.map(filteredOutcomes, function (outcome) {
+        const outcomesData = _.map(outcomeHelper.getNonReservedOutcomeDeclarations(testModel), function (outcome) {
             let externalScoredDisabled = outcome.attr && outcome.attr('externalScoredDisabled');
             const externalScored = {
                 human: { label: __('Human'), selected: true },
