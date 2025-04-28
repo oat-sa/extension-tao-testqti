@@ -76,7 +76,7 @@ define([
                     outcome => outcome.identifier !== $outcomeContainer.find('input.identifier').val()
                 );
             })
-            .on('blur', 'input', function () {
+            .on('blur increment.incrementer decrement.incrementer', 'input', function () {
                 const $input = $(this);
                 editedOutcomeDeclaration[$input.attr('name')] = $input.val().trim();
             });
