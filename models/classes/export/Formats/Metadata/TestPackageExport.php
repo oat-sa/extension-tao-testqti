@@ -32,7 +32,7 @@ class TestPackageExport extends AbstractTestExport
 {
     use EventManagerAwareTrait;
 
-    public const VERSION = 'metadata';
+    protected const VERSION = 'metadata';
 
     public function getLabel(): string
     {
