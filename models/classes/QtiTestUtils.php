@@ -138,10 +138,7 @@ class QtiTestUtils extends ConfigurableService
             '2.1' => 'imsmanifest',
             '2.2' => 'imsmanifestQti22',
             '3.0' => 'imsmanifestQti30',
-            MetadataTestPackageExport::VERSION => false,
-            default => throw new InvalidArgumentException(
-                'Invalid version provided. Only "2.1", "2.2" and "3.0" are supported.'
-            ),
+            default => false
         };
 
         if ($manifestFileName === false) {
