@@ -21,9 +21,11 @@
 
 namespace oat\taoQtiTest\models;
 
+use DOMDocument;
 use InvalidArgumentException;
 use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
+use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport as MetadataTestPackageExport;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\Directory;
@@ -130,16 +132,21 @@ class QtiTestUtils extends ConfigurableService
      * @param $version string The requested QTI version. Can be "2.1" or "2.2". Default is "2.1".
      * @return \DOMDocument
      */
-    public function emptyImsManifest($version = '2.1')
+    public function emptyImsManifest($version = '2.1'): ?DOMDocument
     {
         $manifestFileName = match ($version) {
             '2.1' => 'imsmanifest',
             '2.2' => 'imsmanifestQti22',
             '3.0' => 'imsmanifestQti30',
+            MetadataTestPackageExport::VERSION => false,
             default => throw new InvalidArgumentException(
                 'Invalid version provided. Only "2.1", "2.2" and "3.0" are supported.'
             ),
         };
+
+        if ($manifestFileName === false) {
+            return null;
+        }
 
         $templateRenderer = new taoItems_models_classes_TemplateRenderer(
             ROOT_PATH . 'taoQtiItem/model/qti/templates/' . $manifestFileName . '.tpl.php',
