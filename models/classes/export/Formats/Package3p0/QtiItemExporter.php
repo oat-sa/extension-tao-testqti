@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -26,19 +26,7 @@ use oat\taoQtiItem\model\Export\Qti3Package\Exporter;
 use oat\taoQtiTest\models\export\QtiItemExporterTrait;
 use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 
-class QtiItemExporter implements QtiItemExporterInterface
+class QtiItemExporter extends Exporter implements QtiItemExporterInterface
 {
     use QtiItemExporterTrait;
-
-    private Exporter $exporter;
-
-    public function __construct(Exporter $exporter)
-    {
-        $this->exporter = $exporter;
-    }
-
-    public function __call(string $name, array $arguments)
-    {
-        return $this->exporter->$name(...$arguments);
-    }
 }
