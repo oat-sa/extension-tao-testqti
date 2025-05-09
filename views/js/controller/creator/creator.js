@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -45,7 +45,8 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoTests/previewer/factory',
     'core/logger',
-    'taoQtiTest/controller/creator/views/subsection'
+    'taoQtiTest/controller/creator/views/subsection',
+    'taoQtiTest/controller/creator/helpers/scaleSelector'
 ], function (
     module,
     $,
@@ -73,7 +74,8 @@ define([
     featureVisibility,
     previewerFactory,
     loggerFactory,
-    subsectionView
+    subsectionView,
+    scaleSelector
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -127,13 +129,25 @@ define([
             options.routes = options.routes || {};
             options.labels = options.labels || {};
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
+            options.scalesPresets = options.scalesPresets || [];
             options.guidedNavigation = options.guidedNavigation === true;
             options.translation = options.translation === true;
 
             const saveUrl = options.routes.save || '';
             options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));
 
+            // Add dummy scalesPresets data
+            //@TODO remove this when the backend is ready
+            options.scalesPresets = [
+                { uri: "https://example.com/1", label: "Example 1" },
+                { uri: "https://example.com/2", label: "Example 2" },
+                { uri: "https://example.com/3", label: "Example 3" },
+                { uri: "https://example.com/4", label: "Example 4" },
+                { uri: "https://example.com/5", label: "Example 5" }
+            ];
+
             categorySelector.setPresets(options.categoriesPresets);
+            scaleSelector.setPresets(options.scalesPresets);
 
             //back button
             if (options.translation) {
