@@ -29,6 +29,20 @@ define([
 ], function (_, outcomeValidator, qtiElementHelper, baseTypeHelper, cardinalityHelper) {
     'use strict';
 
+    /**
+     * This is a list of outcomes that are reserved for the score processing
+     */
+    var reservedOutcomeDeclarations = [
+        'SCORE_TOTAL',
+        'SCORE_TOTAL_MAX',
+        'SCORE_TOTAL_WEIGHTED',
+        'SCORE_TOTAL_MAX_WEIGHTED',
+        'SCORE_RATIO',
+        'SCORE_RATIO_WEIGHTED',
+        'PASS_ALL',
+        'PASS_ALL_RENDERING',
+    ];
+
     var outcomeHelper = {
         /**
          * Gets a property from an outcome rule expression.
@@ -68,6 +82,22 @@ define([
          */
         getOutcomeDeclarations: function getOutcomeDeclarations(testModel) {
             var outcomes = testModel && testModel.outcomeDeclarations;
+            return outcomes || [];
+        },
+
+        getReservedOutcomeDeclarations: function getReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return _.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
+            return outcomes || [];
+        },
+
+        getNonReservedOutcomeDeclarations: function getNonReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return !_.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
             return outcomes || [];
         },
 

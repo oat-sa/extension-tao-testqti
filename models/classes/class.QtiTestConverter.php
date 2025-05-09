@@ -19,6 +19,7 @@
 */
 
 use qtism\common\datatypes\QtiPair;
+use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
 use qtism\data\QtiComponentCollection;
@@ -174,6 +175,10 @@ class taoQtiTest_models_classes_QtiTestConverter
                     $array[$property->getName()] = $value;
                 }
             }
+        }
+
+        if ($component instanceof OutcomeDeclaration) {
+            $array['serial'] = uniqid();
         }
 
         return $array;
