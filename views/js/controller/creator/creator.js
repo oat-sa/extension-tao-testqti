@@ -136,16 +136,6 @@ define([
             const saveUrl = options.routes.save || '';
             options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));
 
-            // Add dummy scalesPresets data
-            //@TODO remove this when the backend is ready
-            options.scalesPresets = [
-                { uri: "https://example.com/1", label: "Example 1" },
-                { uri: "https://example.com/2", label: "Example 2" },
-                { uri: "https://example.com/3", label: "Example 3" },
-                { uri: "https://example.com/4", label: "Example 4" },
-                { uri: "https://example.com/5", label: "Example 5" }
-            ];
-
             categorySelector.setPresets(options.categoriesPresets);
             scaleSelector.setPresets(options.scalesPresets);
 
