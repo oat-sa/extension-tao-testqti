@@ -140,11 +140,16 @@ define([
             })
             .on('blur increment.incrementer decrement.incrementer', 'input', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
-                editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
-                    outcome => outcome.identifier === $outcomeContainer.find('input.identifier').val()
-                );
                 const $input = $(this);
-                editedOutcomeDeclaration[$input.attr('name')] = $input.val().trim();
+
+                editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                    outcome => outcome.serial === $outcomeContainer.data('serial')
+                );
+                if (editedOutcomeDeclaration) {
+                    editedOutcomeDeclaration[$input.attr('name')] = $input.val().trim();
+                } else {
+                    console.error('Could not find outcome declaration with serial:', $outcomeContainer.data('serial'));
+                }
             });
     }
 
