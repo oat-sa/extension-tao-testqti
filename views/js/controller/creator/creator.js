@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -45,7 +45,8 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoTests/previewer/factory',
     'core/logger',
-    'taoQtiTest/controller/creator/views/subsection'
+    'taoQtiTest/controller/creator/views/subsection',
+    'taoQtiTest/controller/creator/helpers/scaleSelector'
 ], function (
     module,
     $,
@@ -73,7 +74,8 @@ define([
     featureVisibility,
     previewerFactory,
     loggerFactory,
-    subsectionView
+    subsectionView,
+    scaleSelector
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -127,6 +129,7 @@ define([
             options.routes = options.routes || {};
             options.labels = options.labels || {};
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
+            options.scalesPresets = options.scalesPresets || [];
             options.guidedNavigation = options.guidedNavigation === true;
             options.translation = options.translation === true;
 
@@ -134,6 +137,7 @@ define([
             options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));
 
             categorySelector.setPresets(options.categoriesPresets);
+            scaleSelector.setPresets(options.scalesPresets);
 
             //back button
             if (options.translation) {

@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -35,7 +35,8 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
-    'taoQtiTest/controller/creator/helpers/renderOutcomeHelper'
+    'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
+    'taoQtiTest/controller/creator/helpers/scaleSelector',
 ], function (
     $,
     _,
@@ -53,7 +54,8 @@ define([
     featureVisibility,
     baseTypeHelper,
     outcome,
-    { renderOutcomeDeclarationList }
+    { renderOutcomeDeclarationList },
+    scaleSelectorFactory
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -203,6 +205,18 @@ define([
                 // Add the 'editing' class to the newly created outcome-container
                 const $newOutcomeContainer = $('.outcome-declarations-manual .outcome-container').last();
                 $newOutcomeContainer.addClass('editing');
+
+                const $scaleContainer = $newOutcomeContainer.find('.scales');
+                const scaleSelector = scaleSelectorFactory($scaleContainer);
+                scaleSelector.createForm('');
+
+                scaleSelector.on('scale-change', function(selected) {
+                    newOutcome.scale = selected || '';
+
+                    const $minMaxInputs = $newOutcomeContainer.find('.minimum-maximum input');
+                    $minMaxInputs.prop('disabled', !!selected);
+                });
+
                 $newOutcomeContainer.find('.identifier').focus();
             });
 
