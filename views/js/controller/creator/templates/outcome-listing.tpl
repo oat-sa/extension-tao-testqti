@@ -12,7 +12,7 @@
     <span class="trigger icon-bin" title="{{titleDelete}}" data-role="delete"></span>
     <span class="trigger icon-edit" title="{{titleEdit}}" data-role="edit"></span>
     <div class="outcome-properties-form">
-        <div class="panel">
+        <div class="panel interpretation">
             <label for="interpretation" class="has-icon">{{__ "Interpretation"}}</label>
             <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
             <div class="tooltip-content">{{__ "A human interpretation of the variable's value."}}</div>
@@ -37,12 +37,6 @@
                     <option value="{{@key}}" {{#if selected}}selected="selected"{{/if}}>{{label}}</option>
                 {{/each}}
             </select>
-        </div>
-        <div class="panel scales">
-            <label for="scale-custom" class="has-icon">{{__ "Scale"}}</label>
-            <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">{{__ "Select a scale or enter a custom one. When a scale is selected, min/max values will be disabled."}}</div>
-            <input type="text" name="scale-custom" value="{{scale}}"/>
         </div>
         <div class="panel minimum-maximum">
             <label class="has-icon">{{__ "Value"}}</label>

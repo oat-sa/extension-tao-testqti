@@ -223,7 +223,6 @@ define([
                 normalMaximum: false,
                 normalMinimum: false,
                 masteryValue: false,
-                scale: null,
                 externalScored: null,
                 externalScoredDisabled: 1,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),

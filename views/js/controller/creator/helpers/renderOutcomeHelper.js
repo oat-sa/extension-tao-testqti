@@ -39,24 +39,22 @@ define([
                 }
             };
 
-            let scaleValue = '';
-            if (outcome.scale) {
-                if (typeof outcome.scale === 'object' && outcome.scale.uri) {
-                    scaleValue = outcome.scale.uri;
-                } else if (typeof outcome.scale === 'string') {
-                    scaleValue = outcome.scale;
+            let interpretationValue = '';
+            if (outcome.interpretation) {
+                if (typeof outcome.interpretation === 'object' && outcome.interpretation.uri) {
+                    interpretationValue = outcome.interpretation.uri;
+                } else if (typeof outcome.interpretation === 'string') {
+                    interpretationValue = outcome.interpretation;
                 }
             }
-
 
             return {
                 serial: outcome.serial,
                 identifier: outcome.identifier,
-                interpretation: outcome.interpretation,
+                interpretation: interpretationValue,
                 longInterpretation: outcome.longInterpretation,
                 externalScored: externalScored,
                 externalScoredDisabled: 1,
-                scale: scaleValue,
                 normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
                 normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
                 titleDelete: __('Delete'),
@@ -72,27 +70,25 @@ define([
 
         formElement.initWidget($editorPanel);
 
-        let editedOutcomeDeclaration = {};
-
         $editorPanel.find('.outcome-container').each(function() {
             const $outcomeContainer = $(this);
             const identifierValue = $outcomeContainer.find('input.identifier').val();
             const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
 
             if (outcome) {
-                const $scaleContainer = $outcomeContainer.find('.scales');
-                const scaleSelector = scaleSelectorFactory($scaleContainer);
+                const $interpretationContainer = $outcomeContainer.find('.interpretation');
 
-                scaleSelector.createForm(outcome.scale || '');
+                const scaleSelector = scaleSelectorFactory($interpretationContainer);
+                scaleSelector.createForm(outcome.interpretation || '');
 
-                scaleSelector.on('scale-change', function(selectedScale) {
-                    outcome.scale = selectedScale;
+                scaleSelector.on('interpretation-change', function(interpretationValue) {
+                    outcome.interpretation = interpretationValue || '';
 
                     const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!selectedScale);
+                    $minMaxInputs.prop('disabled', !!interpretationValue);
                 });
 
-                if (outcome.scale) {
+                if (outcome.interpretation) {
                     $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
                 }
             }
@@ -103,24 +99,32 @@ define([
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 const $labelContainer = $outcomeContainer.find('.identifier-label');
                 const $identifierInput = $labelContainer.find('.identifier');
-                editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
-                    outcome => outcome.identifier === $outcomeContainer.find('input.identifier').val()
+
+                const identifierValue = $outcomeContainer.find('input.identifier').val();
+                const editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                    outcome => outcome.identifier === identifierValue
                 );
+
                 $outcomeContainer.addClass('editing');
                 $outcomeContainer.removeClass('editable');
 
-                const $scaleContainer = $outcomeContainer.find('.scales');
-                const scaleSelector = scaleSelectorFactory($scaleContainer);
-                scaleSelector.createForm(editedOutcomeDeclaration.scale || '');
+                const $interpretationContainer = $outcomeContainer.find('.interpretation');
 
-                scaleSelector.on('scale-change', function(selected) {
-                    editedOutcomeDeclaration.scale = selected || '';
+                const scaleSelector = scaleSelectorFactory($interpretationContainer);
+
+                const interpretationValue = editedOutcomeDeclaration?.interpretation || '';
+                scaleSelector.createForm(interpretationValue);
+
+                scaleSelector.on('interpretation-change', function(interpretationValue) {
+                    if (editedOutcomeDeclaration) {
+                        editedOutcomeDeclaration.interpretation = interpretationValue || '';
+                    }
 
                     const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!selected);
+                    $minMaxInputs.prop('disabled', !!interpretationValue);
                 });
 
-                if (editedOutcomeDeclaration.scale) {
+                if (editedOutcomeDeclaration?.interpretation) {
                     $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
                 }
 
@@ -134,21 +138,25 @@ define([
             .on(`click${_ns}`, '.deletable [data-role="delete"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 $outcomeContainer.addClass('hidden');
+
+                const identifierValue = $outcomeContainer.find('input.identifier').val();
                 testModel.outcomeDeclarations = testModel.outcomeDeclarations.filter(
-                    outcome => outcome.identifier !== $outcomeContainer.find('input.identifier').val()
+                    outcome => outcome.identifier !== identifierValue
                 );
             })
             .on('blur increment.incrementer decrement.incrementer', 'input', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 const $input = $(this);
+                const serial = $outcomeContainer.data('serial');
 
-                editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
-                    outcome => outcome.serial === $outcomeContainer.data('serial')
+                const editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                    outcome => outcome.serial === serial
                 );
+
                 if (editedOutcomeDeclaration) {
                     editedOutcomeDeclaration[$input.attr('name')] = $input.val().trim();
                 } else {
-                    console.error('Could not find outcome declaration with serial:', $outcomeContainer.data('serial'));
+                    console.error('Could not find outcome declaration with serial:', serial);
                 }
             });
     }
