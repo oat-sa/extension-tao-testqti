@@ -112,7 +112,10 @@ define([
 
                 const scaleSelector = scaleSelectorFactory($interpretationContainer);
 
-                const interpretationValue = editedOutcomeDeclaration?.interpretation || '';
+                let interpretationValue = '';
+                if (editedOutcomeDeclaration.interpretation) {
+                    interpretationValue = editedOutcomeDeclaration.interpretation;
+                }
                 scaleSelector.createForm(interpretationValue);
 
                 scaleSelector.on('interpretation-change', function(interpretationValue) {
@@ -124,7 +127,7 @@ define([
                     $minMaxInputs.prop('disabled', !!interpretationValue);
                 });
 
-                if (editedOutcomeDeclaration?.interpretation) {
+                if (editedOutcomeDeclaration && editedOutcomeDeclaration.interpretation) {
                     $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
                 }
 
