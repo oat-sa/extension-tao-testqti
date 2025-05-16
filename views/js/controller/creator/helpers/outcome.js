@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2025 (original work) Open Assessment Technologies SA ;
  */
 /**
  * Basic helper that is intended to manage outcomes inside a test model.
@@ -212,7 +212,6 @@ define([
          * @throws {TypeError} if the identifier is empty or is not a string
          */
         createOutcome: function createOutcome(identifier, type, cardinality) {
-
             if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
@@ -224,6 +223,8 @@ define([
                 normalMaximum: false,
                 normalMinimum: false,
                 masteryValue: false,
+                externalScored: null,
+                externalScoredDisabled: 1,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
                 baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
             });
