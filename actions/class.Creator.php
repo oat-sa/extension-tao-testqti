@@ -92,7 +92,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 
         $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
 
-        if ($this->getClass(RemoteScaleListService::SCALES_URI)->exists()) {
+        if ($this->isScaleEnabled()) {
             $this->setData(
                 'scalesPresets',
                 json_encode(
@@ -238,5 +238,15 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     private function getRemoteListService(): ListService
     {
         return $this->getServiceManager()->getContainer()->get(ListService::class);
+    }
+
+    private function isScaleEnabled(): bool
+    {
+        return $this->getRemoteScaleListService()->isRemoteListEnabled();
+    }
+
+    private function getRemoteScaleListService(): RemoteScaleListService
+    {
+        return $this->getServiceManager()->getContainer()->get(RemoteScaleListService::class);
     }
 }
