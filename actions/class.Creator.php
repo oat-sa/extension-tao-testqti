@@ -95,13 +95,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         if ($this->isScaleEnabled()) {
             $this->setData(
                 'scalesPresets',
-                json_encode(
-                    iterator_to_array(
-                        $this->getRemoteListService()->getListElements(
-                            $this->getClass(RemoteScaleListService::SCALES_URI)
-                        )
-                    )
-                )
+                $this->getScalePresets()
             );
         } else {
             $this->setData('scalesPresets', json_encode([]));
@@ -248,5 +242,32 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     private function getRemoteScaleListService(): RemoteScaleListService
     {
         return $this->getServiceManager()->getContainer()->get(RemoteScaleListService::class);
+    }
+
+    private function getScalePresets(): string
+    {
+        $listElements = $this->getRemoteListService()->getListElements(
+            $this->getClass(RemoteScaleListService::SCALES_URI)
+        );
+
+        if (!is_iterable($listElements)) {
+            throw new InvalidArgumentException('List elements should be iterable');
+        }
+
+        $listElements = iterator_to_array(
+            $listElements
+        );
+
+        if (empty($listElements)) {
+            return json_encode([]);
+        }
+
+        $json = json_encode($listElements);
+        if ($json === false) {
+            $this->logWarning('List of elements could not be encoded to JSON');
+            return json_encode([]);
+        }
+
+        return $json;
     }
 }
