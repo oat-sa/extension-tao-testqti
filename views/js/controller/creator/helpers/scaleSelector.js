@@ -1,19 +1,6 @@
 /**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; under version 2
- * of the License (non-upgradable).
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
+ * Synchronized Scale Selector - Simplified Version
+ * All outcomes share the same scale value automatically
  */
 define([
     'jquery',
@@ -35,12 +22,33 @@ define([
             try {
                 if ($el.data('select2')) {
                     $el.select2('val', value || '');
+                    $el.trigger('change.select2');
                 } else {
                     $el.val(value || '');
                 }
             } catch (e) {
                 $el.val(value || '');
             }
+        },
+
+        rebuildWithValue($el, value, data, onChange) {
+            this.destroy($el);
+            $el.val(value || '');
+
+            $el.select2({
+                width: '100%',
+                tags: true,
+                multiple: false,
+                tokenSeparators: null,
+                createSearchChoice: (term) => term.match(/^[a-zA-Z0-9_-]+$/) ? {id: term, text: term} : null,
+                formatNoMatches: () => __('Scale name not allowed'),
+                maximumSelectionSize: 1,
+                maximumInputLength: 32,
+                data: data
+            });
+
+            $el.off('change.scale').on('change.scale', onChange);
+            $el.trigger('change.select2');
         },
 
         destroy($el) {
@@ -50,6 +58,7 @@ define([
                     $el.select2('destroy');
                 }
             } catch (e) {
+                // Ignore errors
             }
         },
 
@@ -60,6 +69,7 @@ define([
                 width: '100%',
                 tags: true,
                 multiple: false,
+                maximumSelectionSize: 1,
                 tokenSeparators: null,
                 createSearchChoice: (term) => term.match(/^[a-zA-Z0-9_-]+$/) ? {id: term, text: term} : null,
                 formatNoMatches: () => __('Scale name not allowed'),
@@ -68,6 +78,18 @@ define([
             });
 
             $el.off('change.scale').on('change.scale', onChange);
+        },
+
+        refresh($el) {
+            try {
+                if ($el.data('select2')) {
+                    const currentVal = $el.val();
+                    $el.select2('val', currentVal);
+                    $el.trigger('change.select2');
+                }
+            } catch (e) {
+                // Ignore errors
+            }
         }
     };
 
@@ -143,7 +165,13 @@ define([
             },
 
             _setValue(value) {
-                Select2Utils.setValue($input, value);
+                const data = this._buildData();
+                const onChange = () => {
+                    if (!updating) {
+                        setTimeout(() => this._onChange(), 10);
+                    }
+                };
+                Select2Utils.rebuildWithValue($input, value, data, onChange);
             },
 
             _onChange() {
