@@ -54,6 +54,7 @@ define([
     /**
      * Render the lists of the test outcomes into the outcome editor panel
      * @param {Object} testModel
+     * @param $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
         const externalScoredOptions = {
