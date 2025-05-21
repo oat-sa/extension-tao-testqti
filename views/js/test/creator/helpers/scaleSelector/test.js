@@ -34,7 +34,7 @@ define([
         { title: 'updateFormState' },
         { title: 'updateScale' }
     ]).test('helpers/scaleSelector API ', function(data, assert) {
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         var scaleSelector = scaleSelectorFactory($container);
 
         assert.equal(typeof scaleSelector[data.title], 'function', 'The scaleSelector instance exposes a "' + data.title + '" function');
@@ -56,7 +56,7 @@ define([
         var ready = assert.async();
         assert.expect(2);
 
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         $('#qunit-fixture').append($container);
 
         var testPresets = [
@@ -87,7 +87,7 @@ define([
         var ready = assert.async();
         assert.expect(3);
 
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         $('#qunit-fixture').append($container);
 
         var testPresets = [
@@ -101,23 +101,49 @@ define([
 
         var select2ValCalled = false;
         var originalSelect2 = $.fn.select2;
-        $.fn.select2 = function(options) {
+        var originalVal = $.fn.val;
+        var originalTrigger = $.fn.trigger;
+        var originalFind = $.fn.find;
+        var originalAppend = $.fn.append;
+
+        $.fn.select2 = function() {
             assert.ok(true, 'select2 was initialized');
-            this.select2 = function(method, value) {
-                if (method === 'val') {
-                    assert.equal(value, currentScale.uri, 'select2 val was set to the current scale URI');
-                    select2ValCalled = true;
-                }
-                return this;
-            };
             return this;
         };
 
-        scaleSelector.createForm(currentScale);
+        $.fn.val = function(value) {
+            if (arguments.length > 0) {
+                assert.equal(value, currentScale.uri, 'select2 val was set to the current scale URI');
+                select2ValCalled = true;
+                return this;
+            }
+            return originalVal.apply(this, arguments);
+        };
+
+        $.fn.trigger = function(event) {
+            return originalTrigger.apply(this, arguments);
+        };
+
+        $.fn.find = function(selector) {
+            if (selector.includes('option')) {
+                return $();
+            }
+            return originalFind.apply(this, arguments);
+        };
+
+        $.fn.append = function() {
+            return this;
+        };
+
+        scaleSelector.createForm(currentScale.uri);
 
         setTimeout(function() {
             assert.ok(select2ValCalled, 'select2 val was called');
             $.fn.select2 = originalSelect2;
+            $.fn.val = originalVal;
+            $.fn.trigger = originalTrigger;
+            $.fn.find = originalFind;
+            $.fn.append = originalAppend;
             ready();
         }, 10);
     });
@@ -126,7 +152,7 @@ define([
         var ready = assert.async();
         assert.expect(3);
 
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         $('#qunit-fixture').append($container);
 
         var testPresets = [
@@ -138,26 +164,55 @@ define([
         var scaleSelector = scaleSelectorFactory($container);
         var newScale = { uri: "https://test.com/1", label: "Test Scale 1" };
 
+        var valCallCount = 0;
         var originalSelect2 = $.fn.select2;
+        var originalVal = $.fn.val;
+        var originalTrigger = $.fn.trigger;
+        var originalFind = $.fn.find;
+        var originalAppend = $.fn.append;
+
         $.fn.select2 = function() {
-            this.select2 = function(method, value) {
-                if (method === 'val') {
-                    // Make sure the assertion matches the newScale.uri value
+            return this;
+        };
+
+        $.fn.val = function(value) {
+            if (arguments.length > 0) {
+                valCallCount++;
+                if (valCallCount <= 2) {
                     assert.equal(value, newScale.uri, 'select2 val was set to the new scale URI');
                 }
                 return this;
-            };
+            }
+            return originalVal.apply(this, arguments);
+        };
+
+        $.fn.trigger = function() {
+            return this;
+        };
+
+        $.fn.find = function(selector) {
+            if (selector.includes('option')) {
+                return $();
+            }
+            return originalFind.apply(this, arguments);
+        };
+
+        $.fn.append = function() {
             return this;
         };
 
         scaleSelector.createForm();
 
-        scaleSelector.updateFormState(newScale);
-
+        scaleSelector.updateFormState(newScale.uri);
         scaleSelector.updateFormState("https://test.com/1");
+
         assert.ok(true, 'updateFormState with string doesn\'t cause errors');
 
         $.fn.select2 = originalSelect2;
+        $.fn.val = originalVal;
+        $.fn.trigger = originalTrigger;
+        $.fn.find = originalFind;
+        $.fn.append = originalAppend;
         ready();
     });
 
@@ -165,7 +220,7 @@ define([
         var ready = assert.async();
         assert.expect(2);
 
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         $('#qunit-fixture').append($container);
 
         var testPresets = [
@@ -178,19 +233,19 @@ define([
 
         var originalTrigger = scaleSelector.trigger;
         scaleSelector.trigger = function(eventName, data) {
-            if (eventName === 'scale-change') {
-                if (data && data.uri === "https://test.com/1") {
-                    assert.deepEqual(data, testPresets[0], 'scale-change event was triggered with the correct scale');
+            if (eventName === 'interpretation-change') {
+                if (data === "https://test.com/1") {
+                    assert.equal(data, testPresets[0].uri, 'interpretation-change event was triggered with the correct scale');
 
-                    $container.find('[name=scale-custom]').val = function() {
+                    $container.find('[name="interpretation"]').val = function() {
                         return "https://nonexistent.com";
                     };
 
                     scaleSelector.trigger = function(eventName, data) {
-                        if (eventName === 'scale-change') {
-                            assert.deepEqual(
+                        if (eventName === 'interpretation-change') {
+                            assert.equal(
                                 data,
-                                { uri: "https://nonexistent.com", label: "https://nonexistent.com" },
+                                "https://nonexistent.com",
                                 'For nonexistent URI, creates a custom scale with URI as label'
                             );
 
@@ -206,7 +261,7 @@ define([
             return originalTrigger.apply(this, arguments);
         };
 
-        $container.find('[name=scale-custom]').val = function() {
+        $container.find('[name="interpretation"]').val = function() {
             return "https://test.com/1";
         };
 
@@ -219,19 +274,19 @@ define([
         var ready = assert.async();
         assert.expect(1);
 
-        var $container = $('<div><input name="scale-custom" /></div>');
+        var $container = $('<div><input name="interpretation" /></div>');
         $('#qunit-fixture').append($container);
 
         var scaleSelector = scaleSelectorFactory($container);
 
         scaleSelector.createForm();
 
-        $container.find('[name=scale-custom]').val = function() {
+        $container.find('[name="interpretation"]').val = function() {
             return "";
         };
 
-        scaleSelector.on('scale-change', function(scale) {
-            assert.strictEqual(scale, null, 'scale-change event was triggered with null');
+        scaleSelector.on('interpretation-change', function(scale) {
+            assert.strictEqual(scale, null, 'interpretation-change event was triggered with null');
             ready();
         });
 
