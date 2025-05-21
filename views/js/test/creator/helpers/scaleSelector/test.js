@@ -137,15 +137,15 @@ define([
 
         scaleSelector.createForm(currentScale.uri);
 
-        setTimeout(function() {
-            assert.ok(select2ValCalled, 'select2 val was called');
-            $.fn.select2 = originalSelect2;
-            $.fn.val = originalVal;
-            $.fn.trigger = originalTrigger;
-            $.fn.find = originalFind;
-            $.fn.append = originalAppend;
-            ready();
-        }, 10);
+        assert.ok(select2ValCalled, 'select2 val was called');
+
+        $.fn.select2 = originalSelect2;
+        $.fn.val = originalVal;
+        $.fn.trigger = originalTrigger;
+        $.fn.find = originalFind;
+        $.fn.append = originalAppend;
+
+        ready();
     });
 
     QUnit.test('updateFormState() - updates the form state', function(assert) {
@@ -213,10 +213,11 @@ define([
         $.fn.trigger = originalTrigger;
         $.fn.find = originalFind;
         $.fn.append = originalAppend;
+
         ready();
     });
 
-    QUnit.test('updateScale() - triggers scale-change event with current selection', function(assert) {
+    QUnit.test('updateScale() - triggers interpretation-change event with current selection', function(assert) {
         var ready = assert.async();
         assert.expect(2);
 
@@ -231,46 +232,45 @@ define([
 
         var scaleSelector = scaleSelectorFactory($container);
 
+        var eventCount = 0;
         var originalTrigger = scaleSelector.trigger;
+        var originalVal = $.fn.val;
+        var currentReturnValue = "https://test.com/1";
+
+        $.fn.val = function(value) {
+            if (arguments.length > 0) {
+                return this;
+            } else {
+                return currentReturnValue;
+            }
+        };
+
         scaleSelector.trigger = function(eventName, data) {
             if (eventName === 'interpretation-change') {
-                if (data === "https://test.com/1") {
-                    assert.equal(data, testPresets[0].uri, 'interpretation-change event was triggered with the correct scale');
+                eventCount++;
+                if (eventCount === 1) {
+                    assert.equal(data, "https://test.com/1", 'interpretation-change event was triggered with the correct URI');
 
-                    $container.find('[name="interpretation"]').val = function() {
-                        return "https://nonexistent.com";
-                    };
-
-                    scaleSelector.trigger = function(eventName, data) {
-                        if (eventName === 'interpretation-change') {
-                            assert.equal(
-                                data,
-                                "https://nonexistent.com",
-                                'For nonexistent URI, creates a custom scale with URI as label'
-                            );
-
-                            scaleSelector.trigger = originalTrigger;
-                            ready();
-                        }
-                    };
+                    currentReturnValue = "https://nonexistent.com";
 
                     scaleSelector.updateScale();
+                } else if (eventCount === 2) {
+                    assert.equal(data, "https://nonexistent.com", 'For nonexistent URI, creates a custom scale with URI as label');
+
+                    scaleSelector.trigger = originalTrigger;
+                    $.fn.val = originalVal;
+                    ready();
                 }
             }
 
             return originalTrigger.apply(this, arguments);
         };
 
-        $container.find('[name="interpretation"]').val = function() {
-            return "https://test.com/1";
-        };
-
         scaleSelector.createForm();
-
         scaleSelector.updateScale();
     });
 
-    QUnit.test('updateScale() - triggers scale-change with null when no selection', function(assert) {
+    QUnit.test('updateScale() - triggers interpretation-change with null when no selection', function(assert) {
         var ready = assert.async();
         assert.expect(1);
 
@@ -278,15 +278,22 @@ define([
         $('#qunit-fixture').append($container);
 
         var scaleSelector = scaleSelectorFactory($container);
+        var originalVal = $.fn.val;
+
+        $.fn.val = function(value) {
+            if (arguments.length > 0) {
+                return this;
+            } else {
+                return "";
+            }
+        };
 
         scaleSelector.createForm();
 
-        $container.find('[name="interpretation"]').val = function() {
-            return "";
-        };
-
         scaleSelector.on('interpretation-change', function(scale) {
             assert.strictEqual(scale, null, 'interpretation-change event was triggered with null');
+
+            $.fn.val = originalVal;
             ready();
         });
 

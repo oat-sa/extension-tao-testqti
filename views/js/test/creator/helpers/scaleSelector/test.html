@@ -11,8 +11,8 @@
     <script type="text/javascript" src="js/lib/blanket/blanket.min.js" data-cover-flag="branchTracking" data-cover-only="creator/helpers/scaleSelector.js"></script>
 
     <script type="text/javascript">
-        // Don't start the test now
         QUnit.config.autostart = false;
+        QUnit.config.testTimeout = 10000;
 
         // Load the config
         require(['/tao/ClientConfig/config'], function() {
