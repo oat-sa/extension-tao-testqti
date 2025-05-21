@@ -19,8 +19,42 @@ define([
     const _ns = '.outcome-container';
 
     /**
+     * Find the first non-empty interpretation value from all outcomes
+     * @param {Object} testModel - The test model
+     * @returns {String} - First found interpretation value or empty string
+     */
+    function getGlobalInterpretationValue(testModel) {
+        const outcomes = outcomeHelper.getNonReservedOutcomeDeclarations(testModel);
+
+        for (const outcome of outcomes) {
+            if (outcome.interpretation) {
+                if (typeof outcome.interpretation === 'object' && outcome.interpretation.uri) {
+                    return outcome.interpretation.uri;
+                } else if (typeof outcome.interpretation === 'string') {
+                    return outcome.interpretation;
+                }
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Update all outcomes in the model with the same interpretation value
+     * @param {Object} testModel - The test model
+     * @param {String} interpretationValue - The new interpretation value
+     */
+    function updateAllOutcomesInterpretation(testModel, interpretationValue) {
+        const outcomes = outcomeHelper.getNonReservedOutcomeDeclarations(testModel);
+        outcomes.forEach(outcome => {
+            outcome.interpretation = interpretationValue || '';
+        });
+    }
+
+    /**
      * Render the lists of the test outcomes into the outcome editor panel
      * @param {Object} testModel
+     * @param $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
         const externalScoredOptions = {
@@ -28,6 +62,12 @@ define([
             human: 'human',
             externalMachine: 'externalMachine'
         };
+
+        const globalInterpretationValue = getGlobalInterpretationValue(testModel);
+
+        if (globalInterpretationValue) {
+            scaleSelectorFactory.setGlobalScale(globalInterpretationValue);
+        }
 
         const outcomesData = _.map(outcomeHelper.getNonReservedOutcomeDeclarations(testModel), function (outcome) {
             const externalScored = {
@@ -39,14 +79,9 @@ define([
                 }
             };
 
-            let interpretationValue = '';
-            if (outcome.interpretation) {
-                if (typeof outcome.interpretation === 'object' && outcome.interpretation.uri) {
-                    interpretationValue = outcome.interpretation.uri;
-                } else if (typeof outcome.interpretation === 'string') {
-                    interpretationValue = outcome.interpretation;
-                }
-            }
+            const interpretationValue = globalInterpretationValue;
+
+            outcome.interpretation = interpretationValue;
 
             return {
                 serial: outcome.serial,
@@ -57,6 +92,7 @@ define([
                 externalScoredDisabled: 1,
                 normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
                 normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
+                scale: interpretationValue,
                 titleDelete: __('Delete'),
                 titleEdit: __('Edit')
             };
@@ -79,31 +115,30 @@ define([
                 const $interpretationContainer = $outcomeContainer.find('.interpretation');
 
                 const scaleSelector = scaleSelectorFactory($interpretationContainer);
-                scaleSelector.createForm(outcome.interpretation || '');
+                scaleSelector.createForm(globalInterpretationValue);
 
                 scaleSelector.on('interpretation-change', function(interpretationValue) {
-                    outcome.interpretation = interpretationValue || '';
+                    updateAllOutcomesInterpretation(testModel, interpretationValue);
 
-                    const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!interpretationValue);
+                    $editorPanel.find('.outcome-container .minimum-maximum input').prop('disabled', !!interpretationValue);
                 });
 
-                if (outcome.interpretation) {
+                if (globalInterpretationValue) {
                     $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
                 }
             }
         });
 
+        scaleSelectorFactory.on('global-scale-change', function(newScaleValue) {
+            updateAllOutcomesInterpretation(testModel, newScaleValue);
+
+            $editorPanel.find('.outcome-container .minimum-maximum input').prop('disabled', !!newScaleValue);
+        });
+
         $editorPanel
             .on(`click${_ns}`, '.editable [data-role="edit"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
-                const $labelContainer = $outcomeContainer.find('.identifier-label');
-                const $identifierInput = $labelContainer.find('.identifier');
-
-                const identifierValue = $outcomeContainer.find('input.identifier').val();
-                const editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
-                    outcome => outcome.identifier === identifierValue
-                );
+                const $identifierInput = $outcomeContainer.find('.identifier-label .identifier');
 
                 $outcomeContainer.addClass('editing');
                 $outcomeContainer.removeClass('editable');
@@ -111,24 +146,17 @@ define([
                 const $interpretationContainer = $outcomeContainer.find('.interpretation');
 
                 const scaleSelector = scaleSelectorFactory($interpretationContainer);
-
-                let interpretationValue = '';
-                if (editedOutcomeDeclaration.interpretation) {
-                    interpretationValue = editedOutcomeDeclaration.interpretation;
-                }
-                scaleSelector.createForm(interpretationValue);
+                const currentGlobalValue = scaleSelectorFactory.getGlobalScale();
+                scaleSelector.createForm(currentGlobalValue);
 
                 scaleSelector.on('interpretation-change', function(interpretationValue) {
-                    if (editedOutcomeDeclaration) {
-                        editedOutcomeDeclaration.interpretation = interpretationValue || '';
-                    }
+                    updateAllOutcomesInterpretation(testModel, interpretationValue);
 
-                    const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!interpretationValue);
+                    $editorPanel.find('.outcome-container .minimum-maximum input').prop('disabled', !!interpretationValue);
                 });
 
-                if (editedOutcomeDeclaration && editedOutcomeDeclaration.interpretation) {
-                    $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
+                if (currentGlobalValue) {
+                    $editorPanel.find('.outcome-container .minimum-maximum input').prop('disabled', true);
                 }
 
                 $identifierInput.focus();

@@ -1,19 +1,6 @@
 /**
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; under version 2
- * of the License (non-upgradable).
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
+ * Synchronized Scale Selector - Simplified Version
+ * All outcomes share the same scale value automatically
  */
 define([
     'jquery',
@@ -25,129 +12,221 @@ define([
 ], function ($, _, __, eventifier, tooltip) {
     'use strict';
 
-    let allScalesPresets = [];
+    let presets = [];
+    let globalValue = '';
+    let instances = [];
+    let updating = false;
 
-    const scaleMap = new Map();
-
-    function scaleSelectorFactory($container) {
-        const $scaleSelect = $container.find('[name="interpretation"]');
-
-        const scaleSelector = {
-            /**
-             * Read the form state and trigger an event with the result
-             * @fires scaleSelector#interpretation-change
-             */
-            updateScale() {
-                const selectedUri = $scaleSelect.val();
-
-                if (!selectedUri) {
-                    this.trigger('interpretation-change', null);
-                    return;
-                }
-
-                if (scaleMap.has(selectedUri)) {
-                    const selectedScale = scaleMap.get(selectedUri);
-                    this.trigger('interpretation-change', selectedScale.uri);
+    const Select2Utils = {
+        setValue($el, value) {
+            try {
+                if ($el.data('select2')) {
+                    $el.select2('val', value || '');
+                    $el.trigger('change.select2');
                 } else {
-                    this.trigger('interpretation-change', selectedUri);
+                    $el.val(value || '');
                 }
-            },
-
-            /**
-             * Create the scale selection form
-             * @param {String} [currentInterpretation] - current interpretation associated with the outcome
-             */
-            createForm(currentInterpretation) {
-                const selectData = allScalesPresets.map(preset => ({
-                    id: preset.uri,
-                    text: preset.label
-                }));
-
-                if (currentInterpretation && !scaleMap.has(currentInterpretation)) {
-                    selectData.push({
-                        id: currentInterpretation,
-                        text: currentInterpretation
-                    });
-                }
-
-                $scaleSelect
-                    .select2({
-                        width: '100%',
-                        tags: true,
-                        multiple: false,
-                        tokenSeparators: null,
-                        createSearchChoice: (scale) => scale.match(/^[a-zA-Z0-9_-]+$/)
-                            ? { id: scale, text: scale }
-                            : null,
-                        formatNoMatches: () => __('Scale name not allowed'),
-                        maximumSelectionSize: 1,
-                        maximumInputLength: 32,
-                        data: selectData
-                    })
-                    .on('change', () => this.updateScale());
-
-                if (currentInterpretation) {
-                    if (!$scaleSelect.find(`option[value="${currentInterpretation}"]`).length) {
-                        $scaleSelect.append(new Option(currentInterpretation, currentInterpretation, true, true));
-                    }
-
-                    $scaleSelect.val(currentInterpretation).trigger('change');
-                }
-
-                tooltip.lookup($container);
-            },
-
-            /**
-             * Update the form to match the data model
-             * @param {String} interpretation - interpretation associated with an outcome
-             */
-            updateFormState(interpretation) {
-                if (interpretation) {
-                    if (!$scaleSelect.find(`option[value="${interpretation}"]`).length) {
-                        $scaleSelect.append(new Option(interpretation, interpretation, true, true));
-                    }
-
-                    $scaleSelect.val(interpretation).trigger('change');
-                } else {
-                    $scaleSelect.val('').trigger('change');
-                }
-            },
-
-            /**
-             * Clear the current selection
-             */
-            clearSelection() {
-                $scaleSelect.val('').trigger('change');
-                this.updateScale();
+            } catch (e) {
+                $el.val(value || '');
             }
-        };
+        },
 
-        eventifier(scaleSelector);
-        return scaleSelector;
-    }
+        rebuildWithValue($el, value, data, onChange) {
+            this.destroy($el);
+            $el.val(value || '');
 
-    /**
-     * @param {Object[]} presets - expected format:
-     * [
-     *  {
-     *    uri: "https://example.com/1",
-     *    label: "Scale 1"
-     *  },
-     *  ...
-     * ]
-     */
-    scaleSelectorFactory.setPresets = function setPresets(presets) {
-        if (Array.isArray(presets)) {
-            allScalesPresets = Array.from(presets);
-
-            scaleMap.clear();
-            allScalesPresets.forEach(scale => {
-                if (scale && scale.uri) {
-                    scaleMap.set(scale.uri, scale);
-                }
+            $el.select2({
+                width: '100%',
+                tags: true,
+                multiple: false,
+                tokenSeparators: null,
+                createSearchChoice: (term) => term.match(/^[a-zA-Z0-9_-]+$/) ? {id: term, text: term} : null,
+                formatNoMatches: () => __('Scale name not allowed'),
+                maximumSelectionSize: 1,
+                maximumInputLength: 32,
+                data: data
             });
+
+            $el.off('change.scale').on('change.scale', onChange);
+            $el.trigger('change.select2');
+        },
+
+        destroy($el) {
+            try {
+                if ($el.data('select2')) {
+                    $el.off('change.scale');
+                    $el.select2('destroy');
+                }
+            } catch (e) {
+                // Ignore errors
+            }
+        },
+
+        init($el, data, onChange) {
+            this.destroy($el);
+
+            $el.select2({
+                width: '100%',
+                tags: true,
+                multiple: false,
+                maximumSelectionSize: 1,
+                tokenSeparators: null,
+                createSearchChoice: (term) => term.match(/^[a-zA-Z0-9_-]+$/) ? {id: term, text: term} : null,
+                formatNoMatches: () => __('Scale name not allowed'),
+                maximumInputLength: 32,
+                data: data
+            });
+
+            $el.off('change.scale').on('change.scale', onChange);
+        },
+
+        refresh($el) {
+            try {
+                if ($el.data('select2')) {
+                    const currentVal = $el.val();
+                    $el.select2('val', currentVal);
+                    $el.trigger('change.select2');
+                }
+            } catch (e) {
+                // Ignore errors
+            }
         }
     };
 
+    /**
+     * Main scale selector factory
+     */
+    function scaleSelectorFactory($container) {
+        const $input = $container.find('[name="interpretation"]');
+
+        const instance = {
+            createForm(currentValue) {
+                this._register();
+                this._initSelect2();
+                this._setValue(globalValue || currentValue || '');
+                tooltip.lookup($container);
+            },
+
+            updateFormState(value) {
+                if (!updating) {
+                    globalValue = value || '';
+                    this._syncAll();
+                }
+            },
+
+            clearSelection() {
+                this._setValue('');
+                this._syncAll();
+            },
+
+            updateScale() {
+                const value = $input.val() || '';
+                this.trigger('interpretation-change', value || null);
+            },
+
+            destroy() {
+                this._unregister();
+                Select2Utils.destroy($input);
+            },
+
+            _register() {
+                if (instances.indexOf(this) === -1) {
+                    instances.push(this);
+                }
+            },
+
+            _unregister() {
+                const index = instances.indexOf(this);
+                if (index > -1) {
+                    instances.splice(index, 1);
+                }
+            },
+
+            _initSelect2() {
+                const data = this._buildData();
+                const onChange = () => {
+                    if (!updating) {
+                        setTimeout(() => this._onChange(), 10);
+                    }
+                };
+
+                Select2Utils.init($input, data, onChange);
+            },
+
+            _buildData() {
+                const data = presets.map(p => ({id: p.uri, text: p.label}));
+                const currentValue = $input.val();
+
+                if (currentValue && !presets.some(p => p.uri === currentValue)) {
+                    data.push({id: currentValue, text: currentValue});
+                }
+
+                return data;
+            },
+
+            _setValue(value) {
+                const data = this._buildData();
+                const onChange = () => {
+                    if (!updating) {
+                        setTimeout(() => this._onChange(), 10);
+                    }
+                };
+                Select2Utils.rebuildWithValue($input, value, data, onChange);
+            },
+
+            _onChange() {
+                globalValue = $input.val() || '';
+                this.updateScale();
+                this._syncAll();
+            },
+
+            _syncAll() {
+                if (updating) return;
+
+                updating = true;
+
+                instances.forEach(inst => {
+                    if (inst !== this) {
+                        inst._setValue(globalValue);
+                    }
+                });
+
+                updating = false;
+
+                scaleSelectorFactory.trigger('global-scale-change', globalValue);
+            }
+        };
+
+        eventifier(instance);
+        return instance;
+    }
+
+    scaleSelectorFactory.setPresets = function(newPresets) {
+        presets = Array.isArray(newPresets) ? [...newPresets] : [];
+    };
+
+    scaleSelectorFactory.getGlobalScale = function() {
+        return globalValue;
+    };
+
+    scaleSelectorFactory.setGlobalScale = function(value) {
+        if (updating) return;
+
+        globalValue = value || '';
+        updating = true;
+
+        instances.forEach(inst => inst._setValue(globalValue));
+
+        updating = false;
+        this.trigger('global-scale-change', globalValue);
+    };
+
+    scaleSelectorFactory.resetGlobalState = function() {
+        globalValue = '';
+        instances.length = 0;
+        updating = false;
+    };
+
+    eventifier(scaleSelectorFactory);
     return scaleSelectorFactory;
 });
