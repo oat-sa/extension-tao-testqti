@@ -285,7 +285,8 @@ define([
                                     originModel: options.originModel,
                                     labels: options.labels,
                                     routes: options.routes,
-                                    guidedNavigation: options.guidedNavigation
+                                    guidedNavigation: options.guidedNavigation,
+                                    scalePresets: options.scalesPresets
                                 });
 
                                 creatorContext.setTestModel(model);
