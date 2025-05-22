@@ -18,6 +18,9 @@
  * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
+use oat\generis\model\OntologyAwareTrait;
+use oat\taoBackOffice\model\lists\ListService;
+use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
 use oat\generis\model\data\event\ResourceUpdated;
@@ -30,19 +33,19 @@ use function GuzzleHttp\Psr7\stream_for;
  *
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  * @package taoQtiTest
-
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
 class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 {
+    use OntologyAwareTrait;
+
     /**
      * Render the creator base view
      */
     public function index()
     {
-
         $labels = [];
-        $testUri   =  $this->getRequestParameter('uri');
+        $testUri = $this->getRequestParameter('uri');
         $testModel = $this->getServiceManager()->get(TestModelService::SERVICE_ID);
 
         // Add support for translation and side-by-side view
@@ -86,7 +89,17 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
                 )
             );
         }
+
         $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
+
+        if ($this->isScaleEnabled()) {
+            $this->setData(
+                'scalesPresets',
+                $this->getScalePresets()
+            );
+        } else {
+            $this->setData('scalesPresets', json_encode([]));
+        }
 
         $guidedNavigation = false;
         if (is_array($runtimeConfig) && isset($runtimeConfig['guidedNavigation'])) {
@@ -192,8 +205,8 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     /**
      * Returns the test that is being authored
      *
-     * @throws tao_models_classes_MissingRequestParameterException
      * @return core_kernel_classes_Resource
+     * @throws tao_models_classes_MissingRequestParameterException
      */
     protected function getCurrentTest()
     {
@@ -214,5 +227,47 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             ->get(\common_ext_ExtensionsManager::SERVICE_ID)
             ->getExtensionById('taoQtiTest');
         return $extension->getConfig('testRunner');
+    }
+
+    private function getRemoteListService(): ListService
+    {
+        return $this->getServiceManager()->getContainer()->get(ListService::class);
+    }
+
+    private function isScaleEnabled(): bool
+    {
+        return $this->getRemoteScaleListService()->isRemoteListEnabled();
+    }
+
+    private function getRemoteScaleListService(): RemoteScaleListService
+    {
+        return $this->getServiceManager()->getContainer()->get(RemoteScaleListService::class);
+    }
+
+    private function getScalePresets(): string
+    {
+        $listElements = $this->getRemoteListService()->getListElements(
+            $this->getClass(RemoteScaleListService::SCALES_URI)
+        );
+
+        if (!is_iterable($listElements)) {
+            throw new InvalidArgumentException('List elements should be iterable');
+        }
+
+        $listElements = iterator_to_array(
+            $listElements
+        );
+
+        if (empty($listElements)) {
+            return json_encode([]);
+        }
+
+        $json = json_encode($listElements);
+        if ($json === false) {
+            $this->logWarning('List of elements could not be encoded to JSON');
+            return json_encode([]);
+        }
+
+        return $json;
     }
 }
