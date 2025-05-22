@@ -41,6 +41,8 @@ define([
         'SCORE_RATIO_WEIGHTED',
         'PASS_ALL',
         'PASS_ALL_RENDERING',
+        'GRADE',
+        'GRADE_MAX'
     ];
 
     var outcomeHelper = {

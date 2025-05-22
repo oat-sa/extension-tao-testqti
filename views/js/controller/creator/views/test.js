@@ -131,19 +131,22 @@ define([
             const $weightIdentifierLine = $('.test-weight-identifier', $view);
             const $descriptions = $('.test-outcome-processing-description', $view);
             const $generate = $('[data-action="generate-outcomes"]', $view);
+            const $scoringError = $('.test-outcome-processing-error', $view);
             const $addOutcomeDeclaration = $('[data-action="add-outcome-declaration"]', $view);
             let scoringState = JSON.stringify(testModel.scoring);
             const weightVisible = features.isVisible('taoQtiTest/creator/test/property/scoring/weight');
 
             function changeScoring(scoring) {
-                const noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
+                const noOptions = !!scoring && ['none', 'custom', 'grade'].indexOf(scoring.outcomeProcessing) === -1;
                 const newScoringState = JSON.stringify(scoring);
 
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
                 hider.toggle($categoryScoreLine, noOptions);
                 hider.toggle($weightIdentifierLine, noOptions && weightVisible);
                 hider.hide($descriptions);
+                hider.hide($scoringError);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
+                testModel.scalePresets = config.scalePresets;
 
                 if (scoringState !== newScoringState) {
                     /**
