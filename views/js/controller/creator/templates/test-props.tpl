@@ -217,6 +217,12 @@
                     <span class="icon-info"></span>
                     {{description}}
                 </div>
+                {{#if error}}
+                <div class="feedback-error test-outcome-processing-error hidden" data-key="{{key}}">
+                    <span class="icon-error"></span>
+                    {{error}}
+                </div>
+                {{/if}}
                 {{/each}}
             </div>
         </div>
