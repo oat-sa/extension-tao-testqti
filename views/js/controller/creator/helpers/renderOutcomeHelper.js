@@ -1,3 +1,20 @@
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
+ */
 define([
     'jquery',
     'lodash',
@@ -18,9 +35,53 @@ define([
     'use strict';
     const _ns = '.outcome-container';
 
+    const scaleSelectors = new Map();
+
+    /**
+     * Generate unique outcome ID for scale synchronization
+     * @param {Object} outcome - Outcome declaration
+     * @returns {string} Unique ID
+     */
+    function generateOutcomeId(outcome) {
+        return `outcome_${outcome.serial || outcome.identifier || Math.random().toString(36).substr(2, 9)}`;
+    }
+
+    /**
+     * Create and setup scale selector for an outcome
+     * @param {jQuery} $outcomeContainer - Container element
+     * @param {Object} outcome - Outcome declaration
+     * @param {Object} testModel - Test model
+     */
+    function setupScaleSelector($outcomeContainer, outcome, testModel) {
+        const $interpretationContainer = $outcomeContainer.find('.interpretation');
+        const outcomeId = generateOutcomeId(outcome);
+
+        const existingSelector = scaleSelectors.get(outcomeId);
+        if (existingSelector) {
+            existingSelector.destroy();
+        }
+
+        const scaleSelector = scaleSelectorFactory($interpretationContainer, outcomeId);
+        scaleSelectors.set(outcomeId, scaleSelector);
+
+        scaleSelector.createForm(outcome.interpretation || '');
+
+        scaleSelector.on('interpretation-change', function(interpretationValue) {
+            outcome.interpretation = interpretationValue || '';
+
+            const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
+            $minMaxInputs.prop('disabled', !!interpretationValue);
+        });
+
+        if (outcome.interpretation) {
+            $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
+        }
+    }
+
     /**
      * Render the lists of the test outcomes into the outcome editor panel
      * @param {Object} testModel
+     * @param {jQuery} $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
         const externalScoredOptions = {
@@ -76,29 +137,16 @@ define([
             const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
 
             if (outcome) {
-                const $interpretationContainer = $outcomeContainer.find('.interpretation');
-
-                const scaleSelector = scaleSelectorFactory($interpretationContainer);
-                scaleSelector.createForm(outcome.interpretation || '');
-
-                scaleSelector.on('interpretation-change', function(interpretationValue) {
-                    outcome.interpretation = interpretationValue || '';
-
-                    const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!interpretationValue);
-                });
-
-                if (outcome.interpretation) {
-                    $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
-                }
+                setupScaleSelector($outcomeContainer, outcome, testModel);
             }
         });
+
+        $editorPanel.off(_ns);
 
         $editorPanel
             .on(`click${_ns}`, '.editable [data-role="edit"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
-                const $labelContainer = $outcomeContainer.find('.identifier-label');
-                const $identifierInput = $labelContainer.find('.identifier');
+                const $identifierInput = $outcomeContainer.find('.identifier');
 
                 const identifierValue = $outcomeContainer.find('input.identifier').val();
                 const editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
@@ -108,27 +156,8 @@ define([
                 $outcomeContainer.addClass('editing');
                 $outcomeContainer.removeClass('editable');
 
-                const $interpretationContainer = $outcomeContainer.find('.interpretation');
-
-                const scaleSelector = scaleSelectorFactory($interpretationContainer);
-
-                let interpretationValue = '';
-                if (editedOutcomeDeclaration.interpretation) {
-                    interpretationValue = editedOutcomeDeclaration.interpretation;
-                }
-                scaleSelector.createForm(interpretationValue);
-
-                scaleSelector.on('interpretation-change', function(interpretationValue) {
-                    if (editedOutcomeDeclaration) {
-                        editedOutcomeDeclaration.interpretation = interpretationValue || '';
-                    }
-
-                    const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-                    $minMaxInputs.prop('disabled', !!interpretationValue);
-                });
-
-                if (editedOutcomeDeclaration && editedOutcomeDeclaration.interpretation) {
-                    $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
+                if (editedOutcomeDeclaration) {
+                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel);
                 }
 
                 $identifierInput.focus();
@@ -140,9 +169,19 @@ define([
             })
             .on(`click${_ns}`, '.deletable [data-role="delete"]', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
-                $outcomeContainer.addClass('hidden');
-
                 const identifierValue = $outcomeContainer.find('input.identifier').val();
+                const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
+
+                if (outcome) {
+                    const outcomeId = generateOutcomeId(outcome);
+                    const selector = scaleSelectors.get(outcomeId);
+                    if (selector) {
+                        selector.destroy();
+                        scaleSelectors.delete(outcomeId);
+                    }
+                }
+
+                $outcomeContainer.addClass('hidden');
                 testModel.outcomeDeclarations = testModel.outcomeDeclarations.filter(
                     outcome => outcome.identifier !== identifierValue
                 );
@@ -164,7 +203,18 @@ define([
             });
     }
 
+    /**
+     * Cleanup all scale selectors
+     */
+    function cleanup() {
+        scaleSelectors.forEach(selector => {
+            selector.destroy();
+        });
+        scaleSelectors.clear();
+    }
+
     return {
-        renderOutcomeDeclarationList
+        renderOutcomeDeclarationList,
+        cleanup
     };
 });
