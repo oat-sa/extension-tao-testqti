@@ -21,36 +21,82 @@ define([
     'i18n',
     'core/eventifier',
     'ui/tooltip',
-    'select2'
-], function ($, _, __, eventifier, tooltip) {
+    'select2',
+    'taoQtiTest/controller/creator/helpers/scaleSynchronizationManager'
+], function ($, _, __, eventifier, tooltip, select2, syncManager) {
     'use strict';
 
     let allScalesPresets = [];
-
     const scaleMap = new Map();
 
-    function scaleSelectorFactory($container) {
+    function scaleSelectorFactory($container, outcomeId) {
         const $scaleSelect = $container.find('[name="interpretation"]');
 
         const scaleSelector = {
+            _isInternalUpdate: false,
+
+            /**
+             * Get current scale value
+             * @returns {string|null}
+             */
+            getCurrentValue() {
+                try {
+                    return $scaleSelect.val() || null;
+                } catch (error) {
+                    console.warn('Error getting current value:', error);
+                    return null;
+                }
+            },
+
+            /**
+             * Update available scales based on synchronization state
+             * @param {string|null} lockedPredefinedScale - Currently locked predefined scale
+             */
+            updateAvailableScales(lockedPredefinedScale) {
+                this._isInternalUpdate = true;
+
+                try {
+                    const currentValue = this.getCurrentValue();
+                    const selectData = this._buildSelectData(lockedPredefinedScale, currentValue);
+
+                    setTimeout(() => {
+                        try {
+                            this._safeDestroySelect2();
+
+                            this._initializeSelect2(selectData);
+
+                            if (currentValue) {
+                                this._setCurrentValue(currentValue, true);
+                            }
+                        } catch (error) {
+                            console.warn('Error updating scale selector:', error);
+                        } finally {
+                            this._isInternalUpdate = false;
+                        }
+                    }, 0);
+                } catch (error) {
+                    console.warn('Error in updateAvailableScales:', error);
+                    this._isInternalUpdate = false;
+                }
+            },
+
             /**
              * Read the form state and trigger an event with the result
              * @fires scaleSelector#interpretation-change
              */
             updateScale() {
-                const selectedUri = $scaleSelect.val();
-
-                if (!selectedUri) {
-                    this.trigger('interpretation-change', null);
+                if (this._isInternalUpdate) {
                     return;
                 }
 
-                if (scaleMap.has(selectedUri)) {
-                    const selectedScale = scaleMap.get(selectedUri);
-                    this.trigger('interpretation-change', selectedScale.uri);
-                } else {
-                    this.trigger('interpretation-change', selectedUri);
+                const selectedUri = $scaleSelect.val();
+                const normalizedValue = this._normalizeScaleValue(selectedUri);
+
+                if (outcomeId) {
+                    syncManager.onScaleChange(outcomeId, normalizedValue);
                 }
+
+                this.trigger('interpretation-change', normalizedValue);
             },
 
             /**
@@ -58,40 +104,17 @@ define([
              * @param {String} [currentInterpretation] - current interpretation associated with the outcome
              */
             createForm(currentInterpretation) {
-                const selectData = allScalesPresets.map(preset => ({
-                    id: preset.uri,
-                    text: preset.label
-                }));
+                const lockedScale = syncManager.getActivePredefinedScale();
+                const selectData = this._buildSelectData(lockedScale, currentInterpretation);
 
-                if (currentInterpretation && !scaleMap.has(currentInterpretation)) {
-                    selectData.push({
-                        id: currentInterpretation,
-                        text: currentInterpretation
-                    });
-                }
-
-                $scaleSelect
-                    .select2({
-                        width: '100%',
-                        tags: true,
-                        multiple: false,
-                        tokenSeparators: null,
-                        createSearchChoice: (scale) => scale.match(/^[a-zA-Z0-9_-]+$/)
-                            ? { id: scale, text: scale }
-                            : null,
-                        formatNoMatches: () => __('Scale name not allowed'),
-                        maximumSelectionSize: 1,
-                        maximumInputLength: 32,
-                        data: selectData
-                    })
-                    .on('change', () => this.updateScale());
+                this._initializeSelect2(selectData);
 
                 if (currentInterpretation) {
-                    if (!$scaleSelect.find(`option[value="${currentInterpretation}"]`).length) {
-                        $scaleSelect.append(new Option(currentInterpretation, currentInterpretation, true, true));
-                    }
+                    this._setCurrentValue(currentInterpretation, false);
+                }
 
-                    $scaleSelect.val(currentInterpretation).trigger('change');
+                if (outcomeId) {
+                    syncManager.registerSelector(outcomeId, this);
                 }
 
                 tooltip.lookup($container);
@@ -102,14 +125,17 @@ define([
              * @param {String} interpretation - interpretation associated with an outcome
              */
             updateFormState(interpretation) {
-                if (interpretation) {
-                    if (!$scaleSelect.find(`option[value="${interpretation}"]`).length) {
-                        $scaleSelect.append(new Option(interpretation, interpretation, true, true));
+                this._isInternalUpdate = true;
+                try {
+                    if (interpretation) {
+                        this._setCurrentValue(interpretation, true);
+                    } else {
+                        $scaleSelect.val('');
                     }
-
-                    $scaleSelect.val(interpretation).trigger('change');
-                } else {
-                    $scaleSelect.val('').trigger('change');
+                } catch (error) {
+                    console.warn('Error updating form state:', error);
+                } finally {
+                    this._isInternalUpdate = false;
                 }
             },
 
@@ -117,8 +143,154 @@ define([
              * Clear the current selection
              */
             clearSelection() {
-                $scaleSelect.val('').trigger('change');
+                this._isInternalUpdate = true;
+                try {
+                    $scaleSelect.val('');
+                } catch (error) {
+                    console.warn('Error clearing selection:', error);
+                } finally {
+                    this._isInternalUpdate = false;
+                }
                 this.updateScale();
+            },
+
+            /**
+             * Destroy the selector and cleanup
+             */
+            destroy() {
+                try {
+                    if (outcomeId) {
+                        syncManager.unregisterSelector(outcomeId);
+                    }
+
+                    this._safeDestroySelect2();
+                } catch (error) {
+                    console.warn('Error during selector destruction:', error);
+                }
+            },
+
+            /**
+             * Build select data based on current lock state
+             * @param {string|null} lockedScale - Currently locked predefined scale
+             * @param {string} currentValue - Current selected value
+             * @returns {Array} Select2 data array
+             * @private
+             */
+            _buildSelectData(lockedScale, currentValue) {
+                let availablePresets;
+
+                if (lockedScale) {
+                    availablePresets = allScalesPresets.filter(preset => preset.uri === lockedScale);
+                } else {
+                    availablePresets = allScalesPresets;
+                }
+
+                const selectData = availablePresets.map(preset => ({
+                    id: preset.uri,
+                    text: preset.label
+                }));
+
+                if (currentValue && !scaleMap.has(currentValue)) {
+                    selectData.push({
+                        id: currentValue,
+                        text: currentValue
+                    });
+                }
+
+                return selectData;
+            },
+
+            /**
+             * Initialize Select2 with given data
+             * @param {Array} selectData - Data for Select2
+             * @private
+             */
+            _initializeSelect2(selectData) {
+                try {
+                    $scaleSelect
+                        .select2({
+                            width: '100%',
+                            tags: true,
+                            multiple: false,
+                            tokenSeparators: null,
+                            createSearchChoice: (scale) => scale.match(/^[a-zA-Z0-9_-]+$/)
+                                ? { id: scale, text: scale }
+                                : null,
+                            formatNoMatches: () => __('Scale name not allowed'),
+                            maximumSelectionSize: 1,
+                            maximumInputLength: 32,
+                            data: selectData
+                        })
+                        .on('change.scaleSync', () => {
+                            if (!this._isInternalUpdate) {
+                                setTimeout(() => {
+                                    this.updateScale();
+                                }, 0);
+                            }
+                        });
+                } catch (error) {
+                    console.warn('Error initializing Select2:', error);
+                }
+            },
+
+            /**
+             * Set current value ensuring option exists
+             * @param {string} value - Value to set
+             * @param {boolean} skipTrigger - Skip triggering change event
+             * @private
+             */
+            _setCurrentValue(value, skipTrigger = false) {
+                try {
+                    if (!$scaleSelect.find(`option[value="${value}"]`).length) {
+                        $scaleSelect.append(new Option(value, value, true, true));
+                    }
+
+                    if (skipTrigger) {
+                        $scaleSelect.val(value);
+                    } else {
+                        $scaleSelect.val(value).trigger('change');
+                    }
+                } catch (error) {
+                    console.warn('Error setting current value:', error);
+                }
+            },
+
+            /**
+             * Safe Select2 destruction with error handling
+             * @private
+             */
+            _safeDestroySelect2() {
+                try {
+                    $scaleSelect.off('change.scaleSync');
+
+                    if ($scaleSelect.length && $scaleSelect.hasClass('select2-hidden-accessible')) {
+                        $scaleSelect.select2('destroy');
+                    }
+                } catch (error) {
+                    console.warn('Error destroying Select2:', error);
+                    try {
+                        $scaleSelect.removeClass('select2-hidden-accessible');
+                        $scaleSelect.next('.select2-container').remove();
+                    } catch (cleanupError) {
+                        console.warn('Error in Select2 cleanup:', cleanupError);
+                    }
+                }
+            },
+
+            /**
+             * Normalize scale value for consistency
+             * @param {string} value - Raw scale value
+             * @returns {string|null} Normalized value
+             * @private
+             */
+            _normalizeScaleValue(value) {
+                if (!value) return null;
+
+                if (scaleMap.has(value)) {
+                    return scaleMap.get(value).uri;
+                }
+
+                return value;
             }
         };
 
@@ -127,14 +299,8 @@ define([
     }
 
     /**
-     * @param {Object[]} presets - expected format:
-     * [
-     *  {
-     *    uri: "https://example.com/1",
-     *    label: "Scale 1"
-     *  },
-     *  ...
-     * ]
+     * Set predefined scales presets
+     * @param {Object[]} presets - Array of {uri, label} objects
      */
     scaleSelectorFactory.setPresets = function setPresets(presets) {
         if (Array.isArray(presets)) {
@@ -146,6 +312,8 @@ define([
                     scaleMap.set(scale.uri, scale);
                 }
             });
+
+            syncManager.init(presets);
         }
     };
 
