@@ -23,6 +23,8 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\reporting\Report;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\resources\ResourceAccessDeniedException;
@@ -238,7 +240,18 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $doc = $this->getDoc($test);
 
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+            $currentIdentifier = $converter->toArray()['identifier'];
+
             $converter->fromJson($json);
+
+            if (
+                $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
+                && $currentIdentifier !== $converter->toArray()['identifier']
+            ) {
+                throw new taoQtiTest_models_classes_QtiTestServiceException(
+                    'QTI identifier is unique and cannot be modified'
+                );
+            }
 
             $saved = $this->saveDoc($test, $doc);
 
@@ -1678,5 +1691,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $file = $folder . $assessmentSectionRef->getHref();
             $this->getSectionConverter()->convertToQti2($file);
         }
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
     }
 }
