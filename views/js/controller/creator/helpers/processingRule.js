@@ -171,7 +171,7 @@ define([
             var processingRule = processingRuleHelper.create('min', null, forceArray(expressions));
 
             processingRule.minOperands = 1;
-            processingRule.maxOperands = -1; // unlimited max operands
+            processingRule.maxOperands = 0;
             processingRule.acceptedCardinalities = [
                 cardinalityHelper.SINGLE, cardinalityHelper.MULTIPLE, cardinalityHelper.ORDERED
             ];
