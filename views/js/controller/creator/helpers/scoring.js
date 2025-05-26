@@ -75,9 +75,15 @@ define([
         },
         grade: {
             key: 'grade',
-            label: __('Minimum Grade'),
-            description: __('Description placeholder'),
-            error: __('Error placeholder')
+            label: __('Lowest Grade Achieved'),
+            description: __(
+                '"Lowest Grade Achieved" sets the final test grade as the lowest score among all test variables ' +
+                'using the same scale. It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE ' +
+                'with the top value of that scale. ' +
+                'Note: This mode does not use categories or weights.'
+            ),
+            error: __('A grading scale is required for this mode. ' +
+                'Please select a scale for the GRADE outcome in Outcome Declarations to enable this calculation.')
         }
     };
 
