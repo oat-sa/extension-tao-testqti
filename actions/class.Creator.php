@@ -20,6 +20,7 @@
 
 use oat\generis\model\OntologyAwareTrait;
 use oat\taoBackOffice\model\lists\ListService;
+use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
@@ -246,9 +247,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 
     private function getScalePresets(): string
     {
-        $listElements = $this->getRemoteListService()->getListElements(
-            $this->getClass(RemoteScaleListService::SCALES_URI)
-        );
+        $listElements = $this->getScaleProcessor()->getScaleRemoteList();
 
         if (!is_iterable($listElements)) {
             throw new InvalidArgumentException('List elements should be iterable');
@@ -269,5 +268,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         }
 
         return $json;
+    }
+
+    private function getScaleProcessor(): ScalePreprocessor
+    {
+        return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
     }
 }

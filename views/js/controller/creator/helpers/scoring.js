@@ -72,6 +72,18 @@ define([
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category.')
+        },
+        grade: {
+            key: 'grade',
+            label: __('Lowest Grade Achieved'),
+            description: __(
+                '"Lowest Grade Achieved" sets the final test grade as the lowest score among all test variables ' +
+                'using the same scale. It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE ' +
+                'with the top value of that scale. ' +
+                'Note: This mode does not use categories or weights.'
+            ),
+            error: __('A grading scale is required for this mode. ' +
+                'Please select a scale for the GRADE outcome in Outcome Declarations to enable this calculation.')
         }
     };
 
@@ -135,6 +147,21 @@ define([
                     feedbackFailed: 'not_passed',
                     categoryIdentifier: 'PASS_CATEGORY_%s',
                     categoryFeedback: 'PASS_CATEGORY_%s_RENDERING'
+                }
+            ],
+            clean: true
+        },
+        grade: {
+            key: 'grade',
+            signature: /^GRADE(_MAX)?$/,
+            outcomes: [
+                {
+                    writer: 'grade',
+                    identifier: 'GRADE',
+                },
+                {
+                    writer: 'grade_max',
+                    identifier: 'GRADE_MAX',
                 }
             ],
             clean: true
@@ -304,6 +331,15 @@ define([
             }
 
             return outcomes;
+        },
+
+        grade: function writerGrade(descriptor, scoring, outcomes) {
+            addGradeMinOutcomeProcessing(outcomes, descriptor.identifier, scoring.scalePresets)
+            addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
+        },
+
+        grade_max: function writerGradeMax(descriptor, scoring, outcomes, categories) {
+            addGradeMaxOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
         }
     };
 
@@ -375,6 +411,7 @@ define([
 
             model = modelOverseer.getModel();
             scoring = model.scoring;
+            scoring.scalePresets = model.scalePresets;
             outcomes = getOutcomes(model);
 
             // write the score processing mode by generating the outcomes variables, but only if the mode has been set
@@ -562,6 +599,95 @@ define([
 
         outcomeHelper.addOutcome(model, outcome);
         outcomeHelper.addOutcomeProcessing(model, processingRule);
+    }
+
+    function addGradeOutcome(outcomes, identifier, scalePresets) {
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
+        outcome.interpretation = getCommonScaleUri(outcomes, scalePresets);
+
+        outcomeHelper.addOutcome(outcomes, outcome);
+    }
+
+    function addGradeMaxOutcome(outcomes, identifier, scalePresets) {
+        var commonScaleUri = getCommonScaleUri(outcomes, scalePresets);
+        const errorMessage = $('.test-outcome-processing-error[data-key="grade"]');
+        if (commonScaleUri === null) {
+            errorMessage.removeClass('hidden');
+            return;
+        }
+
+        errorMessage.addClass('hidden');
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
+        outcome.interpretation = commonScaleUri;
+
+        outcome.defaultValue = {
+            'qti-type': 'defaultValue',
+            'values': [{
+                'qti-type': 'value',
+                'value': getMaxScaleValue(outcomes, scalePresets),
+                'baseType': baseTypeHelper.FLOAT
+            }]
+        };
+
+        outcomeHelper.addOutcome(outcomes, outcome);
+    }
+
+    function getMaxScaleValue(outcomes, scalePresets) {
+
+        const scale = _.find(scalePresets, { uri: getCommonScaleUri(outcomes, scalePresets) });
+
+        if (!scale || !scale.values) {
+            return null
+        }
+
+        return _.max(_.map(Object.keys(scale.values), Number));
+    }
+
+    function getCommonScaleUri(outcomes, scalePresets) {
+        var scaleUris = _.map(scalePresets, 'uri');
+
+        var urlInterpretations = _.chain(outcomes.outcomeDeclarations)
+            .map('interpretation')
+            .filter(function(i) {
+                return typeof i === 'string' && _.includes(scaleUris, i);
+            })
+            .uniq()
+            .value();
+
+        if (urlInterpretations.length !== 1) {
+            return null;
+        }
+
+        return urlInterpretations[0];
+    }
+
+    function addGradeMinOutcomeProcessing(outcomes, gradeIdentifier, scalesPresets) {
+        var commonScaleUri = getCommonScaleUri(outcomes, scalesPresets)
+
+        if (commonScaleUri === null) {
+            return;
+        }
+        var scaleOrientedOutcomeDeclarations = _.filter(outcomes.outcomeDeclarations, function(outcome) {
+            return outcome.interpretation === commonScaleUri;
+        });
+
+
+        // Create an array of variable expressions for each identifier
+        var scaleVariableExpressions = scaleOrientedOutcomeDeclarations.map(function(outcome) {
+            return processingRuleHelper.variable(outcome.identifier);
+        });
+
+        // Create a min expression with all the variables
+        var minExpression = processingRuleHelper.min(scaleVariableExpressions);
+
+        // Create a setOutcomeValue rule that assigns the min to the GRADE
+        var processingRule = processingRuleHelper.setOutcomeValue(
+            gradeIdentifier,
+            minExpression
+        );
+
+        // Add the processing rule to the model
+        outcomeHelper.addOutcomeProcessing(outcomes, processingRule);
     }
 
     /**
