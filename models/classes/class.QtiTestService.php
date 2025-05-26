@@ -236,22 +236,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         if (!empty($json)) {
             $this->verifyItemPermissions($test, $json);
+            $this->syncUniqueId($test, $json);
 
             $doc = $this->getDoc($test);
 
             $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
-            $currentIdentifier = $converter->toArray()['identifier'];
-
             $converter->fromJson($json);
-
-            if (
-                $this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')
-                && $currentIdentifier !== $converter->toArray()['identifier']
-            ) {
-                throw new taoQtiTest_models_classes_QtiTestServiceException(
-                    'QTI identifier is unique and cannot be modified'
-                );
-            }
 
             $saved = $this->saveDoc($test, $doc);
 
@@ -1661,6 +1651,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         }
 
         return reset($labelMetadata)->getValue();
+    }
+
+    private function syncUniqueId(core_kernel_classes_Resource $test, string &$json): void
+    {
+        if (!$this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
+            return;
+        }
+
+        $uniqueId = (string) $test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
+        $decodedJson = json_decode($json, true);
+
+        if (!empty($uniqueId) && $uniqueId !== $decodedJson['identifier']) {
+            $decodedJson['identifier'] = $uniqueId;
+            $json = json_encode($decodedJson);
+        }
     }
 
     private function getManifestConverter(): ManifestConverter
