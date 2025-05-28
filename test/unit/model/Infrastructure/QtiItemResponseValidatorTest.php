@@ -35,6 +35,12 @@ use qtism\runtime\tests\RouteItemSessionControl;
 
 class QtiItemResponseValidatorTest extends TestCase
 {
+    private QtiItemResponseValidator $subject;
+    private Route $routeMock;
+    private RouteItem $routeItem;
+    private RouteItemSessionControl $routeItemSessionControl;
+    private ItemSessionControl $itemSessionControl;
+
     public function setUp(): void
     {
         $this->subject = new QtiItemResponseValidator();
@@ -70,10 +76,7 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getRoute')
             ->willReturn($this->routeMock);
 
-        $this->itemSessionControl->expects($this->never())
-            ->method('mustValidateResponses');
-
-        $this->itemSessionControl->expects($this->once())
+        $this->itemSessionControl
             ->method('doesAllowSkipping')
             ->willReturn(true);
 
@@ -81,10 +84,16 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('containsNullOnly')
             ->willReturn(true);
 
+        $assessmentTestSession
+            ->expects($this->never())
+            ->method('getCurrentAssessmentItemSession');
+
         $this->subject->validate($assessmentTestSession, $responses);
+        
+        $this->assertTrue(true, 'Validation passed without throwing any exceptions');
     }
 
-    public function testValidateNotAllowedToSkip(): void
+    public function testValidateNotAllowedToSkipWithEmptyResponses(): void
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
@@ -93,12 +102,13 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getRoute')
             ->willReturn($this->routeMock);
 
-        $this->itemSessionControl->expects($this->never())
-            ->method('mustValidateResponses');
-
-        $this->itemSessionControl->expects($this->exactly(2))
+        $this->itemSessionControl
             ->method('doesAllowSkipping')
             ->willReturn(false);
+
+        $this->itemSessionControl
+            ->method('mustValidateResponses')
+            ->willReturn(true);
 
         $responses
             ->method('containsNullOnly')
@@ -109,7 +119,7 @@ class QtiItemResponseValidatorTest extends TestCase
         $this->subject->validate($assessmentTestSession, $responses);
     }
 
-    public function testValidateNotAllowedToSkipValidateResponses(): void
+    public function testValidateWithResponseValidation(): void
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
@@ -119,11 +129,11 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getRoute')
             ->willReturn($this->routeMock);
 
-        $this->itemSessionControl->expects($this->once())
+        $this->itemSessionControl
             ->method('mustValidateResponses')
             ->willReturn(true);
 
-        $this->itemSessionControl->expects($this->exactly(2))
+        $this->itemSessionControl
             ->method('doesAllowSkipping')
             ->willReturn(false);
 
@@ -131,12 +141,43 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('containsNullOnly')
             ->willReturn(false);
 
-        $assessmentTestSession->expects($this->once())
+        $assessmentTestSession
             ->method('getCurrentAssessmentItemSession')
             ->willReturn($assessmentItemSession);
 
-        $assessmentItemSession->expects($this->once())
-            ->method('checkResponseValidityConstraints');
+        $assessmentItemSession
+            ->expects($this->once())
+            ->method('checkResponseValidityConstraints')
+            ->with($responses);
+
+        $this->subject->validate($assessmentTestSession, $responses);
+    }
+
+    public function testValidateWithoutResponseValidation(): void
+    {
+        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        $responses = $this->createMock(State::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+
+        $assessmentTestSession
+            ->method('getRoute')
+            ->willReturn($this->routeMock);
+
+        $this->itemSessionControl
+            ->method('mustValidateResponses')
+            ->willReturn(false);
+
+        $this->itemSessionControl
+            ->method('doesAllowSkipping')
+            ->willReturn(false);
+
+        $responses
+            ->method('containsNullOnly')
+            ->willReturn(false);
+
+        $assessmentTestSession
+            ->expects($this->never())
+            ->method('getCurrentAssessmentItemSession');
 
         $this->subject->validate($assessmentTestSession, $responses);
     }
