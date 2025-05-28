@@ -129,7 +129,7 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
 
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
-                $this->itemResponseValidator->validate($testSession , $responses);
+                $this->itemResponseValidator->validate($testSession, $responses);
                 $this->extraQtiInteractionResponseValidator->validate(
                     $this->runnerService->getItemData($serviceContext, $itemDefinition),
                     $responses
@@ -142,9 +142,9 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             return;
         }
 
-       if (
+        if (
             $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
-            && !TestRunnerUtils::doesAllowSkipping($testSession )
+            && !TestRunnerUtils::doesAllowSkipping($testSession)
             && $this->runnerService->emptyResponse($serviceContext, $responses)
         ) {
             throw new QtiRunnerEmptyResponsesException();

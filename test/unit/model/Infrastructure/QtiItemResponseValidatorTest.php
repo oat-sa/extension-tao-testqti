@@ -89,7 +89,7 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getCurrentAssessmentItemSession');
 
         $this->subject->validate($assessmentTestSession, $responses);
-        
+
         $this->assertTrue(true, 'Validation passed without throwing any exceptions');
     }
 
