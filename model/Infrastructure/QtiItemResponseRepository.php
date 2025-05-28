@@ -33,6 +33,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerItemResponseException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 
@@ -123,10 +124,12 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             $itemDefinition,
             $itemResponse->getResponse()
         );
+        /** @var AssessmentTestSession $testSession */
+        $testSession = $serviceContext->getTestSession();
 
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
-                $this->itemResponseValidator->validate($serviceContext->getTestSession(), $responses);
+                $this->itemResponseValidator->validate($testSession , $responses);
                 $this->extraQtiInteractionResponseValidator->validate(
                     $this->runnerService->getItemData($serviceContext, $itemDefinition),
                     $responses
@@ -134,9 +137,16 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             } catch (AssessmentItemSessionException | QtiRunnerInvalidResponsesException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
+
+            $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
+            return;
         }
 
-        if ($this->blockEmptyResponse($serviceContext, $responses)) {
+       if (
+            $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
+            && !TestRunnerUtils::doesAllowSkipping($testSession )
+            && $this->runnerService->emptyResponse($serviceContext, $responses)
+        ) {
             throw new QtiRunnerEmptyResponsesException();
         }
 

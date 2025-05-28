@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure;
 
+use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentTestSession;
@@ -35,8 +36,16 @@ class QtiItemResponseValidator
      */
     public function validate(AssessmentTestSession $testSession, State $responses): void
     {
-        if ($responses->containsNullOnly()) {
+        if ($this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
             return;
+        }
+
+        if (
+            !$this->getAllowSkip($testSession) &&
+            $responses->containsNullOnly() &&
+            $this->getResponseValidation($testSession)
+        ) {
+            throw new QtiRunnerEmptyResponsesException();
         }
 
         if ($this->getResponseValidation($testSession)) {
@@ -52,5 +61,14 @@ class QtiItemResponseValidator
             ->getItemSessionControl()
             ->getItemSessionControl()
             ->mustValidateResponses();
+    }
+
+    private function getAllowSkip(AssessmentTestSession $testSession): bool
+    {
+        return $testSession->getRoute()
+            ->current()
+            ->getItemSessionControl()
+            ->getItemSessionControl()
+            ->doesAllowSkipping();
     }
 }
