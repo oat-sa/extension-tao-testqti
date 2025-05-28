@@ -1,3 +1,4 @@
+
 <?php
 
 /**
@@ -23,6 +24,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\model\Infrastructure;
 
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
+use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use PHPUnit\Framework\TestCase;
 use qtism\data\ItemSessionControl;
 use qtism\runtime\common\State;
@@ -34,12 +36,6 @@ use qtism\runtime\tests\RouteItemSessionControl;
 
 class QtiItemResponseValidatorTest extends TestCase
 {
-    private QtiItemResponseValidator $subject;
-    private Route $routeMock;
-    private RouteItem $routeItem;
-    private RouteItemSessionControl $routeItemSessionControl;
-    private ItemSessionControl $itemSessionControl;
-
     public function setUp(): void
     {
         $this->subject = new QtiItemResponseValidator();
@@ -62,30 +58,11 @@ class QtiItemResponseValidatorTest extends TestCase
     }
 
     /**
+     * @throws \common_exception_Error
+     * @throws \oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException
      * @throws \qtism\runtime\tests\AssessmentItemSessionException
      */
-    public function testValidateWithNullResponses(): void
-    {
-        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
-        $responses = $this->createMock(State::class);
-
-        $responses
-            ->method('containsNullOnly')
-            ->willReturn(true);
-
-        $assessmentTestSession->expects($this->never())
-            ->method('getRoute');
-
-        $assessmentTestSession->expects($this->never())
-            ->method('getCurrentAssessmentItemSession');
-
-        $this->subject->validate($assessmentTestSession, $responses);
-    }
-
-    /**
-     * @throws \qtism\runtime\tests\AssessmentItemSessionException
-     */
-    public function testValidateWithResponseValidationDisabled(): void
+    public function testValidateAllowedToSkip()
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
@@ -94,24 +71,46 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getRoute')
             ->willReturn($this->routeMock);
 
+        $this->itemSessionControl->expects($this->never())
+            ->method('mustValidateResponses');
+
+        $this->itemSessionControl->expects($this->once())
+            ->method('doesAllowSkipping')
+            ->willReturn(true);
+
         $responses
             ->method('containsNullOnly')
-            ->willReturn(false);
-
-        $this->itemSessionControl
-            ->method('mustValidateResponses')
-            ->willReturn(false);
-
-        $assessmentTestSession->expects($this->never())
-            ->method('getCurrentAssessmentItemSession');
+            ->willReturn(true);
 
         $this->subject->validate($assessmentTestSession, $responses);
     }
 
-    /**
-     * @throws \qtism\runtime\tests\AssessmentItemSessionException
-     */
-    public function testValidateWithResponseValidationEnabled(): void
+    public function testValidateNotAllowedToSkip(): void
+    {
+        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        $responses = $this->createMock(State::class);
+
+        $assessmentTestSession
+            ->method('getRoute')
+            ->willReturn($this->routeMock);
+
+        $this->itemSessionControl->expects($this->never())
+            ->method('mustValidateResponses');
+
+        $this->itemSessionControl->expects($this->exactly(2))
+            ->method('doesAllowSkipping')
+            ->willReturn(false);
+
+        $responses
+            ->method('containsNullOnly')
+            ->willReturn(true);
+
+        $this->expectException(QtiRunnerEmptyResponsesException::class);
+
+        $this->subject->validate($assessmentTestSession, $responses);
+    }
+
+    public function testValidateNotAllowedToSkipValidateResponses(): void
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
@@ -121,21 +120,24 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('getRoute')
             ->willReturn($this->routeMock);
 
+        $this->itemSessionControl->expects($this->once())
+            ->method('mustValidateResponses')
+            ->willReturn(true);
+
+        $this->itemSessionControl->expects($this->exactly(2))
+            ->method('doesAllowSkipping')
+            ->willReturn(false);
+
         $responses
             ->method('containsNullOnly')
             ->willReturn(false);
-
-        $this->itemSessionControl
-            ->method('mustValidateResponses')
-            ->willReturn(true);
 
         $assessmentTestSession->expects($this->once())
             ->method('getCurrentAssessmentItemSession')
             ->willReturn($assessmentItemSession);
 
         $assessmentItemSession->expects($this->once())
-            ->method('checkResponseValidityConstraints')
-            ->with($responses);
+            ->method('checkResponseValidityConstraints');
 
         $this->subject->validate($assessmentTestSession, $responses);
     }
