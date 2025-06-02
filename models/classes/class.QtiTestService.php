@@ -254,7 +254,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     public function fromJson($json)
     {
-        $doc = new XmlDocument('2.1');
+        $doc = new XmlDocument('2.2');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($json);
         return $doc;
@@ -1118,7 +1118,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function getDoc(core_kernel_classes_Resource $test)
     {
-        $doc = new XmlDocument('2.1');
+        $doc = new XmlDocument('2.2');
         $doc->loadFromString($this->getQtiTestFile($test)->read());
         return $doc;
     }
