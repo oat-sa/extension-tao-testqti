@@ -34,7 +34,8 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/translation-props',
     'tpl!taoQtiTest/controller/creator/templates/category-presets',
     'tpl!taoQtiTest/controller/creator/templates/subsection',
-    'tpl!taoQtiTest/controller/creator/templates/menu-button'
+    'tpl!taoQtiTest/controller/creator/templates/menu-button',
+    'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
 ], function (
     defaults,
     testPart,
@@ -51,7 +52,8 @@ define([
     translationProps,
     categoryPresets,
     subsection,
-    menuButton
+    menuButton,
+    outcomeListing
 ) {
     'use strict';
 
@@ -69,6 +71,7 @@ define([
         outcomes: applyTemplateConfiguration(outcomes),
         subsection: applyTemplateConfiguration(subsection),
         menuButton: applyTemplateConfiguration(menuButton),
+        outcomeListing: applyTemplateConfiguration(outcomeListing),
         properties: {
             test: applyTemplateConfiguration(testProps),
             testpart: applyTemplateConfiguration(testPartProps),

@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -32,7 +32,11 @@ define([
     'taoQtiTest/controller/creator/templates/index',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/translation',
-    'taoQtiTest/controller/creator/helpers/featureVisibility'
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
+    'taoQtiTest/controller/creator/helpers/scaleSelector',
 ], function (
     $,
     _,
@@ -47,9 +51,13 @@ define([
     templates,
     qtiTestHelper,
     translationHelper,
-    featureVisibility
+    featureVisibility,
+    baseTypeHelper,
+    outcome,
+    { renderOutcomeDeclarationList },
+    scaleSelectorFactory
 ) {
-    'use strict';
+    const _ns = '.outcome-declarations-manual';
 
     /**
      * The TestView setup test related components and behavior
@@ -123,18 +131,22 @@ define([
             const $weightIdentifierLine = $('.test-weight-identifier', $view);
             const $descriptions = $('.test-outcome-processing-description', $view);
             const $generate = $('[data-action="generate-outcomes"]', $view);
+            const $scoringError = $('.test-outcome-processing-error', $view);
+            const $addOutcomeDeclaration = $('[data-action="add-outcome-declaration"]', $view);
             let scoringState = JSON.stringify(testModel.scoring);
             const weightVisible = features.isVisible('taoQtiTest/creator/test/property/scoring/weight');
 
             function changeScoring(scoring) {
-                const noOptions = !!scoring && ['none', 'custom'].indexOf(scoring.outcomeProcessing) === -1;
+                const noOptions = !!scoring && ['none', 'custom', 'grade'].indexOf(scoring.outcomeProcessing) === -1;
                 const newScoringState = JSON.stringify(scoring);
 
                 hider.toggle($cutScoreLine, !!scoring && scoring.outcomeProcessing === 'cut');
                 hider.toggle($categoryScoreLine, noOptions);
                 hider.toggle($weightIdentifierLine, noOptions && weightVisible);
                 hider.hide($descriptions);
+                hider.hide($scoringError);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
+                testModel.scalePresets = config.scalePresets;
 
                 if (scoringState !== newScoringState) {
                     /**
@@ -146,10 +158,11 @@ define([
                 scoringState = newScoringState;
             }
 
+
             function updateOutcomes() {
                 const $panel = $('.outcome-declarations', $view);
 
-                $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomesList() }));
+                $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomeDeclarationsReservedList() }));
             }
 
             $('[name=test-outcome-processing]', $view).select2({
@@ -171,19 +184,91 @@ define([
                     .trigger('scoring-change');
             });
 
+            $addOutcomeDeclaration.on(`click${_ns}`, () => {
+                // Generate a unique identifier for the new outcome
+                let outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
+                let newOutcomeIdentifier;
+
+                do {
+                    outcomeCount++;
+                    newOutcomeIdentifier = `OUTCOME_${outcomeCount}`;
+                } while (testModel.outcomeDeclarations.some(outcome => outcome.identifier === newOutcomeIdentifier));
+
+                const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
+
+                if (!Array.isArray(testModel.outcomeDeclarations)) {
+                    testModel.outcomeDeclarations = [];
+                }
+
+                testModel.outcomeDeclarations.push(newOutcome);
+
+                // Re-render the outcome declarations
+                renderOutcomeDeclarationList(testModel, $view);
+
+                // Add the 'editing' class to the newly created outcome-container
+                const $newOutcomeContainer = $('.outcome-declarations-manual .outcome-container').last();
+                $newOutcomeContainer.addClass('editing');
+
+                const $scaleContainer = $newOutcomeContainer.find('.scales');
+                const scaleSelector = scaleSelectorFactory($scaleContainer);
+                scaleSelector.createForm('');
+
+                scaleSelector.on('scale-change', function(selected) {
+                    newOutcome.scale = selected || '';
+
+                    const $minMaxInputs = $newOutcomeContainer.find('.minimum-maximum input');
+                    $minMaxInputs.prop('disabled', !!selected);
+                });
+
+                $newOutcomeContainer.find('.identifier').focus();
+            });
+
+            // Disable the save button if the identifier is invalid
+            // Modify validation to skip check if the identifier has not changed
+            $view.on('focus', '.outcome-container.editing .identifier', function () {
+                const $input = $(this);
+                $input.data('originalValue', $input.val());
+            });
+
+            $view.on('blur', '.outcome-container.editing .identifier', function () {
+                const $input = $(this);
+                const identifier = $input.val();
+                const originalIdentifier = $input.data('originalValue');
+                const $saveButton = $('#saver');
+
+                // Skip validation if the identifier has not changed
+                if (identifier === originalIdentifier) {
+                    $saveButton.removeClass('disabled').removeAttr('disabled');
+                    return;
+                }
+
+                // Check if the identifier is unique among other outcome declarations
+                const isUnique = !testModel.outcomeDeclarations.some(outcome =>
+                    outcome.identifier === identifier && outcome.serial
+                );
+                if (!isUnique || !identifier.trim()) {
+                    feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                    $input.focus();
+                    $saveButton.addClass('disabled').attr('disabled', true);
+                } else {
+                    $saveButton.removeClass('disabled').removeAttr('disabled');
+                }
+            });
+
+            // Update the test parts and render the outcome declarations
             $view.on('change.binder', (e, model) => {
                 if (e.namespace === 'binder' && model['qti-type'] === 'assessmentTest') {
                     changeScoring(model.scoring);
-
+                    renderOutcomeDeclarationList(testModel, $view);
                     //update the test part title when the databinder has changed it
                     showTitle(model);
                 }
             });
 
             modelOverseer.on('scoring-write', updateOutcomes);
-
             changeScoring(testModel.scoring);
             updateOutcomes();
+            renderOutcomeDeclarationList(testModel, $view);
         }
 
         /**

@@ -30,18 +30,17 @@ use core_kernel_persistence_Exception;
 use DOMDocument;
 use DOMException;
 use DOMXPath;
+use oat\oatbox\filesystem\Directory;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
-use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\oatbox\service\ServiceManager;
+use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
+use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
+use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
-use oat\taoQtiTest\models\classes\metadata\MetadataLomService;
+use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
-use oat\oatbox\filesystem\Directory;
-use oat\taoQtiItem\model\qti\metadata\exporter\MetadataExporter;
-use oat\taoQtiItem\model\qti\metadata\MetadataService;
-use oat\oatbox\service\ServiceManager;
-use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 use qtism\data\storage\xml\XmlStorageException;
 use tao_helpers_Uri;
 use taoItems_models_classes_ItemExporter as ItemExporter;
@@ -176,6 +175,12 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
+
+        // 4. Include scale object in manifest from test outcome declaration
+        $this->getScalePreprocessor()->includeScaleObject(
+            $this->getManifest(),
+            $this->getTestDocument()->getDomDocument()
+        );
 
         $this->genericLomOntologyExtractor()->extract(
             [$this->getItem()],
@@ -362,5 +367,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
     {
         return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
+    }
+
+    private function getScalePreprocessor(): ScalePreprocessor
+    {
+        return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
     }
 }

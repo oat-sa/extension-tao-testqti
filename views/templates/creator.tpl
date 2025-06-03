@@ -82,6 +82,7 @@ requirejs.config({
             translation : <?=get_data('translation')?>,
             originResourceUri : <?=get_data('originResourceUri')?>,
             categoriesPresets : <?=get_data('categoriesPresets')?>,
+            scalesPresets: <?=get_data('scalesPresets')?>,
             labels : <?=get_data('labels')?>,
             guidedNavigation : <?=get_data('guidedNavigation')?>
        }

@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2025 (original work) Open Assessment Technologies SA ;
  */
 /**
  * Basic helper that is intended to manage outcomes inside a test model.
@@ -28,6 +28,22 @@ define([
     'taoQtiTest/controller/creator/helpers/cardinality'
 ], function (_, outcomeValidator, qtiElementHelper, baseTypeHelper, cardinalityHelper) {
     'use strict';
+
+    /**
+     * This is a list of outcomes that are reserved for the score processing
+     */
+    var reservedOutcomeDeclarations = [
+        'SCORE_TOTAL',
+        'SCORE_TOTAL_MAX',
+        'SCORE_TOTAL_WEIGHTED',
+        'SCORE_TOTAL_MAX_WEIGHTED',
+        'SCORE_RATIO',
+        'SCORE_RATIO_WEIGHTED',
+        'PASS_ALL',
+        'PASS_ALL_RENDERING',
+        'GRADE',
+        'GRADE_MAX'
+    ];
 
     var outcomeHelper = {
         /**
@@ -68,6 +84,22 @@ define([
          */
         getOutcomeDeclarations: function getOutcomeDeclarations(testModel) {
             var outcomes = testModel && testModel.outcomeDeclarations;
+            return outcomes || [];
+        },
+
+        getReservedOutcomeDeclarations: function getReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return _.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
+            return outcomes || [];
+        },
+
+        getNonReservedOutcomeDeclarations: function getNonReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return !_.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
             return outcomes || [];
         },
 
@@ -182,7 +214,6 @@ define([
          * @throws {TypeError} if the identifier is empty or is not a string
          */
         createOutcome: function createOutcome(identifier, type, cardinality) {
-
             if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
@@ -194,6 +225,8 @@ define([
                 normalMaximum: false,
                 normalMinimum: false,
                 masteryValue: false,
+                externalScored: null,
+                externalScoredDisabled: 1,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
                 baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
             });
