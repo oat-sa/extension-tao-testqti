@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2020 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2020-2025 (original work) Open Assessment Technologies SA;
  *
  */
 
@@ -48,7 +48,7 @@ class AssessmentTestXmlFactory extends ConfigurableService implements Assessment
     public const OPTION_EXTENSIONS             = 'extensions';
     public const OPTION_CONFIGURATION_REGISTRY = 'configurationRegistry';
 
-    private const DEFAULT_QTI_VERSION = '2.1';
+    private const DEFAULT_QTI_VERSION = '2.2';
 
     /**
      * @param string $testIdentifier

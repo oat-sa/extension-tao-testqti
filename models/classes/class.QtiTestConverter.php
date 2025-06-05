@@ -15,10 +15,11 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 *
-* Copyright (c) 2013 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+* Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
 
 use qtism\common\datatypes\QtiPair;
+use qtism\data\state\ExternalScored;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
@@ -44,6 +45,15 @@ use qtism\data\View;
  */
 class taoQtiTest_models_classes_QtiTestConverter
 {
+    /**
+     * Value transformation map for frontend to QTI conversion
+     */
+    private static array $valueTransformMap = [
+        'externalScored' => [
+            'human' => ExternalScored::HUMAN,
+            'externalMachine' => ExternalScored::EXTERNAL_MACHINE
+        ],
+    ];
     /**
      * operators for which qtsm classes are postfix
      *
@@ -148,6 +158,7 @@ class taoQtiTest_models_classes_QtiTestConverter
             $value = $this->getValue($component, $property);
             if ($value !== null) {
                 $key = $property->getName();
+                $value = $this->reverseTransformValue($key, $value);
                 if ($value instanceof QtiPair) {
                     $array[$property->getName()] = (string) $value;
                 } elseif ($value instanceof QtiComponentCollection) {
@@ -243,10 +254,12 @@ class taoQtiTest_models_classes_QtiTestConverter
         try {
             $method = new ReflectionMethod($component, $setterName);
             if ($method->isPublic()) {
-                $component->{$setterName}($value);
+                $transformedValue = $this->transformValue($property->getName(), $value);
+                $method->invoke($component, $transformedValue);
             }
         } catch (ReflectionException $re) {
-        } // this must be ignored
+            // this must be ignored
+        }
     }
 
     /**
@@ -517,5 +530,32 @@ class taoQtiTest_models_classes_QtiTestConverter
                 return $className;
             }
         }
+    }
+
+    /**
+     * Transform frontend values to QTI specification values
+     */
+    private function transformValue(string $propertyName, mixed $value): mixed
+    {
+        if (isset(self::$valueTransformMap[$propertyName][$value])) {
+            return self::$valueTransformMap[$propertyName][$value];
+        }
+
+        return $value;
+    }
+
+    /**
+     * Transform QTI values back to frontend format
+     */
+    private function reverseTransformValue($propertyName, $value)
+    {
+        if (isset(self::$valueTransformMap[$propertyName])) {
+            $flippedMap = array_flip(self::$valueTransformMap[$propertyName]);
+            if (isset($flippedMap[$value])) {
+                return $flippedMap[$value];
+            }
+        }
+
+        return $value;
     }
 }
