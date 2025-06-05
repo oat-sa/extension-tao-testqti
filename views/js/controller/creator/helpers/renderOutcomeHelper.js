@@ -97,7 +97,7 @@ define([
                 interpretation: interpretationValue,
                 longInterpretation: outcome.longInterpretation,
                 externalScored: externalScored,
-                externalScoredDisabled: 1,
+                externalScoredDisabled: outcomeHelper.shouldDisableExternalScored(testModel, outcome.identifier) ? 1 : 0,
                 normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
                 normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
                 titleDelete: __('Delete'),
@@ -167,6 +167,8 @@ define([
                 testModel.outcomeDeclarations = testModel.outcomeDeclarations.filter(
                     outcome => outcome.identifier !== identifierValue
                 );
+
+                renderOutcomeDeclarationList(testModel, $editorPanel);
             })
             .on('blur increment.incrementer decrement.incrementer', '.outcome-container input', function () {
                 const $outcomeContainer = $(this).closest('.outcome-container');
@@ -190,6 +192,23 @@ define([
                     }
                 } else {
                     console.warn('Outcome declaration not found for container with serial:', serial);
+                }
+            })
+            .on('change', '.outcome-container select[name="externalScored"]', function () {
+                const $outcomeContainer = $(this).closest('.outcome-container');
+                const $select = $(this);
+                const identifierValue = $outcomeContainer.find('input.identifier').val();
+                const selectedValue = $select.val();
+
+                const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
+                if (outcome) {
+                    if (selectedValue === 'none') {
+                        delete outcome.externalScored;
+                    } else {
+                        outcome.externalScored = selectedValue;
+                    }
+
+                    outcomeHelper.updateExternalScoredDisabled(testModel);
                 }
             });
     }
