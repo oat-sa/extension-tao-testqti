@@ -19,6 +19,7 @@
 */
 
 use qtism\common\datatypes\QtiPair;
+use qtism\data\state\ExternalScored;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\QtiComponent;
@@ -49,8 +50,8 @@ class taoQtiTest_models_classes_QtiTestConverter
      */
     private static array $valueTransformMap = [
         'externalScored' => [
-            'human' => 1,
-            'externalMachine' => 2
+            'human' => ExternalScored::HUMAN,
+            'externalMachine' => ExternalScored::EXTERNAL_MACHINE
         ],
     ];
     /**
