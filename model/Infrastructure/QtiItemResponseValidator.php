@@ -36,7 +36,7 @@ class QtiItemResponseValidator
      */
     public function validate(AssessmentTestSession $testSession, State $responses): void
     {
-        if ($this->getAllowSkip($testSession) && $responses->containsNullOnly()) {
+        if ($this->getAllowSkip($testSession) && $responses->containsNullOnly() && !$this->getResponseValidation($testSession)) {
             return;
         }
 
