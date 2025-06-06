@@ -85,10 +85,10 @@ class QtiItemResponseValidatorTest extends TestCase
         $responses
             ->method('containsNullOnly')
             ->willReturn(true);
-            
+
         $this->itemSessionControl
             ->method('mustValidateResponses')
-            ->willReturn(false);    
+            ->willReturn(false);
 
         $assessmentTestSession
             ->expects($this->never())
