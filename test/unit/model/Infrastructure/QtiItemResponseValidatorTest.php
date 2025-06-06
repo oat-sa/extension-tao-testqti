@@ -33,6 +33,8 @@ use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\RouteItemSessionControl;
 
+use function PHPUnit\Framework\once;
+
 class QtiItemResponseValidatorTest extends TestCase
 {
     private QtiItemResponseValidator $subject;
@@ -83,6 +85,10 @@ class QtiItemResponseValidatorTest extends TestCase
         $responses
             ->method('containsNullOnly')
             ->willReturn(true);
+            
+        $this->itemSessionControl
+            ->method('mustValidateResponses')
+            ->willReturn(false);    
 
         $assessmentTestSession
             ->expects($this->never())
