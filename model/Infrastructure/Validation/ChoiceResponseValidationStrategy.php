@@ -73,10 +73,11 @@ class ChoiceResponseValidationStrategy implements InteractionResponseValidationS
     private function getQtiIdentifiersForChoicesByResponseDeclarationId(State $responses, string $key): array
     {
         $result = [];
-        foreach ($responses->getVariable($key)->getValue() as $response) {
-            $result[] = (string) $response->getValue();
+        if ($responses->getVariable($key)->getValue()) {
+            foreach ($responses->getVariable($key)->getValue() as $response) {
+                $result[] = (string) $response->getValue();
+            }
         }
-
         return $result;
     }
 }
