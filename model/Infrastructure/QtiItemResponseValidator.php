@@ -26,6 +26,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\Utils as TestUtils;
 
 class QtiItemResponseValidator
 {
@@ -53,6 +54,16 @@ class QtiItemResponseValidator
         }
 
         if ($this->getResponseValidation($testSession)) {
+            $testSession->getCurrentAssessmentItemSession()
+                ->checkResponseValidityConstraints($responses);
+        }
+
+        # Covering cases when force contraint is false but the item has response validity constraints
+        if (
+            !$this->getResponseValidation($testSession) &&
+            $testSession->getCurrentAssessmentItemSession()->getAssessmentItem()->getResponseValidityConstraints()->count()
+        ) {
+            $testSession->getCurrentAssessmentItemSession()->getItemSessionControl()->setValidateResponses(true);
             $testSession->getCurrentAssessmentItemSession()
                 ->checkResponseValidityConstraints($responses);
         }
