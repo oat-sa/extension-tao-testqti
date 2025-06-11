@@ -53,18 +53,19 @@ class QtiItemResponseValidator
             throw new QtiRunnerEmptyResponsesException();
         }
 
+        $currentAssessmentItemSession = $testSession->getCurrentAssessmentItemSession();
         if ($this->getResponseValidation($testSession)) {
-            $testSession->getCurrentAssessmentItemSession()
+            $currentAssessmentItemSession
                 ->checkResponseValidityConstraints($responses);
         }
 
         # Covering cases when force contraint is false but the item has response validity constraints
         if (
             !$this->getResponseValidation($testSession) &&
-            $testSession->getCurrentAssessmentItemSession()->getAssessmentItem()->getResponseValidityConstraints()->count()
+           $currentAssessmentItemSession->getAssessmentItem()->getResponseValidityConstraints()->count()
         ) {
-            $testSession->getCurrentAssessmentItemSession()->getItemSessionControl()->setValidateResponses(true);
-            $testSession->getCurrentAssessmentItemSession()
+            $currentAssessmentItemSession->getItemSessionControl()->setValidateResponses(true);
+            $currentAssessmentItemSession
                 ->checkResponseValidityConstraints($responses);
         }
     }
