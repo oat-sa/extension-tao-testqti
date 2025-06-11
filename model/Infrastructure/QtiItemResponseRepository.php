@@ -120,12 +120,30 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             $itemResponse->getResponse()
         );
 
+        /** @var AssessmentTestSession $testSession */
+        $testSession = $serviceContext->getTestSession();
+
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
-                $this->itemResponseValidator->validate($serviceContext->getTestSession(), $responses);
-            } catch (AssessmentItemSessionException $e) {
+                $this->itemResponseValidator->validate($testSession, $responses);
+                $this->extraQtiInteractionResponseValidator->validate(
+                    $this->runnerService->getItemData($serviceContext, $itemDefinition),
+                    $responses
+                );
+            } catch (AssessmentItemSessionException | QtiRunnerInvalidResponsesException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
+
+            $this->runnerService->storeItemResponse($serviceContext, $itemDefinition, $responses);
+            return;
+        }
+
+        if (
+            $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
+            && !TestRunnerUtils::doesAllowSkipping($testSession)
+            && $this->runnerService->emptyResponse($serviceContext, $responses)
+        ) {
+            throw new QtiRunnerEmptyResponsesException();
         }
 
         if ($this->blockEmptyResponse($serviceContext, $responses)) {

@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\model\Infrastructure;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentTestSession;
+use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 
 class QtiItemResponseValidator
 {
@@ -35,12 +36,35 @@ class QtiItemResponseValidator
      */
     public function validate(AssessmentTestSession $testSession, State $responses): void
     {
-        if ($responses->containsNullOnly()) {
+        if (
+            $this->getAllowSkip($testSession) &&
+            $responses->containsNullOnly() &&
+            !$this->getResponseValidation($testSession)
+        ) {
             return;
         }
 
+        if (
+            !$this->getAllowSkip($testSession) &&
+            $responses->containsNullOnly() &&
+            $this->getResponseValidation($testSession)
+        ) {
+            throw new QtiRunnerEmptyResponsesException();
+        }
+
+        $currentAssessmentItemSession = $testSession->getCurrentAssessmentItemSession();
         if ($this->getResponseValidation($testSession)) {
-            $testSession->getCurrentAssessmentItemSession()
+            $currentAssessmentItemSession
+                ->checkResponseValidityConstraints($responses);
+        }
+
+        # Covering cases when force contraint is false but the item has response validity constraints
+        if (
+            !$this->getResponseValidation($testSession) &&
+            $currentAssessmentItemSession->getAssessmentItem()->getResponseValidityConstraints()->count()
+        ) {
+            $currentAssessmentItemSession->getItemSessionControl()->setValidateResponses(true);
+            $currentAssessmentItemSession
                 ->checkResponseValidityConstraints($responses);
         }
     }
@@ -52,5 +76,14 @@ class QtiItemResponseValidator
             ->getItemSessionControl()
             ->getItemSessionControl()
             ->mustValidateResponses();
+    }
+
+    private function getAllowSkip(AssessmentTestSession $testSession): bool
+    {
+        return $testSession->getRoute()
+            ->current()
+            ->getItemSessionControl()
+            ->getItemSessionControl()
+            ->doesAllowSkipping();
     }
 }

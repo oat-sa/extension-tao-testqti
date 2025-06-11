@@ -26,8 +26,8 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
+use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
-use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use PHPUnit\Framework\TestCase;
@@ -39,21 +39,23 @@ use qtism\runtime\tests\AssessmentTestSession;
 
 class QtiItemResponseRepositoryTest extends TestCase
 {
-    private $runnerServiceMock;
-    private $featureFlagCheckerMock;
-    private $itemResponseValidatorMock;
+    private QtiItemResponseRepository $subject;
 
     public function setUp(): void
     {
         $this->runnerServiceMock = $this->createMock(QtiRunnerService::class);
         $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
         $this->itemResponseValidatorMock = $this->createMock(QtiItemResponseValidator::class);
+        $this->interactionResponseValidator = $this->createMock(ExtraQtiInteractionResponseValidator::class);
 
         $this->subject = new QtiItemResponseRepository(
             $this->runnerServiceMock,
             $this->featureFlagCheckerMock,
-            $this->itemResponseValidatorMock
+            $this->itemResponseValidatorMock,
+            $this->interactionResponseValidator
         );
+
+        $this->runnerServiceMock->method('getItemData')->willReturn([]);
     }
 
     /**
@@ -67,9 +69,8 @@ class QtiItemResponseRepositoryTest extends TestCase
         string $itemHref,
         string $responseIdentifier,
         int $storeItemResponseCount,
-        bool $shouldThrowValidationException,
-        bool $blockEmptyResponse = false,
-        bool $shouldThrowEmptyResponseException = false
+        bool $qtiItemResponseValidatorShouldThrowException,
+        bool $interactionResponseValidatorShouldThrowException,
     ): void {
         $itemResponse = new ItemResponse(
             'itemIdentifier',
@@ -84,15 +85,6 @@ class QtiItemResponseRepositoryTest extends TestCase
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $stateMock = $this->createMock(State::class);
-
-        $subjectPartialMock = $this->getMockBuilder(QtiItemResponseRepository::class)
-            ->setConstructorArgs([
-                $this->runnerServiceMock,
-                $this->featureFlagCheckerMock,
-                $this->itemResponseValidatorMock
-            ])
-            ->onlyMethods(['blockEmptyResponse'])
-            ->getMock();
 
         $extendedAssessmentItemRefMock->expects($this->once())
             ->method('getIdentifier')
@@ -127,14 +119,19 @@ class QtiItemResponseRepositoryTest extends TestCase
 
         $this->featureFlagCheckerMock->expects($this->once())
             ->method('isEnabled')
-            ->with('FEATURE_FLAG_RESPONSE_VALIDATOR')
             ->willReturn(true);
 
         $runnerServiceContextMock
             ->method('getTestSession')
             ->willReturn($assessmentTestSession);
 
-        if ($shouldThrowValidationException) {
+        $this->itemResponseValidatorMock->expects($this->once())
+            ->method('validate');
+
+        $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
+            ->method('storeItemResponse');
+
+        if ($qtiItemResponseValidatorShouldThrowException) {
             $this->itemResponseValidatorMock->expects($this->once())
                 ->method('validate')
                 ->with($assessmentTestSession, $stateMock)
@@ -145,35 +142,21 @@ class QtiItemResponseRepositoryTest extends TestCase
                         AssessmentItemSessionException::DURATION_OVERFLOW
                     )
                 );
-
-            $subjectPartialMock->expects($this->never())
-                ->method('blockEmptyResponse');
-
             $this->expectException(QtiRunnerInvalidResponsesException::class);
-        } else {
-            $this->itemResponseValidatorMock->expects($this->once())
+        }
+
+        if ($interactionResponseValidatorShouldThrowException) {
+            $this->interactionResponseValidator->expects($this->once())
                 ->method('validate')
-                ->with($assessmentTestSession, $stateMock);
-
-            $subjectPartialMock->expects($this->once())
-                ->method('blockEmptyResponse')
-                ->with($runnerServiceContextMock, $stateMock)
-                ->willReturn($blockEmptyResponse);
-
-            if ($shouldThrowEmptyResponseException) {
-                $this->expectException(QtiRunnerEmptyResponsesException::class);
-            }
+                ->with([], $stateMock)
+                ->willThrowException(
+                    new QtiRunnerInvalidResponsesException('mockedMessage')
+                );
+            $this->expectException(QtiRunnerInvalidResponsesException::class);
+            $this->expectExceptionMessage('mockedMessage');
         }
 
-        if (!$shouldThrowValidationException && !$shouldThrowEmptyResponseException) {
-            $this->runnerServiceMock->expects($this->exactly($storeItemResponseCount))
-                ->method('storeItemResponse');
-        } else {
-            $this->runnerServiceMock->expects($this->never())
-                ->method('storeItemResponse');
-        }
-
-        $subjectPartialMock->save($itemResponse, $runnerServiceContextMock);
+        $this->subject->save($itemResponse, $runnerServiceContextMock);
     }
 
     public function saveDataProvider(): array
@@ -187,11 +170,10 @@ class QtiItemResponseRepositoryTest extends TestCase
                 'itemHref' => 'itemHref',
                 'responseIdentifier' => 'itemIdentifier',
                 'storeItemResponseCount' => 1,
-                'shouldThrowValidationException' => false,
-                'blockEmptyResponse' => false,
-                'shouldThrowEmptyResponseException' => false
+                'qtiItemResponseValidatorShouldThrowException' => false,
+                'interactionResponseValidatorShouldThrowException' => false,
             ],
-            'validation throw an error, flag enabled' => [
+            'ItemResponseValidator throw an error, flag enabled' => [
                 'state' => ['state'],
                 'response' => ['response'],
                 'duration' => 1.0,
@@ -199,11 +181,10 @@ class QtiItemResponseRepositoryTest extends TestCase
                 'itemHref' => 'itemHref',
                 'responseIdentifier' => 'itemIdentifier',
                 'storeItemResponseCount' => 0,
-                'shouldThrowValidationException' => true,
-                'blockEmptyResponse' => false,
-                'shouldThrowEmptyResponseException' => false
+                'qtiItemResponseValidatorShouldThrowException' => true,
+                'interactionResponseValidatorShouldThrowException' => false,
             ],
-            'empty response exception should be thrown' => [
+            'extraInteractionResponseValidator throw an error, flag enabled' => [
                 'state' => ['state'],
                 'response' => ['response'],
                 'duration' => 1.0,
@@ -211,9 +192,8 @@ class QtiItemResponseRepositoryTest extends TestCase
                 'itemHref' => 'itemHref',
                 'responseIdentifier' => 'itemIdentifier',
                 'storeItemResponseCount' => 0,
-                'shouldThrowValidationException' => false,
-                'blockEmptyResponse' => true,
-                'shouldThrowEmptyResponseException' => true
+                'qtiItemResponseValidatorShouldThrowException' => false,
+                'interactionResponseValidatorShouldThrowException' => true,
             ]
         ];
     }
