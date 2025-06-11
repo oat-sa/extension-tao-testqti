@@ -62,7 +62,7 @@ class QtiItemResponseValidator
         # Covering cases when force contraint is false but the item has response validity constraints
         if (
             !$this->getResponseValidation($testSession) &&
-           $currentAssessmentItemSession->getAssessmentItem()->getResponseValidityConstraints()->count()
+            $currentAssessmentItemSession->getAssessmentItem()->getResponseValidityConstraints()->count()
         ) {
             $currentAssessmentItemSession->getItemSessionControl()->setValidateResponses(true);
             $currentAssessmentItemSession
