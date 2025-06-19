@@ -91,7 +91,7 @@ class QtiFlysystemFileManager extends ConfigurableService implements FileManager
     {
         $hash = md5(uniqid(mt_rand(), true));
         $prefix = substr($hash, 0, 2);
-        $id = $prefix . \"/\" . $hash;
+        $id = $prefix . DIRECTORY_SEPARATOR . $hash;
         return $this->filePrefix . $id;
     }
 }
