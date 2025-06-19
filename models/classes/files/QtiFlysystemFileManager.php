@@ -89,9 +89,11 @@ class QtiFlysystemFileManager extends ConfigurableService implements FileManager
 
     private function generateId()
     {
-        $hash = md5(uniqid(mt_rand(), true));
-        $prefix = substr($hash, 0, 2);
-        $id = $prefix . DIRECTORY_SEPARATOR . $hash;
+        $hash = md5(uniqid((string) mt_rand(), true));
+        $prefix = substr($hash, 0, 5);
+        $parts = str_split($prefix);
+        $subPath = implode(DIRECTORY_SEPARATOR, $parts);
+        $id = $subPath . DIRECTORY_SEPARATOR . $hash;
         return $this->filePrefix . $id;
     }
 }
