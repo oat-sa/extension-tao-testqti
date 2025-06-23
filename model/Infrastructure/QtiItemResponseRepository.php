@@ -126,10 +126,6 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
         if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
             try {
                 $this->itemResponseValidator->validate($testSession, $responses);
-                $this->extraQtiInteractionResponseValidator->validate(
-                    $this->runnerService->getItemData($serviceContext, $itemDefinition),
-                    $responses
-                );
             } catch (AssessmentItemSessionException | QtiRunnerInvalidResponsesException $e) {
                 throw new QtiRunnerInvalidResponsesException($e->getMessage());
             }
