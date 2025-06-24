@@ -33,6 +33,7 @@ use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\RouteItemSessionControl;
 use qtism\data\AssessmentItem;
+use qtism\data\state\OutcomeDeclarationCollection;
 use qtism\data\state\ResponseValidityConstraintCollection;
 
 use function PHPUnit\Framework\once;
@@ -75,6 +76,28 @@ class QtiItemResponseValidatorTest extends TestCase
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $getAssessmentItem = $this->createMock(AssessmentItem::class);
+        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $outcomeDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
 
         $assessmentTestSession
             ->method('getRoute')
@@ -93,8 +116,13 @@ class QtiItemResponseValidatorTest extends TestCase
             ->willReturn(false);
 
         $assessmentTestSession
-            ->expects($this->never())
-            ->method('getCurrentAssessmentItemSession');
+            ->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getAssessmentItem')
+            ->willReturn($getAssessmentItem);
 
         $this->subject->validate($assessmentTestSession, $responses);
 
@@ -105,6 +133,34 @@ class QtiItemResponseValidatorTest extends TestCase
     {
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+
+        $getAssessmentItem = $this->createMock(AssessmentItem::class);
+        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $outcomeDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
+
+        $assessmentTestSession
+            ->expects($this->once())
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
 
         $assessmentTestSession
             ->method('getRoute')
@@ -121,6 +177,10 @@ class QtiItemResponseValidatorTest extends TestCase
         $responses
             ->method('containsNullOnly')
             ->willReturn(true);
+
+        $assessmentItemSession->expects($this->once())
+            ->method('getAssessmentItem')
+            ->willReturn($getAssessmentItem);
 
         $this->expectException(QtiRunnerEmptyResponsesException::class);
 
@@ -132,6 +192,27 @@ class QtiItemResponseValidatorTest extends TestCase
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
         $responses = $this->createMock(State::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $getAssessmentItem = $this->createMock(AssessmentItem::class);
+        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $outcomeDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $getAssessmentItem
+            ->expects($this->once())
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
 
         $assessmentTestSession
             ->method('getRoute')
@@ -158,6 +239,10 @@ class QtiItemResponseValidatorTest extends TestCase
             ->method('checkResponseValidityConstraints')
             ->with($responses);
 
+        $assessmentItemSession->expects($this->once())
+            ->method('getAssessmentItem')
+            ->willReturn($getAssessmentItem);
+
         $this->subject->validate($assessmentTestSession, $responses);
     }
 
@@ -168,6 +253,26 @@ class QtiItemResponseValidatorTest extends TestCase
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
         $assessmentItem = $this->createMock(AssessmentItem::class);
         $responseValidityConstraintCollection = new ResponseValidityConstraintCollection();
+        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $outcomeDeclarationCollection
+            ->method('count')
+            ->willReturn(1);
+
+        $assessmentItem
+            ->expects($this->once())
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $assessmentItem
+            ->expects($this->once())
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
 
         $assessmentTestSession
             ->method('getRoute')
