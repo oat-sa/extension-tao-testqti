@@ -36,36 +36,63 @@ class QtiItemResponseValidator
      */
     public function validate(AssessmentTestSession $testSession, State $responses): void
     {
-        if (
-            $this->getAllowSkip($testSession) &&
-            $responses->containsNullOnly() &&
-            !$this->getResponseValidation($testSession)
-        ) {
+        $itemSession       = $testSession->getCurrentAssessmentItemSession();
+        $item              = $itemSession->getAssessmentItem();
+        $outcomeDecls      = $item->getOutcomeDeclarations();
+        $responseDecls     = $item->getResponseDeclarations();
+        $itemConstraints   = $item->getResponseValidityConstraints();
+
+        $allowSkip         = $this->getAllowSkip($testSession);
+        $nullOnly          = $responses->containsNullOnly();
+        $validateRequired  = $this->getResponseValidation($testSession);
+
+        $hasConstraints    = $itemConstraints->count() > 0;
+        $hasOutcomes       = $outcomeDecls->count() > 0;
+        $hasResponses      = $responseDecls->count() > 0;
+        $noDeclOrConst     = !$hasConstraints && !$hasOutcomes && !$hasResponses;
+
+        // 1) Skip allowed & nothing answered & no forced validation
+        if ($allowSkip && $nullOnly && ! $validateRequired) {
             return;
         }
 
-        if (
-            !$this->getAllowSkip($testSession) &&
-            $responses->containsNullOnly() &&
-            $this->getResponseValidation($testSession)
-        ) {
+        // 2) Skip allowed & nothing answered & validation *on* & no declarations/constraints
+        if (!$allowSkip && $nullOnly && !$validateRequired && !$noDeclOrConst) {
             throw new QtiRunnerEmptyResponsesException();
         }
 
-        $currentAssessmentItemSession = $testSession->getCurrentAssessmentItemSession();
-        if ($this->getResponseValidation($testSession)) {
-            $currentAssessmentItemSession
-                ->checkResponseValidityConstraints($responses);
+        // 3) Skip *not* allowed & nothing answered & validation *on* & no declarations/constraints
+        if (!$allowSkip && $nullOnly && $validateRequired && $noDeclOrConst) {
+            return;
         }
 
-        # Covering cases when force contraint is false but the item has response validity constraints
-        if (
-            !$this->getResponseValidation($testSession) &&
-            $currentAssessmentItemSession->getAssessmentItem()->getResponseValidityConstraints()->count()
-        ) {
-            $currentAssessmentItemSession->getItemSessionControl()->setValidateResponses(true);
-            $currentAssessmentItemSession
-                ->checkResponseValidityConstraints($responses);
+        // 4) Skip *not* allowed & nothing answered & validation *on* => error
+        if (!$allowSkip && $nullOnly && $validateRequired) {
+            throw new QtiRunnerEmptyResponsesException();
+        }
+
+        // 5) If skip allowed, nothing answered, validation *on* and item has constraints/outcomes/responses
+        if ($allowSkip && $nullOnly && $validateRequired && $hasConstraints) {
+            throw new QtiRunnerEmptyResponsesException();
+        }
+
+        // 6) If validation is on, always run the constraint check
+        if ($validateRequired) {
+            $itemSession->checkResponseValidityConstraints($responses);
+            return;
+        }
+
+        if (!$validateRequired && $allowSkip && $hasConstraints && $hasOutcomes && $hasResponses) {
+            return;
+        }
+
+        // 7) Force-enable validation when off but item *does* have constraints/outcomes/responses
+        if (!$validateRequired && $hasConstraints && $hasOutcomes && $hasResponses) {
+            $itemSession
+            ->getItemSessionControl()
+            ->setValidateResponses(true);
+
+            $itemSession->checkResponseValidityConstraints($responses);
         }
     }
 
