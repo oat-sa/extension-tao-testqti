@@ -186,11 +186,14 @@ define([
         mockSelector1.setCurrentValue('custom1');
         mockSelector2.setCurrentValue('custom2');
 
+        mockSelector1.resetUpdateCount();
+        mockSelector2.resetUpdateCount();
+
         syncManager.onScaleChange('outcome1', 'custom1');
 
         assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Scale unlocked when no predefined scales');
-        assert.ok(mockSelector1.getUpdateCallCount() >= 2, 'First selector updated multiple times');
-        assert.ok(mockSelector2.getUpdateCallCount() >= 2, 'Second selector updated multiple times');
+        assert.ok(mockSelector1.getUpdateCallCount() >= 1, 'First selector updated');
+        assert.ok(mockSelector2.getUpdateCallCount() >= 1, 'Second selector updated');
     });
 
     QUnit.test('onScaleChange() - prevents circular updates', function(assert) {

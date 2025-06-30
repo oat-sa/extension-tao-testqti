@@ -226,7 +226,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 0,
             baseType: 3
@@ -244,7 +243,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 0,
             baseType: 2
@@ -262,7 +260,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 2,
             baseType: 3
@@ -281,7 +278,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 1,
             baseType: 1
@@ -299,7 +295,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 0,
             baseType: 3
@@ -317,7 +312,6 @@ define([
             normalMinimum: false,
             masteryValue: false,
             externalScored: null,
-            externalScoredDisabled: 1,
             identifier: 'FOO_BAR',
             cardinality: 0,
             baseType: 3
