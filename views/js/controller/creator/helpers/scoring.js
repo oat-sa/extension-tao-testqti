@@ -411,11 +411,11 @@ define([
 
             model = modelOverseer.getModel();
             scoring = model.scoring;
-            scoring.scalePresets = model.scalePresets;
             outcomes = getOutcomes(model);
 
             // write the score processing mode by generating the outcomes variables, but only if the mode has been set
             if (scoring) {
+                scoring.scalePresets = model.scalePresets;
                 outcomeRecipe = outcomesRecipes[scoring.outcomeProcessing];
                 if (outcomeRecipe) {
                     if (outcomeRecipe.clean) {

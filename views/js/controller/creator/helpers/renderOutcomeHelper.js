@@ -30,6 +30,96 @@ define([
     }
 
     /**
+     * Disable/enable min/max controls including incrementer buttons
+     * @param {jQuery} $outcomeContainer - Container element
+     * @param {boolean} disabled - Whether to disable the controls
+     */
+    function setMinMaxDisabled($outcomeContainer, disabled) {
+        const $minMaxContainer = $outcomeContainer.find('.minimum-maximum');
+        const $inputs = $minMaxContainer.find('input[name="normalMinimum"], input[name="normalMaximum"]');
+        const $incrementerWrappers = $minMaxContainer.find('.incrementer-ctrl-wrapper');
+        const $incrementerControls = $minMaxContainer.find('.ctrl.incrementer-ctrl');
+        const $incrementerButtons = $minMaxContainer.find('.incrementer-ctrl a.inc, .incrementer-ctrl a.dec');
+
+        $inputs.prop('disabled', disabled);
+
+        if (disabled) {
+            $inputs.addClass('disabled');
+            $incrementerWrappers.addClass('disabled');
+            $incrementerControls.addClass('disabled');
+
+            $incrementerButtons.each(function() {
+                const $button = $(this);
+
+                $button.on('click.outcome-disabled mousedown.outcome-disabled', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    return false;
+                });
+
+                $button.css({
+                    'pointer-events': 'none',
+                    'opacity': '0.4',
+                    'cursor': 'not-allowed'
+                });
+
+                $button.attr({
+                    'aria-disabled': 'true'
+                });
+            });
+
+            $minMaxContainer.addClass('incrementer-disabled');
+        } else {
+            $inputs.removeClass('disabled');
+            $incrementerWrappers.removeClass('disabled');
+            $incrementerControls.removeClass('disabled');
+            $minMaxContainer.removeClass('incrementer-disabled');
+
+            $incrementerButtons.each(function() {
+                const $button = $(this);
+
+                $button.off('.outcome-disabled');
+
+                $button.css({
+                    'pointer-events': '',
+                    'opacity': '',
+                    'cursor': ''
+                });
+
+                $button.removeAttr('aria-disabled');
+            });
+        }
+    }
+
+    /**
+     * Set external scored to human and disable it when interpretation is set
+     * @param {jQuery} $outcomeContainer - Container element
+     * @param {boolean} hasInterpretation - Whether interpretation is set
+     */
+    function updateExternalScored($outcomeContainer, hasInterpretation) {
+        const $externalScoredSelect = $outcomeContainer.find('select[name="externalScored"]');
+
+        if (hasInterpretation) {
+            $externalScoredSelect.val('human');
+            $externalScoredSelect.prop('disabled', true);
+
+            if ($externalScoredSelect.data('select2')) {
+                $externalScoredSelect.select2('val', 'human');
+                $externalScoredSelect.select2('enable', false);
+            }
+
+            $externalScoredSelect.trigger('change');
+        } else {
+            $externalScoredSelect.prop('disabled', false);
+
+            if ($externalScoredSelect.data('select2')) {
+                $externalScoredSelect.select2('enable', true);
+            }
+        }
+    }
+
+    /**
      * Create and setup scale selector for an outcome
      * @param {jQuery} $outcomeContainer - Container element
      * @param {Object} outcome - Outcome declaration
@@ -51,12 +141,38 @@ define([
         scaleSelector.on('interpretation-change', function(interpretationValue) {
             outcome.interpretation = interpretationValue || '';
 
-            const $minMaxInputs = $outcomeContainer.find('.minimum-maximum input');
-            $minMaxInputs.prop('disabled', !!interpretationValue);
+            const hasInterpretation = !!interpretationValue;
+
+            setMinMaxDisabled($outcomeContainer, hasInterpretation);
+
+            updateExternalScored($outcomeContainer, hasInterpretation);
+
+            if (hasInterpretation) {
+                outcome.externalScored = 'human';
+                outcome.normalMinimum = false;
+                outcome.normalMaximum = false;
+                $outcomeContainer.find('input[name="normalMinimum"]').val('');
+                $outcomeContainer.find('input[name="normalMaximum"]').val('');
+            } else {
+                delete outcome.externalScored;
+                const $externalScoredSelect = $outcomeContainer.find('select[name="externalScored"]');
+                $externalScoredSelect.val('none');
+                $externalScoredSelect.trigger('change');
+                if ($externalScoredSelect.data('select2')) {
+                    $externalScoredSelect.select2('val', 'none');
+                }
+
+                // Set min/max to 0
+                outcome.normalMinimum = 0;
+                outcome.normalMaximum = 0;
+                $outcomeContainer.find('input[name="normalMinimum"]').val('0');
+                $outcomeContainer.find('input[name="normalMaximum"]').val('0');
+            }
         });
 
         if (outcome.interpretation) {
-            $outcomeContainer.find('.minimum-maximum input').prop('disabled', true);
+            setMinMaxDisabled($outcomeContainer, true);
+            updateExternalScored($outcomeContainer, true);
         }
     }
 
@@ -73,6 +189,17 @@ define([
         };
 
         const outcomesData = _.map(outcomeHelper.getNonReservedOutcomeDeclarations(testModel), function (outcome) {
+            if (outcome.normalMinimum === undefined || outcome.normalMinimum === null) {
+                outcome.normalMinimum = 0;
+            }
+            if (outcome.normalMaximum === undefined || outcome.normalMaximum === null) {
+                outcome.normalMaximum = 0;
+            }
+
+            if (outcome.interpretation && !outcome.externalScored) {
+                outcome.externalScored = 'human';
+            }
+
             const externalScored = {
                 none: { label: __('None'), selected: !outcome.externalScored },
                 human: { label: __('Human'), selected: outcome.externalScored === externalScoredOptions.human },
@@ -91,15 +218,36 @@ define([
                 }
             }
 
+            let normalMinimum, normalMaximum;
+
+            if (outcome.interpretation) {
+                normalMinimum = false;
+                normalMaximum = false;
+            } else {
+                if (outcome.normalMinimum === false || outcome.normalMinimum === null || outcome.normalMinimum === undefined || outcome.normalMinimum === '') {
+                    normalMinimum = 0;
+                    outcome.normalMinimum = 0;
+                } else {
+                    normalMinimum = outcome.normalMinimum;
+                }
+
+                if (outcome.normalMaximum === false || outcome.normalMaximum === null || outcome.normalMaximum === undefined || outcome.normalMaximum === '') {
+                    normalMaximum = 0;
+                    outcome.normalMaximum = 0;
+                } else {
+                    normalMaximum = outcome.normalMaximum;
+                }
+            }
+
             return {
-                serial: outcome.serial,
+                serial: outcome.serial || outcome.identifier || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 identifier: outcome.identifier,
                 interpretation: interpretationValue,
                 longInterpretation: outcome.longInterpretation,
                 externalScored: externalScored,
-                externalScoredDisabled: outcomeHelper.shouldDisableExternalScored(testModel, outcome.identifier) ? 1 : 0,
-                normalMinimum: outcome.normalMinimum === false ? 0 : outcome.normalMinimum,
-                normalMaximum: outcome.normalMaximum === false ? 0 : outcome.normalMaximum,
+                externalScoredDisabled: outcome.interpretation ? 1 : (outcomeHelper.shouldDisableExternalScored(testModel, outcome.identifier) ? 1 : 0),
+                normalMinimum: normalMinimum,
+                normalMaximum: normalMaximum,
                 titleDelete: __('Delete'),
                 titleEdit: __('Edit')
             };
@@ -113,13 +261,27 @@ define([
 
         formElement.initWidget($editorPanel);
 
+        // Setup scale selectors and apply disabled states
         $editorPanel.find('.outcome-container').each(function() {
             const $outcomeContainer = $(this);
             const identifierValue = $outcomeContainer.find('input.identifier').val();
             const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
 
             if (outcome) {
-                setupScaleSelector($outcomeContainer, outcome, testModel);
+                if (outcome.normalMinimum === undefined || outcome.normalMinimum === null || outcome.normalMinimum === '') {
+                    outcome.normalMinimum = 0;
+                    $outcomeContainer.find('input[name="normalMinimum"]').val('0');
+                }
+                if (outcome.normalMaximum === undefined || outcome.normalMaximum === null || outcome.normalMaximum === '') {
+                    outcome.normalMaximum = 0;
+                    $outcomeContainer.find('input[name="normalMaximum"]').val('0');
+                }
+
+                setupScaleSelector($outcomeContainer, outcome);
+
+                if (outcome.interpretation) {
+                    setMinMaxDisabled($outcomeContainer, true);
+                }
             }
         });
 
@@ -139,7 +301,7 @@ define([
                 $outcomeContainer.removeClass('editable');
 
                 if (editedOutcomeDeclaration) {
-                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel);
+                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration);
                 }
 
                 $identifierInput.focus();
@@ -174,24 +336,57 @@ define([
                 const $outcomeContainer = $(this).closest('.outcome-container');
                 const $input = $(this);
                 const serial = $outcomeContainer.data('serial');
+                const inputName = $input.attr('name');
 
-                if (!$outcomeContainer.length || !serial) {
+                if (!$outcomeContainer.length || !inputName) {
                     return;
                 }
 
-                const editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
-                    outcome => outcome.serial === serial
-                );
+                let editedOutcomeDeclaration;
+
+                if (serial) {
+                    editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                        outcome => outcome.serial === serial
+                    );
+                }
+
+                if (!editedOutcomeDeclaration) {
+                    const identifierValue = $outcomeContainer.find('input.identifier').val();
+                    if (identifierValue) {
+                        editedOutcomeDeclaration = testModel.outcomeDeclarations.find(
+                            outcome => outcome.identifier === identifierValue
+                        );
+                    }
+                }
 
                 if (editedOutcomeDeclaration) {
-                    const inputName = $input.attr('name');
                     const inputValue = $input.val().trim();
 
-                    if (inputName) {
+                    if (inputName === 'normalMinimum' || inputName === 'normalMaximum') {
+                        if (editedOutcomeDeclaration.interpretation) {
+                            $input.val('');
+                            editedOutcomeDeclaration[inputName] = false;
+                            return;
+                        }
+
+                        if (inputValue === '') {
+                            editedOutcomeDeclaration[inputName] = 0;
+                            $input.val('0');
+                        } else {
+                            const numValue = parseFloat(inputValue);
+                            editedOutcomeDeclaration[inputName] = isNaN(numValue) ? 0 : numValue;
+                            if (!isNaN(numValue)) {
+                                $input.val(numValue);
+                            }
+                        }
+                    } else {
                         editedOutcomeDeclaration[inputName] = inputValue;
                     }
                 } else {
-                    console.warn('Outcome declaration not found for container with serial:', serial);
+                    console.warn('Outcome declaration not found for container:', {
+                        serial: serial,
+                        identifier: $outcomeContainer.find('input.identifier').val()
+                    });
                 }
             })
             .on('change', '.outcome-container select[name="externalScored"]', function () {
@@ -202,6 +397,11 @@ define([
 
                 const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
                 if (outcome) {
+                    if (outcome.interpretation) {
+                        $select.val('human');
+                        return;
+                    }
+
                     if (selectedValue === 'none') {
                         delete outcome.externalScored;
                     } else {

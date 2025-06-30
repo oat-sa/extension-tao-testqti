@@ -36,12 +36,14 @@ define([
         const $input = $('<input name="interpretation" />');
         const $container = $('<div></div>').append($input);
 
+        let testValue = '';
+
         $input.val = function(value) {
             if (arguments.length > 0) {
-                this._testValue = value;
+                testValue = value === '' ? '' : value;
                 return this;
             }
-            return this._testValue || '';
+            return testValue;
         };
 
         $input.trigger = function() { return this; };
@@ -53,6 +55,9 @@ define([
         $input.next = function() { return $(); };
         $input.off = function() { return this; };
         $input.on = function() { return this; };
+        $input.empty = function() { return this; };
+        $input.data = function() { return null; };
+        $input.length = 1;
 
         return $container;
     }
@@ -172,7 +177,6 @@ define([
     });
 
     QUnit.test('updateAvailableScales() - handles locked state', function(assert) {
-        const done = assert.async();
         assert.expect(1);
 
         const $container = createMockContainer();
@@ -182,14 +186,10 @@ define([
 
         scaleSelector.updateAvailableScales('https://test.com/1');
 
-        setTimeout(function() {
-            assert.ok(true, 'updateAvailableScales completed without errors');
-            done();
-        }, 10);
+        assert.ok(true, 'updateAvailableScales completed without errors');
     });
 
     QUnit.test('clearSelection() - clears value and updates sync manager', function(assert) {
-        const done = assert.async();
         assert.expect(2);
 
         const testPresets = [
@@ -200,19 +200,21 @@ define([
         const $container = createMockContainer();
         const scaleSelector = scaleSelectorFactory($container, 'test-outcome-1');
 
-        $container.find('input').val('https://test.com/1');
         scaleSelector.createForm();
 
+        $container.find('input').val('https://test.com/1');
+        scaleSelector.updateScale(); // This will set lastKnownValue
+
         const originalOnScaleChange = syncManager.onScaleChange;
+
         syncManager.onScaleChange = function(outcomeId, newScale) {
             assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed');
             assert.strictEqual(newScale, null, 'Scale cleared to null');
-
-            syncManager.onScaleChange = originalOnScaleChange;
-            done();
         };
 
         scaleSelector.clearSelection();
+
+        syncManager.onScaleChange = originalOnScaleChange;
     });
 
     QUnit.test('error handling - getCurrentValue with invalid DOM', function(assert) {

@@ -23,18 +23,26 @@ define(['lodash'], function (_) {
 
     /**
      * Singleton manager for scale synchronization
+     * Now properly resets state between tests
      */
     const ScaleSynchronizationManager = {
         _predefinedScales: new Set(),
         _activePredefinedScale: null,
         _outcomeSelectors: new Map(),
         _isUpdating: false,
+        _testId: null,
 
         /**
          * Initialize with predefined scales from backend
          * @param {Array} scalesPresets - Array of {uri, label} objects
+         * @param {string} [testId] - Optional test identifier to ensure isolation
          */
-        init(scalesPresets) {
+        init(scalesPresets, testId) {
+            if (testId && this._testId !== testId) {
+                this.reset();
+                this._testId = testId;
+            }
+
             this._predefinedScales.clear();
             if (Array.isArray(scalesPresets)) {
                 scalesPresets.forEach(scale => {
@@ -46,12 +54,25 @@ define(['lodash'], function (_) {
         },
 
         /**
+         * Reset all state - should be called when switching tests or clearing context
+         */
+        reset() {
+            this._predefinedScales.clear();
+            this._activePredefinedScale = null;
+            this._outcomeSelectors.clear();
+            this._isUpdating = false;
+            this._testId = null;
+        },
+
+        /**
          * Register an outcome scale selector
          * @param {string} outcomeId - Unique identifier for the outcome
          * @param {Object} selector - Scale selector instance
          */
         registerSelector(outcomeId, selector) {
             this._outcomeSelectors.set(outcomeId, selector);
+
+            this._checkCurrentState();
         },
 
         /**
@@ -60,6 +81,11 @@ define(['lodash'], function (_) {
          */
         unregisterSelector(outcomeId) {
             this._outcomeSelectors.delete(outcomeId);
+
+            // Re-check state after unregistering
+            if (this._activePredefinedScale !== null) {
+                this._checkAndUnlockPredefinedScales();
+            }
         },
 
         /**
@@ -76,7 +102,11 @@ define(['lodash'], function (_) {
 
             if (isPredefinedScale) {
                 this._lockToPredefinedScale(newScale);
-            } else if (this._activePredefinedScale !== null) {
+            } else if (newScale && !isPredefinedScale) {
+                if (this._activePredefinedScale !== null) {
+                    this._checkAndUnlockPredefinedScales();
+                }
+            } else if (!newScale && this._activePredefinedScale !== null) {
                 this._checkAndUnlockPredefinedScales();
             }
         },
@@ -96,6 +126,42 @@ define(['lodash'], function (_) {
          */
         getActivePredefinedScale() {
             return this._activePredefinedScale;
+        },
+
+        /**
+         * Check current state of all selectors and update lock accordingly
+         * @private
+         */
+        _checkCurrentState() {
+            let foundPredefinedScale = null;
+            let hasDifferentPredefinedScales = false;
+
+            this._outcomeSelectors.forEach(selector => {
+                try {
+                    const currentValue = selector.getCurrentValue();
+                    if (this.isPredefinedScale(currentValue)) {
+                        if (foundPredefinedScale === null) {
+                            foundPredefinedScale = currentValue;
+                        } else if (foundPredefinedScale !== currentValue) {
+                            hasDifferentPredefinedScales = true;
+                        }
+                    }
+                } catch (error) {
+                    console.warn('Error checking selector value:', error);
+                }
+            });
+
+            if (hasDifferentPredefinedScales) {
+                if (this._activePredefinedScale !== null) {
+                    this._activePredefinedScale = null;
+                    this._updateAllSelectors();
+                }
+            } else if (foundPredefinedScale && foundPredefinedScale !== this._activePredefinedScale) {
+                this._lockToPredefinedScale(foundPredefinedScale);
+            } else if (!foundPredefinedScale && this._activePredefinedScale !== null) {
+                this._activePredefinedScale = null;
+                this._updateAllSelectors();
+            }
         },
 
         /**
@@ -119,13 +185,18 @@ define(['lodash'], function (_) {
         _checkAndUnlockPredefinedScales() {
             let hasPredefinedScale = false;
             let foundPredefinedScale = null;
+            let allScalesMatch = true;
 
             this._outcomeSelectors.forEach(selector => {
                 try {
                     const currentValue = selector.getCurrentValue();
-                    if (this.isPredefinedScale(currentValue)) {
+                    if (currentValue && this.isPredefinedScale(currentValue)) {
+                        if (!foundPredefinedScale) {
+                            foundPredefinedScale = currentValue;
+                        } else if (foundPredefinedScale !== currentValue) {
+                            allScalesMatch = false;
+                        }
                         hasPredefinedScale = true;
-                        foundPredefinedScale = currentValue;
                     }
                 } catch (error) {
                     console.warn('Error checking selector value:', error);
@@ -133,19 +204,32 @@ define(['lodash'], function (_) {
             });
 
             if (!hasPredefinedScale) {
-                this._activePredefinedScale = null;
-                this._updateAllSelectors();
-            } else if (foundPredefinedScale !== this._activePredefinedScale) {
+                if (this._activePredefinedScale !== null) {
+                    this._activePredefinedScale = null;
+                    this._updateAllSelectors();
+                }
+            } else if (allScalesMatch && foundPredefinedScale !== this._activePredefinedScale) {
                 this._activePredefinedScale = foundPredefinedScale;
+                this._updateAllSelectors();
+            } else if (!allScalesMatch && this._activePredefinedScale !== null) {
+                this._activePredefinedScale = null;
                 this._updateAllSelectors();
             }
         },
 
         /**
          * Update all registered selectors with current lock state
+         * When locked to a predefined scale:
+         * - The dropdown shows only the locked predefined scale option
+         * - Users can still type and select custom scales
+         * - But predefined scales other than the locked one are hidden
          * @private
          */
         _updateAllSelectors() {
+            if (this._isUpdating) {
+                return;
+            }
+
             this._isUpdating = true;
 
             try {
