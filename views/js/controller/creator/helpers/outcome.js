@@ -310,19 +310,12 @@ define([
          * @param {String} identifier
          * @param {String|Number|Boolean} [type] - The data type of the outcome, FLOAT by default
          * @param {Number} [cardinality] - The variable cardinality, default 0
-         * @param {Object} [testModel] - The test model to check for conflicts (optional)
          * @returns {Object}
          * @throws {TypeError} if the identifier is empty or is not a string
          */
-        createOutcome: function createOutcome(identifier, type, cardinality, testModel) {
+        createOutcome: function createOutcome(identifier, type, cardinality) {
             if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
-            }
-
-            var externalScoredDisabled = 0; // Default to enabled
-
-            if (testModel) {
-                externalScoredDisabled = outcomeHelper.shouldDisableExternalScored(testModel, identifier) ? 1 : 0;
             }
 
             return qtiElementHelper.create('outcomeDeclaration', identifier, {
@@ -333,7 +326,6 @@ define([
                 normalMinimum: false,
                 masteryValue: false,
                 externalScored: null,
-                externalScoredDisabled: externalScoredDisabled,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
                 baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
             });
@@ -397,8 +389,6 @@ define([
 
             declarations.push(outcome);
 
-            outcomeHelper.updateExternalScoredDisabled(testModel);
-
             return outcome;
         },
 
@@ -416,8 +406,6 @@ define([
                     }
 
                     testModel.outcomeDeclarations = [].concat(outcomes.outcomeDeclarations);
-
-                    outcomeHelper.updateExternalScoredDisabled(testModel);
                 }
                 if (outcomes.outcomeProcessing && _.isArray(outcomes.outcomeProcessing.outcomeRules)) {
                     if (!outcomeValidator.validateOutcomes(outcomes.outcomeProcessing.outcomeRules)) {
