@@ -23,6 +23,8 @@ use oat\oatbox\filesystem\Directory;
 use oat\oatbox\filesystem\File;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\reporting\Report;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\resources\ResourceAccessDeniedException;
@@ -234,6 +236,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
         if (!empty($json)) {
             $this->verifyItemPermissions($test, $json);
+            $this->syncUniqueId($test, $json);
 
             $doc = $this->getDoc($test);
 
@@ -1650,6 +1653,21 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return reset($labelMetadata)->getValue();
     }
 
+    private function syncUniqueId(core_kernel_classes_Resource $test, string &$json): void
+    {
+        if (!$this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
+            return;
+        }
+
+        $uniqueId = (string) $test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
+        $decodedJson = json_decode($json, true);
+
+        if (!empty($uniqueId) && $uniqueId !== $decodedJson['identifier']) {
+            $decodedJson['identifier'] = $uniqueId;
+            $json = json_encode($decodedJson);
+        }
+    }
+
     private function getManifestConverter(): ManifestConverter
     {
         return $this->getPsrContainer()->get(ManifestConverter::class);
@@ -1678,5 +1696,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $file = $folder . $assessmentSectionRef->getHref();
             $this->getSectionConverter()->convertToQti2($file);
         }
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getPsrContainer()->get(FeatureFlagChecker::class);
     }
 }

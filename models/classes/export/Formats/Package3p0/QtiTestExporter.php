@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2024-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -24,9 +24,7 @@ namespace oat\taoQtiTest\models\export\Formats\Package3p0;
 
 use core_kernel_classes_Resource as Resource;
 use DOMDocument;
-use oat\taoQtiItem\model\Export\Qti3Package\Exporter;
 use oat\taoQtiItem\model\Export\Qti3Package\ExporterFactory;
-use oat\taoQtiItem\model\Export\Qti3Package\TransformationService;
 use oat\taoQtiTest\models\export\AbstractQtiTestExporter;
 use oat\taoQtiTest\models\export\QtiItemExporterInterface;
 
@@ -39,17 +37,12 @@ class QtiTestExporter extends AbstractQtiTestExporter
     private const XSI_SCHEMA_LOCATION = 'http://www.imsglobal.org/xsd/imsqtiasi_v3p0';
     // phpcs:ignore Generic.Files.LineLength.TooLong
     private const XSI_SCHEMA_LOCATION_XSD = 'https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd';
-    private TransformationService $transformationService;
-
-    private Exporter $exporter;
-
 
     protected function getItemExporter(Resource $item): QtiItemExporterInterface
     {
-        $factory = $this->getExporterFactory();
-        $this->exporter =  $factory->create($item, $this->getZip(), $this->getManifest());
-
-        return new QtiItemExporter($this->exporter);
+        $exporter = new QtiItemExporter($item, $this->getZip(), $this->getManifest());
+        $exporter->setTransformationService($this->getExporterFactory()->getTransformationService());
+        return $exporter;
     }
 
     protected function adjustTestXml(string $xml): string
@@ -59,7 +52,7 @@ class QtiTestExporter extends AbstractQtiTestExporter
 
     protected function itemContentPostProcessing($content): string
     {
-        $transformationService = $this->exporter->getTransformationService();
+        $transformationService = $this->getExporterFactory()->getTransformationService();
         $dom = new DOMDocument('1.0', 'UTF-8');
         $dom->loadXML($content);
 
