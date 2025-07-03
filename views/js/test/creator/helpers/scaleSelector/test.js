@@ -25,10 +25,7 @@ define([
 
     QUnit.module('helpers/scaleSelector', {
         beforeEach: function() {
-            syncManager._predefinedScales.clear();
-            syncManager._activePredefinedScale = null;
-            syncManager._outcomeSelectors.clear();
-            syncManager._isUpdating = false;
+            syncManager.reset();
         }
     });
 
@@ -85,7 +82,28 @@ define([
         });
     });
 
-    QUnit.test('setPresets() - static method initializes sync manager', function(assert) {
+    QUnit.test('setTestId() - sets test ID', function(assert) {
+        assert.expect(2);
+
+        assert.equal(typeof scaleSelectorFactory.setTestId, 'function', 'setTestId method exists');
+
+        scaleSelectorFactory.setTestId('test-123');
+        assert.equal(scaleSelectorFactory.getTestId(), 'test-123', 'Test ID set correctly');
+    });
+
+    QUnit.test('setTestId() - requires testId parameter', function(assert) {
+        assert.expect(2);
+
+        assert.throws(function() {
+            scaleSelectorFactory.setTestId();
+        }, 'Throws error when testId is missing');
+
+        assert.throws(function() {
+            scaleSelectorFactory.setTestId(null);
+        }, 'Throws error when testId is null');
+    });
+
+    QUnit.test('initialize() - sets both presets and testId', function(assert) {
         assert.expect(3);
 
         const testPresets = [
@@ -93,12 +111,26 @@ define([
             {uri: "https://test.com/2", label: "Test Scale 2"}
         ];
 
-        assert.equal(typeof scaleSelectorFactory.setPresets, 'function', 'setPresets method exists');
+        scaleSelectorFactory.initialize(testPresets, 'test-123');
+
+        assert.equal(scaleSelectorFactory.getTestId(), 'test-123', 'Test ID set correctly');
+        assert.ok(syncManager.isPredefinedScale("https://test.com/1"), 'Sync manager recognizes first preset');
+        assert.ok(syncManager.isPredefinedScale("https://test.com/2"), 'Sync manager recognizes second preset');
+    });
+
+    QUnit.test('setPresets() - works with existing testId', function(assert) {
+        assert.expect(2);
+
+        scaleSelectorFactory.setTestId('test-123');
+
+        const testPresets = [
+            {uri: "https://test.com/1", label: "Test Scale 1"}
+        ];
 
         scaleSelectorFactory.setPresets(testPresets);
 
-        assert.ok(syncManager.isPredefinedScale("https://test.com/1"), 'Sync manager recognizes first preset');
-        assert.ok(syncManager.isPredefinedScale("https://test.com/2"), 'Sync manager recognizes second preset');
+        assert.ok(syncManager.isPredefinedScale("https://test.com/1"), 'Sync manager recognizes preset');
+        assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager has correct test ID');
     });
 
     QUnit.test('getCurrentValue() - returns current selection', function(assert) {
@@ -113,8 +145,10 @@ define([
         assert.equal(scaleSelector.getCurrentValue(), 'test-value', 'Returns current value');
     });
 
-    QUnit.test('createForm() - registers with sync manager', function(assert) {
-        assert.expect(2);
+    QUnit.test('createForm() - registers with sync manager when testId set', function(assert) {
+        assert.expect(3);
+
+        scaleSelectorFactory.setTestId('test-123');
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
@@ -125,16 +159,19 @@ define([
         const outcomeId = 'test-outcome-1';
         const scaleSelector = scaleSelectorFactory($container, outcomeId);
 
-        assert.equal(syncManager._outcomeSelectors.size, 0, 'Sync manager empty before createForm');
+        assert.equal(syncManager._testStates.get('test-123').outcomeSelectors.size, 0, 'Sync manager empty before createForm');
 
         scaleSelector.createForm();
 
-        assert.equal(syncManager._outcomeSelectors.size, 1, 'Selector registered with sync manager');
+        assert.equal(syncManager._testStates.get('test-123').outcomeSelectors.size, 1, 'Selector registered with sync manager');
+        assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager has correct test ID');
     });
 
     QUnit.test('updateScale() - notifies sync manager of changes', function(assert) {
         const done = assert.async();
         assert.expect(2);
+
+        scaleSelectorFactory.setTestId('test-123');
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
@@ -166,31 +203,23 @@ define([
     QUnit.test('destroy() - unregisters from sync manager', function(assert) {
         assert.expect(2);
 
+        scaleSelectorFactory.setTestId('test-123');
+        scaleSelectorFactory.setPresets([]);
+
         const $container = createMockContainer();
         const scaleSelector = scaleSelectorFactory($container, 'test-outcome-1');
 
         scaleSelector.createForm();
-        assert.equal(syncManager._outcomeSelectors.size, 1, 'Selector registered');
+        assert.equal(syncManager._testStates.get('test-123').outcomeSelectors.size, 1, 'Selector registered');
 
         scaleSelector.destroy();
-        assert.equal(syncManager._outcomeSelectors.size, 0, 'Selector unregistered after destroy');
-    });
-
-    QUnit.test('updateAvailableScales() - handles locked state', function(assert) {
-        assert.expect(1);
-
-        const $container = createMockContainer();
-        const scaleSelector = scaleSelectorFactory($container, 'test-outcome-1');
-
-        scaleSelector.createForm();
-
-        scaleSelector.updateAvailableScales('https://test.com/1');
-
-        assert.ok(true, 'updateAvailableScales completed without errors');
+        assert.equal(syncManager._testStates.get('test-123').outcomeSelectors.size, 0, 'Selector unregistered after destroy');
     });
 
     QUnit.test('clearSelection() - clears value and updates sync manager', function(assert) {
         assert.expect(2);
+
+        scaleSelectorFactory.setTestId('test-123');
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
@@ -215,6 +244,31 @@ define([
         scaleSelector.clearSelection();
 
         syncManager.onScaleChange = originalOnScaleChange;
+    });
+
+    QUnit.test('reset() - clears factory state', function(assert) {
+        assert.expect(2);
+
+        scaleSelectorFactory.setTestId('test-123');
+        scaleSelectorFactory.setPresets([{uri: "https://test.com/1", label: "Test Scale 1"}]);
+
+        scaleSelectorFactory.reset();
+
+        assert.strictEqual(scaleSelectorFactory.getTestId(), null, 'Test ID cleared');
+        assert.strictEqual(syncManager._currentTestId, null, 'Sync manager also reset');
+    });
+
+    QUnit.test('reset() - can reset specific test', function(assert) {
+        assert.expect(2);
+
+        scaleSelectorFactory.setTestId('test-123');
+        scaleSelectorFactory.setPresets([{uri: "https://test.com/1", label: "Test Scale 1"}]);
+
+        scaleSelectorFactory.reset('test-456'); // Reset different test
+
+        // Should still have our test
+        assert.equal(scaleSelectorFactory.getTestId(), 'test-123', 'Our test ID still exists');
+        assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager still has our test');
     });
 
     QUnit.test('error handling - getCurrentValue with invalid DOM', function(assert) {
@@ -247,5 +301,30 @@ define([
         assert.equal(callCount, 0, 'updateScale skipped when _isInternalUpdate is true');
 
         syncManager.onScaleChange = originalOnScaleChange;
+    });
+
+    QUnit.test('test isolation - different tests maintain separate state', function(assert) {
+        assert.expect(3);
+
+        // Setup test 1
+        scaleSelectorFactory.setTestId('test-1');
+        scaleSelectorFactory.setPresets([{uri: "https://test1.com/1", label: "Test 1 Scale"}]);
+
+        const $container1 = createMockContainer();
+        const scaleSelector1 = scaleSelectorFactory($container1, 'outcome1');
+        scaleSelector1.createForm();
+
+        // Setup test 2
+        scaleSelectorFactory.setTestId('test-2');
+        scaleSelectorFactory.setPresets([{uri: "https://test2.com/1", label: "Test 2 Scale"}]);
+
+        const $container2 = createMockContainer();
+        const scaleSelector2 = scaleSelectorFactory($container2, 'outcome2');
+        scaleSelector2.createForm();
+
+        // Verify isolation
+        assert.equal(syncManager._currentTestId, 'test-2', 'Currently in test-2');
+        assert.ok(syncManager.isPredefinedScale("https://test2.com/1"), 'Test 2 scale recognized');
+        assert.notOk(syncManager.isPredefinedScale("https://test1.com/1"), 'Test 1 scale not recognized in test 2');
     });
 });
