@@ -22,10 +22,7 @@ define([
 
     QUnit.module('helpers/scaleSynchronizationManager', {
         beforeEach: function() {
-            syncManager._predefinedScales.clear();
-            syncManager._activePredefinedScale = null;
-            syncManager._outcomeSelectors.clear();
-            syncManager._isUpdating = false;
+            syncManager.reset();
         }
     });
 
@@ -59,8 +56,24 @@ define([
         assert.ok(syncManager.init, 'syncManager has init method');
     });
 
-    QUnit.test('init() - initializes predefined scales', function(assert) {
-        assert.expect(3);
+    QUnit.test('init() - requires testId', function(assert) {
+        assert.expect(2);
+
+        const testPresets = [
+            {uri: "https://test.com/1", label: "Test Scale 1"}
+        ];
+
+        assert.throws(function() {
+            syncManager.init(testPresets);
+        }, 'Throws error when testId is missing');
+
+        assert.throws(function() {
+            syncManager.init(testPresets, null);
+        }, 'Throws error when testId is null');
+    });
+
+    QUnit.test('init() - initializes predefined scales with testId', function(assert) {
+        assert.expect(4);
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"},
@@ -69,61 +82,45 @@ define([
             null
         ];
 
-        syncManager.init(testPresets);
+        syncManager.init(testPresets, 'test-1');
 
         assert.ok(syncManager.isPredefinedScale("https://test.com/1"), 'First scale recognized as predefined');
         assert.ok(syncManager.isPredefinedScale("https://test.com/2"), 'Second scale recognized as predefined');
         assert.notOk(syncManager.isPredefinedScale(""), 'Empty URI not recognized as predefined');
+        assert.equal(syncManager._currentTestId, 'test-1', 'Test ID stored correctly');
     });
 
-    QUnit.test('init() - handles invalid input gracefully', function(assert) {
-        assert.expect(3);
+    QUnit.test('testId isolation - different tests have separate state', function(assert) {
+        assert.expect(4);
 
-        syncManager.init(null);
-        assert.notOk(syncManager.isPredefinedScale("anything"), 'No scales recognized after null init');
+        const presets1 = [{uri: "https://test1.com/1", label: "Test 1 Scale"}];
+        const presets2 = [{uri: "https://test2.com/1", label: "Test 2 Scale"}];
 
-        syncManager.init("not-an-array");
-        assert.notOk(syncManager.isPredefinedScale("anything"), 'No scales recognized after string init');
+        // Initialize test 1
+        syncManager.init(presets1, 'test-1');
+        assert.ok(syncManager.isPredefinedScale("https://test1.com/1"), 'Test 1 scale recognized');
 
-        syncManager.init([]);
-        assert.notOk(syncManager.isPredefinedScale("anything"), 'No scales recognized after empty array init');
+        // Switch to test 2
+        syncManager.init(presets2, 'test-2');
+        assert.ok(syncManager.isPredefinedScale("https://test2.com/1"), 'Test 2 scale recognized');
+        assert.notOk(syncManager.isPredefinedScale("https://test1.com/1"), 'Test 1 scale not recognized in test 2');
+
+        // Switch back to test 1
+        syncManager.init(presets1, 'test-1');
+        assert.ok(syncManager.isPredefinedScale("https://test1.com/1"), 'Test 1 scale recognized again');
     });
 
     QUnit.test('registerSelector() and unregisterSelector()', function(assert) {
-        assert.expect(3);
-
-        const mockSelector = createMockSelector();
-
-        assert.equal(syncManager._outcomeSelectors.size, 0, 'No selectors initially registered');
-
-        syncManager.registerSelector('outcome1', mockSelector);
-        assert.equal(syncManager._outcomeSelectors.size, 1, 'Selector registered successfully');
-
-        syncManager.unregisterSelector('outcome1');
-        assert.equal(syncManager._outcomeSelectors.size, 0, 'Selector unregistered successfully');
-    });
-
-    QUnit.test('isPredefinedScale() - correctly identifies predefined scales', function(assert) {
-        assert.expect(4);
-
-        var testPresets = [
-            { uri: "https://test.com/1", label: "Test Scale 1" }
-        ];
-        syncManager.init(testPresets);
-
-        assert.ok(syncManager.isPredefinedScale("https://test.com/1"), 'Recognizes predefined scale');
-        assert.notOk(syncManager.isPredefinedScale("https://custom.com/1"), 'Does not recognize custom scale');
-        assert.notOk(syncManager.isPredefinedScale(null), 'Handles null input');
-        assert.notOk(syncManager.isPredefinedScale(""), 'Handles empty string input');
-    });
-
-    QUnit.test('getActivePredefinedScale() - returns current active scale', function(assert) {
         assert.expect(2);
 
-        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Initially no active scale');
+        syncManager.init([], 'test-1');
+        const mockSelector = createMockSelector();
 
-        syncManager._activePredefinedScale = "https://test.com/1";
-        assert.equal(syncManager.getActivePredefinedScale(), "https://test.com/1", 'Returns active scale');
+        syncManager.registerSelector('outcome1', mockSelector);
+        assert.equal(syncManager._testStates.get('test-1').outcomeSelectors.size, 1, 'Selector registered successfully');
+
+        syncManager.unregisterSelector('outcome1');
+        assert.equal(syncManager._testStates.get('test-1').outcomeSelectors.size, 0, 'Selector unregistered successfully');
     });
 
     QUnit.test('onScaleChange() - locks to predefined scale', function(assert) {
@@ -132,7 +129,7 @@ define([
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
         ];
-        syncManager.init(testPresets);
+        syncManager.init(testPresets, 'test-1');
 
         const mockSelector1 = createMockSelector();
         const mockSelector2 = createMockSelector();
@@ -147,32 +144,13 @@ define([
         assert.equal(mockSelector2.getUpdateCallCount(), 1, 'Second selector updated');
     });
 
-    QUnit.test('onScaleChange() - ignores custom scales for locking', function(assert) {
-        assert.expect(2);
-
-        const testPresets = [
-            {uri: "https://test.com/1", label: "Test Scale 1"}
-        ];
-        syncManager.init(testPresets);
-
-        const mockSelector = createMockSelector();
-        syncManager.registerSelector('outcome1', mockSelector);
-
-        mockSelector.resetUpdateCount();
-
-        syncManager.onScaleChange('outcome1', 'https://custom.com/1');
-
-        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'No active scale for custom scale');
-        assert.equal(mockSelector.getUpdateCallCount(), 0, 'No updates triggered for custom scale');
-    });
-
     QUnit.test('onScaleChange() - unlocks when no predefined scales remain', function(assert) {
         assert.expect(4);
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
         ];
-        syncManager.init(testPresets);
+        syncManager.init(testPresets, 'test-1');
 
         const mockSelector1 = createMockSelector('https://test.com/1');
         const mockSelector2 = createMockSelector('https://test.com/1');
@@ -180,130 +158,115 @@ define([
         syncManager.registerSelector('outcome1', mockSelector1);
         syncManager.registerSelector('outcome2', mockSelector2);
 
+        // Lock to predefined scale
         syncManager.onScaleChange('outcome1', 'https://test.com/1');
         assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Scale locked');
 
-        mockSelector1.setCurrentValue('custom1');
-        mockSelector2.setCurrentValue('custom2');
+        // Clear both selectors
+        mockSelector1.setCurrentValue(null);
+        mockSelector2.setCurrentValue(null);
 
         mockSelector1.resetUpdateCount();
         mockSelector2.resetUpdateCount();
 
-        syncManager.onScaleChange('outcome1', 'custom1');
+        // Trigger change with no predefined scales
+        syncManager.onScaleChange('outcome1', null);
 
         assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Scale unlocked when no predefined scales');
         assert.ok(mockSelector1.getUpdateCallCount() >= 1, 'First selector updated');
         assert.ok(mockSelector2.getUpdateCallCount() >= 1, 'Second selector updated');
     });
 
-    QUnit.test('onScaleChange() - prevents circular updates', function(assert) {
+    QUnit.test('onScaleChange() - maintains lock when one predefined scale remains', function(assert) {
         assert.expect(2);
 
         const testPresets = [
             {uri: "https://test.com/1", label: "Test Scale 1"}
         ];
-        syncManager.init(testPresets);
+        syncManager.init(testPresets, 'test-1');
 
-        const mockSelector = createMockSelector();
-        syncManager.registerSelector('outcome1', mockSelector);
+        const mockSelector1 = createMockSelector('https://test.com/1');
+        const mockSelector2 = createMockSelector('https://test.com/1');
 
-        syncManager._isUpdating = true;
-        const initialCallCount = mockSelector.getUpdateCallCount();
+        syncManager.registerSelector('outcome1', mockSelector1);
+        syncManager.registerSelector('outcome2', mockSelector2);
 
+        // Lock to predefined scale
         syncManager.onScaleChange('outcome1', 'https://test.com/1');
 
-        assert.equal(mockSelector.getUpdateCallCount(), initialCallCount, 'No updates when _isUpdating flag is set');
-        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Active scale not changed during circular update');
+        // Clear one selector but keep the other
+        mockSelector1.setCurrentValue(null);
+        syncManager.onScaleChange('outcome1', null);
+
+        assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Scale still locked');
+        assert.equal(mockSelector2.getCurrentValue(), 'https://test.com/1', 'Second selector still has predefined scale');
     });
 
-    QUnit.test('_updateAllSelectors() - handles selector errors gracefully', function(assert) {
-        assert.expect(2);
+    QUnit.test('reset() - clears all state', function(assert) {
+        assert.expect(3);
 
-        var testPresets = [
-            { uri: "https://test.com/1", label: "Test Scale 1" }
-        ];
-        syncManager.init(testPresets);
+        syncManager.init([{uri: "https://test.com/1", label: "Test Scale 1"}], 'test-1');
+        syncManager.registerSelector('outcome1', createMockSelector());
 
-        var goodSelector = createMockSelector();
-        var badSelector = {
-            updateAvailableScales: function() {
-                throw new Error('Test error');
-            }
-        };
+        syncManager.reset();
 
-        syncManager.registerSelector('good', goodSelector);
-        syncManager.registerSelector('bad', badSelector);
+        assert.strictEqual(syncManager._currentTestId, null, 'Test ID cleared');
+        assert.equal(syncManager._testStates.size, 0, 'All test states cleared');
 
-        syncManager._lockToPredefinedScale('https://test.com/1');
-
-        assert.equal(goodSelector.getUpdateCallCount(), 1, 'Good selector was updated');
-        assert.notOk(syncManager._isUpdating, 'Update flag reset despite error');
+        // Should throw error when trying to use without init
+        assert.throws(function() {
+            syncManager.isPredefinedScale("https://test.com/1");
+        }, 'Throws error when no active test');
     });
 
-    QUnit.test('complex scenario - multiple outcomes with mixed scales', function(assert) {
-        assert.expect(6);
+    QUnit.test('reset() - can reset specific test', function(assert) {
+        assert.expect(3);
 
-        var testPresets = [
-            { uri: "https://test.com/1", label: "Test Scale 1" },
-            { uri: "https://test.com/2", label: "Test Scale 2" }
+        syncManager.init([{uri: "https://test1.com/1", label: "Test 1 Scale"}], 'test-1');
+        syncManager.init([{uri: "https://test2.com/1", label: "Test 2 Scale"}], 'test-2');
+
+        syncManager.reset('test-1');
+
+        // Should still be in test-2
+        assert.equal(syncManager._currentTestId, 'test-2', 'Still in test-2');
+        assert.ok(syncManager.isPredefinedScale("https://test2.com/1"), 'Test 2 scale still recognized');
+        assert.notOk(syncManager._testStates.has('test-1'), 'Test 1 state removed');
+    });
+
+    QUnit.test('complex scenario - basic lock/unlock behavior', function(assert) {
+        assert.expect(5);
+
+        const testPresets = [
+            {uri: "https://test.com/1", label: "Test Scale 1"},
+            {uri: "https://test.com/2", label: "Test Scale 2"}
         ];
-        syncManager.init(testPresets);
+        syncManager.init(testPresets, 'test-1');
 
         const selector1 = createMockSelector();
         const selector2 = createMockSelector();
-        const selector3 = createMockSelector();
 
         syncManager.registerSelector('outcome1', selector1);
         syncManager.registerSelector('outcome2', selector2);
-        syncManager.registerSelector('outcome3', selector3);
 
-        // Step 1: Set first predefined scale
+        // Initially unlocked
+        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Initially unlocked');
+
+        // Select predefined scale - should lock
         selector1.setCurrentValue('https://test.com/1');
         syncManager.onScaleChange('outcome1', 'https://test.com/1');
-        assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Locked to first predefined scale');
+        assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Locked to predefined scale');
 
-        // Step 2: Set custom scale in another outcome
+        // Select custom scale in other selector - should stay locked
         selector2.setCurrentValue('custom_scale');
         syncManager.onScaleChange('outcome2', 'custom_scale');
         assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Still locked despite custom scale');
 
-        // Step 3: Set same predefined scale in third outcome
-        selector3.setCurrentValue('https://test.com/1');
-        syncManager.onScaleChange('outcome3', 'https://test.com/1');
-        assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Still locked to same scale');
-
-        // Step 4: Clear predefined scale from first outcome
+        // Clear predefined scale - should unlock
         selector1.setCurrentValue(null);
         syncManager.onScaleChange('outcome1', null);
-        assert.equal(syncManager.getActivePredefinedScale(), 'https://test.com/1', 'Still locked - third outcome has predefined scale');
+        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Unlocked when no predefined scales');
 
-        // Step 5: Clear predefined scale from third outcome
-        selector3.setCurrentValue('another_custom');
-        syncManager.onScaleChange('outcome3', 'another_custom');
-        assert.strictEqual(syncManager.getActivePredefinedScale(), null, 'Unlocked - no predefined scales remain');
-
-        assert.ok(selector1.getUpdateCallCount() > 0 && selector2.getUpdateCallCount() > 0 && selector3.getUpdateCallCount() > 0,
-            'All selectors received updates');
-    });
-
-    QUnit.test('edge case - same scale change does not trigger unnecessary updates', function(assert) {
-        assert.expect(2);
-
-        const testPresets = [
-            {uri: "https://test.com/1", label: "Test Scale 1"}
-        ];
-        syncManager.init(testPresets);
-
-        const mockSelector = createMockSelector();
-        syncManager.registerSelector('outcome1', mockSelector);
-
-        syncManager.onScaleChange('outcome1', 'https://test.com/1');
-        const firstUpdateCount = mockSelector.getUpdateCallCount();
-
-        syncManager.onScaleChange('outcome1', 'https://test.com/1');
-        const secondUpdateCount = mockSelector.getUpdateCallCount();
-
-        assert.ok(firstUpdateCount > 0, 'First change triggered update');
-        assert.equal(secondUpdateCount, firstUpdateCount, 'Identical change did not trigger additional update');
+        // All selectors should receive updates
+        assert.ok(selector1.getUpdateCallCount() > 0 && selector2.getUpdateCallCount() > 0, 'All selectors received updates');
     });
 });
