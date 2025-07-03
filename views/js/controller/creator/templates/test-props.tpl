@@ -242,9 +242,9 @@
             <div class="outcome-declarations-manual"></div>
             <div class="grid-row test-outcomes-declaration">
                 <div class="col-12">
-                    <a href="#" class="adder feedbackRule-add" data-action="add-outcome-declaration">
-                        {{__ "Add an outcome declaration"}}
-                    </a>
+                    <button type="button" class="adder feedbackRule-add btn-info small" data-action="add-outcome-declaration">
+                        <span class="icon-add"></span>{{__ "Add an outcome declaration"}}
+                    </button>
                 </div>
             </div>
             <div class="grid-row">
