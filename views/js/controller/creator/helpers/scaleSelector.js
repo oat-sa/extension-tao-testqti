@@ -28,6 +28,7 @@ define([
 
     let allScalesPresets = [];
     const scaleMap = new Map();
+    let currentTestId = null;
 
     function scaleSelectorFactory($container, outcomeId) {
         const $scaleSelect = $container.find('[name="interpretation"]');
@@ -69,7 +70,14 @@ define([
                     const currentValue = this.getCurrentValue();
                     const selectData = this._buildSelectData(lockedPredefinedScale, currentValue);
 
-                    const currentData = $scaleSelect.select2('data');
+                    if (!$scaleSelect.length || !$scaleSelect.data('select2')) {
+                        this._initializeSelect2(selectData);
+                        if (currentValue) {
+                            this._setCurrentValue(currentValue, true);
+                        }
+                        return;
+                    }
+
                     const currentOptions = $scaleSelect.find('option').map(function() {
                         return $(this).val();
                     }).get();
@@ -77,32 +85,54 @@ define([
                     const newOptions = selectData.map(item => item.id);
                     const needsUpdate = !_.isEqual(currentOptions.sort(), [''].concat(newOptions).sort());
 
-                    if (!needsUpdate && currentData) {
+                    if (!needsUpdate) {
                         this._isInternalUpdate = false;
                         return;
                     }
 
-                    const hasFocus = $scaleSelect.next('.select2-container').find('.select2-focus').length > 0;
-                    const isOpen = $scaleSelect.select2('isOpen');
+                    setTimeout(() => {
+                        if (this._destroyed) {
+                            return;
+                        }
 
-                    if (isOpen) {
-                        $scaleSelect.select2('close');
+                        try {
+                            this._safeUpdateSelect2(selectData, currentValue);
+                        } catch (error) {
+                            console.warn('Error in delayed Select2 update:', error);
+                        }
+                    }, 10);
+
+                } catch (error) {
+                    console.warn('Error updating scale selector:', error);
+                } finally {
+                    this._isInternalUpdate = false;
+                }
+            },
+
+            /**
+             * Safely update Select2 with proper cleanup
+             * @param {Array} selectData - New options data
+             * @param {string} currentValue - Current selected value
+             * @private
+             */
+            _safeUpdateSelect2(selectData, currentValue) {
+                if (this._destroyed || !$scaleSelect.length) {
+                    return;
+                }
+
+                try {
+                    if ($scaleSelect.data('select2')) {
+                        this._safeDestroySelect2();
                     }
 
-                    this._safeDestroySelect2();
                     this._initializeSelect2(selectData);
 
                     if (currentValue) {
                         this._setCurrentValue(currentValue, true);
                     }
 
-                    if (hasFocus && !isOpen) {
-                        $scaleSelect.select2('focus');
-                    }
                 } catch (error) {
-                    console.warn('Error updating scale selector:', error);
-                } finally {
-                    this._isInternalUpdate = false;
+                    console.warn('Error in _safeUpdateSelect2:', error);
                 }
             },
 
@@ -193,6 +223,9 @@ define([
                 this._isInternalUpdate = true;
 
                 try {
+                    const previousValue = lastKnownValue;
+                    lastKnownValue = null;
+
                     $scaleSelect.val('');
 
                     if ($scaleSelect.data('select2')) {
@@ -202,13 +235,6 @@ define([
                     if ($scaleSelect._testValue !== undefined) {
                         $scaleSelect._testValue = '';
                     }
-                } catch (error) {
-                    console.warn('Error clearing selection:', error);
-                } finally {
-                    this._isInternalUpdate = false;
-
-                    const previousValue = lastKnownValue;
-                    lastKnownValue = null;
 
                     if (previousValue !== null) {
                         if (outcomeId) {
@@ -216,6 +242,10 @@ define([
                         }
                         this.trigger('interpretation-change', null);
                     }
+                } catch (error) {
+                    console.warn('Error clearing selection:', error);
+                } finally {
+                    this._isInternalUpdate = false;
                 }
             },
 
@@ -260,16 +290,8 @@ define([
                             text: lockedPreset.label
                         });
                     }
-                } else {
-                    selectData = allScalesPresets.map(preset => ({
-                        id: preset.uri,
-                        text: preset.label
-                    }));
-                }
 
-                if (currentValue) {
-                    const valueExists = selectData.some(item => item.id === currentValue);
-                    if (!valueExists) {
+                    if (currentValue && currentValue !== lockedScale) {
                         const preset = scaleMap.get(currentValue);
                         if (preset) {
                             selectData.push({
@@ -281,6 +303,29 @@ define([
                                 id: currentValue,
                                 text: currentValue
                             });
+                        }
+                    }
+                } else {
+                    selectData = allScalesPresets.map(preset => ({
+                        id: preset.uri,
+                        text: preset.label
+                    }));
+
+                    if (currentValue) {
+                        const valueExists = selectData.some(item => item.id === currentValue);
+                        if (!valueExists) {
+                            const preset = scaleMap.get(currentValue);
+                            if (preset) {
+                                selectData.push({
+                                    id: preset.uri,
+                                    text: preset.label
+                                });
+                            } else {
+                                selectData.push({
+                                    id: currentValue,
+                                    text: currentValue
+                                });
+                            }
                         }
                     }
                 }
@@ -381,25 +426,47 @@ define([
              * @private
              */
             _safeDestroySelect2() {
+                if (!$scaleSelect.length) {
+                    return;
+                }
+
                 try {
                     $scaleSelect.off('change.scaleSync');
 
-                    if ($scaleSelect.length && $scaleSelect.data('select2')) {
+                    if ($scaleSelect.data('select2')) {
                         try {
                             $scaleSelect.select2('close');
-                        } catch (e) {
+                        } catch (closeError) {
+                            console.warn('Error closing Select2 during destruction:', closeError);
                         }
 
-                        $scaleSelect.select2('destroy');
+                        try {
+                            $scaleSelect.select2('val', '');
+                        } catch (clearError) {
+                            console.warn('Error clearing Select2 value:', clearError);
+                        }
+
+                        try {
+                            $scaleSelect.select2('destroy');
+                        } catch (destroyError) {
+                            console.warn('Error destroying Select2 instance:', destroyError);
+                        }
                     }
-                } catch (error) {
-                    console.warn('Error destroying Select2:', error);
+
                     try {
                         $scaleSelect.removeClass('select2-hidden-accessible');
-                        $scaleSelect.next('.select2-container').remove();
+                        const $container = $scaleSelect.next('.select2-container');
+                        if ($container.length) {
+                            $container.off();
+                            $container.find('*').off();
+                            $container.remove();
+                        }
                     } catch (cleanupError) {
                         console.warn('Error in Select2 cleanup:', cleanupError);
                     }
+
+                } catch (error) {
+                    console.warn('Error in _safeDestroySelect2:', error);
                 }
             },
 
@@ -431,6 +498,30 @@ define([
     }
 
     /**
+     * Set the current test ID - must be called before creating selectors
+     * @param {string} testId - Test identifier
+     */
+    scaleSelectorFactory.setTestId = function setTestId(testId) {
+        if (!testId) {
+            throw new Error('testId is required');
+        }
+
+        currentTestId = testId;
+
+        if (allScalesPresets.length > 0) {
+            syncManager.init(allScalesPresets, currentTestId);
+        }
+    };
+
+    /**
+     * Get the current test ID
+     * @returns {string|null} Current test ID
+     */
+    scaleSelectorFactory.getTestId = function getTestId() {
+        return currentTestId;
+    };
+
+    /**
      * Set predefined scales presets
      * @param {Object[]} presets - Array of {uri, label} objects
      */
@@ -445,18 +536,51 @@ define([
                 }
             });
 
-            const testId = window.location.pathname;
-            syncManager.init(presets, testId);
+            if (currentTestId) {
+                syncManager.init(presets, currentTestId);
+            }
         }
     };
 
     /**
-     * Reset the factory state - useful when switching between tests
+     * Initialize with both presets and test ID
+     * @param {Object[]} presets - Array of {uri, label} objects
+     * @param {string} testId - Test identifier
      */
-    scaleSelectorFactory.reset = function reset() {
-        allScalesPresets = [];
-        scaleMap.clear();
-        syncManager.reset();
+    scaleSelectorFactory.initialize = function initialize(presets, testId) {
+        if (!testId) {
+            throw new Error('testId is required');
+        }
+
+        currentTestId = testId;
+        this.setPresets(presets);
+    };
+
+    /**
+     * Reset the factory state - useful when switching between tests
+     * @param {string} [testId] - Specific test to reset, or null for all tests
+     */
+    scaleSelectorFactory.reset = function reset(testId = null) {
+        if (testId) {
+            syncManager.reset(testId);
+            if (currentTestId === testId) {
+                currentTestId = null;
+            }
+        } else {
+            allScalesPresets = [];
+            scaleMap.clear();
+            currentTestId = null;
+            syncManager.reset();
+        }
+    };
+
+    /**
+     * Expose sync manager for enhanced functionality (internal use)
+     * @returns {Object} Sync manager instance
+     * @private
+     */
+    scaleSelectorFactory.__getSyncManager = function getSyncManager() {
+        return syncManager;
     };
 
     return scaleSelectorFactory;

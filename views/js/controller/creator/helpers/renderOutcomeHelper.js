@@ -19,14 +19,40 @@ define([
     const _ns = '.outcome-container';
 
     const scaleSelectors = new Map();
+    let selectorIdCounter = 0;
 
     /**
-     * Generate unique outcome ID for scale synchronization
-     * @param {Object} outcome - Outcome declaration
-     * @returns {string} Unique ID
+     * Generate unique selector ID (not tied to outcome properties that might change)
+     * @returns {string} Unique selector ID
      */
-    function generateOutcomeId(outcome) {
-        return `outcome_${outcome.serial || outcome.identifier || Math.random().toString(36).substr(2, 9)}`;
+    function generateSelectorId() {
+        return `selector_${++selectorIdCounter}_${Date.now()}`;
+    }
+
+    /**
+     * Generate stable outcome identifier for tracking duplicates
+     * @param {Object} outcome - Outcome declaration
+     * @returns {string} Stable identifier
+     */
+    function getStableOutcomeId(outcome) {
+        if (outcome.serial) {
+            return outcome.serial;
+        }
+        if (outcome.identifier) {
+            return outcome.identifier;
+        }
+        const props = [
+            outcome.longInterpretation,
+            outcome.interpretation,
+            outcome.normalMinimum,
+            outcome.normalMaximum
+        ].filter(p => p !== undefined && p !== null && p !== '');
+
+        if (props.length > 0) {
+            return `temp_${props.join('_').replace(/[^a-zA-Z0-9_]/g, '_')}`;
+        }
+
+        return `temp_new_${Date.now()}`;
     }
 
     /**
@@ -120,31 +146,76 @@ define([
     }
 
     /**
+     * Find existing selector for an outcome to prevent duplicates
+     * @param {Object} outcome - Outcome declaration
+     * @returns {Object|null} Existing selector info or null
+     */
+    function findExistingSelectorForOutcome(outcome) {
+        const stableId = getStableOutcomeId(outcome);
+
+        for (const [selectorId, selectorInfo] of scaleSelectors.entries()) {
+            if (selectorInfo.outcomeStableId === stableId) {
+                return { selectorId, selectorInfo };
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Create and setup scale selector for an outcome
      * @param {jQuery} $outcomeContainer - Container element
      * @param {Object} outcome - Outcome declaration
      */
     function setupScaleSelector($outcomeContainer, outcome) {
         const $interpretationContainer = $outcomeContainer.find('.interpretation');
-        const outcomeId = generateOutcomeId(outcome);
+        const stableOutcomeId = getStableOutcomeId(outcome);
 
-        const existingSelector = scaleSelectors.get(outcomeId);
-        if (existingSelector) {
-            existingSelector.destroy();
+        const existing = findExistingSelectorForOutcome(outcome);
+        if (existing) {
+
+            if (existing.selectorInfo.selector && typeof existing.selectorInfo.selector.destroy === 'function') {
+                try {
+                    existing.selectorInfo.selector.destroy();
+                } catch (error) {
+                    console.warn('Error destroying existing selector:', error);
+                }
+            }
+            scaleSelectors.delete(existing.selectorId);
         }
 
-        const scaleSelector = scaleSelectorFactory($interpretationContainer, outcomeId);
-        scaleSelectors.set(outcomeId, scaleSelector);
+        const selectorId = generateSelectorId();
+
+        const scaleSelector = scaleSelectorFactory($interpretationContainer, selectorId);
+
+        scaleSelectors.set(selectorId, {
+            selector: scaleSelector,
+            outcomeStableId: stableOutcomeId,
+            outcome: outcome,
+            container: $outcomeContainer
+        });
+
+        const syncManager = scaleSelectorFactory.__getSyncManager ? scaleSelectorFactory.__getSyncManager() : null;
+        if (syncManager && typeof syncManager.registerSelector === 'function') {
+            try {
+                syncManager.registerSelector(selectorId, scaleSelector, outcome);
+            } catch (error) {
+                if (typeof syncManager.registerSelector === 'function') {
+                    syncManager.registerSelector(selectorId, scaleSelector);
+                }
+            }
+        }
 
         scaleSelector.createForm(outcome.interpretation || '');
 
         scaleSelector.on('interpretation-change', function(interpretationValue) {
+            const oldOutcome = { ...outcome };
+
             outcome.interpretation = interpretationValue || '';
 
             const hasInterpretation = !!interpretationValue;
 
             setMinMaxDisabled($outcomeContainer, hasInterpretation);
-
             updateExternalScored($outcomeContainer, hasInterpretation);
 
             if (hasInterpretation) {
@@ -162,11 +233,20 @@ define([
                     $externalScoredSelect.select2('val', 'none');
                 }
 
-                // Set min/max to 0
                 outcome.normalMinimum = 0;
                 outcome.normalMaximum = 0;
                 $outcomeContainer.find('input[name="normalMinimum"]').val('0');
                 $outcomeContainer.find('input[name="normalMaximum"]').val('0');
+            }
+
+            const newStableId = getStableOutcomeId(outcome);
+            const selectorInfo = scaleSelectors.get(selectorId);
+            if (selectorInfo && selectorInfo.outcomeStableId !== newStableId) {
+                selectorInfo.outcomeStableId = newStableId;
+
+                if (syncManager && typeof syncManager.updateSelectorRegistration === 'function') {
+                    syncManager.updateSelectorRegistration(selectorId, oldOutcome, outcome);
+                }
             }
         });
 
@@ -174,6 +254,57 @@ define([
             setMinMaxDisabled($outcomeContainer, true);
             updateExternalScored($outcomeContainer, true);
         }
+    }
+
+    /**
+     * Clean up selector by ID
+     * @param {string} selectorId - Selector ID to clean up
+     */
+    function cleanupSelector(selectorId) {
+        const selectorInfo = scaleSelectors.get(selectorId);
+        if (selectorInfo) {
+            const { selector, outcome } = selectorInfo;
+
+            const syncManager = scaleSelectorFactory.__getSyncManager ? scaleSelectorFactory.__getSyncManager() : null;
+            if (syncManager && typeof syncManager.unregisterSelector === 'function') {
+                try {
+                    syncManager.unregisterSelector(selectorId, outcome);
+                } catch (error) {
+                    if (typeof syncManager.unregisterSelector === 'function') {
+                        syncManager.unregisterSelector(selectorId);
+                    }
+                }
+            }
+
+            if (selector && typeof selector.destroy === 'function') {
+                try {
+                    selector.destroy();
+                } catch (error) {
+                    console.warn('Error destroying selector:', error);
+                }
+            }
+
+            scaleSelectors.delete(selectorId);
+        }
+    }
+
+    /**
+     * Clean up selector for a specific outcome
+     * @param {Object} outcome - Outcome declaration
+     */
+    function cleanupSelectorsForOutcome(outcome) {
+        const stableId = getStableOutcomeId(outcome);
+        const selectorsToCleanup = [];
+
+        for (const [selectorId, selectorInfo] of scaleSelectors.entries()) {
+            if (selectorInfo.outcomeStableId === stableId) {
+                selectorsToCleanup.push(selectorId);
+            }
+        }
+
+        selectorsToCleanup.forEach(selectorId => {
+            cleanupSelector(selectorId);
+        });
     }
 
     /**
@@ -261,7 +392,6 @@ define([
 
         formElement.initWidget($editorPanel);
 
-        // Setup scale selectors and apply disabled states
         $editorPanel.find('.outcome-container').each(function() {
             const $outcomeContainer = $(this);
             const identifierValue = $outcomeContainer.find('input.identifier').val();
@@ -317,12 +447,7 @@ define([
                 const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
 
                 if (outcome) {
-                    const outcomeId = generateOutcomeId(outcome);
-                    const selector = scaleSelectors.get(outcomeId);
-                    if (selector) {
-                        selector.destroy();
-                        scaleSelectors.delete(outcomeId);
-                    }
+                    cleanupSelectorsForOutcome(outcome);
                 }
 
                 $outcomeContainer.addClass('hidden');
@@ -361,6 +486,7 @@ define([
 
                 if (editedOutcomeDeclaration) {
                     const inputValue = $input.val().trim();
+                    const oldOutcome = { ...editedOutcomeDeclaration };
 
                     if (inputName === 'normalMinimum' || inputName === 'normalMaximum') {
                         if (editedOutcomeDeclaration.interpretation) {
@@ -381,12 +507,22 @@ define([
                         }
                     } else {
                         editedOutcomeDeclaration[inputName] = inputValue;
+
+                        if (inputName === 'identifier' && oldOutcome.identifier !== inputValue) {
+                            const oldStableId = getStableOutcomeId(oldOutcome);
+                            for (const [selectorId, selectorInfo] of scaleSelectors.entries()) {
+                                if (selectorInfo.outcomeStableId === oldStableId) {
+                                    selectorInfo.outcomeStableId = getStableOutcomeId(editedOutcomeDeclaration);
+                                    selectorInfo.outcome = editedOutcomeDeclaration;
+
+                                    const syncManager = scaleSelectorFactory.__getSyncManager ? scaleSelectorFactory.__getSyncManager() : null;
+                                    if (syncManager && typeof syncManager.updateSelectorRegistration === 'function') {
+                                        syncManager.updateSelectorRegistration(selectorId, oldOutcome, editedOutcomeDeclaration);
+                                    }
+                                }
+                            }
+                        }
                     }
-                } else {
-                    console.warn('Outcome declaration not found for container:', {
-                        serial: serial,
-                        identifier: $outcomeContainer.find('input.identifier').val()
-                    });
                 }
             })
             .on('change', '.outcome-container select[name="externalScored"]', function () {
@@ -417,14 +553,19 @@ define([
      * Cleanup all scale selectors
      */
     function cleanup() {
-        scaleSelectors.forEach(selector => {
-            selector.destroy();
+        scaleSelectors.forEach((selectorInfo, selectorId) => {
+            cleanupSelector(selectorId);
         });
         scaleSelectors.clear();
+
+        const syncManager = scaleSelectorFactory.__getSyncManager ? scaleSelectorFactory.__getSyncManager() : null;
+        if (syncManager && typeof syncManager.cleanupOrphanedSelectors === 'function') {
+            syncManager.cleanupOrphanedSelectors();
+        }
     }
 
     return {
         renderOutcomeDeclarationList,
-        cleanup
+        cleanup,
     };
 });

@@ -137,7 +137,7 @@ define([
             options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));
 
             categorySelector.setPresets(options.categoriesPresets);
-            scaleSelector.setPresets(options.scalesPresets);
+            scaleSelector.initialize(options.scalesPresets, options.testUri);
 
             //back button
             if (options.translation) {
