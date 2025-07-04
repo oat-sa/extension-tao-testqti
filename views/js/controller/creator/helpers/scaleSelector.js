@@ -574,5 +574,14 @@ define([
         }
     };
 
+    /**
+     * Expose sync manager for enhanced functionality (internal use)
+     * @returns {Object} Sync manager instance
+     * @private
+     */
+    scaleSelectorFactory.__getSyncManager = function getSyncManager() {
+        return syncManager;
+    };
+
     return scaleSelectorFactory;
 });

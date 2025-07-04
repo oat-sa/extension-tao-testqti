@@ -21,10 +21,6 @@
 define(['lodash'], function (_) {
     'use strict';
 
-    /**
-     * Singleton manager for scale synchronization
-     * Now properly handles multiple tests with testId-indexed state
-     */
     const ScaleSynchronizationManager = {
         _testStates: new Map(),
         _currentTestId: null,
@@ -41,7 +37,8 @@ define(['lodash'], function (_) {
                 this._testStates.set(testId, {
                     predefinedScales: new Set(),
                     activePredefinedScale: null,
-                    outcomeSelectors: new Map()
+                    outcomeSelectors: new Map(),
+                    outcomeIdentifierMap: new Map()
                 });
             }
             return this._testStates.get(testId);
@@ -88,11 +85,34 @@ define(['lodash'], function (_) {
          */
         reset(testId = null) {
             if (testId) {
+                const state = this._testStates.get(testId);
+                if (state) {
+                    state.outcomeSelectors.forEach(selector => {
+                        if (selector && typeof selector.destroy === 'function') {
+                            try {
+                                selector.destroy();
+                            } catch (error) {
+                                console.warn('Error destroying selector during reset:', error);
+                            }
+                        }
+                    });
+                }
                 this._testStates.delete(testId);
                 if (this._currentTestId === testId) {
                     this._currentTestId = null;
                 }
             } else {
+                this._testStates.forEach(state => {
+                    state.outcomeSelectors.forEach(selector => {
+                        if (selector && typeof selector.destroy === 'function') {
+                            try {
+                                selector.destroy();
+                            } catch (error) {
+                                console.warn('Error destroying selector during reset:', error);
+                            }
+                        }
+                    });
+                });
                 this._testStates.clear();
                 this._currentTestId = null;
             }
@@ -100,25 +120,159 @@ define(['lodash'], function (_) {
         },
 
         /**
-         * Register an outcome scale selector
-         * @param {string} outcomeId - Unique identifier for the outcome
-         * @param {Object} selector - Scale selector instance
+         * Generate a stable outcome identifier for tracking
+         * @param {Object} outcome - Outcome object
+         * @returns {string} Stable identifier
+         * @private
          */
-        registerSelector(outcomeId, selector) {
+        _getStableOutcomeIdentifier(outcome) {
+            if (outcome.identifier) {
+                return outcome.identifier;
+            }
+            if (outcome.serial) {
+                return outcome.serial;
+            }
+
+            const props = [
+                outcome.longInterpretation,
+                outcome.interpretation,
+                outcome.normalMinimum,
+                outcome.normalMaximum
+            ].filter(p => p !== undefined && p !== null && p !== '');
+
+            if (props.length > 0) {
+                return `temp_${props.join('_').replace(/[^a-zA-Z0-9_]/g, '_')}`;
+            }
+
+            return `temp_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
+        },
+
+        /**
+         * Register an outcome scale selector with duplicate prevention
+         * @param {string} selectorId - Unique identifier for the selector instance
+         * @param {Object} selector - Scale selector instance
+         * @param {Object} outcome - Outcome object for tracking
+         */
+        registerSelector(selectorId, selector, outcome) {
             const state = this._getCurrentState();
-            state.outcomeSelectors.set(outcomeId, selector);
+            if (!outcome) {
+                state.outcomeSelectors.set(selectorId, selector);
+                this._checkCurrentState();
+                return;
+            }
+
+            const stableId = this._getStableOutcomeIdentifier(outcome);
+            const existingSelectorId = state.outcomeIdentifierMap.get(stableId);
+            if (existingSelectorId && existingSelectorId !== selectorId) {
+                const existingSelector = state.outcomeSelectors.get(existingSelectorId);
+                if (existingSelector && !existingSelector._destroyed) {
+                    try {
+                        existingSelector.destroy();
+                    } catch (error) {
+                        console.warn('Error destroying duplicate selector:', error);
+                    }
+
+                    state.outcomeSelectors.delete(existingSelectorId);
+                }
+            }
+            state.outcomeSelectors.set(selectorId, selector);
+            state.outcomeIdentifierMap.set(stableId, selectorId);
+
             this._checkCurrentState();
         },
 
         /**
          * Unregister an outcome scale selector
-         * @param {string} outcomeId - Unique identifier for the outcome
+         * @param {string} selectorId - Unique identifier for the selector
+         * @param {Object} [outcome] - Outcome object for proper cleanup
          */
-        unregisterSelector(outcomeId) {
+        unregisterSelector(selectorId, outcome = null) {
             const state = this._getCurrentState();
-            state.outcomeSelectors.delete(outcomeId);
+            state.outcomeSelectors.delete(selectorId);
+            if (outcome) {
+                const stableId = this._getStableOutcomeIdentifier(outcome);
+                const mappedSelectorId = state.outcomeIdentifierMap.get(stableId);
+                if (mappedSelectorId === selectorId) {
+                    state.outcomeIdentifierMap.delete(stableId);
+                }
+            } else {
+                for (const [stableId, mappedSelectorId] of state.outcomeIdentifierMap.entries()) {
+                    if (mappedSelectorId === selectorId) {
+                        state.outcomeIdentifierMap.delete(stableId);
+                        break;
+                    }
+                }
+            }
 
             this._checkIfAnyPredefinedScalesInUse();
+        },
+
+        /**
+         * Update selector registration when outcome properties change
+         * @param {string} selectorId - Current selector ID
+         * @param {Object} oldOutcome - Previous outcome state
+         * @param {Object} newOutcome - Updated outcome state
+         */
+        updateSelectorRegistration(selectorId, oldOutcome, newOutcome) {
+            const state = this._getCurrentState();
+            const selector = state.outcomeSelectors.get(selectorId);
+
+            if (!selector) {
+                return;
+            }
+
+            const oldStableId = oldOutcome ? this._getStableOutcomeIdentifier(oldOutcome) : null;
+            const newStableId = this._getStableOutcomeIdentifier(newOutcome);
+
+            if (oldStableId && oldStableId !== newStableId) {
+                if (state.outcomeIdentifierMap.get(oldStableId) === selectorId) {
+                    state.outcomeIdentifierMap.delete(oldStableId);
+                }
+
+                const existingSelectorId = state.outcomeIdentifierMap.get(newStableId);
+                if (existingSelectorId && existingSelectorId !== selectorId) {
+                    const existingSelector = state.outcomeSelectors.get(existingSelectorId);
+                    if (existingSelector && !existingSelector._destroyed) {
+                        try {
+                            existingSelector.destroy();
+                        } catch (error) {
+                            console.warn('Error destroying conflicting selector:', error);
+                        }
+                        state.outcomeSelectors.delete(existingSelectorId);
+                    }
+                }
+
+                state.outcomeIdentifierMap.set(newStableId, selectorId);
+            }
+        },
+
+        /**
+         * Clean up orphaned selectors that may have been left behind
+         */
+        cleanupOrphanedSelectors() {
+            const state = this._getCurrentState();
+            const validSelectorIds = new Set(state.outcomeIdentifierMap.values());
+
+            const orphanedSelectorIds = [];
+            for (const selectorId of state.outcomeSelectors.keys()) {
+                if (!validSelectorIds.has(selectorId)) {
+                    orphanedSelectorIds.push(selectorId);
+                }
+            }
+
+            orphanedSelectorIds.forEach(selectorId => {
+                const selector = state.outcomeSelectors.get(selectorId);
+                if (selector) {
+                    try {
+                        if (typeof selector.destroy === 'function') {
+                            selector.destroy();
+                        }
+                    } catch (error) {
+                        console.warn('Error destroying orphaned selector:', error);
+                    }
+                    state.outcomeSelectors.delete(selectorId);
+                }
+            });
         },
 
         /**
@@ -194,6 +348,9 @@ define(['lodash'], function (_) {
 
             state.outcomeSelectors.forEach(selector => {
                 try {
+                    if (selector._destroyed) {
+                        return;
+                    }
                     const currentValue = selector.getCurrentValue();
                     if (currentValue && state.predefinedScales.has(currentValue)) {
                         foundPredefinedScale = currentValue;
@@ -217,10 +374,6 @@ define(['lodash'], function (_) {
 
         /**
          * Update all registered selectors with current lock state
-         * When locked to a predefined scale:
-         * - The dropdown shows only the locked predefined scale option
-         * - Users can still type and select custom scales
-         * - But predefined scales other than the locked one are hidden
          * @private
          */
         _updateAllSelectors() {
@@ -232,11 +385,14 @@ define(['lodash'], function (_) {
 
             try {
                 const state = this._getCurrentState();
-                state.outcomeSelectors.forEach((selector, outcomeId) => {
+                state.outcomeSelectors.forEach((selector, selectorId) => {
                     try {
+                        if (selector._destroyed) {
+                            return;
+                        }
                         selector.updateAvailableScales(state.activePredefinedScale);
                     } catch (error) {
-                        console.warn(`Error updating selector ${outcomeId}:`, error);
+                        console.warn(`Error updating selector ${selectorId}:`, error);
                     }
                 });
             } catch (error) {
