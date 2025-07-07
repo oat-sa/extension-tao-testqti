@@ -209,7 +209,7 @@ define([
         scaleSelector.createForm(outcome.interpretation || '');
 
         scaleSelector.on('interpretation-change', function(interpretationValue) {
-            const oldOutcome = { ...outcome };
+            const oldOutcome = Object.assign({}, outcome);
 
             outcome.interpretation = interpretationValue || '';
 
@@ -486,7 +486,7 @@ define([
 
                 if (editedOutcomeDeclaration) {
                     const inputValue = $input.val().trim();
-                    const oldOutcome = { ...editedOutcomeDeclaration };
+                    const oldOutcome = Object.assign({}, editedOutcomeDeclaration);
 
                     if (inputName === 'normalMinimum' || inputName === 'normalMaximum') {
                         if (editedOutcomeDeclaration.interpretation) {
