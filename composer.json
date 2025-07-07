@@ -62,7 +62,7 @@
     "ext-zip": "*",
     "oat-sa/lib-test-cat": "2.4.0",
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
-    "qtism/qtism": ">=0.28.7",
+    "qtism/qtism": ">=0.28.9",
     "oat-sa/generis": ">=16.0.0",
     "oat-sa/tao-core": ">=54.32.1",
     "oat-sa/extension-tao-item": ">=12.4.0",
