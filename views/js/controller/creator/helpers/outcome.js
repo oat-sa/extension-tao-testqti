@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2017 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2017-2025 (original work) Open Assessment Technologies SA ;
  */
 /**
  * Basic helper that is intended to manage outcomes inside a test model.
@@ -28,6 +28,36 @@ define([
     'taoQtiTest/controller/creator/helpers/cardinality'
 ], function (_, outcomeValidator, qtiElementHelper, baseTypeHelper, cardinalityHelper) {
     'use strict';
+
+    /**
+     * This is a list of outcomes that are reserved for the score processing
+     */
+    var reservedOutcomeDeclarations = [
+        'SCORE_TOTAL',
+        'SCORE_TOTAL_MAX',
+        'SCORE_TOTAL_WEIGHTED',
+        'SCORE_TOTAL_MAX_WEIGHTED',
+        'SCORE_RATIO',
+        'SCORE_RATIO_WEIGHTED',
+        'PASS_ALL',
+        'PASS_ALL_RENDERING',
+        'GRADE',
+        'GRADE_MAX'
+    ];
+
+    /**
+     * Types of externalScored attributes
+     */
+    var externalScoredOptions = {
+        none: 'none',
+        human: 'human',
+        externalMachine: 'externalMachine'
+    };
+
+    var externalScoredValidOptions = [
+        externalScoredOptions.human,
+        externalScoredOptions.externalMachine
+    ];
 
     var outcomeHelper = {
         /**
@@ -68,6 +98,22 @@ define([
          */
         getOutcomeDeclarations: function getOutcomeDeclarations(testModel) {
             var outcomes = testModel && testModel.outcomeDeclarations;
+            return outcomes || [];
+        },
+
+        getReservedOutcomeDeclarations: function getReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return _.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
+            return outcomes || [];
+        },
+
+        getNonReservedOutcomeDeclarations: function getNonReservedOutcomeDeclarations(testModel) {
+            var outcomes = _.filter(testModel && testModel.outcomeDeclarations, function (outcome) {
+                return !_.includes(reservedOutcomeDeclarations, outcome.identifier);
+            });
+
             return outcomes || [];
         },
 
@@ -174,6 +220,92 @@ define([
         },
 
         /**
+         * Checks if there are outcomes (other than specified identifier) that have external scoring enabled
+         * @param {Object} testModel
+         * @param {String} excludeIdentifier - Identifier to exclude from the check
+         * @returns {Boolean}
+         */
+        hasExternalScoredOutcome: function hasExternalScoredOutcome(testModel, excludeIdentifier) {
+            var outcomes = outcomeHelper.getOutcomeDeclarations(testModel);
+            return _.some(outcomes, function (outcome) {
+                return outcome.identifier !== excludeIdentifier &&
+                    outcomeHelper.hasValidExternalScoring(outcome);
+            });
+        },
+
+        /**
+         * Gets the external scored value for a specific outcome
+         * @param {Object} testModel
+         * @param {String} identifier
+         * @returns {String}
+         */
+        getOutcomeExternalScored: function getOutcomeExternalScored(testModel, identifier) {
+            var outcome = _.find(outcomeHelper.getOutcomeDeclarations(testModel), function (outcome) {
+                return outcome.identifier === identifier;
+            });
+            return _.get(outcome, 'externalScored', externalScoredOptions.none);
+        },
+
+        /**
+         * Determines if externalScored should be disabled for a given outcome
+         * @param {Object} testModel
+         * @param {String} identifier
+         * @returns {Boolean}
+         */
+        shouldDisableExternalScored: function shouldDisableExternalScored(testModel, identifier) {
+            var isScoreOutcome = identifier === 'SCORE' || _.includes(reservedOutcomeDeclarations, identifier);
+            var scoreExternalScored = outcomeHelper.getOutcomeExternalScored(testModel, 'SCORE');
+
+            var hasReservedScoreWithExternalScoring = _.some(reservedOutcomeDeclarations, function(reservedId) {
+                var externalScored = outcomeHelper.getOutcomeExternalScored(testModel, reservedId);
+                return _.includes(externalScoredValidOptions, externalScored);
+            });
+
+            if (isScoreOutcome) {
+                return outcomeHelper.hasExternalScoredOutcome(testModel, identifier);
+            } else {
+                return _.includes(externalScoredValidOptions, scoreExternalScored) ||
+                    hasReservedScoreWithExternalScoring;
+            }
+        },
+
+        /**
+         * Checks if an outcome has valid external scoring enabled
+         * @param {Object} outcome
+         * @returns {Boolean}
+         */
+        hasValidExternalScoring: function hasValidExternalScoring(outcome) {
+            return outcome.externalScored && _.includes(externalScoredValidOptions, outcome.externalScored);
+        },
+
+        /**
+         * Updates externalScoredDisabled for all outcomes based on current state
+         * @param {Object} testModel
+         */
+        updateExternalScoredDisabled: function updateExternalScoredDisabled(testModel) {
+            var outcomes = outcomeHelper.getOutcomeDeclarations(testModel);
+
+            _.forEach(outcomes, function (outcome) {
+                var shouldDisable = outcomeHelper.shouldDisableExternalScored(testModel, outcome.identifier);
+                outcome.externalScoredDisabled = shouldDisable ? 1 : 0;
+
+                if (shouldDisable && !_.includes(externalScoredValidOptions, outcome.externalScored)) {
+                    delete outcome.externalScored;
+                }
+            });
+
+            var allDisabled = _.every(outcomes, function (outcome) {
+                return outcome.externalScoredDisabled === 1;
+            });
+
+            if (allDisabled && outcomes.length > 0) {
+                _.forEach(outcomes, function (outcome) {
+                    outcome.externalScoredDisabled = 0;
+                });
+            }
+        },
+
+        /**
          * Creates an outcome declaration
          * @param {String} identifier
          * @param {String|Number|Boolean} [type] - The data type of the outcome, FLOAT by default
@@ -182,7 +314,6 @@ define([
          * @throws {TypeError} if the identifier is empty or is not a string
          */
         createOutcome: function createOutcome(identifier, type, cardinality) {
-
             if (!outcomeValidator.validateIdentifier(identifier)) {
                 throw new TypeError('You must provide a valid identifier!');
             }
@@ -194,6 +325,7 @@ define([
                 normalMaximum: false,
                 normalMinimum: false,
                 masteryValue: false,
+                externalScored: null,
                 cardinality: cardinalityHelper.getValid(cardinality, cardinalityHelper.SINGLE),
                 baseType: baseTypeHelper.getValid(type, baseTypeHelper.FLOAT)
             });
@@ -256,6 +388,7 @@ define([
             }
 
             declarations.push(outcome);
+
             return outcome;
         },
 

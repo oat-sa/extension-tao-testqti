@@ -4,6 +4,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL",
             "interpretation": "",
             "longInterpretation": "",
@@ -16,6 +18,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
@@ -28,6 +32,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_MAX",
             "interpretation": "",
             "longInterpretation": "",
@@ -40,6 +46,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
@@ -52,6 +60,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_RATIO",
             "interpretation": "",
             "longInterpretation": "",
@@ -64,6 +74,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_RATIO_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
@@ -76,6 +88,8 @@
         {
             "baseType": 1,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "PASS_ALL",
             "interpretation": "",
             "longInterpretation": "",
@@ -88,6 +102,8 @@
         {
             "baseType": 0,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "PASS_ALL_RENDERING",
             "interpretation": "",
             "longInterpretation": "",

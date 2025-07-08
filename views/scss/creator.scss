@@ -249,13 +249,13 @@
             position: relative;
             margin-bottom: 12px;
             label {
-                width: 40%;
+                width: 90%;
             }
             input, select {
                 position: relative;
                 max-width: inherit;
                 min-width: inherit;
-                width: 50%;
+                width: 100%;
             }
             [data-role='upload-trigger'] {
                 max-width: inherit;
@@ -267,9 +267,109 @@
                 @include font-size(13);
                 line-height: 1.3;
             }
+            &:last-child, .panel-row {
+                margin-bottom: 7px
+            }
             .icon-help {
                 float: right;
                 margin-right: 5px;
+                color: $info;
+            }
+        }
+
+        .editing > .outcome-properties-form {
+            display: block !important;
+
+
+        }
+
+        .outcome-declarations-manual > .outcome-container {
+            padding: 15px 5px 8px 5px;
+            background-color:white(.8);
+
+            .minimum-maximum {
+                label {
+                    display: inline;
+                    &.has-icon {
+                        display: inline-block;
+                        min-width: 140px;
+                        width: 90%;
+                    }
+                }
+                .incrementer-ctrl-wrapper {
+                    margin: 0 2px;
+                    .incrementer {
+                        width: 46px !important;;
+                    }
+                }
+            }
+
+            &.editing {
+                .icon-edit {
+                    font-weight: bold;
+                    color: $info;
+                    &:hover {
+                        color: whiten($info, .2);
+                    }
+                }
+                .outcome-properties-form {
+                    display: block;
+                }
+                .identifier-label {
+                    margin-bottom: 12px;
+                    span.label {
+                        display: none;
+                    }
+                    input.identifier {
+                        display: inline-block;
+                    }
+                }
+            }
+
+            &.subpanel {
+                @include simple-border();
+                background-color:white(.8);
+                padding:8px;
+                margin: 5px 0;
+                @include font-size(13);
+            }
+
+            .icon-edit {
+                font-weight: bold;
+                color: $info;
+                &:hover {
+                    color: whiten($info, .2);
+                }
+            }
+            .outcome-properties-form {
+                display: none;
+            }
+
+            .trigger {
+                color: $info;
+                float: right;
+                padding: 3px;
+                margin-left: 3px;
+                cursor: pointer;
+                &:hover {
+                    color: whiten($info, .4);
+                }
+                &:active {
+                    color: whiten($info, .6);
+                }
+            }
+            .identifier-label {
+                @include font-size(12.5);
+                display: inline-block;
+                margin: 0;
+                width: calc(100% - 44px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                input.identifier {
+                    min-width: 80px;
+                    display: none;
+                    margin-bottom: 6px;
+                }
             }
         }
     }

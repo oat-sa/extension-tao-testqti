@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2020-2025 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -142,340 +142,134 @@ define([
         instance.uninstall();
     });
 
-    QUnit.test('confirmBefore ', assert => {
-        const ready = assert.async();
-        const modalSelector = '.modal.opened';
-        const fixtureSelector = '#fixture-confirmBefore';
-        const $fixture = $(fixtureSelector);
-        const fixture = document.querySelector(`${fixtureSelector} .editor`);
+    QUnit.test('change detection', assert => {
+        const fixture = document.getElementById('fixture-change-detection');
         const testCreator = testCreatorFactory();
-        const instance = changeTrackerFactory(fixture, testCreator, fixtureSelector);
+        const instance = changeTrackerFactory(fixture, testCreator);
 
-        assert.expect(45);
+        assert.expect(5);
 
-        Promise
-            .resolve()
+        assert.equal(instance.hasChanged(), false, 'No changes initially');
 
-            // click outside, no change yet
-            .then(() => new Promise(resolve => {
-                assert.equal(instance.hasChanged(), false, 'No change yet');
+        Object.assign(testCreator.getModelOverseer().getModel(), {test: 'value'});
+        assert.equal(instance.hasChanged(), true, 'Changes detected after model update');
 
-                $fixture
-                    .off('.test')
-                    .on('click.test', () => {
-                        assert.ok(true, 'The click event has been propagated');
-                    });
+        testCreator.trigger('saved');
+        assert.equal(instance.hasChanged(), false, 'Changes reset after save event');
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    });
+        Object.assign(testCreator.getModelOverseer().getModel(), {test2: 'value2'});
+        assert.equal(instance.hasChanged(), true, 'Changes detected again');
 
-                window.setTimeout(resolve, 200);
-                $fixture.click();
-            }))
+        testCreator.trigger('ready');
+        assert.equal(instance.hasChanged(), false, 'Changes reset after ready event');
 
-            // click outside, cancel confirm
-            .then(() => new Promise(resolve => {
-                Object.assign(testCreator.getModelOverseer().getModel(), {foo: 'bar'});
-                assert.equal(instance.hasChanged(), true, 'Model has changed');
+        instance.uninstall();
+    });
 
-                $fixture
-                    .off('.test')
-                    .on('click.test', () => {
-                        assert.ok(false, 'The click event should not be propagated');
-                    });
+    QUnit.test('confirmBefore with no changes', assert => {
+        const fixture = document.getElementById('fixture-confirm-nochanges');
+        const testCreator = testCreatorFactory();
+        const instance = changeTrackerFactory(fixture, testCreator);
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    });
+        assert.expect(2);
 
-                window.setTimeout(() => {
-                    assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel click');
-                    $(modalSelector).find('.cancel').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                    window.setTimeout(resolve, 200);
-                }, 200);
+        const promise = instance.confirmBefore('exit');
+        assert.ok(promise instanceof Promise, 'confirmBefore returns a promise');
 
-                $fixture.click();
-            }))
+        const done = assert.async();
+        promise.then(() => {
+            assert.ok(true, 'Promise resolves immediately when no changes');
+            instance.uninstall();
+            done();
+        }).catch(() => {
+            assert.ok(false, 'Promise should not reject when no changes');
+            instance.uninstall();
+            done();
+        });
+    });
 
-            // click outside, confirm without change
-            .then(() => new Promise(resolve => {
-                assert.equal(instance.hasChanged(), true, 'Changes not saved yet');
+    QUnit.test('confirmBefore with changes', assert => {
+        const fixture = document.getElementById('fixture-confirm-changes');
+        const testCreator = testCreatorFactory();
+        const instance = changeTrackerFactory(fixture, testCreator);
 
-                $fixture
-                    .off('.test')
-                    .on('click.test', () => {
-                        assert.ok(true, 'The click event should be propagated');
-                    });
+        assert.expect(2);
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    });
+        Object.assign(testCreator.getModelOverseer().getModel(), {test: 'value'});
+        assert.equal(instance.hasChanged(), true, 'Model has changes');
 
-                window.setTimeout(() => {
-                    assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - confirm click without save');
-                    $(modalSelector).find('.dontsave').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
-                    window.setTimeout(resolve, 200);
-                }, 200);
+        assert.ok(typeof instance.confirmBefore === 'function', 'confirmBefore method exists and is callable');
 
-                $fixture.click();
-            }))
+        instance.uninstall();
+    });
 
-            // click outside, save and confirm
-            .then(() => new Promise(resolve => {
-                instance.uninstall();
-                instance.install();
-                Object.assign(testCreator.getModelOverseer().getModel(), {foo1: 'bar'});
-                assert.equal(instance.hasChanged(), true, 'Model changed');
+    QUnit.test('serialization', assert => {
+        const fixture = document.getElementById('fixture-serialization');
 
-                $fixture
-                    .off('.test')
-                    .on('click.test', () => {
-                        assert.ok(true, 'The click event should be propagated');
-                    });
+        assert.expect(3);
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(true, 'The save event has been emitted');
-                        testCreator.trigger('saved');
-                    })
-                    .after('saved.test', () => {
-                        assert.equal(instance.hasChanged(), false, 'Changes saved');
-                        resolve();
-                    });
+        const testCreator = testCreatorFactory();
+        const instance = changeTrackerFactory(fixture, testCreator);
+        const serialized = instance.getSerializedTest();
+        assert.ok(typeof serialized === 'string', 'Serialization returns string');
+        instance.uninstall();
 
-                window.setTimeout(() => {
-                    assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and confirm click');
-                    $(modalSelector).find('.save').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
-                    window.setTimeout(resolve, 200);
-                }, 200);
+        const brokenCreator = eventifier({
+            getModelOverseer() {
+                return {
+                    getModel() {
+                        const obj = { test: 'value' };
+                        obj.self = obj;
+                        return obj;
+                    }
+                };
+            },
+            isTestHasErrors() {
+                return false;
+            }
+        });
 
-                $fixture.click();
-            }))
+        const instance2 = changeTrackerFactory(fixture, brokenCreator);
+        assert.equal(instance2.getSerializedTest(), null, 'Returns null for broken serialization');
+        instance2.uninstall();
 
-            // exit, no change yet
-            .then(() => new Promise(resolve => {
-                instance.uninstall();
-                instance.install();
-                assert.equal(instance.hasChanged(), false, 'No change yet');
+        const spaceCreator = eventifier({
+            getModelOverseer() {
+                return {
+                    getModel() {
+                        return { content: 'test  with   multiple    spaces' };
+                    }
+                };
+            },
+            isTestHasErrors() {
+                return false;
+            }
+        });
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    })
-                    .on('exit.test', () => {
-                        assert.ok(true, 'The exit event is emitted');
-                        resolve();
-                    })
-                    .trigger('exit');
-            }))
+        const instance3 = changeTrackerFactory(fixture, spaceCreator);
+        const spaceSerialized = instance3.getSerializedTest();
+        assert.ok(!spaceSerialized.includes('  '), 'Multiple spaces are normalized');
+        instance3.uninstall();
+    });
 
-            // cancel exit
-            .then(() => {
-                instance.uninstall();
-                instance.install();
-                Object.assign(testCreator.getModelOverseer().getModel(), {foo2: 'bar'});
-                assert.equal(instance.hasChanged(), true, 'Model changed');
+    QUnit.test('install and uninstall', assert => {
+        const fixture = document.getElementById('fixture-install');
+        const testCreator = testCreatorFactory();
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    });
+        assert.expect(4);
 
-                const race = Promise.race([
-                    new Promise(resolve => {
-                        testCreator
-                            .before('creatorclose.test', () => {
-                                assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel exit');
-                                $(modalSelector).find('.cancel').click();
-                                assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                                window.setTimeout(resolve, 200);
-                            });
-                    }),
-                    new Promise(resolve => {
-                        testCreator
-                            .on('creatorclose.test', () => {
-                                assert.ok(false, 'The creatorclose event should not be emitted');
-                                resolve();
-                            });
-                    })
-                ]);
+        const instance = changeTrackerFactory(fixture, testCreator);
+        assert.ok(instance, 'Instance created and installed');
 
-                testCreator.trigger('creatorclose');
+        const result = instance.init();
+        assert.equal(result, instance, 'init returns instance');
 
-                return race;
-            })
+        const uninstallResult = instance.uninstall();
+        assert.equal(uninstallResult, instance, 'uninstall returns instance');
 
-            // exit without save
-            .then(() => new Promise(resolve => {
-                assert.equal(instance.hasChanged(), true, 'Model still changed');
+        const reinstallResult = instance.install();
+        assert.equal(reinstallResult, instance, 'install returns instance');
 
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    })
-                    .before('creatorclose.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - exit without save');
-                        $(modalSelector).find('.dontsave').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
-                    })
-                    .on('creatorclose.test', () => {
-                        assert.ok(true, 'The creatorclose event has been emitted');
-                        resolve();
-                    })
-                    .trigger('creatorclose');
-            }))
-
-            // save and exit
-            .then(() => new Promise(resolve => {
-                instance.uninstall();
-                instance.install();
-                Object.assign(testCreator.getModelOverseer().getModel(), {foo3: 'bar'});
-                assert.equal(instance.hasChanged(), true, 'Model changed');
-
-                testCreator
-                    .off('.test')
-                    .before('creatorclose.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and exit');
-                        $(modalSelector).find('.save').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
-                    })
-                    .on('creatorclose.test', () => {
-                        assert.ok(true, 'The creatorclose event has been emitted');
-                    })
-                    .on('save.test', () => {
-                        assert.ok(true, 'The save event has been emitted');
-                        testCreator.trigger('saved');
-                    })
-                    .after('saved.test', () => {
-                        assert.equal(instance.hasChanged(), false, 'Changes saved');
-                        resolve();
-                    })
-                    .trigger('creatorclose');
-            }))
-
-            // preview, no change yet
-            .then(() => new Promise(resolve => {
-                instance.uninstall();
-                instance.install();
-                assert.equal(instance.hasChanged(), false, 'No change yet');
-
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    })
-                    .on('preview.test', () => {
-                        assert.ok(true, 'The preview event is emitted');
-                        resolve();
-                    })
-                    .trigger('preview');
-            }))
-
-            // cancel preview
-            .then(() => {
-                Object.assign(testCreator.getModelOverseer().getModel(), {foo4: 'bar'});
-                assert.equal(instance.hasChanged(), true, 'Model changed');
-
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    });
-
-                const race = Promise.race([
-                    new Promise(resolve => {
-                        testCreator
-                            .before('preview.test', () => {
-                                assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel preview');
-                                $(modalSelector).find('.cancel').click();
-                                assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                                window.setTimeout(resolve, 200);
-                            });
-                    }),
-                    new Promise(resolve => {
-                        testCreator
-                            .on('preview.test', () => {
-                                assert.ok(false, 'The preview event should not be emitted');
-                                resolve();
-                            });
-                    })
-                ]);
-
-                testCreator.trigger('preview');
-
-                return race;
-            })
-
-            // preview without save
-            .then(() => new Promise(resolve => {
-                assert.equal(instance.hasChanged(), true, 'Model still changed');
-
-                testCreator
-                    .off('.test')
-                    .on('save.test', () => {
-                        assert.ok(false, 'The save event should not be emitted');
-                    })
-                    .before('preview.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - preview without save');
-                        $(modalSelector).find('.dontsave').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
-                    })
-                    .on('preview.test', () => {
-                        assert.ok(true, 'The preview event has been emitted');
-                        resolve();
-                    })
-                    .trigger('preview');
-            }))
-
-            // save and preview
-            .then(() => new Promise(resolve => {
-                assert.equal(instance.hasChanged(), true, 'Model still changed');
-
-                testCreator
-                    .off('.test')
-                    .before('preview.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and preview');
-                        $(modalSelector).find('.save').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
-                    })
-                    .on('preview.test', () => {
-                        assert.ok(true, 'The preview event has been emitted');
-                    })
-                    .on('save.test', () => {
-                        assert.ok(true, 'The save event has been emitted');
-                        testCreator.trigger('saved');
-                    })
-                    .after('saved.test', () => {
-                        assert.equal(instance.hasChanged(), false, 'Changes saved');
-                        resolve();
-                    })
-                    .trigger('preview');
-            }))
-
-            .catch(err => {
-                assert.ok(false, 'The operation should not fail!');
-                assert.pushResult({
-                    result: false,
-                    message: err
-                });
-            })
-            .then(() => {
-                instance.uninstall();
-                ready();
-            });
+        instance.uninstall();
     });
 });

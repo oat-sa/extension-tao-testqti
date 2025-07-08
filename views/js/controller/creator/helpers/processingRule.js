@@ -162,6 +162,25 @@ define([
         },
 
         /**
+         * Creates a `min` rule
+         * @param {Object|Array} expressions - The expressions to find the minimum value among
+         * @returns {Object}
+         * @throws {TypeError} if the expressions are not valid QTI elements
+         */
+        min: function min(expressions) {
+            var processingRule = processingRuleHelper.create('min', null, forceArray(expressions));
+
+            processingRule.minOperands = 1;
+            processingRule.maxOperands = 0;
+            processingRule.acceptedCardinalities = [
+                cardinalityHelper.SINGLE, cardinalityHelper.MULTIPLE, cardinalityHelper.ORDERED
+            ];
+            processingRule.acceptedBaseTypes = [baseTypeHelper.INTEGER, baseTypeHelper.FLOAT];
+
+            return processingRule;
+        },
+
+        /**
          * Creates a `testVariables` rule
          * @param {String} identifier
          * @param {String|Number} [type]

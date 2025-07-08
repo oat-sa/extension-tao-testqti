@@ -30,7 +30,7 @@ class QtiTestServiceTest extends TestCase
     // phpcs:disable Generic.Files.LineLength
     private const TEST_TEMPLATE = <<<'XML'
 <?xml version="1.0" encoding="UTF-8"?>
-<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="{testId}" title="{testTitle}" toolName="tao" toolVersion="{taoVersion}" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p1 http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd">
+<assessmentTest xmlns="http://www.imsglobal.org/xsd/imsqti_v2p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" identifier="{testId}" title="{testTitle}" toolName="tao" toolVersion="{taoVersion}" xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqti_v2p2 http://www.imsglobal.org/xsd/qti/qtiv2p2/imsqti_v2p2.xsd">
   <testPart identifier="testPart-1" navigationMode="linear" submissionMode="individual">
     <itemSessionControl maxAttempts="0" showFeedback="false" allowReview="true" showSolution="false" allowComment="false" allowSkipping="true" validateResponses="false"/>
     <assessmentSection identifier="assessmentSection-1" required="true" fixed="false" title="Section 1" visible="true" keepTogether="true"/>

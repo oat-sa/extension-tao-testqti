@@ -4,6 +4,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL",
             "interpretation": "",
             "longInterpretation": "",
@@ -16,6 +18,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
@@ -28,6 +32,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_HISTORY",
             "interpretation": "",
             "longInterpretation": "",
@@ -40,6 +46,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_WEIGHTED_HISTORY",
             "interpretation": "",
             "longInterpretation": "",
@@ -52,6 +60,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_MATH",
             "interpretation": "",
             "longInterpretation": "",
@@ -64,6 +74,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_WEIGHTED_MATH",
             "interpretation": "",
             "longInterpretation": "",
@@ -76,6 +88,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_MAX",
             "interpretation": "",
             "longInterpretation": "",
@@ -88,6 +102,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_TOTAL_MAX_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
@@ -100,6 +116,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_MAX_HISTORY",
             "interpretation": "",
             "longInterpretation": "",
@@ -112,6 +130,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_HISTORY",
             "interpretation": "",
             "longInterpretation": "",
@@ -124,6 +144,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_MAX_MATH",
             "interpretation": "",
             "longInterpretation": "",
@@ -136,6 +158,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_CATEGORY_WEIGHTED_MAX_MATH",
             "interpretation": "",
             "longInterpretation": "",
@@ -148,6 +172,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_RATIO",
             "interpretation": "",
             "longInterpretation": "",
@@ -160,6 +186,8 @@
         {
             "baseType": 3,
             "cardinality": 0,
+            "externalScored": null,
+
             "identifier": "SCORE_RATIO_WEIGHTED",
             "interpretation": "",
             "longInterpretation": "",
