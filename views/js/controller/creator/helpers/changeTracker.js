@@ -128,7 +128,14 @@ define([
                 // every click outside the authoring
                 $(wrapperSelector)
                     .on(`click${eventNS}`, e => {
-                        if (!$.contains(container, e.target) && this.hasChanged() && e.target.classList[0] !== 'icon-close') {
+                        const isNavigationClick = e.target.matches('a[href], button[data-navigate], .nav-item') ||
+                            e.target.closest('a[href], button[data-navigate], .nav-item');
+
+                        if (!$.contains(container, e.target) &&
+                            this.hasChanged() &&
+                            isNavigationClick &&
+                            e.target.classList[0] !== 'icon-close') {
+
                             e.stopImmediatePropagation();
                             e.preventDefault();
 

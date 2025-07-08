@@ -71,7 +71,15 @@ define([
                 return config;
             },
 
-
+            getOutcomeDeclarationsReservedList: function getOutcomeDeclarationsReservedList() {
+                return _.map(outcomeHelper.getReservedOutcomeDeclarations(model), function(declaration) {
+                    return {
+                        name: declaration.identifier,
+                        type: baseTypeHelper.getNameByConstant(declaration.baseType),
+                        cardinality: cardinalityHelper.getNameByConstant(declaration.cardinality)
+                    };
+                });
+            },
 
             /**
              * Gets the list of defined outcomes for the nested model. A descriptor is built for each outcomes:
