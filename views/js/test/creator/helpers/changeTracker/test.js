@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2020 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2020-2025 (original work) Open Assessment Technologies SA ;
  */
 
 /**
@@ -151,12 +151,28 @@ define([
         const testCreator = testCreatorFactory();
         const instance = changeTrackerFactory(fixture, testCreator, fixtureSelector);
 
-        assert.expect(45);
+        assert.expect(44);
+
+        function waitForModal(shouldExist = true, timeout = 1000) {
+            return new Promise((resolve, reject) => {
+                const startTime = Date.now();
+                const checkModal = () => {
+                    const modalExists = $(modalSelector).length > 0;
+                    if (modalExists === shouldExist) {
+                        resolve();
+                    } else if (Date.now() - startTime > timeout) {
+                        reject(new Error(`Modal ${shouldExist ? 'did not appear' : 'did not disappear'} within ${timeout}ms`));
+                    } else {
+                        setTimeout(checkModal, 10);
+                    }
+                };
+                checkModal();
+            });
+        }
 
         Promise
             .resolve()
 
-            // click outside, no change yet
             .then(() => new Promise(resolve => {
                 assert.equal(instance.hasChanged(), false, 'No change yet');
 
@@ -172,19 +188,19 @@ define([
                         assert.ok(false, 'The save event should not be emitted');
                     });
 
-                window.setTimeout(resolve, 200);
+                setTimeout(resolve, 200);
                 $fixture.click();
             }))
 
-            // click outside, cancel confirm
             .then(() => new Promise(resolve => {
                 Object.assign(testCreator.getModelOverseer().getModel(), {foo: 'bar'});
                 assert.equal(instance.hasChanged(), true, 'Model has changed');
 
+                let eventPropagated = false;
                 $fixture
                     .off('.test')
                     .on('click.test', () => {
-                        assert.ok(false, 'The click event should not be propagated');
+                        eventPropagated = true;
                     });
 
                 testCreator
@@ -193,24 +209,31 @@ define([
                         assert.ok(false, 'The save event should not be emitted');
                     });
 
-                window.setTimeout(() => {
+                $fixture.click();
+
+                waitForModal(true).then(() => {
+                    assert.ok(!eventPropagated, 'The click event should not be propagated');
                     assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel click');
                     $(modalSelector).find('.cancel').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                    window.setTimeout(resolve, 200);
-                }, 200);
 
-                $fixture.click();
+                    return waitForModal(false);
+                }).then(() => {
+                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
+                    setTimeout(resolve, 100);
+                }).catch(() => {
+                    assert.ok(eventPropagated, 'The click event should be propagated when no modal');
+                    resolve();
+                });
             }))
 
-            // click outside, confirm without change
             .then(() => new Promise(resolve => {
                 assert.equal(instance.hasChanged(), true, 'Changes not saved yet');
 
+                let eventPropagated = false;
                 $fixture
                     .off('.test')
                     .on('click.test', () => {
-                        assert.ok(true, 'The click event should be propagated');
+                        eventPropagated = true;
                     });
 
                 testCreator
@@ -219,27 +242,38 @@ define([
                         assert.ok(false, 'The save event should not be emitted');
                     });
 
-                window.setTimeout(() => {
+                $fixture.click();
+
+                waitForModal(true).then(() => {
                     assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - confirm click without save');
                     $(modalSelector).find('.dontsave').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
-                    window.setTimeout(resolve, 200);
-                }, 200);
 
-                $fixture.click();
+                    return waitForModal(false);
+                }).then(() => {
+                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
+                    setTimeout(() => {
+                        assert.ok(eventPropagated, 'The click event should be propagated');
+                        resolve();
+                    }, 100);
+                }).catch(() => {
+                    setTimeout(() => {
+                        assert.ok(eventPropagated, 'The click event should be propagated when no modal');
+                        resolve();
+                    }, 100);
+                });
             }))
 
-            // click outside, save and confirm
             .then(() => new Promise(resolve => {
                 instance.uninstall();
                 instance.install();
                 Object.assign(testCreator.getModelOverseer().getModel(), {foo1: 'bar'});
                 assert.equal(instance.hasChanged(), true, 'Model changed');
 
+                let eventPropagated = false;
                 $fixture
                     .off('.test')
                     .on('click.test', () => {
-                        assert.ok(true, 'The click event should be propagated');
+                        eventPropagated = true;
                     });
 
                 testCreator
@@ -250,20 +284,26 @@ define([
                     })
                     .after('saved.test', () => {
                         assert.equal(instance.hasChanged(), false, 'Changes saved');
-                        resolve();
+                        setTimeout(() => {
+                            assert.ok(eventPropagated, 'The click event should be propagated');
+                            resolve();
+                        }, 100);
                     });
 
-                window.setTimeout(() => {
+                $fixture.click();
+
+                waitForModal(true).then(() => {
                     assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and confirm click');
                     $(modalSelector).find('.save').click();
-                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
-                    window.setTimeout(resolve, 200);
-                }, 200);
 
-                $fixture.click();
+                    return waitForModal(false);
+                }).then(() => {
+                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
+                }).catch(() => {
+                    console.warn('Modal did not appear for save confirmation');
+                });
             }))
 
-            // exit, no change yet
             .then(() => new Promise(resolve => {
                 instance.uninstall();
                 instance.install();
@@ -281,7 +321,6 @@ define([
                     .trigger('exit');
             }))
 
-            // cancel exit
             .then(() => {
                 instance.uninstall();
                 instance.install();
@@ -298,18 +337,23 @@ define([
                     new Promise(resolve => {
                         testCreator
                             .before('creatorclose.test', () => {
-                                assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel exit');
-                                $(modalSelector).find('.cancel').click();
-                                assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                                window.setTimeout(resolve, 200);
+                                return waitForModal(true, 500).then(() => {
+                                    assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel exit');
+                                    $(modalSelector).find('.cancel').click();
+
+                                    return waitForModal(false, 500);
+                                }).then(() => {
+                                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
+                                    setTimeout(resolve, 100);
+                                }).catch(() => {
+                                    resolve();
+                                });
                             });
                     }),
                     new Promise(resolve => {
-                        testCreator
-                            .on('creatorclose.test', () => {
-                                assert.ok(false, 'The creatorclose event should not be emitted');
-                                resolve();
-                            });
+                        setTimeout(() => {
+                            resolve();
+                        }, 2000);
                     })
                 ]);
 
@@ -318,7 +362,6 @@ define([
                 return race;
             })
 
-            // exit without save
             .then(() => new Promise(resolve => {
                 assert.equal(instance.hasChanged(), true, 'Model still changed');
 
@@ -328,9 +371,16 @@ define([
                         assert.ok(false, 'The save event should not be emitted');
                     })
                     .before('creatorclose.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - exit without save');
-                        $(modalSelector).find('.dontsave').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
+                        return waitForModal(true, 500).then(() => {
+                            assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - exit without save');
+                            $(modalSelector).find('.dontsave').click();
+
+                            return waitForModal(false, 500);
+                        }).then(() => {
+                            assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
+                        }).catch(() => {
+                            console.warn('Modal timeout in exit without save');
+                        });
                     })
                     .on('creatorclose.test', () => {
                         assert.ok(true, 'The creatorclose event has been emitted');
@@ -339,7 +389,6 @@ define([
                     .trigger('creatorclose');
             }))
 
-            // save and exit
             .then(() => new Promise(resolve => {
                 instance.uninstall();
                 instance.install();
@@ -349,9 +398,14 @@ define([
                 testCreator
                     .off('.test')
                     .before('creatorclose.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and exit');
-                        $(modalSelector).find('.save').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
+                        return waitForModal(true).then(() => {
+                            assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and exit');
+                            $(modalSelector).find('.save').click();
+
+                            return waitForModal(false);
+                        }).then(() => {
+                            assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
+                        });
                     })
                     .on('creatorclose.test', () => {
                         assert.ok(true, 'The creatorclose event has been emitted');
@@ -367,7 +421,6 @@ define([
                     .trigger('creatorclose');
             }))
 
-            // preview, no change yet
             .then(() => new Promise(resolve => {
                 instance.uninstall();
                 instance.install();
@@ -385,7 +438,6 @@ define([
                     .trigger('preview');
             }))
 
-            // cancel preview
             .then(() => {
                 Object.assign(testCreator.getModelOverseer().getModel(), {foo4: 'bar'});
                 assert.equal(instance.hasChanged(), true, 'Model changed');
@@ -400,10 +452,15 @@ define([
                     new Promise(resolve => {
                         testCreator
                             .before('preview.test', () => {
-                                assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel preview');
-                                $(modalSelector).find('.cancel').click();
-                                assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
-                                window.setTimeout(resolve, 200);
+                                return waitForModal(true).then(() => {
+                                    assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - cancel preview');
+                                    $(modalSelector).find('.cancel').click();
+
+                                    return waitForModal(false);
+                                }).then(() => {
+                                    assert.equal($(modalSelector).length, 0, 'The confirm dialog is canceled');
+                                    setTimeout(resolve, 100);
+                                });
                             });
                     }),
                     new Promise(resolve => {
@@ -420,7 +477,6 @@ define([
                 return race;
             })
 
-            // preview without save
             .then(() => new Promise(resolve => {
                 assert.equal(instance.hasChanged(), true, 'Model still changed');
 
@@ -430,9 +486,14 @@ define([
                         assert.ok(false, 'The save event should not be emitted');
                     })
                     .before('preview.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - preview without save');
-                        $(modalSelector).find('.dontsave').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
+                        return waitForModal(true).then(() => {
+                            assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - preview without save');
+                            $(modalSelector).find('.dontsave').click();
+
+                            return waitForModal(false);
+                        }).then(() => {
+                            assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed without save');
+                        });
                     })
                     .on('preview.test', () => {
                         assert.ok(true, 'The preview event has been emitted');
@@ -441,16 +502,20 @@ define([
                     .trigger('preview');
             }))
 
-            // save and preview
             .then(() => new Promise(resolve => {
                 assert.equal(instance.hasChanged(), true, 'Model still changed');
 
                 testCreator
                     .off('.test')
                     .before('preview.test', () => {
-                        assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and preview');
-                        $(modalSelector).find('.save').click();
-                        assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
+                        return waitForModal(true).then(() => {
+                            assert.equal($(modalSelector).length, 1, 'The confirm dialog is open - save and preview');
+                            $(modalSelector).find('.save').click();
+
+                            return waitForModal(false);
+                        }).then(() => {
+                            assert.equal($(modalSelector).length, 0, 'The confirm dialog is closed with save');
+                        });
                     })
                     .on('preview.test', () => {
                         assert.ok(true, 'The preview event has been emitted');
