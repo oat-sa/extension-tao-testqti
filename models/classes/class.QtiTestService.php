@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA;
  */
 
 use oat\generis\model\data\event\ResourceCreated;
@@ -65,6 +65,7 @@ use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
 use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 use taoTests_models_classes_TestsService as TestService;
+use oat\taoQtiTest\models\classes\metadata\importer\TestMetadataImporter;
 
 /**
  * the QTI TestModel service.
@@ -1475,7 +1476,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     protected function getMetadataImporter()
     {
         if (!$this->metadataImporter) {
-            $this->metadataImporter = $this->getServiceLocator()->get(MetadataService::SERVICE_ID)->getImporter();
+            $this->metadataImporter = $this->getPsrContainer()->get(TestMetadataImporter::class);
         }
         return $this->metadataImporter;
     }
