@@ -26,7 +26,9 @@ namespace oat\taoQtiTest\model\Service;
 
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
+use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\runner\PersistableRunnerServiceInterface;
+use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use oat\taoQtiTest\models\runner\RunnerService;
 
 class TimeoutService
@@ -54,9 +56,15 @@ class TimeoutService
     {
         $serviceContext = $command->getServiceContext();
 
-        $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);
-        $this->toolsStateRepository->save($command->getToolsState(), $serviceContext);
+        if ($command->isLateSubmissionAllowed()) {
+            try {
+                $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);
+            } catch (QtiRunnerInvalidResponsesException|QtiRunnerEmptyResponsesException) {
+                // allow the session to time out omitting the invalid response
+            }
+        }
 
+        $this->toolsStateRepository->save($command->getToolsState(), $serviceContext);
         $this->runnerService->check($serviceContext);
         $serviceContext->init();
 
