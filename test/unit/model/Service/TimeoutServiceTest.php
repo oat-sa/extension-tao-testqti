@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
- *
- * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
+ * Copyright (c) 2021-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -108,6 +106,16 @@ class TimeoutServiceTest extends TestCase
         $this->expectTestContext(['itemIdentifier' => 'item-2']);
 
         $this->itemResponseRepository->expects($this->once())
+            ->method('save');
+
+        $this->executeAction($this->createCommand(lateSubmissionAllowed: true));
+    }
+
+    public function testSkipsItemResponse(): void
+    {
+        $this->expectTestContext(['itemIdentifier' => 'item-2']);
+
+        $this->itemResponseRepository->expects($this->never())
             ->method('save');
 
         $this->executeAction();
