@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-07-24 13:55\n"
+"PO-Revision-Date: 2025-07-31 09:11\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -114,7 +114,7 @@ msgid "Allow the test-taker to mask and unmask answers in choice interactions."
 msgstr "Umožnite účastníkovi testu maskovať a odmaskovať odpovede v rámci výberových interakcií."
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr "Umožnite testovanému maskovať časti predmetu pohyblivou maskou."
+msgstr "Umožnite testovanému maskovať časti položky pohyblivou maskou."
 
 msgid "Allow the test-taker to use a basic calculator."
 msgstr "Umožnite účastníkovi testu používať základnú kalkulačku."
