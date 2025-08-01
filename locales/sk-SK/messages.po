@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-07-31 09:11\n"
+"PO-Revision-Date: 2025-08-01 09:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -330,7 +330,7 @@ msgid "Contrast"
 msgstr "Kontrast"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr "Riadi príspevok skóre jednotlivých položiek k celkovému skóre testu."
+msgstr "Riadi príspevok skóre z jednotlivých položiek k celkovému skóre testu."
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
 msgstr "Ovláda maximálny povolený počet pokusov. 0 znamená neobmedzený."
@@ -626,7 +626,7 @@ msgid "IMS QTI Test Package successfully imported."
 msgstr "Testovací balík IMS QTI bol úspešne importovaný."
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "Test IMS QTI s odkazom na „%s“ v súbore manifestu IMS bol úspešne importovaný."
+msgstr "Test IMS QTI s odkazom na „%s“ v súbore IMS Manifest bol úspešne importovaný."
 
 msgid "In this part of the test navigation is not allowed."
 msgstr "V tejto časti testu nie je navigácia povolená."
@@ -1366,7 +1366,7 @@ msgid "The assessment has been created but is not already running."
 msgstr "Hodnotenie bolo vytvorené, ale ešte nie je spustené."
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "Hodnotenie bolo pozastavené oprávneným dozorcom. Ak chcete hodnotenie obnoviť, spustite ho znova a v prípade potreby kontaktujte svojho dozorcu."
+msgstr "Hodnotenie bolo pozastavené oprávneným administrátorom. Ak chcete hodnotenie obnoviť, spustite ho znova a v prípade potreby kontaktujte svojho administrátora testovania."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
 msgstr "Hodnotenie bolo pozastavené. Ak chcete pokračovať v hodnotení, spustite ho znova a v prípade potreby kontaktujte svojho dozorcu."
@@ -1671,7 +1671,7 @@ msgid "White on Blue (TAO standard theme)"
 msgstr "Biela na modrej (štandardná téma TAO)"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr "Kto si môže počas doručenia pozrieť rubriku."
+msgstr "Kto si môže počas dodávky pozrieť rubriku."
 
 msgid "With Replacement"
 msgstr "S náhradou"
