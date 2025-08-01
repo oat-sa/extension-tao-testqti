@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2024-12-19 16:02\n"
+"PO-Revision-Date: 2025-08-01 09:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -21,1762 +21,1764 @@ msgstr ""
 "Language-Team: Slovak\n"
 
 msgid "%s to answer %s"
-msgstr ""
+msgstr "%s na odpoveď %s"
 
 msgid "(Visual) Clear all active highlights"
-msgstr ""
+msgstr "(Vizuálne) Vymazať všetky aktívne zvýraznenia"
 
 msgid "(Visual) Highlight Text"
-msgstr ""
+msgstr "(Vizuálne) zvýraznenie textu"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
-msgstr ""
+msgstr "Bolo zistené súbežné doručovanie. Použite poslednú otvorenú reláciu. Aktuálne okno je možné zatvoriť."
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr ""
+msgstr "Položku QTI zapojenú do testu QTI „%s“ nebolo možné skompilovať."
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr ""
+msgstr "Test QTI musí obsahovať aspoň jednu položku QTI, aby sa dal zostaviť. Žiadna sa nenašla."
 
 msgid "A qti testpackage"
-msgstr ""
+msgstr "Testovací balík qti"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr ""
+msgstr "Vzdialený zdroj uvedený v teste QTI '%s' sa nepodarilo načítať."
 
 msgid "A response to every question in this item is required."
-msgstr ""
+msgstr "Na každú otázku v tejto položke je potrebné odpovedať."
 
 msgid "A response to this item is required."
-msgstr ""
+msgstr "Na túto položku je potrebná odpoveď."
 
 msgid "A valid response to this item is required."
-msgstr ""
+msgstr "Na túto položku je vyžadovaná platná odpoveď."
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr ""
+msgstr "Viditeľná časť je taká, ktorú kandidát dokáže identifikovať."
 
 msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
-msgstr ""
+msgstr "Nástroj na zjednodušenie ovládania, ktorý umožňuje účastníkovi testu nechať si nahlas prečítať obsah položky."
 
 msgid "Activated"
-msgstr ""
+msgstr "Aktivované"
 
 msgid "add a new weight"
-msgstr ""
+msgstr "pridať novú váhu"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr ""
+msgstr "Pridajte zip súbor obsahujúci testy a položky QTI/APIP"
 
 msgid "Add selected item(s) here."
-msgstr ""
+msgstr "Sem pridajte vybraté položky."
 
 msgid "Add Subsection"
-msgstr ""
+msgstr "Pridať podsekciu"
 
 msgid "Add the source file"
-msgstr ""
+msgstr "Pridajte zdrojový súbor"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr ""
+msgstr "Po dokončení tejto sekcie sa nebudete môcť do tejto sekcie vrátiť a vykonať zmeny. Naozaj chcete túto sekciu ukončiť?"
 
 msgid "All"
-msgstr ""
+msgstr "Všetky"
 
 msgid "Allow Comment"
-msgstr ""
+msgstr "Povoliť komentár"
 
 msgid "Allow Review"
-msgstr ""
+msgstr "Povoliť kontrolu"
 
 msgid "Allow Section Skipping"
-msgstr ""
+msgstr "Povoliť preskakovanie sekcií"
 
 msgid "Allow Skipping"
-msgstr ""
+msgstr "Povoliť preskakovanie"
 
 msgid "Allow skipping of the current section."
-msgstr ""
+msgstr "Povoliť preskočenie aktuálnej sekcie."
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
-msgstr ""
+msgstr "Umožniť účastníkovi testu prehrávať mediálne súbory priradené k obsahu položky podľa protokolu APIP."
 
 msgid "Allow the candidate to review his answers."
-msgstr ""
+msgstr "Nechajte kandidáta, aby si prehodnotil svoje odpovede."
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr ""
+msgstr "Umožnite účastníkovi testu vynechať/prečiarknuť odpovede v interakciách s možnosťami výberu."
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr ""
+msgstr "Umožnite účastníkovi testu zvýrazniť si časti textu položky."
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr ""
+msgstr "Umožnite účastníkovi testu maskovať a odmaskovať odpovede v rámci výberových interakcií."
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr ""
+msgstr "Umožnite testovanému maskovať časti položky pohyblivou maskou."
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr ""
+msgstr "Umožnite účastníkovi testu používať základnú kalkulačku."
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr ""
+msgstr "Umožnite účastníkovi testu používať kalkulačku s ohľadom na poradie operácií (BODMAS)."
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr ""
+msgstr "Umožnite účastníkovi testu použiť pohyblivú lupu."
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr ""
+msgstr "Umožnite účastníkovi testu použiť vedeckú kalkulačku."
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr ""
+msgstr "Umožnite účastníkovi testu vizuálne oddeliť riadok textu."
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr ""
+msgstr "Umožňuje účastníkovi testu priblížiť a oddialiť obsah položky."
 
 msgid "Also compute the score per categories"
-msgstr ""
+msgstr "Vypočítajte aj skóre podľa kategórií"
 
 msgid "An error occured while retrieving items"
-msgstr ""
+msgstr "Pri načítavaní položiek sa vyskytla chyba"
 
 msgid "An error occurred during results submission. Please retry."
-msgstr ""
+msgstr "Počas odosielania výsledkov sa vyskytla chyba. Skúste to znova."
 
 msgid "An error occurred during the test initialization!"
-msgstr ""
+msgstr "Počas inicializácie testu sa vyskytla chyba!"
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr ""
+msgstr "Počas testu sa vyskytla chyba, informujte, prosím, svojho administrátora."
 
 msgid "An error occurred!"
-msgstr ""
+msgstr "Vyskytla sa chyba!"
 
 msgid "An error occurs, please contact your administrator"
-msgstr ""
+msgstr "Vyskytla sa chyba, kontaktujte, prosím, svojho administrátora."
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr ""
+msgstr "Neviditeľná sekcia s rodičom, ktorý je predmetom premiešania, môže určiť, či sa jej deti, ktoré sa kandidátovi budú javiť ako súčasť rodiča, premiešajú ako blok alebo sa zmiešajú s ostatnými deťmi rodičovskej sekcie."
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr ""
+msgstr "Položku zaradenú do testu nie je možné prečítať alebo nie je v súlade s QTI."
 
 msgid "An item involved in the test cannot be written."
-msgstr ""
+msgstr "Položka zahrnutá v teste nemôže byť písomná."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr ""
+msgstr "Pri kompilácii QTI testu '%s' sa vyskytla neznáma chyba."
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr ""
+msgstr "Pri kompilácii QTI testu '%s' sa vyskytla neznáma chyba."
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
-msgstr ""
+msgstr "Vyskytla sa neopraviteľná chyba. Vaša testovacia relácia bude pozastavená."
 
 msgid "and"
-msgstr ""
+msgstr "a"
 
 msgid "and flagged %s of them"
-msgstr ""
+msgstr "a označil %s z nich"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "a označili ste %s položiek, ktoré môžete teraz skontrolovať"
 
 msgid "Answer Eliminator"
-msgstr ""
+msgstr "Eliminátor odpovedí"
 
 msgid "Answer Masking"
-msgstr ""
+msgstr "Maskovanie odpovedí"
 
 msgid "Answered"
-msgstr ""
+msgstr "Odpovedané"
 
 msgid "APIP Text To Speech"
-msgstr ""
+msgstr "API Text na reč"
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "Naozaj chcete vymazať svoju odpoveď a prejsť na ďalšiu položku? Nebudete sa môcť vrátiť späť a poskytnúť odpoveď."
 
 msgid "Are you sure you want to end the test?"
-msgstr ""
+msgstr "Naozaj chcete ukončiť test?"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr ""
+msgstr "Naozaj chcete prejsť na ďalšiu položku? Nebudete sa môcť vrátiť späť a zmeniť svoju odpoveď."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr ""
+msgstr "Naozaj chcete prejsť na ďalšiu položku? Nebudete sa môcť vrátiť späť a poskytnúť odpoveď."
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr ""
+msgstr "Naozaj chcete prejsť na ďalšiu položku? Nebudete sa môcť vrátiť späť."
 
 msgid "Area Masking"
-msgstr ""
+msgstr "Maskovanie oblasti"
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr ""
+msgstr "Priradenie plánu k sekcii vám umožní overiť túto sekciu oproti zadanému plánu."
 
 msgid "Associate Blueprint"
-msgstr ""
+msgstr "Plán pridruženého partnera"
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr ""
+msgstr "Vo vašej požiadavke bol vyžadovaný aspoň jeden povinný parameter, ale chýbal."
 
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr ""
+msgstr "Pomocný súbor sa nenašiel na mieste „%s“."
 
 msgid "Black on Cream"
-msgstr ""
+msgstr "Čierna na krémovej"
 
 msgid "Black on Light Blue"
-msgstr ""
+msgstr "Čierna na svetlomodrej"
 
 msgid "Black on Light Magenta"
-msgstr ""
+msgstr "Čierna na svetlopurpurovej"
 
 msgid "Black on White"
-msgstr ""
+msgstr "Čierna na bielom"
 
 msgid "Bookmark question"
-msgstr ""
+msgstr "Otázka v záložke"
 
 msgid "Bookmark the current question for later review"
-msgstr ""
+msgstr "Uložiť aktuálnu otázku pre neskoršie preskúmanie"
 
 msgid "Bookmarked question %s"
-msgstr ""
+msgstr "Otázka uložená v záložkách %s"
 
 msgid "Calculator"
-msgstr ""
+msgstr "Kalkulačka"
 
 msgid "Calculator BODMAS"
-msgstr ""
+msgstr "Kalkulačka BODMAS"
 
 msgid "Can not playback media file!"
-msgstr ""
+msgstr "Nie je možné prehrať mediálny súbor!"
 
 msgid "CANCEL"
-msgstr ""
+msgstr "ZRUŠIŤ"
 
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušiť"
 
 msgid "Candidate"
-msgstr ""
+msgstr "Kandidát"
 
 msgid "Cardinality"
-msgstr ""
+msgstr "Kardinalita"
 
 msgid "Categories"
-msgstr ""
+msgstr "Kategórie"
 
 msgid "Category score"
-msgstr ""
+msgstr "Skóre kategórie"
 
 msgid "Change the current color preset"
-msgstr ""
+msgstr "Zmena aktuálnej predvoľby farieb"
 
 msgid "Class"
-msgstr ""
+msgstr "Trieda"
 
 msgid "Class successfully created."
-msgstr ""
+msgstr "Trieda bola úspešne vytvorená."
 
 msgid "Clear all active highlights"
-msgstr ""
+msgstr "Vymazať všetky aktívne zvýraznenia"
 
 msgid "Clear Highlights"
-msgstr ""
+msgstr "Vymazať zvýraznenia"
 
 msgid "Click \"%s\" to continue"
-msgstr ""
+msgstr "Kliknite na „%s“ pre pokračovanie"
 
 msgid "Click \"%s\" to continue."
-msgstr ""
+msgstr "Kliknite na tlačidlo „%s“ pre pokračovanie."
 
 msgid "Click to speak"
-msgstr ""
+msgstr "Kliknite pre hovorenie"
 
 msgid "Close"
-msgstr ""
+msgstr "Zatvoriť"
 
 msgid "Close Magnifier"
-msgstr ""
+msgstr "Zatvoriť lupu"
 
 msgid "Close the mask"
-msgstr ""
+msgstr "Zatvorte masku"
 
 msgid "Close this Section"
-msgstr ""
+msgstr "Zatvoriť túto sekciu"
 
 msgid "Collapse the review panel"
-msgstr ""
+msgstr "Zbaliť panel recenzií"
 
 msgid "Comment"
-msgstr ""
+msgstr "Komentár"
 
 msgid "Completed items"
-msgstr ""
+msgstr "Dokončené položky"
 
 msgid "Connected to server"
-msgstr ""
+msgstr "Pripojené k serveru"
 
 msgid "CONTINUE TO THE NEXT SECTION"
-msgstr ""
+msgstr "POKRAČUJTE NA ĎALŠIU SEKCIU"
 
 msgid "Contrast"
-msgstr ""
+msgstr "Kontrast"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr ""
+msgstr "Riadi príspevok skóre z jednotlivých položiek k celkovému skóre testu."
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr ""
+msgstr "Ovláda maximálny povolený počet pokusov. 0 znamená neobmedzený."
 
 msgid "Covers parts of the item"
-msgstr ""
+msgstr "Zakrýva časti položky"
 
 msgid "Custom"
-msgstr ""
+msgstr "Vlastné"
 
 msgid "custom categories"
-msgstr ""
+msgstr "vlastné kategórie"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr ""
+msgstr "Vlastné spracovanie výsledkov. Existujúce pravidlá nebudú zmenené."
 
 msgid "Cut score"
-msgstr ""
+msgstr "Zníženie skóre"
 
 msgid "Cut score (pass ratio)"
-msgstr ""
+msgstr "Minimálne skóre (pomer úspešnosti)"
 
 msgid "Disable validation"
-msgstr ""
+msgstr "Zakázať overenie"
 
 msgid "Disconnected from server"
-msgstr ""
+msgstr "Odpojené od servera"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr ""
+msgstr "Zobraziť upozornenie predtým, ako účastník testu ukončí časť testu a stále zostanú nezodpovedané alebo označené položky na kontrolu."
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr ""
+msgstr "Zobraziť upozornenie predtým, ako účastník testu ukončí časť testu."
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr ""
+msgstr "Zobraziť upozornenie predtým, ako účastník testu ukončí test."
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr ""
+msgstr "Zobraziť upozornenie predtým, ako účastník testu preskočí danú sekciu. Vyžaduje sa možnosť Preskočenie sekcie."
 
 msgid "Display End Test Warning"
-msgstr ""
+msgstr "Upozornenie na koniec testu displeja"
 
 msgid "Display Next Part Warning"
-msgstr ""
+msgstr "Zobraziť upozornenie na ďalší diel"
 
 msgid "Display Next Section Warning"
-msgstr ""
+msgstr "Zobraziť upozornenie na ďalšiu sekciu"
 
 msgid "Display Unanswered Warning"
-msgstr ""
+msgstr "Zobraziť upozornenie na nezodpovedanú otázku"
 
 msgid "Displayed label"
-msgstr ""
+msgstr "Zobrazený štítok"
 
 msgid "Displays a customisable magnifier"
-msgstr ""
+msgstr "Zobrazuje prispôsobiteľnú lupu"
 
 msgid "Do not bookmark the current question for later review"
-msgstr ""
+msgstr "Neukladať aktuálnu otázku do záložiek na neskoršie prečítanie"
 
 msgid "Do not flag the current item for later review"
-msgstr ""
+msgstr "Neoznačovať aktuálnu položku na neskoršiu kontrolu"
 
 msgid "Do not rename it."
-msgstr ""
+msgstr "Nepremenujte to."
 
 msgid "Do not show alert on timeout"
-msgstr ""
+msgstr "Nezobrazovať upozornenie po uplynutí časového limitu"
 
 msgid "Don\\'t save"
-msgstr ""
+msgstr "Neukladať"
 
 msgid "Download"
-msgstr ""
+msgstr "Stiahnuť"
 
 msgid "Download the pupil responses and submit manually."
-msgstr ""
+msgstr "Stiahnite si odpovede žiakov a odošlite ich manuálne."
 
 msgid "Eliminate choices"
-msgstr ""
+msgstr "Eliminujte možnosti"
 
 msgid "Enable Mark for Review"
-msgstr ""
+msgstr "Povoliť označenie na kontrolu"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr ""
+msgstr "Povoliť označovanie na kontrolu položiek. Vyžaduje sa možnosť Obrazovka kontroly."
 
 msgid "Enable Review Screen"
-msgstr ""
+msgstr "Povoliť obrazovku kontroly"
 
 msgid "Enable selection"
-msgstr ""
+msgstr "Povoliť výber"
 
 msgid "Enable Skipping Ahead"
-msgstr ""
+msgstr "Povoliť preskakovanie dopredu"
 
 msgid "Enable text to speech"
-msgstr ""
+msgstr "Povoliť premenu textu na reč"
 
 msgid "Enable the item review screen / navigator."
-msgstr ""
+msgstr "Povoliť obrazovku/navigátor kontroly položiek."
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr ""
+msgstr "Umožňuje preskočenie na položky v tejto sekcii. Vyžaduje sa možnosť obrazovky kontroly."
 
 msgid "End test"
-msgstr ""
+msgstr "Ukončiť test"
 
 msgid "End Test"
-msgstr ""
+msgstr "Ukončiť test"
 
 msgid "Enter a blueprint"
-msgstr ""
+msgstr "Zadajte plán"
 
 msgid "Enter a custom category"
-msgstr ""
+msgstr "Zadajte vlastnú kategóriu"
 
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
 msgid "Error during file import"
-msgstr ""
+msgstr "Chyba počas importu súboru"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr ""
+msgstr "V teste IMS QTI bola nájdená chyba:\n"
+"%s"
 
 msgid "Expand the review panel"
-msgstr ""
+msgstr "Rozbaliť panel recenzií"
 
 msgid "Export"
-msgstr ""
+msgstr "Export"
 
 msgid "Export failed for the test \"%s"
-msgstr ""
+msgstr "Export zlyhal pre test „%s“"
 
 msgid "Export failed. Key uri nor classUri in formValues are not defined"
-msgstr ""
+msgstr "Export zlyhal. Kľúč URI ani classUri vo formValues nie sú definované."
 
 msgid "Export metadata"
-msgstr ""
+msgstr "Exportovať metadáta"
 
 msgid "Export QTI %s Test Package"
-msgstr ""
+msgstr "Exportovať testovací balík QTI %s"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr ""
+msgstr "Exportovať testovací balík QTI 2.1"
 
 msgid "Export QTI 2.2 Test Package"
-msgstr ""
+msgstr "Exportovať testovací balík QTI 2.2"
 
 msgid "Export successful for the test \"%s"
-msgstr ""
+msgstr "Export pre test bol úspešný „%s“"
 
 msgid "Feedback block"
-msgstr ""
+msgstr "Blok spätnej väzby"
 
 msgid "File name"
-msgstr ""
+msgstr "Názov súboru"
 
 msgid "File not found"
-msgstr ""
+msgstr "Súbor sa nenašiel"
 
 msgid "File not found!"
-msgstr ""
+msgstr "Súbor sa nenašiel!"
 
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 msgid "Fixed"
-msgstr ""
+msgstr "Opravené"
 
 msgid "Fixed position in a shuffled the selection."
-msgstr ""
+msgstr "Pevná pozícia v náhodnom výbere."
 
 msgid "Flag for Review"
-msgstr ""
+msgstr "Nahlásiť na kontrolu"
 
 msgid "Flag the current item for later review"
-msgstr ""
+msgstr "Označiť aktuálnu položku na neskoršiu kontrolu"
 
 msgid "Flagged"
-msgstr ""
+msgstr "Nahlásené"
 
 msgid "Flagged for review"
-msgstr ""
+msgstr "Nahlásené na kontrolu"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr ""
+msgstr "Vynútiť, aby sa položka považovala za informačnú a nebola braná do úvahy v počítadlách (ne)zodpovedaných / označených príznakov."
 
 msgid "Go to next item"
-msgstr ""
+msgstr "Prejsť na ďalšiu položku"
 
 msgid "Go to the current question"
-msgstr ""
+msgstr "Prejsť na aktuálnu otázku"
 
 msgid "Go to the next item?"
-msgstr ""
+msgstr "Prejsť na ďalšiu položku?"
 
 msgid "Go to the next question"
-msgstr ""
+msgstr "Prejsť na ďalšiu otázku"
 
 msgid "Go to the previous question"
-msgstr ""
+msgstr "Prejsť na predchádzajúcu otázku"
 
 msgid "Go to the top of the page"
-msgstr ""
+msgstr "Prejsť na začiatok stránky"
 
 msgid "Gray on Green"
-msgstr ""
+msgstr "Sivá na zelenej"
 
 msgid "Hide Review"
-msgstr ""
+msgstr "Skryť recenziu"
 
 msgid "Hide test overview panel"
-msgstr ""
+msgstr "Skryť panel s prehľadom testov"
 
 msgid "Hide the review screen"
-msgstr ""
+msgstr "Skryť obrazovku kontroly"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr ""
+msgstr "Skryť upozornenie, ktoré sa automaticky zobrazí, keď účastník testu opustí časovo obmedzený úsek."
 
 msgid "Hide Timed Section Warning"
-msgstr ""
+msgstr "Skryť upozornenie na časovanú sekciu"
 
 msgid "Hide timers"
-msgstr ""
+msgstr "Skryť časovače"
 
 msgid "Highlight"
-msgstr ""
+msgstr "Zvýrazniť"
 
 msgid "Highlight Text"
-msgstr ""
+msgstr "Zvýrazniť text"
 
 msgid "Highlighter"
-msgstr ""
+msgstr "Zvýrazňovač"
 
 msgid "hours"
-msgstr ""
+msgstr "hodiny"
 
 msgid "Html title"
-msgstr ""
+msgstr "Názov HTML"
 
 msgid "Identifier"
-msgstr ""
+msgstr "Identifikátor"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr ""
+msgstr "Ak je to potrebné, musí sa (aspoň raz) objaviť vo výbere."
 
 msgid "If required, it must appears at least once in the selection."
-msgstr ""
+msgstr "Ak je to potrebné, musí sa vo výbere objaviť aspoň raz."
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr ""
+msgstr "Ak je nastavené, spôsobí to náhodné poradie podradených prvkov, inak použije poradie, v akom sú podradené prvky definované."
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr ""
+msgstr "Ak kandidát môže preskočiť položku bez odoslania odpovede (predvolená hodnota je true)."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "Ak je nastavená možnosť kategórie, skóre sa bude spracovávať aj podľa kategórií a každý výsledok sa zobrazí vo výsledku PASS_xxx, kde xxx je názov kategórie."
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr ""
+msgstr "Ak je nastavená možnosť kategórie, skóre sa bude spracovávať aj podľa kategórií a každý výsledok sa zobrazí vo výsledku SCORE_xxx, kde xxx je názov kategórie."
 
 msgid "If the connection cannot be restored, see option B."
-msgstr ""
+msgstr "Ak sa pripojenie nedá obnoviť, pozrite si možnosť B."
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
-msgstr ""
+msgstr "Ak test opustíte, vaše zmeny sa neuložia z dôvodu neplatných nastavení testu. Naozaj chcete test opustiť?"
 
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
-msgstr ""
+msgstr "Ak potrebujete pomoc, kontaktujte našu linku pomoci na čísle 0330 088 4171."
 
 msgid "Import"
-msgstr ""
+msgstr "Importovať"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr ""
+msgstr "Import balíka obsahu QTI/APIP"
 
 msgid "Import QTI TEST into \"%s"
-msgstr ""
+msgstr "Importovať QTI TEST do \"%s\""
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "Položku IMS QTI označenú ako „%s“ v súbore manifestu IMS nebolo možné importovať."
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "Položka IMS QTI označená ako „%s“ v súbore manifestu IMS bola úspešne importovaná."
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr ""
+msgstr "Testovací balík IMS QTI bol úspešne importovaný."
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr ""
+msgstr "Test IMS QTI s odkazom na „%s“ v súbore IMS Manifest bol úspešne importovaný."
 
 msgid "In this part of the test navigation is not allowed."
-msgstr ""
+msgstr "V tejto časti testu nie je navigácia povolená."
 
 msgid "Inconsistency at line %1d:"
-msgstr ""
+msgstr "Nekonzistentnosť v riadku %1d:"
 
 msgid "Individual"
-msgstr ""
+msgstr "Jednotlivec"
 
 msgid "Informational item"
-msgstr ""
+msgstr "Informačná položka"
 
 msgid "Informational Item Usage"
-msgstr ""
+msgstr "Použitie informačnej položky"
 
 msgid "Internal server error!"
-msgstr ""
+msgstr "Interná chyba servera!"
 
 msgid "is already used in the test."
-msgstr ""
+msgstr "sa už používa v teste."
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr ""
+msgstr "nie je platný identifikátor (písmeno, podčiarkovník, pomlčka a bodky)"
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr ""
+msgstr "nie je platný identifikátor (všetko okrem medzier)"
 
 msgid "It is not possible to save your responses while working offline."
-msgstr ""
+msgstr "Počas práce offline nie je možné uložiť vaše odpovede."
 
 msgid "Item \"%s\" is completed."
-msgstr ""
+msgstr "Položka „%s“ je dokončená."
 
 msgid "Item %d"
-msgstr ""
+msgstr "Položka %d"
 
 msgid "Item %d of %d"
-msgstr ""
+msgstr "Položka %d z %d"
 
 msgid "Item %s loaded"
-msgstr ""
+msgstr "Položka %s načítaná"
 
 msgid "Item Reference Properties"
-msgstr ""
+msgstr "Vlastnosti referenčného bodu"
 
 msgid "Item response identifier does not match current item"
-msgstr ""
+msgstr "Identifikátor odpovede položky sa nezhoduje s aktuálnou položkou"
 
 msgid "Item Session Control"
-msgstr ""
+msgstr "Riadenie relácie položky"
 
 msgid "items"
-msgstr ""
+msgstr "položky"
 
 msgid "Items"
-msgstr ""
+msgstr "Položky"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr ""
+msgstr "Položky je možné voliteľne priradiť do jednej alebo viacerých kategórií."
 
 msgid "Items Compilation"
-msgstr ""
+msgstr "Zostavovanie položiek"
 
 msgid "Items marked for later review"
-msgstr ""
+msgstr "Položky označené na neskoršiu kontrolu"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr ""
+msgstr "Položky s identifikátormi assessmentItemRef „%s“ nie sú registrované v súvisiacom koncovom bode CAT."
 
 msgid "Jump Menu"
-msgstr ""
+msgstr "Skočiť na menu"
 
 msgid "Jump to:"
-msgstr ""
+msgstr "Prejsť na:"
 
 msgid "Keep Together"
-msgstr ""
+msgstr "Držte spolu"
 
 msgid "Keyboard Navigation"
-msgstr ""
+msgstr "Navigácia na klávesnici"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
-msgstr ""
+msgstr "Účastník testu má k dispozícii klávesové skratky pre nástroje prístupnosti."
 
 msgid "Late submission allowed"
-msgstr ""
+msgstr "Oneskorené podanie je povolené"
 
 msgid "Leave a comment"
-msgstr ""
+msgstr "Zanechajte komentár"
 
 msgid "Line Reader"
-msgstr ""
+msgstr "Čítačka riadkov"
 
 msgid "Linear"
-msgstr ""
+msgstr "Lineárne"
 
 msgid "Link durations to activate the guided navigation"
-msgstr ""
+msgstr "Prepojenie trvaní na aktiváciu navigácie s asistentom"
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr ""
+msgstr "Uzamknuté trvanie: navigácia s navigáciou. Test prejde na ďalšiu položku, keď trvanie dosiahne 0."
 
 msgid "Magnifier"
-msgstr ""
+msgstr "Lupa"
 
 msgid "Magnify less"
-msgstr ""
+msgstr "Zväčšiť menej"
 
 msgid "Magnify more"
-msgstr ""
+msgstr "Zväčšiť viac"
 
 msgid "Magnifying Glass"
-msgstr ""
+msgstr "Lupa"
 
 msgid "Main navigation"
-msgstr ""
+msgstr "Hlavná navigácia"
 
 msgid "Manage Rubric Blocks"
-msgstr ""
+msgstr "Spravovať bloky rubriky"
 
 msgid "Manage test properties"
-msgstr ""
+msgstr "Spravovať vlastnosti testu"
 
 msgid "Manage Tests"
-msgstr ""
+msgstr "Spravovať testy"
 
 #, tao-public
 msgid "Manage tests"
-msgstr ""
+msgstr "Spravovať testy"
 
 msgid "Mark for review"
-msgstr ""
+msgstr "Označiť na kontrolu"
 
 msgid "Masking"
-msgstr ""
+msgstr "Maskovanie"
 
 msgid "Match value"
-msgstr ""
+msgstr "Hodnota zhody"
 
 msgid "Max Attempts"
-msgstr ""
+msgstr "Maximálny počet pokusov"
 
 msgid "Maximum Duration"
-msgstr ""
+msgstr "Maximálne trvanie"
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr ""
+msgstr "Maximálne trvanie: položky sa zablokujú, keď trvanie dosiahne 0."
 
 msgid "Maximum duration for the all test."
-msgstr ""
+msgstr "Maximálne trvanie pre celý test."
 
 msgid "Maximum duration for this item."
-msgstr ""
+msgstr "Maximálna trvanie pre túto položku."
 
 msgid "Maximum duration for this section."
-msgstr ""
+msgstr "Maximálna dĺžka trvania pre túto sekciu."
 
 msgid "Maximum duration for this test part."
-msgstr ""
+msgstr "Maximálne trvanie tejto časti testu."
 
 msgid "Metadata export is not available for test \"%s."
-msgstr ""
+msgstr "Export metadát nie je k dispozícii pre test „%s“."
 
 msgid "Minimum Duration"
-msgstr ""
+msgstr "Minimálne trvanie"
 
 msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr ""
+msgstr "Minimálne trvanie: núti účastníka testu zotrvať na položke počas daného trvania."
 
 msgid "Minimum duration for the test."
-msgstr ""
+msgstr "Minimálna dĺžka trvania testu."
 
 msgid "Minimum duration for this item."
-msgstr ""
+msgstr "Minimálna doba trvania tejto položky."
 
 msgid "Minimum duration for this section."
-msgstr ""
+msgstr "Minimálna dĺžka trvania pre túto sekciu."
 
 msgid "Minimum duration for this test part."
-msgstr ""
+msgstr "Minimálne trvanie tejto časti testu."
 
 msgid "minutes"
-msgstr ""
+msgstr "minúty"
 
 msgid "Missed required parameter \\'id\\'"
-msgstr ""
+msgstr "Chýba povinný parameter \\'id\\'"
 
 msgid "Missed required parameter \\'id\\'"
-msgstr ""
+msgstr "Chýba povinný parameter \\'id\\'"
 
 msgid "Missed test package file"
-msgstr ""
+msgstr "Súbor zmeškaného testovacieho balíka"
 
 msgid "Missing filename for QTI Test export"
-msgstr ""
+msgstr "Chýba názov súboru pre export QTI Test"
 
 msgid "Missing required configuration option %s"
-msgstr ""
+msgstr "Chýba požadovaná možnosť konfigurácie %s"
 
 msgid "Move"
-msgstr ""
+msgstr "Presunúť"
 
 msgid "Move Down"
-msgstr ""
+msgstr "Posunúť nadol"
 
 msgid "Move Up"
-msgstr ""
+msgstr "Posunúť nahor"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr ""
+msgstr "Správa o prechode na ďalšiu položku bez dosiahnutia časového limitu."
 
 msgid "name of the pupil"
-msgstr ""
+msgstr "meno žiaka"
 
 msgid "Navigation"
-msgstr ""
+msgstr "Navigácia"
 
 msgid "Navigation shortcuts"
-msgstr ""
+msgstr "Navigačné skratky"
 
 msgid "Navigation Warnings"
-msgstr ""
+msgstr "Navigačné upozornenia"
 
 msgid "network"
-msgstr ""
+msgstr "sieť"
 
 msgid "New Rubric Block"
-msgstr ""
+msgstr "Nový blok rubriky"
 
 msgid "New section"
-msgstr ""
+msgstr "Nová sekcia"
 
 msgid "New test part"
-msgstr ""
+msgstr "Nová testovacia časť"
 
 msgid "Next"
-msgstr ""
+msgstr "Ďalej"
 
 msgid "Next Section"
-msgstr ""
+msgstr "Ďalšia sekcia"
 
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 msgid "NO"
-msgstr ""
+msgstr "NIE"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr ""
+msgstr "Pre koncový bod CAT „%s“ nie je nakonfigurovaný žiadny CAT Engine."
 
 msgid "No file found at location \"%s\"."
-msgstr ""
+msgstr "Na mieste „%s“ sa nenašiel žiadny súbor."
 
 msgid "No instance in form to export"
-msgstr ""
+msgstr "Žiadna inštancia vo formulári na export"
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr ""
+msgstr "Pre položku „%s“ už nie sú povolené žiadne ďalšie pokusy."
 
 msgid "no outcome declaration found"
-msgstr ""
+msgstr "nenašlo sa žiadne vyhlásenie o výsledku"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr ""
+msgstr "Žiadne spracovanie výsledkov. Vymažte existujúce pravidlá, ak nejaké existujú."
 
 msgid "No reference to any IMS QTI Item found."
-msgstr ""
+msgstr "Nenašiel sa žiadny odkaz na žiadnu položku IMS QTI."
 
 msgid "Non Linear"
-msgstr ""
+msgstr "Nelineárne"
 
 msgid "None"
-msgstr ""
+msgstr "Žiadne"
 
 msgid "Not all test could be exported"
-msgstr ""
+msgstr "Nie všetky testy sa dali exportovať"
 
 msgid "Not answered"
-msgstr ""
+msgstr "Neodpovedané"
 
 msgid "Not seen"
-msgstr ""
+msgstr "Nevidno"
 
 msgid "Not shuffled, the position remains fixed."
-msgstr ""
+msgstr "Nezamiešané, pozícia zostáva fixná."
 
 msgid "Offline"
-msgstr ""
+msgstr "Offline"
 
 msgid "OK"
-msgstr ""
+msgstr "V poriadku"
 
 msgid "Ok"
-msgstr ""
+msgstr "Dobre"
 
 msgid "OK & End test"
-msgstr ""
+msgstr "OK a ukončiť test"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr ""
+msgstr "Keď túto sekciu zatvoríte, už sa k nej nemôžete vrátiť ani zmeniť svoje odpovede."
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr ""
+msgstr "Jednu alebo viacero závislých položiek IMS QTI sa nepodarilo importovať."
 
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 msgid "Only display the items marked for review"
-msgstr ""
+msgstr "Zobraziť iba položky označené na kontrolu"
 
 msgid "Only display the unanswered items"
-msgstr ""
+msgstr "Zobraziť iba nezodpovedané položky"
 
 msgid "Open Calculator"
-msgstr ""
+msgstr "Otvoriť kalkulačku"
 
 msgid "Open Keyboard Shortcuts"
-msgstr ""
+msgstr "Otvoriť klávesové skratky"
 
 msgid "Option A"
-msgstr ""
+msgstr "Možnosť A"
 
 msgid "Option B"
-msgstr ""
+msgstr "Možnosť B"
 
 msgid "or"
-msgstr ""
+msgstr "alebo"
 
 msgid "Ordering"
-msgstr ""
+msgstr "Objednávanie"
 
 msgid "Outcome"
-msgstr ""
+msgstr "Výsledok"
 
 msgid "Outcome declarations"
-msgstr ""
+msgstr "Vyhlásenia o výsledkoch"
 
 msgid "Outcome processing"
-msgstr ""
+msgstr "Spracovanie výsledkov"
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr ""
+msgstr "Balík je platný, ale nenašli sa žiadne testy. Uistite sa, že obsahuje platné QTI testy."
 
 msgid "Part %d"
-msgstr ""
+msgstr "Časť %d"
 
 msgid "Passage"
-msgstr ""
+msgstr "Priechod"
 
 msgid "Pause"
-msgstr ""
+msgstr "Pozastaviť"
 
 msgid "Pause the test"
-msgstr ""
+msgstr "Pozastaviť test"
 
 msgid "Play"
-msgstr ""
+msgstr "Hrať"
 
 msgid "Please confirm you want to leave the test."
-msgstr ""
+msgstr "Potvrďte, prosím, že chcete opustiť test."
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
-msgstr ""
+msgstr "Skúste stránku znova načítať alebo pozastaviť test. Ak ho pozastavíte, budete môcť test obnoviť z tejto stránky."
 
 msgid "Please wait while we try to restore the connection."
-msgstr ""
+msgstr "Počkajte, prosím, kým sa pokúsime obnoviť pripojenie."
 
 msgid "Preview"
-msgstr ""
+msgstr "Náhľad"
 
 msgid "Preview the covered area"
-msgstr ""
+msgstr "Zobraziť ukážku pokrytej oblasti"
 
 msgid "Previous"
-msgstr ""
+msgstr "Predchádzajúce"
 
 msgid "PROCEED & END ASSESSMENT"
-msgstr ""
+msgstr "POKRAČOVAŤ A UKONČIŤ HODNOTENIE"
 
 msgid "Proctor"
-msgstr ""
+msgstr "Proktor"
 
 msgid "Properties"
-msgstr ""
+msgstr "Nehnuteľnosti"
 
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "Testovací ovládač QTI 2.1"
 
 msgid "QTI Item Runner"
-msgstr ""
+msgstr "Bežec položiek QTI"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr ""
+msgstr "Publikovanie QTI testu „%s“ zlyhalo."
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr ""
+msgstr "QTI test „%s“ bol úspešne publikovaný."
 
 msgid "QTI Test Metadata"
-msgstr ""
+msgstr "Metadáta testu QTI"
 
 msgid "QTI Test Package %s"
-msgstr ""
+msgstr "Testovací balík QTI %s"
 
 msgid "QTI Test Package 2.1"
-msgstr ""
+msgstr "Testovací balík QTI 2.1"
 
 msgid "QTI Test Package 2.2"
-msgstr ""
+msgstr "Testovací balík QTI 2.2"
 
 msgid "QTI/APIP Test Content Package"
-msgstr ""
+msgstr "Balík testovacieho obsahu QTI/APIP"
 
 msgid "question"
-msgstr ""
+msgstr "otázka"
 
 msgid "Question"
-msgstr ""
+msgstr "Otázka"
 
 msgid "Question %s"
-msgstr ""
+msgstr "Otázka %s"
 
 msgid "questions"
-msgstr ""
+msgstr "otázky"
 
 msgid "Reference"
-msgstr ""
+msgstr "Referencia"
 
 msgid "Regenerate"
-msgstr ""
+msgstr "Regenerovať"
 
 msgid "Reload the page"
-msgstr ""
+msgstr "Znovu načítať stránku"
 
 msgid "remaining %s %s"
-msgstr ""
+msgstr "zostávajúce %s %s"
 
 msgid "Remove Item Reference"
-msgstr ""
+msgstr "Odstrániť odkaz na položku"
 
 msgid "Remove Rubric Block"
-msgstr ""
+msgstr "Odstrániť blok rubriky"
 
 msgid "Remove Section"
-msgstr ""
+msgstr "Odstrániť sekciu"
 
 msgid "Remove Subsection"
-msgstr ""
+msgstr "Odstrániť podsekciu"
 
 msgid "Remove Test Part"
-msgstr ""
+msgstr "Odstrániť testovaciu časť"
 
 msgid "Required"
-msgstr ""
+msgstr "Povinné"
 
 msgid "Required field"
-msgstr ""
+msgstr "Povinné pole"
 
 msgid "Reset filters"
-msgstr ""
+msgstr "Obnoviť filtre"
 
 msgid "Resource(s) successfully exported."
-msgstr ""
+msgstr "Zdroj(e) boli úspešne exportované."
 
 msgid "ResultTransmission event successfully registered"
-msgstr ""
+msgstr "Udalosť ResultTransmission bola úspešne zaregistrovaná"
 
 msgid "Review"
-msgstr ""
+msgstr "Recenzia"
 
 msgid "Review my Answers"
-msgstr ""
+msgstr "Skontrolujte moje odpovede"
 
 msgid "Rubric Block"
-msgstr ""
+msgstr "Blok rubriky"
 
 msgid "Rubric Block Properties"
-msgstr ""
+msgstr "Vlastnosti bloku rubriky"
 
 msgid "Rubric Blocks"
-msgstr ""
+msgstr "Rubrické bloky"
 
 msgid "Save"
-msgstr ""
+msgstr "Uložiť"
 
 msgid "Saved"
-msgstr ""
+msgstr "Uložené"
 
 msgid "Scientific Calculator"
-msgstr ""
+msgstr "Vedecká kalkulačka"
 
 msgid "Scorer"
-msgstr ""
+msgstr "Strelec"
 
 msgid "Scoring"
-msgstr ""
+msgstr "Bodovanie"
 
 msgid "Scratch Pad"
-msgstr ""
+msgstr "Zápisník"
 
 msgid "Scratch pad"
-msgstr ""
+msgstr "Zápisník"
 
 msgid "Scratchpad"
-msgstr ""
+msgstr "Zápisník"
 
 msgid "seconds"
-msgstr ""
+msgstr "sekundy"
 
 msgid "Section %d"
-msgstr ""
+msgstr "Sekcia %d"
 
 msgid "Section %d of %d"
-msgstr ""
+msgstr "Sekcia %d z %d"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "Kategória na úrovni sekcie umožňuje naraz konfigurovať kategórie položiek, z ktorých sa skladá. Kategória sivá znamená, že danú kategóriu majú všetky položky. Kategória biela znamená, že danú kategóriu má iba niekoľko položiek."
 
 msgid "Section Properties"
-msgstr ""
+msgstr "Vlastnosti sekcie"
 
 msgid "Select"
-msgstr ""
+msgstr "Vyberte"
 
 msgid "Select a blueprint"
-msgstr ""
+msgstr "Vyberte si plán"
 
 msgid "Select Items"
-msgstr ""
+msgstr "Vybrať položky"
 
 msgid "Select the way the responses of your test should be processed"
-msgstr ""
+msgstr "Vyberte spôsob, akým sa majú spracovať odpovede vášho testu"
 
 msgid "Selection"
-msgstr ""
+msgstr "Výber"
 
 msgid "Send"
-msgstr ""
+msgstr "Odoslať"
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr ""
+msgstr "Nastaviť identifikátor výsledku, s ktorým súvisí blok spätnej väzby"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr ""
+msgstr "Nastavte minimálne skóre (alebo pomer úspešnosti) priradené k testu. Musí to byť číslo s pohyblivou desatinnou čiarkou medzi 0 a 1."
 
 msgid "Set the rubric block as a feedback block"
-msgstr ""
+msgstr "Nastavenie bloku rubriky ako bloku spätnej väzby"
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr ""
+msgstr "Nastavte hodnotu výsledku, ktorá aktivuje blok spätnej väzby"
 
 msgid "Set the weight identifier used to process the score"
-msgstr ""
+msgstr "Nastavte identifikátor váhy použitý na spracovanie skóre"
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr ""
+msgstr "Nastavte triedu XHTML-QTI pre blok rubriky."
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr ""
+msgstr "Nastavte identifikátor XHTML-QTI bloku rubriky."
 
 msgid "SetSynchronisationService successfully configured."
-msgstr ""
+msgstr "Služba SetSynchronizationService bola úspešne nakonfigurovaná."
 
 msgid "Settings"
-msgstr ""
+msgstr "Nastavenia"
 
 msgid "Show Feedback"
-msgstr ""
+msgstr "Zobraziť spätnú väzbu"
 
 msgid "Show Review"
-msgstr ""
+msgstr "Zobraziť recenziu"
 
 msgid "Show Solution"
-msgstr ""
+msgstr "Zobraziť riešenie"
 
 msgid "Show test overview panel"
-msgstr ""
+msgstr "Zobraziť panel s prehľadom testov"
 
 msgid "Show the review screen"
-msgstr ""
+msgstr "Zobraziť obrazovku kontroly"
 
 msgid "Show the solution once the answer is submitted."
-msgstr ""
+msgstr "Po odoslaní odpovede ukážte riešenie."
 
 msgid "Show timers"
-msgstr ""
+msgstr "Zobraziť časovače"
 
 msgid "Show/Hide the review screen"
-msgstr ""
+msgstr "Zobraziť/Skryť obrazovku kontroly"
 
 msgid "Shuffle"
-msgstr ""
+msgstr "Náhodne"
 
 msgid "Simultaneous"
-msgstr ""
+msgstr "Súčasné"
 
 msgid "Skip"
-msgstr ""
+msgstr "Preskočiť"
 
 msgid "Skip &amp; End Test"
-msgstr ""
+msgstr "Preskočiť &amp; Ukončiť test"
 
 msgid "Skip and end test"
-msgstr ""
+msgstr "Preskočiť a ukončiť test"
 
 msgid "Skip and go to the end of the test"
-msgstr ""
+msgstr "Preskočiť a prejsť na koniec testu"
 
 msgid "Skip and go to the next item"
-msgstr ""
+msgstr "Preskočiť a prejsť na ďalšiu položku"
 
 msgid "Skip to the end of the test"
-msgstr ""
+msgstr "Preskočiť na koniec testu"
 
 msgid "Skip to the next item"
-msgstr ""
+msgstr "Preskočiť na ďalšiu položku"
 
 msgid "Skip to the next section"
-msgstr ""
+msgstr "Preskočiť na ďalšiu sekciu"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr ""
+msgstr "Niektoré rubriky boli aktualizované, aby odrážali zmeny v zozname výsledkov."
 
 msgid "Something unexpected happened."
-msgstr ""
+msgstr "Stalo sa niečo neočakávané."
 
 msgid "Something went wrong..."
-msgstr ""
+msgstr "Niečo sa pokazilo..."
 
 msgid "Speech speed"
-msgstr ""
+msgstr "Rýchlosť reči"
 
 msgid "Speed"
-msgstr ""
+msgstr "Rýchlosť"
 
 msgid "Start Test-part"
-msgstr ""
+msgstr "Spustiť testovaciu časť"
 
 msgid "Step 1: Download the file (see below when available)."
-msgstr ""
+msgstr "Krok 1: Stiahnite si súbor (ak bude k dispozícii, pozrite si ho nižšie)."
 
 msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
-msgstr ""
+msgstr "Krok 2: Keď budete opäť online, pošlite stiahnutý súbor spolu s "
 
 msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
-msgstr ""
+msgstr "Krok 3: Po stiahnutí súboru môžete zatvoriť okno prehliadača. S hodnotením nerobte žiadne ďalšie kroky, kým sa zobrazuje stav „prebieha“. Stav sa aktualizuje po nahraní súboru linkou pomoci."
 
 msgid "Stop"
-msgstr ""
+msgstr "Zastaviť"
 
 msgid "Submission"
-msgstr ""
+msgstr "Podanie"
 
 msgid "Submit and go to the end of the test"
-msgstr ""
+msgstr "Odoslať a prejsť na koniec testu"
 
 msgid "Submit and go to the item %s"
-msgstr ""
+msgstr "Odoslať a prejsť na položku %s"
 
 msgid "Submit and go to the next item"
-msgstr ""
+msgstr "Odoslať a prejsť na ďalšiu položku"
 
 msgid "Submit and go to the previous item"
-msgstr ""
+msgstr "Odoslať a prejsť na predchádzajúcu položku"
 
 msgid "SUBMIT THE TEST"
-msgstr ""
+msgstr "ODOSLAŤ TEST"
 
 msgid "SUBMIT THIS PART"
-msgstr ""
+msgstr "ODOSLAŤ TÚTO ČASŤ"
 
 msgid "technical"
-msgstr ""
+msgstr "technické"
 
 msgid "Test"
-msgstr ""
+msgstr "Test"
 
 msgid "Test constructor"
-msgstr ""
+msgstr "Konštruktor testov"
 
 msgid "Test metadata successfully exported."
-msgstr ""
+msgstr "Testovacie metadáta boli úspešne exportované."
 
 msgid "Test Navigation"
-msgstr ""
+msgstr "Testovacia navigácia"
 
 msgid "Test overview"
-msgstr ""
+msgstr "Prehľad testu"
 
 msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr ""
+msgstr "Kategória na úrovni testovacej časti umožňuje naraz konfigurovať kategórie jej zložiek. Kategória sivá znamená, že všetky položky majú túto kategóriu. Kategória biela znamená, že túto kategóriu má iba niekoľko položiek."
 
 msgid "Test Part Properties"
-msgstr ""
+msgstr "Vlastnosti testovacej časti"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr ""
+msgstr "Testovacia ukážka nie je nainštalovaná, kontaktujte, prosím, svojho administrátora."
 
 msgid "Test Saved"
-msgstr ""
+msgstr "Test uložený"
 
 msgid "Test status"
-msgstr ""
+msgstr "Stav testu"
 
 msgid "Test status and review structure"
-msgstr ""
+msgstr "Stav testu a štruktúra kontroly"
 
 msgid "Test Status and Structure"
-msgstr ""
+msgstr "Stav a štruktúra testu"
 
 msgid "Test-Taker Tools"
-msgstr ""
+msgstr "Nástroje pre absolventov testov"
 
 #, tao-public
 msgid "Tests"
-msgstr ""
+msgstr "Testy"
 
 msgid "Text content"
-msgstr ""
+msgstr "Textový obsah"
 
 msgid "Text to Speech"
-msgstr ""
+msgstr "Prevod textu na reč"
 
 msgid "Text To Speech"
-msgstr ""
+msgstr "Prevod textu na reč"
 
 msgid "that was being taken."
-msgstr ""
+msgstr "to sa bral."
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr ""
+msgstr "Súbor „imsmanifest.xml“ nájdený v archíve nie je platný."
 
 msgid "the assessment (LCL or Mathematics)"
-msgstr ""
+msgstr "hodnotenie (LCL alebo matematika)"
 
 msgid "The assessment has been created but is not already running."
-msgstr ""
+msgstr "Hodnotenie bolo vytvorené, ale ešte nie je spustené."
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "Hodnotenie bolo pozastavené oprávneným administrátorom. Ak chcete hodnotenie obnoviť, spustite ho znova a v prípade potreby kontaktujte svojho administrátora testovania."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr ""
+msgstr "Hodnotenie bolo pozastavené. Ak chcete pokračovať v hodnotení, spustite ho znova a v prípade potreby kontaktujte svojho dozorcu."
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr ""
+msgstr "Hodnotenie bolo pozastavené. Ak chcete hodnotenie obnoviť, spustite ho znova."
 
 msgid "The assessment has been terminated."
-msgstr ""
+msgstr "Hodnotenie bolo ukončené."
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr ""
+msgstr "Hodnotenie bolo ukončené. Už s ním nemôžete interagovať."
 
 msgid "The assessment is still running."
-msgstr ""
+msgstr "Hodnotenie stále prebieha."
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr ""
+msgstr "Kandidát nesmie odoslať neplatné odpovede."
 
 msgid "The connection seems to be back, please proceed"
-msgstr ""
+msgstr "Zdá sa, že pripojenie je obnovené, pokračujte prosím."
 
 msgid "the current question"
-msgstr ""
+msgstr "aktuálna otázka"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr ""
+msgstr "Závislosť od IMS QTI AssessmentItemRef „%s“ v súbore manifestu IMS sa nepodarilo vyriešiť."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr ""
+msgstr "Stiahnutie bude k dispozícii o <strong>%d</strong> sekúnd"
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr ""
+msgstr "Nasledujúce identifikátory nie sú v rámci testu jedinečné: %s"
 
 msgid "The identifier of the item reference."
-msgstr ""
+msgstr "Identifikátor odkazu na položku."
 
 msgid "The identifier of the section."
-msgstr ""
+msgstr "Identifikátor sekcie."
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr ""
+msgstr "Položka IMS QTI označená ako „%s“ v súbore manifestu IMS už bola uložená v banke položiek."
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr ""
+msgstr "Testovací balík IMS QTI sa nepodarilo importovať."
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr ""
+msgstr "Test IMS QTI, na ktorý sa v súbore manifestu IMS odkazuje ako „%s“, sa nepodarilo importovať."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr ""
+msgstr "Navigačný režim určuje všeobecné cesty, ktorými sa kandidát môže vydať. Lineárny režim obmedzuje kandidáta na postupné skúšanie každej položky. Nelineárny režim toto obmedzenie odstraňuje."
 
 msgid "The number of child elements to be selected."
-msgstr ""
+msgstr "Počet podradených prvkov, ktoré sa majú vybrať."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr ""
+msgstr "Výsledok „%s“ neexistuje, ale je naň odkazovaný blokom spätnej väzby!"
 
 msgid "The outcomes have been regenerated!"
-msgstr ""
+msgstr "Výsledky boli regenerované!"
 
 msgid "The principle identifier of the test."
-msgstr ""
+msgstr "Princípový identifikátor testu."
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr ""
+msgstr "Poskytnutý archív je neplatný. Uistite sa, že nie je poškodený a že obsahuje súbor „imsmanifest.xml“."
 
 msgid "The QTI Item with URI '%s' cannot be found."
-msgstr ""
+msgstr "Položka QTI s URI '%s' sa nenašla."
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr ""
+msgstr "QTI test '%s' musí obsahovať aspoň 1 položku QTI. Žiadna sa nenašla."
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr ""
+msgstr "Test QTI sa nepodarilo správne načítať."
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr ""
+msgstr "Testovací súbor QTI XML alebo jedna z jeho závislostí je poškodená alebo prázdna."
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr ""
+msgstr "Test QTI-XML sa nepodarilo napísať správne."
 
 msgid "The reference."
-msgstr ""
+msgstr "Referencia."
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr ""
+msgstr "Zdroje súvisiace s testom IMS QTI, na ktoré sa v súbore manifestu IMS odkazuje ako „%s“, boli vrátené späť."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr ""
+msgstr "Skóre bude spracované pre celý test. Vypočíta sa súčet všetkých výsledkov SCORE a vydelí sa súčtom MAX SCORE, výsledok sa porovná s minimálnym skóre (alebo pomerom úspešnosti) a potom sa zodpovedajúcim spôsobom nastaví výsledok PASS_TOTAL."
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr ""
+msgstr "Skóre bude spracované pre celý test. Vypočíta sa súčet všetkých výsledkov SCORE, výsledok sa zobrazí vo výsledku SCORE_TOTAL."
 
 msgid "The section title."
-msgstr ""
+msgstr "Názov sekcie."
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr ""
+msgstr "Režim odosielania určuje, kedy sa odpovede kandidáta odošlú na spracovanie odpovedí. Testovacia časť v individuálnom režime vyžaduje, aby kandidát odosielal svoje odpovede po jednotlivých položkách. V simultánnom režime sa odpovede kandidáta odošlú spolu na konci testovacej časti."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-msgstr ""
+msgstr "Test nie je možné uložiť, pretože momentálne obsahuje neplatné nastavenia.\n"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 "Please fix the invalid settings and try again."
-msgstr ""
+msgstr "Test nie je možné uložiť, pretože momentálne obsahuje neplatné nastavenia.\n"
+"Opravte neplatné nastavenia a skúste to znova."
 
 msgid "The test has been closed/suspended!"
-msgstr ""
+msgstr "Test bol uzavretý/pozastavený!"
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr ""
+msgstr "Test bol pozastavený, nemôžeme sa pripojiť k serveru."
 
 msgid "The test has not been saved."
-msgstr ""
+msgstr "Test nebol uložený."
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
-msgstr ""
+msgstr "Test obsahuje neuložené zmeny, ste si istý/á, že chcete odísť?"
 
 msgid "The test has unsaved changes, would you like to save it?"
-msgstr ""
+msgstr "Test obsahuje neuložené zmeny, chcete ho uložiť?"
 
 msgid "The test needs to be saved before it can be previewed."
-msgstr ""
+msgstr "Test je potrebné pred zobrazením ukážky uložiť."
 
 msgid "The test part identifier."
-msgstr ""
+msgstr "Identifikátor testovacej časti."
 
 msgid "The test title."
-msgstr ""
+msgstr "Názov testu."
 
 msgid "The time limit has been reached for this part of the test."
-msgstr ""
+msgstr "Časový limit pre túto časť testu bol dosiahnutý."
 
 msgid "There are %s unanswered questions"
-msgstr ""
+msgstr "Existuje %s nezodpovedaných otázok"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr ""
+msgstr "V tejto časti testu je %s nezodpovedaných otázok"
 
 msgid "There is %s unanswered question"
-msgstr ""
+msgstr "Existuje %s nezodpovedaná otázka"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr ""
+msgstr "V tejto časti testu je %s nezodpovedaných otázok"
 
 msgid "There is not outcomes!"
-msgstr ""
+msgstr "Nie sú žiadne výsledky!"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr ""
+msgstr "Toto obmedzenie ovplyvňuje viditeľnosť spätnej väzby po skončení posledného pokusu."
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr ""
+msgstr "Toto obmedzenie určuje, či má kandidát počas zasadnutia povolené poskytnúť komentár k danej položke. Komentáre nie sú súčasťou hodnotených odpovedí."
 
 msgid "This functionality is blocked. Please contact with your administrator for more details."
-msgstr ""
+msgstr "Táto funkcia je blokovaná. Pre viac informácií kontaktujte svojho správcu."
 
 msgid "This test has been suspended"
-msgstr ""
+msgstr "Tento test bol pozastavený"
 
 msgid "This test has been terminated"
-msgstr ""
+msgstr "Tento test bol ukončený"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr ""
+msgstr "Časový limit pre položku „%s“ bol dosiahnutý."
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr ""
+msgstr "Časový limit bol dosiahnutý, táto časť testu sa skončila."
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr ""
+msgstr "Časový limit bol dosiahnutý, táto časť testu sa skončila. Môžete však dokončiť aktuálnu položku."
 
 msgid "Time Limits"
-msgstr ""
+msgstr "Časové limity"
 
 msgid "Time Remaining"
-msgstr ""
+msgstr "Zostávajúci čas"
 
 msgid "Title"
-msgstr ""
+msgstr "Názov"
 
 msgid "Toggle playback"
-msgstr ""
+msgstr "Prepnúť prehrávanie"
 
 msgid "Toggle start from here mode"
-msgstr ""
+msgstr "Prepnúť režim štartu odtiaľto"
 
 msgid "Tool box and flagging for review"
-msgstr ""
+msgstr "Nástrojová skrinka a označovanie na kontrolu"
 
 msgid "Toolbox"
-msgstr ""
+msgstr "Nástroje"
 
 msgid "Total score"
-msgstr ""
+msgstr "Celkové skóre"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
-msgstr ""
+msgstr "Skúste pripojiť zariadenie k internetu káblom alebo sa presuňte na miesto s lepším signálom Wi-Fi."
 
 msgid "Tutor"
-msgstr ""
+msgstr "Doučovateľ"
 
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 msgid "Unanswered"
-msgstr ""
+msgstr "Nezodpovedané"
 
 msgid "Unanswered items"
-msgstr ""
+msgstr "Nezodpovedané položky"
 
 msgid "Unflag for Review"
-msgstr ""
+msgstr "Zrušiť označenie na kontrolu"
 
 msgid "Unknown error."
-msgstr ""
+msgstr "Neznáma chyba."
 
 msgid "Unlink to use separated durations"
-msgstr ""
+msgstr "Zrušte prepojenie, aby ste mohli použiť oddelené trvania"
 
 msgid "Unseen"
-msgstr ""
+msgstr "Neviditeľné"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr ""
+msgstr "Nahrajte súbor testovacieho balíka QTI 2.1"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr ""
+msgstr "Pre viacnásobný výber použite kláves Ctrl/Meta alebo Lasso"
 
 msgid "Validate Responses"
-msgstr ""
+msgstr "Overiť odpovede"
 
 msgid "Value"
-msgstr ""
+msgstr "Hodnota"
 
 msgid "Viewed"
-msgstr ""
+msgstr "Zobrazené"
 
 msgid "Viewed items"
-msgstr ""
+msgstr "Zobrazené položky"
 
 msgid "Views"
-msgstr ""
+msgstr "Zobrazenia"
 
 msgid "Visible"
-msgstr ""
+msgstr "Viditeľné"
 
 msgid "Volume"
-msgstr ""
+msgstr "Objem"
 
 msgid "Wait for your connection to come back online."
-msgstr ""
+msgstr "Počkajte, kým sa vaše pripojenie opäť neobnoví."
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr ""
+msgstr "Upozornenie – Na dokončenie testu vám zostáva %s ."
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr ""
+msgstr "Upozornenie – Na dokončenie tejto položky vám zostáva %s ."
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr ""
+msgstr "Upozornenie – Na dokončenie tejto časti vám zostáva %s ."
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr ""
+msgstr "Upozornenie – Na dokončenie tejto testovacej časti vám zostáva %s ."
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr ""
+msgstr "Upozornenie – Na dokončenie tohto testu vám zostáva %s ."
 
 msgid "We are unable to connect the server to submit your results."
-msgstr ""
+msgstr "Nepodarilo sa nám pripojiť k serveru a odoslať vaše výsledky."
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr ""
+msgstr "Nepodarilo sa nám pripojiť k serveru a načítať ďalšiu položku."
 
 msgid "Weight"
-msgstr ""
+msgstr "Hmotnosť"
 
 msgid "Weights"
-msgstr ""
+msgstr "Váhy"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr ""
+msgstr "Pri výbere podradených prvkov je každý prvok zvyčajne vhodný na výber iba raz."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr ""
+msgstr "Či by sa mala akceptovať odpoveď kandidáta, ktorá presahuje maximálnu dĺžku trvania položky."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr ""
+msgstr "Či by sa mala akceptovať odpoveď kandidáta, ktorá presahuje maximálny časový limit danej sekcie."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr ""
+msgstr "Či by mala byť odpoveď kandidáta, ktorá presahuje maximálny časový limit testovej časti, stále akceptovaná."
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr ""
+msgstr "Či by mala byť odpoveď kandidáta, ktorá presahuje maximálnu dĺžku trvania, stále akceptovaná."
 
 msgid "White on Black"
-msgstr ""
+msgstr "Biela na čiernom"
 
 msgid "White on Blue (TAO standard theme)"
-msgstr ""
+msgstr "Biela na modrej (štandardná téma TAO)"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr ""
+msgstr "Kto si môže počas dodávky pozrieť rubriku."
 
 msgid "With Replacement"
-msgstr ""
+msgstr "S náhradou"
 
 msgid "Wrong file mime type"
-msgstr ""
+msgstr "Nesprávny MIME typ súboru"
 
 msgid "XML Content"
-msgstr ""
+msgstr "XML obsah"
 
 #, tao-public
 msgid "XML Editor"
-msgstr ""
+msgstr "Editor XML"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr ""
+msgstr "Chyba XML v riadku %1$d stĺpci %2$d „%3$s“."
 
 msgid "Yellow on Blue"
-msgstr ""
+msgstr "Žltá na modrej"
 
 msgid "Yes"
-msgstr ""
+msgstr "Áno"
 
 msgid "YES"
-msgstr ""
+msgstr "ÁNO"
 
 msgid "You answered %s of %s question(s) for this section of the test"
-msgstr ""
+msgstr "V tejto časti testu ste odpovedali na %s z %s otázok"
 
 msgid "You answered all %s question(s) in this section"
-msgstr ""
+msgstr "V tejto sekcii ste odpovedali na všetky otázky ( %s )"
 
 msgid "You answered all %s question(s) in this test"
-msgstr ""
+msgstr "V tomto teste ste odpovedali na všetky otázky ( %s )"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr ""
+msgstr "V tejto sekcii ste odpovedali iba na %s z %s otázok"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr ""
+msgstr "Chystáte sa prejsť na ďalšiu položku. Kliknite na tlačidlo OK pre pokračovanie a prechod na ďalšiu položku."
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr ""
+msgstr "Chystáte sa prejsť na predchádzajúcu položku. Kliknite na tlačidlo OK pre pokračovanie a prechod na predchádzajúcu položku."
 
 msgid "You are about to leave this section."
-msgstr ""
+msgstr "Chystáte sa opustiť túto sekciu."
 
 msgid "You are about to submit the test."
-msgstr ""
+msgstr "Chystáte sa odoslať test."
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr ""
+msgstr "Chystáte sa odoslať test. Po odoslaní k tomuto testu nebudete mať prístup. Kliknite na tlačidlo OK pre pokračovanie a odoslanie testu."
 
 msgid "You are about to submit this test part."
-msgstr ""
+msgstr "Chystáte sa odoslať túto testovaciu časť."
 
 msgid "You are currently working offline."
-msgstr ""
+msgstr "Momentálne pracujete offline."
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr ""
+msgstr "Dochádza k dlhodobému výpadku pripojenia. "
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
-msgstr ""
+msgstr "Obsah môžete zväčšiť až o 200 %. Skontrolujte nastavenia prehliadača a zistite, ako to urobiť."
 
 msgid "You flagged %s item(s) that you can review now"
-msgstr ""
+msgstr "Označili ste %s položiek, ktoré môžete teraz skontrolovať"
 
 msgid "You have %s item(s) marked for review."
-msgstr ""
+msgstr "Máte %s položiek označených na recenziu."
 
 msgid "You have %s left to answer remaining %s questions."
-msgstr ""
+msgstr "Zostáva vám %s na zodpovedanie zostávajúcich %s otázok."
 
 msgid "You have %s remaining to complete the current item."
-msgstr ""
+msgstr "Na dokončenie aktuálnej položky vám zostáva %s ."
 
 msgid "You have %s unanswered question(s)"
-msgstr ""
+msgstr "Máte %s nezodpovedaných otázok"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr ""
+msgstr "Máte %s nezodpovedaných otázok a %s položiek označených na kontrolu."
 
 msgid "You have %s unanswered question(s)."
-msgstr ""
+msgstr "Máte %s nezodpovedaných otázok."
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr ""
+msgstr "Po odoslaní nebudete mať k tomuto testu prístup. Kliknite na „%s“ a pokračujte v odoslaní testu."
 
 msgid "Your comment…"
-msgstr ""
+msgstr "Váš komentár…"
 
 msgid "Your connection seems to be back, please proceed."
-msgstr ""
+msgstr "Zdá sa, že vaše pripojenie je obnovené, pokračujte, prosím."
 
 msgid "Zoom"
-msgstr ""
+msgstr "Priblíženie"
 
 msgid "Zoom in"
-msgstr ""
+msgstr "Priblížiť"
 
 msgid "Zoom out"
-msgstr ""
+msgstr "Oddialiť"
 
 msgid "Enforce Item Constraints"
-msgstr ""
+msgstr "Vynútiť obmedzenia položiek"
 
 msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr ""
+msgstr "Začiarknutie tohto políčka zabráni účastníkovi testu v prechode na iné položky, kým nie sú splnené aktuálne obmedzenia položky, ak nejaké existujú. Zrušenie začiarknutia tohto políčka umožní voľnú navigáciu, aj keď odpovede nespĺňajú nastavené obmedzenia položky."
 
