@@ -5,20 +5,27 @@ namespace oat\taoQtiTest\models\IdentifierGenerator\Generator;
 use core_kernel_classes_Resource;
 use InvalidArgumentException;
 use oat\generis\model\data\Ontology;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use qtism\common\utils\Format;
 
 class QtiIdentifierGenerator implements IdentifierGeneratorInterface
 {
     private Ontology $ontology;
+    private FeatureFlagCheckerInterface $featureFlagChecker;
 
-    public function __construct(Ontology $ontology)
+    public function __construct(Ontology $ontology, FeatureFlagCheckerInterface $featureFlagChecker)
     {
         $this->ontology = $ontology;
+        $this->featureFlagChecker = $featureFlagChecker;
     }
 
     public function generate(array $options = []): string
     {
+        if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER')) {
+            return Format::sanitizeIdentifier(null);
+        }
+
         $resource = $this->getResource($options);
         $label = $resource->getLabel();
 

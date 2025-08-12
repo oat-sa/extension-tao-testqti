@@ -4,6 +4,7 @@ namespace oat\taoQtiTest\models\IdentifierGenerator\ServiceProvider;
 
 use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\TaoOntology;
 use oat\taoQtiTest\models\IdentifierGenerator\Generator\QtiIdentifierGenerator;
@@ -21,6 +22,7 @@ class IdentifierGeneratorServiceProvider implements ContainerServiceProviderInte
             ->set(QtiIdentifierGenerator::class, QtiIdentifierGenerator::class)
             ->args([
                 service(Ontology::SERVICE_ID),
+                service(FeatureFlagChecker::class),
             ]);
 
         $services
