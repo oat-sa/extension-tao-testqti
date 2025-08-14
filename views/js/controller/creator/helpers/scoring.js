@@ -338,7 +338,7 @@ define([
             addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
         },
 
-        grade_max: function writerGradeMax(descriptor, scoring, outcomes, categories) {
+        grade_max: function writerGradeMax(descriptor, scoring, outcomes) {
             addGradeMaxOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
         }
     };
@@ -1019,12 +1019,16 @@ define([
      */
     function detectScoring(modelOverseer) {
         var model = modelOverseer.getModel();
+        var config = modelOverseer.getConfig();
         let modes = processingModes;
         if(!features.isVisible('taoQtiTest/creator/test/property/scoring/custom')) {
             delete modes.custom;
         }
+        if (!config.scalePresets || !Array.isArray(config.scalePresets) || config.scalePresets.length === 0) {
+            delete modes.grade;
+        }
         return {
-            modes: processingModes,
+            modes: modes,
             scoreIdentifier: defaultScoreIdentifier,
             weightIdentifier: getWeightIdentifier(model),
             cutScore: getCutScore(model),
