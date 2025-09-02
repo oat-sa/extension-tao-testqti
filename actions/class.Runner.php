@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2016-2023 (original work) Open Assessment Technologies SA.
+ * Copyright (c) 2016-2025 (original work) Open Assessment Technologies SA.
  */
 
 /**
@@ -63,6 +63,7 @@ use oat\taoQtiTest\models\runner\StorageManager;
 use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -697,10 +698,17 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->validateSecurityToken();
             $this->validateDeliveryExecutionInteractionAccessibility();
 
+            $container = $this->getServiceLocator()->getContainer();
+            $isPermanentLateSubmission = $container->has(FeatureFlagChecker::class)
+                ? $container->get(FeatureFlagChecker::class)
+                            ->isFeatureEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
+                : false;
+
             $command = new TimeoutCommand(
                 $this->getServiceContext(),
                 $this->hasRequestParameter('start'),
-                $this->hasRequestParameter('late')
+                $this->hasRequestParameter('late'),
+                $isPermanentLateSubmission
             );
 
             $this->setNavigationContextToCommand($command);
