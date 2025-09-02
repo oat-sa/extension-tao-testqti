@@ -37,19 +37,29 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class TimeoutServiceTest extends TestCase
 {
-    /** @var TimeoutService */
+    /**
+     * @var TimeoutService
+     */
     private $subject;
 
-    /** @var RunnerService|MockObject */
+    /**
+     * @var RunnerService|MockObject
+     */
     private $runnerService;
 
-    /** @var RunnerServiceContext|MockObject */
+    /**
+     * @var RunnerServiceContext|MockObject
+     */
     private $serviceContext;
 
-    /** @var ItemResponseRepositoryInterface|MockObject */
+    /**
+     * @var ItemResponseRepositoryInterface|MockObject
+     */
     private $itemResponseRepository;
 
-    /** @var ToolsStateRepositoryInterface|MockObject */
+    /**
+     * @var ToolsStateRepositoryInterface|MockObject
+     */
     private $toolsStateRepository;
 
     protected function setUp(): void
@@ -116,6 +126,19 @@ class TimeoutServiceTest extends TestCase
         $this->expectTestContext(['itemIdentifier' => 'item-2']);
 
         $this->itemResponseRepository->expects($this->never())
+            ->method('save');
+
+        $this->executeAction();
+    }
+
+    public function testSkipsItemResponseWithAutoSaveOnTimeout(): void
+    {
+        $this->expectTestContext(['itemIdentifier' => 'item-2']);
+        $this->featureFlagChecker->method('isFeatureEnabled')
+            ->with('FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION')
+            ->willReturn(true);
+
+        $this->itemResponseRepository->expects($this->once())
             ->method('save');
 
         $this->executeAction();
@@ -210,9 +233,17 @@ class TimeoutServiceTest extends TestCase
             ->willReturn($testMap);
     }
 
-    private function createCommand(bool $hastStartTimer = false, bool $lateSubmissionAllowed = false): TimeoutCommand
-    {
-        $command = new TimeoutCommand($this->serviceContext, $hastStartTimer, $lateSubmissionAllowed);
+    private function createCommand(
+        bool $hasStartTimer = false,
+        bool $lateSubmissionAllowed = false,
+        bool $permanentLateSubmission =  false
+    ): TimeoutCommand {
+        $command = new TimeoutCommand(
+            $this->serviceContext,
+            $hasStartTimer,
+            $lateSubmissionAllowed,
+            $permanentLateSubmission
+        );
 
         $command->setNavigationContext('', 'item', null);
 

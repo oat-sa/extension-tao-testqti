@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2021-2025 (original work) Open Assessment Technologies SA;
  *
  * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
  */
@@ -35,23 +35,14 @@ final class TimeoutCommand implements
     use NavigationContextAwareTrait;
     use ToolsStateAwareTrait;
 
-    /** @var QtiRunnerServiceContext */
-    private $serviceContext;
-
-    /** @var bool */
-    private $hasStartTimer;
-
-    /** @var bool */
-    private $lateSubmissionAllowed;
+    public const FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION = 'FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION';
 
     public function __construct(
-        QtiRunnerServiceContext $serviceContext,
-        bool $hasStartTimer,
-        bool $lateSubmissionAllowed
+        private readonly QtiRunnerServiceContext $serviceContext,
+        private readonly bool $hasStartTimer,
+        private readonly bool $lateSubmissionAllowed,
+        private readonly bool $permanentLateSubmission = false,
     ) {
-        $this->serviceContext = $serviceContext;
-        $this->hasStartTimer = $hasStartTimer;
-        $this->lateSubmissionAllowed = $lateSubmissionAllowed;
     }
 
     public function getServiceContext(): QtiRunnerServiceContext
@@ -66,6 +57,6 @@ final class TimeoutCommand implements
 
     public function isLateSubmissionAllowed(): bool
     {
-        return $this->lateSubmissionAllowed;
+        return $this->lateSubmissionAllowed || $this->permanentLateSubmission;
     }
 }
