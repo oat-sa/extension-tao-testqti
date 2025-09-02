@@ -400,4 +400,23 @@ define([
         $preset.click();
     });
 
+    QUnit.module('isValidCategory');
+
+    QUnit.cases.init([
+        { title: 'a_valid_category', expected: true },
+        { title: 'a-valid-category-123', expected: true },
+        { title: 'UPPERCASE', expected: true },
+        { title: 'x-tao-attachment-f47ac10b-58cc-4372-a567-0e02b2c3d479', expected: true },
+        { title: 'x-tao-attachment-F47AC10B-58CC-4372-A567-0E02B2C3D479', expected: true, message: 'allows uppercase UUID' },
+        { title: '-invalid-category', expected: false, message: 'does not allow starting with a dash' },
+        { title: 'invalid-category!', expected: false, message: 'does not allow special characters' },
+        { title: 'invalid category', expected: false, message: 'does not allow spaces' },
+        { title: '', expected: false, message: 'does not allow empty string' },
+        { title: 'x-tao-attachment-not-a-uuid', expected: false, message: 'does not allow invalid UUID' },
+        { title: 'x-tao-attachment-', expected: false, message: 'does not allow empty UUID' }
+    ]).test('validates categories', function (data, assert) {
+        assert.expect(1);
+        var message = data.message || (data.expected ? 'should be valid' : 'should be invalid');
+        assert.equal(categorySelectorFactory._isValidCategory(data.title), data.expected, '"' + data.title + '" ' + message);
+    });
 });
