@@ -698,17 +698,11 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
             $this->validateSecurityToken();
             $this->validateDeliveryExecutionInteractionAccessibility();
 
-            $container = $this->getServiceLocator()->getContainer();
-            $isPermanentLateSubmission = $container->has(FeatureFlagChecker::class)
-                ? $container->get(FeatureFlagChecker::class)
-                            ->isFeatureEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
-                : false;
-
             $command = new TimeoutCommand(
                 $this->getServiceContext(),
                 $this->hasRequestParameter('start'),
                 $this->hasRequestParameter('late'),
-                $isPermanentLateSubmission
+                (bool)$this->getPsrContainer()->get(FeatureFlagChecker::class)->isEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
             );
 
             $this->setNavigationContextToCommand($command);

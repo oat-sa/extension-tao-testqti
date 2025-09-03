@@ -134,7 +134,7 @@ class TimeoutServiceTest extends TestCase
     public function testSkipsItemResponseWithAutoSaveOnTimeout(): void
     {
         $this->expectTestContext(['itemIdentifier' => 'item-2']);
-        $this->featureFlagChecker->method('isFeatureEnabled')
+        $this->featureFlagChecker->method('isEnabled')
             ->with('FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION')
             ->willReturn(true);
 
