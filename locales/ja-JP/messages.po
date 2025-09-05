@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2024-12-19 16:02\n"
+"PO-Revision-Date: 2025-02-07 08:32\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -30,7 +30,7 @@ msgid "(Visual) Highlight Text"
 msgstr "（ビジュアル）ハイライトテキスト"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
-msgstr ""
+msgstr "同時配信が検出されました。最後の開いているセッションを使用してください。現在のウィンドウを閉じることができます。"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
@@ -174,7 +174,7 @@ msgid "An unrecoverable error occurred. Your test session will be paused."
 msgstr "回復不能なエラーが発生しました。受験は一時停止されます。"
 
 msgid "and"
-msgstr ""
+msgstr "と"
 
 msgid "and flagged %s of them"
 msgstr "%s にフラグを立てました。"
@@ -291,7 +291,7 @@ msgid "Clear Highlights"
 msgstr "ラインマーカをクリア"
 
 msgid "Click \"%s\" to continue"
-msgstr ""
+msgstr "「%s」をクリックして続行します"
 
 msgid "Click \"%s\" to continue."
 msgstr "続行するには、「%s」をクリックしてください"
@@ -470,13 +470,13 @@ msgid "Export failed for the test \"%s"
 msgstr "テスト \"%s のエクスポート失敗"
 
 msgid "Export failed. Key uri nor classUri in formValues are not defined"
-msgstr ""
+msgstr "エクスポートに失敗しました。フォームのキーuriとclassUriは定義されていません"
 
 msgid "Export metadata"
 msgstr "メタデータのエクスポート"
 
 msgid "Export QTI %s Test Package"
-msgstr ""
+msgstr "QTI %s テストパッケージをエクスポート"
 
 msgid "Export QTI 2.1 Test Package"
 msgstr "QTI2.1 Test Packageエクスポート"
@@ -650,7 +650,7 @@ msgid "is already used in the test."
 msgstr "既にテストで使用されています"
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr ""
+msgstr "は有効な識別子ではありません (英数字、アンダースコア、ダッシュ、ドット)"
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）にしてください"
@@ -816,13 +816,13 @@ msgid "Missed required parameter \\'id\\'"
 msgstr "必要なパラメータが不足しています \\'id\\'"
 
 msgid "Missed required parameter \\'id\\'"
-msgstr ""
+msgstr "不在の必須パラメータ \\'id\\'"
 
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
 
 msgid "Missing filename for QTI Test export"
-msgstr ""
+msgstr "QTI テストのエクスポートのファイル名がありません"
 
 msgid "Missing required configuration option %s"
 msgstr "必要な設定が見つかりません： %s "
@@ -882,7 +882,7 @@ msgid "No file found at location \"%s\"."
 msgstr "\"%s\"にはファイルがありません"
 
 msgid "No instance in form to export"
-msgstr ""
+msgstr "エクスポートするインスタンスがありません"
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "これ以上，問題\"%s\"の解答はできません。"
@@ -1014,7 +1014,7 @@ msgid "Properties"
 msgstr "プロパティ"
 
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 テストドライバ"
 
 msgid "QTI Item Runner"
 msgstr "QTIアイテムランナー"
@@ -1026,19 +1026,19 @@ msgid "QTI Test \"%s\" successfully published."
 msgstr "QTIテスト\"%s\" の公開が完了しました"
 
 msgid "QTI Test Metadata"
-msgstr ""
+msgstr "QTIテストメタデータ"
 
 msgid "QTI Test Package %s"
-msgstr ""
+msgstr "QTIテストパッケージ %s"
 
 msgid "QTI Test Package 2.1"
-msgstr ""
+msgstr "QTIテストパッケージ 2.1"
 
 msgid "QTI Test Package 2.2"
-msgstr ""
+msgstr "QTIテストパッケージ 2.2"
 
 msgid "QTI/APIP Test Content Package"
-msgstr ""
+msgstr "QTI/APIPテストコンテンツパッケージ"
 
 msgid "question"
 msgstr "問題"
@@ -1468,7 +1468,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-msgstr ""
+msgstr "無効な設定が含まれているため、テストを保存できません。\n"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 "Please fix the invalid settings and try again."
@@ -1776,8 +1776,8 @@ msgid "Zoom out"
 msgstr "縮小"
 
 msgid "Enforce Item Constraints"
-msgstr ""
+msgstr "アイテム制約を強制する"
 
 msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr ""
+msgstr "このチェックボックスをオンにすると、テストテイカーが現在の項目制約が満たされるまで他の項目に移動するのを防ぎます。 このボックスのチェックを外すと、応答が項目制約に準拠していなくても、自由なナビゲーションが可能になります。"
 
