@@ -40,6 +40,24 @@ define([
     let allQtiCategoriesPresets = [];
     let categoryToPreset = new Map();
 
+    /**
+     * Validates a category string.
+     * A category is valid if it's a legacy category name or
+     * has the format "x-tao-attachment-" + UUIDv4.
+     * @param {string} category - The category to validate.
+     * @returns {boolean} - True if the category is valid, false otherwise.
+     */
+    function isValidCategory(category) {
+        const genericCategoryRegex = /^[a-zA-Z_][a-zA-Z0-9_-]*$/;
+        const attachmentCategoryRegex = /^x-tao-attachment-([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})$/i;
+
+        if (category.startsWith('x-tao-attachment-')) {
+            return attachmentCategoryRegex.test(category);
+        }
+
+        return genericCategoryRegex.test(category);
+    }
+
     function categorySelectorFactory($container) {
         const $presetsContainer = $container.find('.category-presets');
         const $customCategoriesSelect = $container.find('[name=category-custom]');
@@ -114,11 +132,11 @@ define([
                         tags: customCategories,
                         multiple: true,
                         tokenSeparators: [',', ' ', ';'],
-                        createSearchChoice: (category) => category.match(/^[a-zA-Z_][a-zA-Z0-9_-]*$/)
+                        createSearchChoice: (category) => isValidCategory(category)
                             ? { id: category, text: category }
                             : null,
                         formatNoMatches: () => __('Category name not allowed'),
-                        maximumInputLength: 32
+                        maximumInputLength: 60
                     })
                     .on('change', () => this.updateCategories());
 
@@ -225,6 +243,9 @@ define([
             }, []);
         }
     };
+
+    // exposed for testing purpose
+    categorySelectorFactory._isValidCategory = isValidCategory;
 
     return categorySelectorFactory;
 });
