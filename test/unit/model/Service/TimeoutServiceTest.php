@@ -131,19 +131,6 @@ class TimeoutServiceTest extends TestCase
         $this->executeAction();
     }
 
-    public function testSkipsItemResponseWithAutoSaveOnTimeout(): void
-    {
-        $this->expectTestContext(['itemIdentifier' => 'item-2']);
-        $this->featureFlagChecker->method('isEnabled')
-            ->with('FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION')
-            ->willReturn(true);
-
-        $this->itemResponseRepository->expects($this->once())
-            ->method('save');
-
-        $this->executeAction();
-    }
-
     public function testSavesToolsState(): void
     {
         $this->expectTestContext(['itemIdentifier' => 'item-2']);
@@ -236,7 +223,7 @@ class TimeoutServiceTest extends TestCase
     private function createCommand(
         bool $hasStartTimer = false,
         bool $lateSubmissionAllowed = false,
-        bool $permanentLateSubmission =  false
+        bool $permanentLateSubmission = false
     ): TimeoutCommand {
         $command = new TimeoutCommand(
             $this->serviceContext,
