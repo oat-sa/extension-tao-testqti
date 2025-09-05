@@ -23,6 +23,7 @@ namespace oat\taoQtiTest\models\runner\synchronisation\action;
 use common_exception_InconsistentData as InconsistentData;
 use common_Logger;
 use Exception;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Service\TimeoutCommand;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\runner\synchronisation\TestRunnerAction;
@@ -52,7 +53,8 @@ class Timeout extends TestRunnerAction
             $command = new TimeoutCommand(
                 $this->getServiceContext(),
                 $this->hasRequestParameter('start'),
-                $this->hasRequestParameter('late')
+                $this->hasRequestParameter('late'),
+                $this->getPsrContainer()->get(FeatureFlagChecker::class)->isEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
             );
 
             $this->setNavigationContextToCommand($command);
