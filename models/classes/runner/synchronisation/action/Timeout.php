@@ -54,7 +54,7 @@ class Timeout extends TestRunnerAction
                 $this->getServiceContext(),
                 $this->hasRequestParameter('start'),
                 $this->hasRequestParameter('late'),
-                (bool)$this->getPsrContainer()->get(FeatureFlagChecker::class)->isEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
+                $this->getPsrContainer()->get(FeatureFlagChecker::class)->isEnabled(TimeoutCommand::FEATURE_FLAG_TIMEOUT_PERMANENT_LATE_SUBMISSION)
             );
 
             $this->setNavigationContextToCommand($command);
