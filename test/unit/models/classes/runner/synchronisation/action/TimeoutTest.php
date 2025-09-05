@@ -31,6 +31,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use oat\taoQtiTest\models\runner\synchronisation\action\Timeout;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class TimeoutTest extends TestCase
@@ -50,6 +51,9 @@ class TimeoutTest extends TestCase
     /** @var TimeoutService|MockObject */
     private $timeoutService;
 
+    /** @var FeatureFlagChecker|MockObject */
+    private $featureFlagChecker;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -59,6 +63,7 @@ class TimeoutTest extends TestCase
         $this->runnerServiceContext = $this->createMock(QtiRunnerServiceContext::class);
         $this->testSession = $this->createMock(TestSession::class);
         $this->eventManager = $this->createMock(EventManager::class);
+        $this->featureFlagChecker = $this->createMock(FeatureFlagChecker::class);
 
         $this->runnerService
             ->method('getServiceContext')
@@ -142,6 +147,7 @@ class TimeoutTest extends TestCase
         $subject = new Timeout('test', microtime(), $requestParameters);
 
         $services = [
+            FeatureFlagChecker::class => $this->featureFlagChecker,
             QtiRunnerService::SERVICE_ID => $this->runnerService,
             EventManager::SERVICE_ID => $this->eventManager,
             TimeoutService::class => $this->timeoutService,
