@@ -172,8 +172,9 @@ define([
                         })})
                     .before(`preview${eventNS}`, () => this.confirmBefore('preview').then(whatToDo => {
                         if(testCreator.isTestHasErrors()){
-                            feedback().warning(`${__('The test cannot be saved because it currently contains invalid settings.\n' +
-                                'Please fix the invalid settings and try again.')}`);
+                            feedback().warning(`${__('The test cannot be saved because it currently contains invalid settings.') +
+                                '\n' +
+                                __('Please fix the invalid settings and try again.')}`);
                         } else {
                         this.ifWantSave(whatToDo);
                         }
