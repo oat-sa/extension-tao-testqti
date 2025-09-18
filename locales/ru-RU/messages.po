@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2023.12\n"
-"PO-Revision-Date: 2023-12-01T07:53:22\n"
+"Project-Id-Version: TAO 2025.10\n"
+"PO-Revision-Date: 2025-09-18T18:00:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -13,7 +13,13 @@ msgstr ""
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
 
+msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr ""
+
 msgid "%s to answer %s"
+msgstr ""
+
+msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -23,6 +29,9 @@ msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
+
+msgid "A human interpretation of the variable's value."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -39,6 +48,9 @@ msgstr "Не удалось получить удаленный ресурс, н
 
 msgid "A response to every question in this item is required."
 msgstr "Требуются ответы на все вопросы в этом элементе."
+
+msgid "A response to this item is invalid."
+msgstr ""
 
 msgid "A response to this item is required."
 msgstr "Требуется ответ на этот элемент."
@@ -61,6 +73,9 @@ msgstr "добавить новый весовой коэффициент"
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Добавить ZIP-файл, содержащий QTI/APIP-тесты и элементы"
 
+msgid "Add an outcome declaration"
+msgstr ""
+
 msgid "Add selected item(s) here."
 msgstr "Добавьте выбранные элементы здесь."
 
@@ -75,6 +90,9 @@ msgstr "После прохождения этого раздела вы уже 
 
 msgid "All"
 msgstr "Все"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "Разрешить комментирование"
@@ -142,6 +160,9 @@ msgstr "Во время инициализации теста возникла �
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Во время теста возникла ошибка, обратитесь к администратору."
 
+msgid "An error occurred while loading the original test."
+msgstr ""
+
 msgid "An error occurred!"
 msgstr "Возникла ошибка!"
 
@@ -156,6 +177,9 @@ msgstr "Не удается прочитать элемент, включенн�
 
 msgid "An item involved in the test cannot be written."
 msgstr "Невозможно записать элемент, включенный в тест."
+
+msgid "An optional link to an extended interpretation of the outcome variable."
+msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr "Во время компоновки теста QTI «%s» возникла неизвестная ошибка."
@@ -214,6 +238,9 @@ msgstr "Связать макет"
 msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr "Был необходим по крайней мере один обязательный параметр, однако он не обнаружен в вашем запросе"
 
+msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
+msgstr ""
+
 msgid "Author"
 msgstr "Автор"
 
@@ -250,11 +277,11 @@ msgstr "Калькулятор BODMAS"
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
-msgstr "ОТМЕНА"
-
 msgid "Cancel"
 msgstr "Отмена"
+
+msgid "CANCEL"
+msgstr "ОТМЕНА"
 
 msgid "Candidate"
 msgstr "Кандидат"
@@ -265,11 +292,17 @@ msgstr "Размерность"
 msgid "Categories"
 msgstr "Категории"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "Балл по категории"
 
 msgid "Change the current color preset"
 msgstr "Изменить текущую настройку цветов"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "Класс"
@@ -343,6 +376,15 @@ msgstr "Проходной балл"
 msgid "Cut score (pass ratio)"
 msgstr "Проходной балл (проходное соотношение)"
 
+msgid "Define the status of the translation."
+msgstr ""
+
+msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Отключить валидацию"
 
@@ -391,6 +433,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr "Не отображать оповещение во время ожидания"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
 msgid "Don\'t save"
 msgstr ""
 
@@ -398,6 +443,9 @@ msgid "Download"
 msgstr "Загрузить"
 
 msgid "Download the pupil responses and submit manually."
+msgstr ""
+
+msgid "Edit"
 msgstr ""
 
 msgid "Eliminate choices"
@@ -427,11 +475,14 @@ msgstr "Включить экран пересмотра элемента/нав
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
 
+msgid "End test"
+msgstr "Завершить тест"
+
 msgid "End Test"
 msgstr "Завершить тест"
 
-msgid "End test"
-msgstr "Завершить тест"
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr "Ввести макет"
@@ -475,6 +526,12 @@ msgstr "Экспорт пакета для тестирования QTI 2.2"
 
 msgid "Export successful for the test \"%s"
 msgstr "Успешно выполнен экспорт для теста «%s"
+
+msgid "External Machine"
+msgstr ""
+
+msgid "External Scored"
+msgstr ""
 
 msgid "Feedback block"
 msgstr "Блок отзывов"
@@ -566,6 +623,9 @@ msgstr ""
 msgid "Html title"
 msgstr "Заголовок HTML"
 
+msgid "Human"
+msgstr ""
+
 msgid "Identifier"
 msgstr "Идентификатор"
 
@@ -588,6 +648,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr "Если задана опция категории, балл будет также обрабатываться по категориям, а все результаты будут включены в результат SCORE_xxx, где xxx — наименование категории."
 
 msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
 msgstr ""
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
@@ -617,6 +680,9 @@ msgstr "Пакет для тестирования IMS QTI успешно имп
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Тест IMS QTI, указанный в файле манифеста IMS как «%s», успешно импортирован."
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "В этой части не допускается навигация по тесту."
 
@@ -635,6 +701,9 @@ msgstr "Использование информационного элемент
 msgid "Internal server error!"
 msgstr "Внутренняя ошибка сервера!"
 
+msgid "Interpretation"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "уже используется в тесте."
 
@@ -643,6 +712,9 @@ msgstr "не является допустимым идентификаторо�
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "не является допустимым идентификатором (допускаются любые символы кроме пробелов)"
+
+msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
+msgstr ""
 
 msgid "It is not possible to save your responses while working offline."
 msgstr ""
@@ -718,6 +790,15 @@ msgstr "Связать длительности для активации инт
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr "Заблокированная длительность: интерактивная навигация. Как только длительность достигнет значения «0», тест перейдет к следующему элементу."
+
+msgid "Long interpretation"
+msgstr ""
+
+msgid "Lowest Grade Achieved"
+msgstr ""
+
+msgid "Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr ""
 
 msgid "Magnifier"
 msgstr "Лупа"
@@ -801,6 +882,9 @@ msgstr "Минимальная длительность для этой част
 msgid "minutes"
 msgstr ""
 
+msgid "Missed required parameter \'id\"
+msgstr ""
+
 msgid "Missed required parameter \'id\'"
 msgstr ""
 
@@ -855,11 +939,11 @@ msgstr "Далее"
 msgid "Next Section"
 msgstr "Следующий раздел"
 
-msgid "No"
-msgstr "Нет"
-
 msgid "NO"
 msgstr ""
+
+msgid "No"
+msgstr "Нет"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Для конечной точки CAT «%s» не настроено ядро CAT."
@@ -882,6 +966,9 @@ msgstr "Результаты не обрабатываются. Удалите �
 msgid "No reference to any IMS QTI Item found."
 msgstr "Не найдены ссылки на какие-либо элементы IMS QTI."
 
+msgid "No translation"
+msgstr ""
+
 msgid "Non Linear"
 msgstr "Нелинейн."
 
@@ -899,6 +986,9 @@ msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Не перемешано, позиция остается фиксированной."
+
+msgid "Note: This mode does not use categories or weights."
+msgstr ""
 
 msgid "Offline"
 msgstr ""
@@ -945,11 +1035,17 @@ msgstr "или"
 msgid "Ordering"
 msgstr "Упорядочение"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr "Результат"
 
 msgid "Outcome declarations"
 msgstr "Результирующие декларации"
+
+msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
+msgstr ""
 
 msgid "Outcome processing"
 msgstr "Обработка результатов"
@@ -969,11 +1065,17 @@ msgstr "Приостановить"
 msgid "Pause the test"
 msgstr ""
 
+msgid "Pending"
+msgstr ""
+
 msgid "Play"
 msgstr "Воспроизвести"
 
 msgid "Please confirm you want to leave the test."
 msgstr "Подтвердите, что желаете покинуть тест."
+
+msgid "Please fix the invalid settings and try again."
+msgstr ""
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
@@ -990,6 +1092,9 @@ msgstr "Предварительный просмотр покрываемой �
 msgid "Previous"
 msgstr "Назад"
 
+msgid "Print Out"
+msgstr ""
+
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
 
@@ -1005,11 +1110,17 @@ msgstr "Драйвер тестирования QTI 2.1"
 msgid "QTI Item Runner"
 msgstr "Лицо, проходящее элемент теста QTI"
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "Не удалось опубликовать тест QTI «%s»."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Тест QTI «%s» успешно опубликован."
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1026,10 +1137,10 @@ msgstr "Пакет для тестирования QTI 2.2"
 msgid "QTI/APIP Test Content Package"
 msgstr "Пакет содержимого для тестирования QTI/APIP"
 
-msgid "Question"
+msgid "question"
 msgstr ""
 
-msgid "question"
+msgid "Question"
 msgstr ""
 
 msgid "Question %s"
@@ -1101,6 +1212,9 @@ msgstr "Сохранить"
 msgid "Saved"
 msgstr ""
 
+msgid "Scale name not allowed"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "Инженерный калькулятор"
 
@@ -1110,10 +1224,10 @@ msgstr "Счетчик баллов"
 msgid "Scoring"
 msgstr "Выставление баллов"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Блокнот"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Блокнот"
 
 msgid "Scratchpad"
@@ -1140,8 +1254,14 @@ msgstr "Выбрать"
 msgid "Select a blueprint"
 msgstr "Выбрать макет"
 
+msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
+msgstr ""
+
 msgid "Select Items"
 msgstr "Выбрать элементы"
+
+msgid "Select or enter a scale"
+msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Выберите, как будут обрабатываться ответы на ваш тест"
@@ -1251,6 +1371,9 @@ msgstr ""
 msgid "Start Test-part"
 msgstr "Начать часть теста"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1323,6 +1446,9 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Средства тестируемого"
 
@@ -1387,6 +1513,9 @@ msgstr "Загрузка будет доступна через <strong>%d</stro
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Следующие идентификаторы не уникальны в пределах теста: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "Идентификатор ссылки на элемент."
 
@@ -1407,6 +1536,12 @@ msgstr "В режиме навигации задаются общие пути 
 
 msgid "The number of child elements to be selected."
 msgstr "Количество дочерних элементов, которые можно выбрать."
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "Результата «%s» не существует, однако в блоке отзывов имеется ссылка на него!"
@@ -1453,11 +1588,7 @@ msgstr "Название раздела."
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "В режиме отправки определяется, когда ответы кандидата отправляются на обработку. В индивидуальном режиме части теста от кандидата требуется отправлять свои ответы по одному элементу за раз. В одновременном режиме ответы кандидата отправляются все вместе по окончании части теста."
 
-msgid "The test cannot be saved because it currently contains invalid settings.\n"
-msgstr ""
-
-msgid "The test cannot be saved because it currently contains invalid settings.\n"
-"Please fix the invalid settings and try again."
+msgid "The test cannot be saved because it currently contains invalid settings."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1486,6 +1617,12 @@ msgstr "Название теста."
 
 msgid "The time limit has been reached for this part of the test."
 msgstr "Время установленное для данной части теста истекло."
+
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
 
 msgid "There are %s unanswered questions"
 msgstr "У вас осталось %s неотвеченных вопросов"
@@ -1535,6 +1672,9 @@ msgstr "Оставшееся время"
 msgid "Title"
 msgstr "Название"
 
+msgid "to"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1549,6 +1689,15 @@ msgstr ""
 
 msgid "Total score"
 msgstr "Суммарный балл"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr ""
