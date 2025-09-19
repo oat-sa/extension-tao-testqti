@@ -143,7 +143,7 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             return;
         }
 
-        if ($this->blockEmptyResponse($serviceContext, $responses)) {
+        if ($this->blockEmptyResponse($serviceContext, $responses, $allowEmptyResponse)) {
             throw new QtiRunnerEmptyResponsesException();
         }
 
@@ -157,10 +157,11 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
      * @throws common_Exception
      * @throws common_ext_ExtensionException
      */
-    protected function blockEmptyResponse(RunnerServiceContext $serviceContext, mixed $responses): bool
+    protected function blockEmptyResponse(RunnerServiceContext $serviceContext, mixed $responses, bool $allowEmptyResponse): bool
     {
         return $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
             && !TestRunnerUtils::doesAllowSkipping($serviceContext->getTestSession())
-            && $this->runnerService->emptyResponse($serviceContext, $responses);
+            && $this->runnerService->emptyResponse($serviceContext, $responses)
+            && !($allowEmptyResponse && $this->runnerService->emptyResponse($serviceContext, $responses));
     }
 }
