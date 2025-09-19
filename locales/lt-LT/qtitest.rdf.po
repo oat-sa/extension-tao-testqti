@@ -1,30 +1,21 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-06-07 09:15\n"
+"Project-Id-Version: TAO 2025.10\n"
+"PO-Revision-Date: 2025-09-18T18:00:06\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: lt\n"
+"Language: lt-LT\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: lt-LT\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: lt\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/qtitest.rdf.po\n"
-"X-Crowdin-File-ID: 535\n"
-"Language-Team: Lithuanian\n"
 
-# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
-msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Testo Tvarkyklė"
+msgid "QTI 2.2 Test Driver"
+msgstr ""
 
-# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
-msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
+msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.2 tests"
 msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
@@ -52,10 +43,9 @@ msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
 msgstr "QTI testo vykdytojas"
 
-# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
-msgid "runs a QTI 2.1 test"
-msgstr "paleidžia QTI 2.1 testą"
+msgid "runs a QTI 2.2 test"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -66,6 +56,21 @@ msgstr ""
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "The Test XML Editor Role"
 msgstr ""
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
+msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
+msgid "QTI 2.1 Test Driver"
+msgstr "QTI 2.1 Testo Tvarkyklė"
+
+# http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
+msgstr ""
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "runs a QTI 2.1 test"
+msgstr "paleidžia QTI 2.1 testą"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
