@@ -8,22 +8,22 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
- *
- * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
+ * Copyright (c) 2021-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
 
 namespace oat\taoQtiTest\model\Infrastructure;
 
+use common_Exception;
+use common_ext_ExtensionException;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\model\Domain\Model\ItemResponse;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
@@ -57,15 +57,18 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
         $this->extraQtiInteractionResponseValidator = $extraQtiInteractionResponseValidator;
     }
 
-    public function save(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
-    {
+    public function save(
+        ItemResponse $itemResponse,
+        RunnerServiceContext $serviceContext,
+        bool $allowEmptyResponse = false
+    ): void {
         if ($this->runnerService->isTerminated($serviceContext)) {
             return;
         }
 
         $this->endItemTimer($itemResponse, $serviceContext);
         $this->saveItemState($itemResponse, $serviceContext);
-        $this->saveItemResponses($itemResponse, $serviceContext);
+        $this->saveItemResponses($itemResponse, $serviceContext, $allowEmptyResponse);
     }
 
     private function endItemTimer(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
@@ -97,8 +100,11 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
         );
     }
 
-    private function saveItemResponses(ItemResponse $itemResponse, RunnerServiceContext $serviceContext): void
-    {
+    private function saveItemResponses(
+        ItemResponse $itemResponse,
+        RunnerServiceContext $serviceContext,
+        bool $allowEmptyResponse = false
+    ): void {
         if (
             empty($itemResponse->getItemIdentifier())
             || $itemResponse->getResponse() === null
@@ -127,7 +133,10 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
         /** @var AssessmentTestSession $testSession */
         $testSession = $serviceContext->getTestSession();
 
-        if ($this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')) {
+        if (
+            !($allowEmptyResponse && $this->runnerService->emptyResponse($serviceContext, $responses))
+            && $this->featureFlagChecker->isEnabled('FEATURE_FLAG_RESPONSE_VALIDATOR')
+        ) {
             try {
                 $this->itemResponseValidator->validate($testSession, $responses);
                 $this->extraQtiInteractionResponseValidator->validate(
@@ -146,6 +155,7 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
             && !TestRunnerUtils::doesAllowSkipping($testSession)
             && $this->runnerService->emptyResponse($serviceContext, $responses)
+            && !($allowEmptyResponse && $this->runnerService->emptyResponse($serviceContext, $responses))
         ) {
             throw new QtiRunnerEmptyResponsesException();
         }
@@ -157,8 +167,8 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
      * @param RunnerServiceContext $serviceContext
      * @param mixed $responses
      * @return bool
-     * @throws \common_Exception
-     * @throws \common_ext_ExtensionException
+     * @throws common_Exception
+     * @throws common_ext_ExtensionException
      */
     protected function blockEmptyResponse(RunnerServiceContext $serviceContext, mixed $responses): bool
     {
