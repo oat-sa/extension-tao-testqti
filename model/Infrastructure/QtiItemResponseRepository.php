@@ -155,6 +155,7 @@ class QtiItemResponseRepository implements ItemResponseRepositoryInterface
             $this->runnerService->getTestConfig()->getConfigValue('enableAllowSkipping')
             && !TestRunnerUtils::doesAllowSkipping($testSession)
             && $this->runnerService->emptyResponse($serviceContext, $responses)
+            && !($allowEmptyResponse && $this->runnerService->emptyResponse($serviceContext, $responses))
         ) {
             throw new QtiRunnerEmptyResponsesException();
         }
