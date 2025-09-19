@@ -8,16 +8,14 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * Copyright (c) 2021 (original work) Open Assessment Technologies SA;
- *
- * @author Ricardo Quintanilha <ricardo.quintanilha@taotesting.com>
+ * Copyright (c) 2021-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -58,8 +56,8 @@ class TimeoutService
 
         if ($command->isLateSubmissionAllowed()) {
             try {
-                $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext);
-            } catch (QtiRunnerInvalidResponsesException|QtiRunnerEmptyResponsesException) {
+                $this->itemResponseRepository->save($command->getItemResponse(), $serviceContext, true);
+            } catch (QtiRunnerInvalidResponsesException | QtiRunnerEmptyResponsesException) {
                 // allow the session to time out omitting the invalid response
             }
         }
