@@ -107,7 +107,11 @@ class QtiTestUtils extends ConfigurableService
 
             if (is_readable($sourcePath) === false) {
                 throw new \common_Exception(
-                    "An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'."
+                    sprintf(
+                        "An error occured while copying the QTI resource from '%s' to '%s'.",
+                        $sourcePath,
+                        $finalPath
+                    )
                 );
             }
 
@@ -117,7 +121,11 @@ class QtiTestUtils extends ConfigurableService
 
             if (!$success) {
                 throw new \common_Exception(
-                    "An error occured while copying the QTI resource from '${sourcePath}' to '${finalPath}'."
+                    sprintf(
+                        "An error occured while copying the QTI resource from '%s' to '%s'.",
+                        $sourcePath,
+                        $finalPath
+                    )
                 );
             }
         }
