@@ -161,7 +161,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             }
 
             throw new common_exception_InconsistentData(
-                "The itemRef (value = '${itemRefInfo}') is not formatted correctly."
+                sprintf(
+                    "The itemRef (value = '%s') is not formatted correctly.",
+                    $itemRefInfo
+                )
             );
         }
 
@@ -173,12 +176,17 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $lang = $userDataLang;
         } elseif ($directory->has(DEFAULT_LANG)) {
             common_Logger::d(
-                $userDataLang . ' is not part of compilation directory for item : ' . $itemUri . ' use ' . DEFAULT_LANG
+                sprintf(
+                    '%s is not part of compilation directory for item : %s use %s',
+                    $userDataLang,
+                    $itemUri,
+                    DEFAULT_LANG
+                )
             );
             $lang = DEFAULT_LANG;
         } else {
             throw new common_Exception(
-                'item : ' . $itemUri . 'is neither compiled in ' . $userDataLang . ' nor in ' . DEFAULT_LANG
+                sprintf('item : %s is neither compiled in %s nor in %s', $itemUri, $userDataLang, DEFAULT_LANG)
             );
         }
         try {
@@ -189,7 +197,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             return $this->dataCache[$cacheKey];
         } catch (FilesystemException $e) {
             throw new tao_models_classes_FileNotFoundException(
-                $path . ' for item reference ' . $itemRef
+                sprintf('%s for item reference %s', $path, $itemRef)
             );
         }
     }
@@ -251,7 +259,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $testSession = $serviceContext->getTestSession();
         $sessionId = $testSession->getSessionId();
 
-        $this->getLogger()->debug("Persisting QTI Assessment Test Session '${sessionId}'...");
+        $this->getLogger()->debug(sprintf("Persisting QTI Assessment Test Session '%s'...", $sessionId));
         $serviceContext->getStorage()->persist($testSession);
         if ($this->isTerminated($serviceContext)) {
             /** @var StorageManager $storageManager */
@@ -780,9 +788,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                         $responses->setVariable($var);
                     }
                 } catch (\OutOfRangeException $e) {
-                    $this->getLogger()->debug("Could not convert client-side value for variable '${id}'.");
+                    $this->getLogger()->debug(sprintf("Could not convert client-side value for variable '%s'.", $id));
                 } catch (\OutOfBoundsException $e) {
-                    $this->getLogger()->debug("Could not find variable with identifier '${id}' in current item.");
+                    $this->getLogger()->debug(
+                        sprintf("Could not find variable with identifier '%s' in current item.", $id)
+                    );
                 }
             }
         } else {
@@ -869,8 +879,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                     );
                 } else {
                     common_Logger::i(
-                        "No 'SCORE' outcome variable for item '${assessmentItemIdentifier}' involved in an "
-                        . "adaptive section."
+                        sprintf(
+                            "No 'SCORE' outcome variable for item '%s' involved in an adaptive section.",
+                            $assessmentItemIdentifier
+                        )
                     );
                 }
 
@@ -887,7 +899,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
                 // Deal with attempts.
                 $attempt = $context->getCatAttempts($itemIdentifier);
-                $transmissionId = "${sessionId}.${itemIdentifier}.${attempt}";
+                $transmissionId = sprintf("%s.%s.%s", $sessionId, $itemIdentifier, $attempt);
 
                 $attempt++;
 
@@ -1117,7 +1129,10 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
                 } else {
                     $code = AssessmentTestSessionException::ASSESSMENT_ITEM_DURATION_OVERFLOW;
                 }
-                throw new AssessmentTestSessionException("Maximum duration of ${scope} '${ref}' not respected.", $code);
+                throw new AssessmentTestSessionException(
+                    sprintf("Maximum duration of %s '%s' not respected.", $scope, $ref),
+                    $code
+                );
             } else {
                 $session->checkTimeLimits(false, true, false);
             }
@@ -1142,7 +1157,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $session = $context->getTestSession();
         $sessionId = $session->getSessionId();
         $this->getLogger()->info(
-            "The user has requested termination of the test session '{$sessionId}'"
+            sprintf("The user has requested termination of the test session '%s'", $sessionId)
         );
 
         if ($context->isAdaptive()) {
@@ -1178,11 +1193,11 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $deliveryExecution = $executionService->getDeliveryExecution($executionUri);
 
         if ($deliveryExecution->getUserIdentifier() == $userUri) {
-            $this->getLogger()->info("Finishing the delivery execution {$executionUri}");
+            $this->getLogger()->info(sprintf("Finishing the delivery execution %s", $executionUri));
             $result = $deliveryExecution->setState($finalState);
         } else {
             $this->getLogger()->warning(
-                "Non owner {$userUri} tried to finish deliveryExecution {$executionUri}"
+                sprintf("Non owner %s tried to finish deliveryExecution %s", $userUri, $executionUri)
             );
             $result = false;
         }
@@ -1382,7 +1397,7 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
         $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
         $occurrence = $testSession->getCurrentAssessmentItemRefOccurence();
         $sessionId = $testSession->getSessionId();
-        $transmissionId = "${sessionId}.${item}.${occurrence}";
+        $transmissionId = sprintf("%s.%s.%s", $sessionId, $item, $occurrence);
 
         /** @var DeliveryServerService $deliveryServerService */
         $deliveryServerService = $this->getServiceManager()->get(DeliveryServerService::SERVICE_ID);
@@ -1972,12 +1987,19 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
             $metadataElements = $this->loadItemData($itemRef, QtiJsonItemCompiler::METADATA_FILE_NAME);
         } catch (tao_models_classes_FileNotFoundException $e) {
             $this->getLogger()->info(
-                'Old delivery that does not contain the compiled portable element data in the item ' . $itemRef
-                . '. Original message: ' . $e->getMessage()
+                sprintf(
+                    'Old delivery that does not contain the compiled portable ' +
+                    'element data in the item %s. Original message: %s',
+                    $itemRef,
+                    $e->getMessage()
+                )
             );
         } catch (Exception $e) {
             $this->getLogger()->warning(
-                'An exception caught during fetching item metadata elements. Original message: ' . $e->getMessage()
+                sprintf(
+                    'An exception caught during fetching item metadata elements. Original message: %s',
+                    $e->getMessage()
+                )
             );
         }
         return $metadataElements;
