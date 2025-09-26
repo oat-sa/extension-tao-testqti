@@ -23,8 +23,8 @@ declare(strict_types=1);
 use oat\generis\model\OntologyAwareTrait;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\taoQtiTest\models\forms\XmlEditForm;
-use oat\taoQtiTest\models\Validation\BranchRuleException;
 use oat\taoQtiTest\models\xmlEditor\XmlEditorInterface;
+use qtism\data\storage\xml\marshalling\BranchRuleConsistencyException;
 use qtism\data\storage\xml\XmlStorageException;
 use tao_helpers_form_FormContainer as FormContainer;
 
@@ -62,7 +62,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
             } catch (ResourceAccessDeniedException $e) {
                 $this->setData('errorMessage', $e->getMessage());
                 common_Logger::e($e->getMessage());
-            } catch (BranchRuleException $e) {
+            } catch (BranchRuleConsistencyException $e) {
                 $this->setData('errorMessage', __('Branch rule validation error: %s', $e->getMessage()));
                 common_Logger::e($e->getMessage());
             } catch (XmlStorageException $e) {

@@ -30,7 +30,6 @@ use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\user\implementation\UserSettingsService;
 use oat\tao\model\user\UserSettingsInterface;
 use oat\tao\model\user\UserSettingsServiceInterface;
-use oat\taoQtiTest\models\Validation\BranchRuleValidation;
 use qtism\data\storage\xml\XmlDocument;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -56,7 +55,6 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
         $doc = new XmlDocument();
         $doc->loadFromString($testString, true);
         $converter = new \taoQtiTest_models_classes_QtiTestConverter($doc);
-        $this->getBranchRuleValidation()->validate($doc);
 
         return $this->getTestService()->saveJsonTest($test, $converter->toJson());
     }
@@ -99,10 +97,5 @@ class XmlEditor extends ConfigurableService implements XmlEditorInterface
     public function getUserSettingsService(): UserSettingsServiceInterface
     {
         return $this->getServiceManager()->getContainer()->get(UserSettingsService::class);
-    }
-
-    public function getBranchRuleValidation(): BranchRuleValidation
-    {
-        return $this->getServiceManager()->getContainer()->get(BranchRuleValidation::class);
     }
 }
