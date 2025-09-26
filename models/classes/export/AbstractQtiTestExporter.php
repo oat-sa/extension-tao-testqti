@@ -81,7 +81,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
         /** @noinspection PhpParamsInspection */
         $this->setTestService(QtiTestService::singleton());
-        $this->setTestDocument($this->getTestService()->getDoc($test));
+        $this->setTestDocument($this->getTestService()->getDoc($test, true));
         $this->setItems($this->getTestService()->getItems($test));
         $this->setManifest($manifest);
     }
