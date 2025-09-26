@@ -29,6 +29,7 @@ use oat\taoQtiItem\model\ValidationService;
 use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
 use oat\taoQtiTest\models\Qti\Converter\TestConverter;
 use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
+use oat\taoQtiTest\models\Validation\BranchRuleValidation;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -61,6 +62,9 @@ class QtiServiceProvider implements ContainerServiceProviderInterface
                 service(CaseConversionService::class),
                 service(ValidationService::SERVICE_ID)
             ])
+            ->public();
+
+        $services->set(BranchRuleValidation::class)
             ->public();
     }
 }

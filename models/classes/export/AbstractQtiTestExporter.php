@@ -39,6 +39,7 @@ use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\qti\metadata\MetadataService;
 use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
 use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
+use oat\taoQtiTest\models\Validation\BranchRuleValidation;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
@@ -244,6 +245,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
      */
     protected function exportTest(array $itemIdentifiers): void
     {
+        $this->getBranchRuleValidation()->validate($this->getTestDocument());
         $testXmlDocument = $this->adjustTestXml($this->getTestDocument()->saveToString());
 
         $newTestDir = 'tests/' . tao_helpers_Uri::getUniqueId($this->getItem()->getUri()) . '/';
@@ -372,5 +374,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function getScalePreprocessor(): ScalePreprocessor
     {
         return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
+    }
+
+    private function getBranchRuleValidation(): BranchRuleValidation
+    {
+        return $this->getServiceManager()->getContainer()->get(BranchRuleValidation::class);
     }
 }
