@@ -26,7 +26,7 @@ use qtism\data\storage\xml\XmlDocument;
 
 class BranchRuleValidation
 {
-    const ERROR_MISSING_TARGET = 'BranchRule element is missing target attribute';
+    private const ERROR_MISSING_TARGET = 'BranchRule element is missing target attribute';
 
     /**
      * Validate that all branchRule elements in the given XmlDocument have a target attribute
@@ -34,6 +34,8 @@ class BranchRuleValidation
      */
     public function validate(XmlDocument $doc): void
     {
+        $errors = []; // Initialize errors array
+
         //Find in doc all branchRule elements
         $branchRules = $doc->getDocumentComponent()->getComponentsByClassName('branchRule');
         foreach ($branchRules as $branchRule) {
@@ -41,10 +43,11 @@ class BranchRuleValidation
             $target = $branchRule->getTarget();
             if (empty($target)) {
                 $errors[] = self::ERROR_MISSING_TARGET;
-            }
-            $targetElement = $doc->getDocumentComponent()->getComponentByIdentifier($target);
-            if ($targetElement === null) {
-                $errors[] = sprintf('BranchRule target "%s" does not exist in the document', $target);
+            } else {
+                $targetElement = $doc->getDocumentComponent()->getComponentByIdentifier($target);
+                if ($targetElement === null) {
+                    $errors[] = sprintf('BranchRule target "%s" does not exist in the document', $target);
+                }
             }
         }
 
