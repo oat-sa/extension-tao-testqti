@@ -1116,13 +1116,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the QTI reprensentation of a test content.
      *
      * @param core_kernel_classes_Resource $test the test to get the content from
+     * @param boolean $validate whether or not to validate the QTI content. Default is (boolean) false.
      * @return XmlDocument the QTI representation from the test content
      * @throws taoQtiTest_models_classes_QtiTestServiceException
      */
-    public function getDoc(core_kernel_classes_Resource $test)
+    public function getDoc(core_kernel_classes_Resource $test, $validate = false)
     {
         $doc = new XmlDocument('2.2');
-        $doc->loadFromString($this->getQtiTestFile($test)->read());
+        $doc->loadFromString($this->getQtiTestFile($test)->read(), $validate);
         return $doc;
     }
 
