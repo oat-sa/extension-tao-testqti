@@ -127,7 +127,7 @@ class QtiItemResponseValidator
      * @param mixed $outcomeDecls Iterable collection of outcome declarations
      * @return array{0: bool, 1: bool} [hasScore, hasMaxScore]
      */
-    private function detectScoringOutcomes($outcomeDecls): array
+    private function detectScoringOutcomes(iterable $outcomeDecls): array
     {
         $hasScore = false;
         $hasMaxScore = false;
@@ -143,9 +143,6 @@ class QtiItemResponseValidator
                     }
                 }
             }
-        } elseif (is_object($outcomeDecls) && method_exists($outcomeDecls, 'count') && $outcomeDecls->count() === 0) {
-            // explicit empty collection
-            return [false, false];
         }
 
         return [$hasScore, $hasMaxScore];
