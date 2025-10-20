@@ -43,6 +43,8 @@ define(['ui/ckeditor/ckConfigurator', 'mathJax'], function(ckConfigurator) {
 
         options.underline = true;
 
+        options.strike = true;
+
         return ckConfigurator.getConfig(editor, toolbarType, options);
     };
 
