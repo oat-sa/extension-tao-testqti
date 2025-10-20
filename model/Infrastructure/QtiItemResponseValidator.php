@@ -47,8 +47,15 @@ class QtiItemResponseValidator
         $validateRequired  = $this->getResponseValidation($testSession);
 
         $hasConstraints    = $itemConstraints->count() > 0;
-        $hasOutcomes       = $outcomeDecls->count() > 0;
         $hasResponses      = $responseDecls->count() > 0;
+
+        [$hasScoreOutcome, $hasMaxScoreOutcome] = $this->detectScoringOutcomes($outcomeDecls);
+
+        // Outcome presence logic:
+        // - If SCORE exists - scored item
+        // - Else if MAXSCORE exists and responseDeclaration exists - possibly externally or manually scored
+        // - Else - informational item
+        $hasOutcomes       = $hasScoreOutcome || ($hasMaxScoreOutcome && $hasResponses);
         $noDeclOrConst     = !$hasConstraints && !$hasOutcomes && !$hasResponses;
 
         // 1) Skip allowed & nothing answered & no forced validation
@@ -112,5 +119,35 @@ class QtiItemResponseValidator
             ->getItemSessionControl()
             ->getItemSessionControl()
             ->doesAllowSkipping();
+    }
+
+    /**
+     * Detect whether SCORE or MAXSCORE outcomes are declared.
+     *
+     * @param mixed $outcomeDecls Iterable collection of outcome declarations
+     * @return array{0: bool, 1: bool} [hasScore, hasMaxScore]
+     */
+    private function detectScoringOutcomes($outcomeDecls): array
+    {
+        $hasScore = false;
+        $hasMaxScore = false;
+
+        if (is_iterable($outcomeDecls)) {
+            foreach ($outcomeDecls as $outcomeDecl) {
+                if (is_object($outcomeDecl) && method_exists($outcomeDecl, 'getIdentifier')) {
+                    $identifier = strtoupper((string) $outcomeDecl->getIdentifier());
+                    if ($identifier === 'SCORE') {
+                        $hasScore = true;
+                    } elseif ($identifier === 'MAXSCORE') {
+                        $hasMaxScore = true;
+                    }
+                }
+            }
+        } elseif (is_object($outcomeDecls) && method_exists($outcomeDecls, 'count') && $outcomeDecls->count() === 0) {
+            // explicit empty collection
+            return [false, false];
+        }
+
+        return [$hasScore, $hasMaxScore];
     }
 }
