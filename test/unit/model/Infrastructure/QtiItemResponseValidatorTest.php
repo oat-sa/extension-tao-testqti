@@ -25,6 +25,7 @@ namespace oat\taoQtiTest\test\unit\model\Infrastructure;
 use oat\taoQtiTest\model\Infrastructure\QtiItemResponseValidator;
 use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use qtism\data\ItemSessionControl;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSession;
@@ -33,6 +34,7 @@ use qtism\runtime\tests\Route;
 use qtism\runtime\tests\RouteItem;
 use qtism\runtime\tests\RouteItemSessionControl;
 use qtism\data\AssessmentItem;
+use qtism\data\state\OutcomeDeclaration;
 use qtism\data\state\OutcomeDeclarationCollection;
 use qtism\data\state\ResponseValidityConstraintCollection;
 
@@ -41,10 +43,14 @@ use function PHPUnit\Framework\once;
 class QtiItemResponseValidatorTest extends TestCase
 {
     private QtiItemResponseValidator $subject;
-    private Route $routeMock;
-    private RouteItem $routeItem;
-    private RouteItemSessionControl $routeItemSessionControl;
-    private ItemSessionControl $itemSessionControl;
+    /** @var Route|MockObject */
+    private MockObject $routeMock;
+    /** @var RouteItem|MockObject */
+    private MockObject $routeItem;
+    /** @var RouteItemSessionControl|MockObject */
+    private MockObject $routeItemSessionControl;
+    /** @var ItemSessionControl|MockObject */
+    private MockObject $itemSessionControl;
 
     public function setUp(): void
     {
@@ -74,18 +80,18 @@ class QtiItemResponseValidatorTest extends TestCase
      */
     public function testValidateAllowedToSkip()
     {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
         $responses = $this->createMock(State::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
         $getAssessmentItem = $this->createMock(AssessmentItem::class);
-        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('SCORE');
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('MAXSCORE');
         $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
 
         $responseDeclarationCollection
-            ->method('count')
-            ->willReturn(1);
-
-        $outcomeDeclarationCollection
             ->method('count')
             ->willReturn(1);
 
@@ -131,19 +137,19 @@ class QtiItemResponseValidatorTest extends TestCase
 
     public function testValidateNotAllowedToSkipWithEmptyResponses(): void
     {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
         $responses = $this->createMock(State::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
 
         $getAssessmentItem = $this->createMock(AssessmentItem::class);
-        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('SCORE');
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('MAXSCORE');
         $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
 
         $responseDeclarationCollection
-            ->method('count')
-            ->willReturn(1);
-
-        $outcomeDeclarationCollection
             ->method('count')
             ->willReturn(1);
 
@@ -189,18 +195,18 @@ class QtiItemResponseValidatorTest extends TestCase
 
     public function testValidateWithResponseValidation(): void
     {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
         $responses = $this->createMock(State::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
         $getAssessmentItem = $this->createMock(AssessmentItem::class);
-        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('SCORE');
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('MAXSCORE');
         $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
 
         $responseDeclarationCollection
-            ->method('count')
-            ->willReturn(1);
-
-        $outcomeDeclarationCollection
             ->method('count')
             ->willReturn(1);
 
@@ -248,19 +254,19 @@ class QtiItemResponseValidatorTest extends TestCase
 
     public function testValidateWithoutResponseValidation(): void
     {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
         $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
         $responses = $this->createMock(State::class);
         $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
         $assessmentItem = $this->createMock(AssessmentItem::class);
         $responseValidityConstraintCollection = new ResponseValidityConstraintCollection();
-        $outcomeDeclarationCollection = $this->createMock(OutcomeDeclarationCollection::class);
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('SCORE');
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('MAXSCORE');
         $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
 
         $responseDeclarationCollection
-            ->method('count')
-            ->willReturn(1);
-
-        $outcomeDeclarationCollection
             ->method('count')
             ->willReturn(1);
 
@@ -306,5 +312,112 @@ class QtiItemResponseValidatorTest extends TestCase
             ->willReturn($responseValidityConstraintCollection);
 
         $this->subject->validate($assessmentTestSession, $responses);
+    }
+
+    public function testScoreOnlyOutcomeTriggersExceptionWhenEmptyResponses(): void
+    {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
+        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
+        $responses = $this->createMock(State::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $assessmentItem = $this->createMock(AssessmentItem::class);
+
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('SCORE');
+
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(0);
+
+        $assessmentItem
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $assessmentItem
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
+
+        $assessmentTestSession
+            ->method('getRoute')
+            ->willReturn($this->routeMock);
+
+        $this->itemSessionControl
+            ->method('doesAllowSkipping')
+            ->willReturn(false);
+
+        $this->itemSessionControl
+            ->method('mustValidateResponses')
+            ->willReturn(false);
+
+        $responses
+            ->method('containsNullOnly')
+            ->willReturn(true);
+
+        $assessmentTestSession
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession
+            ->method('getAssessmentItem')
+            ->willReturn($assessmentItem);
+
+        $this->expectException(QtiRunnerEmptyResponsesException::class);
+        $this->subject->validate($assessmentTestSession, $responses);
+    }
+
+    public function testMaxScoreOnlyWithoutResponsesDoesNotTriggerExceptionWhenEmptyResponses(): void
+    {
+        /** @var AssessmentTestSession&MockObject $assessmentTestSession */
+        $assessmentTestSession = $this->createMock(AssessmentTestSession::class);
+        /** @var State&MockObject $responses */
+        $responses = $this->createMock(State::class);
+        $assessmentItemSession = $this->createMock(AssessmentItemSession::class);
+        $assessmentItem = $this->createMock(AssessmentItem::class);
+
+        $outcomeDeclarationCollection = new OutcomeDeclarationCollection();
+        $outcomeDeclarationCollection[] = new OutcomeDeclaration('MAXSCORE');
+
+        $responseDeclarationCollection = $this->createMock(ResponseValidityConstraintCollection::class);
+        $responseDeclarationCollection
+            ->method('count')
+            ->willReturn(0);
+
+        $assessmentItem
+            ->method('getOutcomeDeclarations')
+            ->willReturn($outcomeDeclarationCollection);
+
+        $assessmentItem
+            ->method('getResponseDeclarations')
+            ->willReturn($responseDeclarationCollection);
+
+        $assessmentTestSession
+            ->method('getRoute')
+            ->willReturn($this->routeMock);
+
+        $this->itemSessionControl
+            ->method('doesAllowSkipping')
+            ->willReturn(false);
+
+        $this->itemSessionControl
+            ->method('mustValidateResponses')
+            ->willReturn(false);
+
+        $responses
+            ->method('containsNullOnly')
+            ->willReturn(true);
+
+        $assessmentTestSession
+            ->method('getCurrentAssessmentItemSession')
+            ->willReturn($assessmentItemSession);
+
+        $assessmentItemSession
+            ->method('getAssessmentItem')
+            ->willReturn($assessmentItem);
+
+        // Should NOT throw
+        $this->subject->validate($assessmentTestSession, $responses);
+        $this->assertTrue(true);
     }
 }
