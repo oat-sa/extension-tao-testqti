@@ -34,6 +34,7 @@ define(['ui/ckeditor/ckConfigurator', 'mathJax'], function(ckConfigurator) {
      * @param {Boolean} [options.qtiImage] - enables the qtiImage plugin
      * @param {Boolean} [options.qtiInclude] - enables the qtiInclude plugin
      * @param {Boolean} [options.underline] - enables the underline plugin
+     * @param {Boolean} [options.strike] - enables the strike plugin
      * @param {Boolean} [options.mathJax] - enables the mathJax plugin
      *
      * @see http://docs.ckeditor.com/#!/api/CKEDITOR.config
