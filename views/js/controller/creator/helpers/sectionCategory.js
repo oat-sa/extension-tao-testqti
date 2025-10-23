@@ -103,7 +103,6 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
 
         //the categories that are only partially covered on the section level : complementary of "propagated"
         partial = _.difference(union, propagated);
-
         return createCategories(union, propagated, partial);
     }
 
@@ -155,16 +154,11 @@ define(['lodash', 'i18n', 'core/errorHandler'], function (_, __, errorHandler) {
     }
 
     function createCategories(all = [], propagated = [], partial = []) {
-        return _.mapValues(
-            {
-                all: all,
-                propagated: propagated,
-                partial: partial
-            },
-            function (categories) {
-                return categories.sort();
-            }
-        );
+        return {
+            all: all,
+            propagated: propagated,
+            partial: partial
+        };
     }
 
     return {

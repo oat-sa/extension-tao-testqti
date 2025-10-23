@@ -159,13 +159,11 @@ define([
      * @returns {CategoriesSummary}
      */
     function createCategories(all = [], propagated = [], partial = []) {
-        return _.mapValues({
+        return {
             all: all,
             propagated: propagated,
             partial: partial
-        }, function(categories) {
-            return categories.sort();
-        });
+        };
     }
 
     return {
