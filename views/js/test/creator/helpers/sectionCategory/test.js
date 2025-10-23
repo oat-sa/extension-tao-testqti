@@ -70,13 +70,13 @@ define([
         //Add a new category
         sectionCategory.addCategories(sectionModel, ['G']);
         categories = sectionCategory.getCategories(sectionModel);
-        assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F', 'G'], 'all categories found');
+        assert.deepEqual(categories.all, ['A', 'B', 'G', 'C', 'D', 'E', 'F'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'B', 'G'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
 
         //Try adding an exiting one
         sectionCategory.addCategories(sectionModel, ['A', 'C']);
-        assert.deepEqual(categories.all, ['A', 'B', 'C', 'D', 'E', 'F', 'G'], 'all categories found');
+        assert.deepEqual(categories.all, ['A', 'B', 'G', 'C', 'D', 'E', 'F'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'B', 'G'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D', 'E', 'F'], 'partial categories found');
     });
@@ -126,7 +126,7 @@ define([
 
         //Check result
         categories = sectionCategory.getCategories(sectionModel);
-        assert.deepEqual(categories.all, ['A', 'C', 'D', 'G'], 'all categories found');
+        assert.deepEqual(categories.all, ['A', 'G', 'C', 'D'], 'all categories found');
         assert.deepEqual(categories.propagated, ['A', 'G'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['C', 'D'], 'partial categories found');
     });
@@ -145,7 +145,7 @@ define([
 
         //Check result
         categories = sectionCategory.getCategories(sectionModel);
-        assert.deepEqual(categories.all, ['B', 'C', 'D', 'E', 'G'], 'all categories found');
+        assert.deepEqual(categories.all, ['B', 'C', 'G', 'D', 'E'], 'all categories found');
         assert.deepEqual(categories.propagated, ['B', 'C', 'G'], 'propagated categories found');
         assert.deepEqual(categories.partial, ['D', 'E'], 'partial categories found');
     });
