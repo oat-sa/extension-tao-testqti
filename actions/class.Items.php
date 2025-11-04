@@ -19,6 +19,7 @@
  */
 
 use oat\generis\model\OntologyRdfs;
+use oat\taoQtiItem\model\qti\ItemMaxScoreService;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoItems\model\CategoryService;
 use qtism\common\utils\Format;
@@ -168,6 +169,54 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             }
         }
         $this->returnJson($categories);
+    }
+
+    /**
+     * Get MAXSCORE values for multiple items
+     *
+     * This endpoint retrieves the maximum achievable score for each item.
+     * Used by the MNOP (Maximum Number of Points) feature in test authoring.
+     *
+     * @throws \common_exception_BadRequest if itemUris parameter is missing or invalid
+     */
+    public function getItemsMaxScores()
+    {
+        try {
+            if (!$this->hasRequestParameter('itemUris')) {
+                throw new \common_exception_BadRequest(
+                    'Missing parameter: itemUris (expected array of item URIs)'
+                );
+            }
+
+            $itemUris = $this->getRequestParameter('itemUris');
+
+            if (!is_array($itemUris)) {
+                throw new \common_exception_BadRequest(
+                    'Invalid parameter: itemUris must be an array'
+                );
+            }
+
+            if (empty($itemUris)) {
+                return $this->returnSuccess([]);
+            }
+
+            /** @var ItemMaxScoreService $service */
+            $service = $this->getServiceLocator()->get(
+                ItemMaxScoreService::class
+            );
+
+            $scores = $service->getItemsMaxScores($itemUris);
+
+            return $this->returnSuccess($scores);
+
+        } catch (\common_exception_BadRequest $e) {
+            return $this->returnFailure($e);
+        } catch (\Exception $e) {
+            \common_Logger::e('Error retrieving item max scores: ' . $e->getMessage());
+            return $this->returnFailure(
+                new \common_Exception('Failed to retrieve item max scores: ' . $e->getMessage())
+            );
+        }
     }
 
     /**
