@@ -202,8 +202,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
                 return $this->returnSuccess([]);
             }
 
-            $service = $this->getItemMaxScoreService();
-            $scores = $service->getItemsMaxScores($itemUris);
+            $scores = $this->getItemMaxScoreService()->getItemsMaxScores($itemUris);
 
             return $this->returnSuccess($scores);
         } catch (common_exception_BadRequest $e) {
