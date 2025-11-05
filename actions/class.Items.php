@@ -13,9 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 declare(strict_types=1);
@@ -84,7 +84,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     {
         try {
             $data = $this->getCreatorItemsService()->getItemClasses();
-        } catch (\common_Exception $e) {
+        } catch (common_Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -123,7 +123,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
             $itemClass = new \core_kernel_classes_Class($classUri);
             $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -207,10 +207,10 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             return $this->returnSuccess($scores);
         } catch (common_exception_BadRequest $e) {
             return $this->returnFailure($e);
-        } catch (\Exception $e) {
-            \common_Logger::e('Error retrieving item max scores: ' . $e->getMessage());
+        } catch (Exception $e) {
+            common_Logger::e('Error retrieving item max scores: ' . $e->getMessage());
             return $this->returnFailure(
-                new \common_Exception('Failed to retrieve item max scores: ' . $e->getMessage())
+                new common_Exception('Failed to retrieve item max scores: ' . $e->getMessage())
             );
         }
     }
@@ -275,13 +275,13 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
     /**
      * Helps you to format failures responses.
-     * @param \Exception $e
+     * @param Exception $e
      * @return string the json
      */
-    protected function returnFailure(\Exception $exception)
+    protected function returnFailure(Exception $exception)
     {
 
-        \common_Logger::e($exception);
+        common_Logger::e($exception);
 
         $returnArray = [
             'success' => false,
