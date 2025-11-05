@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -200,11 +202,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
                 return $this->returnSuccess([]);
             }
 
-            /** @var ItemMaxScoreService $service */
-            $service = $this->getServiceLocator()->get(
-                ItemMaxScoreService::class
-            );
-
+            $service = $this->getItemMaxScoreService();
             $scores = $service->getItemsMaxScores($itemUris);
 
             return $this->returnSuccess($scores);
@@ -235,6 +233,11 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         }
 
         return $items;
+    }
+
+    private function getItemMaxScoreService(): ItemMaxScoreService
+    {
+        return $this->getServiceLocator()->get(ItemMaxScoreService::class);
     }
 
     /**
