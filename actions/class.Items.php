@@ -13,12 +13,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
+declare(strict_types=1);
+
 use oat\generis\model\OntologyRdfs;
+use oat\taoQtiItem\model\qti\ItemMaxScoreService;
 use oat\taoQtiTest\models\creator\CreatorItems;
 use oat\taoItems\model\CategoryService;
 use qtism\common\utils\Format;
@@ -81,7 +84,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     {
         try {
             $data = $this->getCreatorItemsService()->getItemClasses();
-        } catch (\common_Exception $e) {
+        } catch (common_Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -120,7 +123,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
             $itemClass = new \core_kernel_classes_Class($classUri);
             $data = $this->getCreatorItemsService()->getQtiItems($itemClass, $format, $search, $offset, $limit);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return $this->returnFailure($e);
         }
 
@@ -171,6 +174,48 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     }
 
     /**
+     * Get MAXSCORE values for multiple items
+     *
+     * This endpoint retrieves the maximum achievable score for each item.
+     * Used by the MNOP (Maximum Number of Points) feature in test authoring.
+     *
+     * @throws common_exception_BadRequest if itemUris parameter is missing or invalid
+     */
+    public function getItemsMaxScores()
+    {
+        try {
+            if (!$this->hasRequestParameter('itemUris')) {
+                throw new common_exception_BadRequest(
+                    'Missing parameter: itemUris (expected array of item URIs)'
+                );
+            }
+
+            $itemUris = $this->getRequestParameter('itemUris');
+
+            if (!is_array($itemUris)) {
+                throw new common_exception_BadRequest(
+                    'Invalid parameter: itemUris must be an array'
+                );
+            }
+
+            if (empty($itemUris)) {
+                return $this->returnSuccess([]);
+            }
+
+            $scores = $this->getItemMaxScoreService()->getItemsMaxScores($itemUris);
+
+            return $this->returnSuccess($scores);
+        } catch (common_exception_BadRequest $e) {
+            return $this->returnFailure($e);
+        } catch (Exception $e) {
+            common_Logger::e('Error retrieving item max scores: ' . $e->getMessage());
+            return $this->returnFailure(
+                new common_Exception('Failed to retrieve item max scores: ' . $e->getMessage())
+            );
+        }
+    }
+
+    /**
      * Get the qti items from a list of uris
      * @param array $itemUris list of item uris to get
      * @return core_kernel_classes_Resource[] $items
@@ -187,6 +232,11 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         }
 
         return $items;
+    }
+
+    private function getItemMaxScoreService(): ItemMaxScoreService
+    {
+        return $this->getServiceLocator()->get(ItemMaxScoreService::class);
     }
 
     /**
@@ -225,13 +275,13 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
 
     /**
      * Helps you to format failures responses.
-     * @param \Exception $e
+     * @param Exception $e
      * @return string the json
      */
-    protected function returnFailure(\Exception $exception)
+    protected function returnFailure(Exception $exception)
     {
 
-        \common_Logger::e($exception);
+        common_Logger::e($exception);
 
         $returnArray = [
             'success' => false,
