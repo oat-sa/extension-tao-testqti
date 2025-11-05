@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -19,6 +17,8 @@ declare(strict_types=1);
  *
  * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
+
+declare(strict_types=1);
 
 use oat\generis\model\OntologyRdfs;
 use oat\taoQtiItem\model\qti\ItemMaxScoreService;
@@ -179,13 +179,13 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
      * This endpoint retrieves the maximum achievable score for each item.
      * Used by the MNOP (Maximum Number of Points) feature in test authoring.
      *
-     * @throws \common_exception_BadRequest if itemUris parameter is missing or invalid
+     * @throws common_exception_BadRequest if itemUris parameter is missing or invalid
      */
     public function getItemsMaxScores()
     {
         try {
             if (!$this->hasRequestParameter('itemUris')) {
-                throw new \common_exception_BadRequest(
+                throw new common_exception_BadRequest(
                     'Missing parameter: itemUris (expected array of item URIs)'
                 );
             }
@@ -193,7 +193,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             $itemUris = $this->getRequestParameter('itemUris');
 
             if (!is_array($itemUris)) {
-                throw new \common_exception_BadRequest(
+                throw new common_exception_BadRequest(
                     'Invalid parameter: itemUris must be an array'
                 );
             }
@@ -206,7 +206,7 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
             $scores = $service->getItemsMaxScores($itemUris);
 
             return $this->returnSuccess($scores);
-        } catch (\common_exception_BadRequest $e) {
+        } catch (common_exception_BadRequest $e) {
             return $this->returnFailure($e);
         } catch (\Exception $e) {
             \common_Logger::e('Error retrieving item max scores: ' . $e->getMessage());
