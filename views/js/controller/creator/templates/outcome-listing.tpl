@@ -12,7 +12,7 @@
     <span class="trigger icon-bin" title="{{titleDelete}}" data-role="delete"></span>
     <span class="trigger icon-edit" title="{{titleEdit}}" data-role="edit"></span>
     <div class="outcome-properties-form">
-        <div class="panel interpretation hidden">
+        <div class="panel interpretation">
             <label for="interpretation" class="has-icon">{{__ "Interpretation"}}</label>
             <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
             <div class="tooltip-content">{{__ "A human interpretation of the variable's value."}}</div>

@@ -575,20 +575,29 @@ define([
      * @param {jQuery} $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
-        // Check if remote scale feature is enabled: either presets are provided or testScales has entries
-        const hasPresets = testModel && Array.isArray(testModel.scalePresets) && testModel.scalePresets.length > 0;
-        const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
 
-        // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
-        if (hasPresets) {
-            try {
-                if (typeof scaleSelectorFactory.setPresets === 'function') {
-                    scaleSelectorFactory.setPresets(testModel.scalePresets);
-                }
-            } catch (err) {
-                console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
-            }
-        }
+        // Check if remote scale feature is enabled: either presets are provided or testScales has entries
+        // Accept both 'scalePresets' and an alternate 'scalesPresets' coming from backend (typo/legacy)
+        const suppliedPresets = (testModel && Array.isArray(testModel.scalePresets) && testModel.scalePresets.length > 0)
+            ? testModel.scalePresets
+            : (testModel && Array.isArray(testModel.scalesPresets) && testModel.scalesPresets.length > 0 ? testModel.scalesPresets : null);
+        const hasPresets = !!(suppliedPresets && suppliedPresets.length);
+         const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
+
+         // Determine the label to use for the interpretation field: when scale presets or test scales are present, use 'Label'
+         const interpretationLabel = (hasPresets || hasTestScales) ? __('Label') : __('Interpretation');
+
+         // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
+         if (hasPresets) {
+             try {
+                 if (typeof scaleSelectorFactory.setPresets === 'function') {
+-                    scaleSelectorFactory.setPresets(testModel.scalePresets);
++                    scaleSelectorFactory.setPresets(suppliedPresets);
+                 }
+             } catch (err) {
+                 console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
+             }
+         }
          const externalScoredOptions = {
              none: 'none',
              human: 'human',
@@ -662,11 +671,26 @@ define([
 
         $editorPanel.find('.outcome-declarations-manual').html(
             outcomeListingTpl({
-                outcomes: outcomesData
+                outcomes: outcomesData,
+                interpretationLabel: interpretationLabel
             })
         );
 
         formElement.initWidget($editorPanel);
+
+        // Update the interpretation label text per rendered outcome container so it's visible immediately
+        // Use the computed interpretationLabel (either 'Label' when scales exist or 'Interpretation')
+        try {
+            $editorPanel.find('.outcome-container').each(function () {
+                const $oc = $(this);
+                const $label = $oc.find('.interpretation').find('label');
+                if ($label.length) {
+                    $label.text(interpretationLabel);
+                }
+            });
+        } catch (err) {
+            console.warn('renderOutcomeDeclarationList: failed to update interpretation label in DOM', err);
+        }
 
         $editorPanel.find('.outcome-container').each(function() {
             const $outcomeContainer = $(this);
