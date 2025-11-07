@@ -12,7 +12,7 @@
     <span class="trigger icon-bin" title="{{titleDelete}}" data-role="delete"></span>
     <span class="trigger icon-edit" title="{{titleEdit}}" data-role="edit"></span>
     <div class="outcome-properties-form">
-        <div class="panel interpretation">
+        <div class="panel interpretation hidden">
             <label for="interpretation" class="has-icon">{{__ "Interpretation"}}</label>
             <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
             <div class="tooltip-content">{{__ "A human interpretation of the variable's value."}}</div>
@@ -32,7 +32,7 @@
             <label for="scale" class="has-icon">{{__ "Scale"}}</label>
             <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
             <div class="tooltip-content">{{__ "Select or enter a scale for this outcome."}}</div>
-            <select name="scale" class="select2" data-has-search="false"></select>
+            <input name="scale" value="" type="text">
         </div>
         <div class="panel rubric hidden">
             <label for="rubric" class="has-icon">{{__ "Rubric"}}</label>

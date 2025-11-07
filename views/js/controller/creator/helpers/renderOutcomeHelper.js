@@ -578,7 +578,6 @@ define([
         // Check if remote scale feature is enabled: either presets are provided or testScales has entries
         const hasPresets = testModel && Array.isArray(testModel.scalePresets) && testModel.scalePresets.length > 0;
         const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
-        const isRemoteScaleEnabled = hasPresets || hasTestScales;
 
         // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
         if (hasPresets) {
