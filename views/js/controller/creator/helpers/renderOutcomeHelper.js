@@ -163,13 +163,82 @@ define([
     }
 
     /**
-     * Create and setup scale selector for an outcome
-     * @param {jQuery} $outcomeContainer - Container element
-     * @param {Object} outcome - Outcome declaration
+     * Read the value of the longInterpretation input for an outcome container
+     * @param {jQuery} $outcomeContainer
+     * @returns {string|null} string value or null when not present/empty
      */
-    function setupScaleSelector($outcomeContainer, outcome) {
-        const $interpretationContainer = $outcomeContainer.find('.interpretation');
+    function getLongInterpretationValue($outcomeContainer) {
+        if (!$outcomeContainer || !$outcomeContainer.length) {
+            return null;
+        }
+
+        const $input = $outcomeContainer.find('.longinterpretation').find('input');
+        if (!$input.length) {
+            return null;
+        }
+
+        const val = $input.val();
+        if (typeof val === 'undefined' || val === null || val === '') {
+            return null;
+        }
+
+        return String(val);
+    }
+
+    /**
+     * Create and setup scale selector for an outcome
+     * @param {jQuery} $outcomeContainer - Container element for the outcome UI
+     * @param {Object} outcome - Outcome declaration object (may be temporary for new outcomes)
+     * @param {Object} scales - Map/object of available scales keyed by filename or id
+     * @param {Array.<Object>=} scalePresets - Optional array of predefined scale presets (objects with {uri, label}) to populate the selector
+     */
+    function setupScaleSelector($outcomeContainer, outcome, scales, scalePresets) {
         const stableOutcomeId = getStableOutcomeId(outcome);
+
+        // Hide the Long Interpretation field
+        $outcomeContainer.find('.longinterpretation').hide();
+
+        // If presets are provided, ensure the selector factory knows them so Select2 can be populated
+        try {
+            if (Array.isArray(scalePresets) && scalePresets.length && typeof scaleSelectorFactory.setPresets === 'function') {
+                scaleSelectorFactory.setPresets(scalePresets);
+            }
+        } catch (err) {
+            console.warn('setupScaleSelector: failed to set presets on scaleSelectorFactory', err);
+        }
+
+        // Find the scale-selector container (which has the input[name="scale"])
+        const $scaleSelectorContainer = $outcomeContainer.find('.scale-selector');
+
+        // Show the scale-selector panel (it's hidden by default in the template)
+        $scaleSelectorContainer.removeClass('hidden');
+
+        // Initialize form widgets in the scale-selector container (ensures select2/init hooks are applied)
+        formElement.initWidget($scaleSelectorContainer);
+
+        // Ensure the scale field exists (some consumers may have altered the template). Create fallback select if not found.
+        if ($scaleSelectorContainer.find('[name="scale"], [name="interpretation"]').length === 0) {
+            console.warn('setupScaleSelector: no scale field found in container; creating fallback select[name="scale"]');
+            const $fallback = $('<select/>', { name: 'scale', class: 'select2', 'data-has-search': 'false' });
+            $scaleSelectorContainer.append($fallback);
+            formElement.initWidget($scaleSelectorContainer); // re-init widgets so select2 is applied
+        }
+
+        // Find and show the rubric panel
+        const $rubricContainer = $outcomeContainer.find('.rubric');
+        $rubricContainer.removeClass('hidden');
+
+        // Initialize rubric input with existing value if any and keep outcome.rubric in sync
+        const $rubricInput = $rubricContainer.find('input[name="rubric"]');
+        if (outcome.rubric) {
+            $rubricInput.val(outcome.rubric);
+        }
+
+        // Update the outcome model when rubric input changes and emit updated scale JSON
+        $rubricInput.off('.rubric').on('input.rubric', _.debounce(function () {
+            outcome.rubric = $(this).val();
+            emitScaleJsonUpdate();
+        }, 200));
 
         const existing = findExistingSelectorForOutcome(outcome);
         if (existing) {
@@ -186,7 +255,9 @@ define([
 
         const selectorId = generateSelectorId();
 
-        const scaleSelector = scaleSelectorFactory($interpretationContainer, selectorId);
+        // Create scale selector using the scale-selector container (which has the input[name="scale"])
+        // The scaleSelectorFactory will transform the input into a Select2 dropdown
+        const scaleSelector = scaleSelectorFactory($scaleSelectorContainer, selectorId);
 
         scaleSelectors.set(selectorId, {
             selector: scaleSelector,
@@ -206,12 +277,203 @@ define([
             }
         }
 
-        scaleSelector.createForm(outcome.interpretation || '');
+        // read longInterpretation using helper (this is a filename/key)
+        const longInterpVal = getLongInterpretationValue($outcomeContainer);
 
+        // Find exact match in provided `scales` (object keyed by filename/id).
+        // scales entries should have format: { scale: { uri, label, values }, rubric }
+        let matchedScale = null;
+        let matchedKey = null;
+        if (longInterpVal && scales && typeof scales === 'object') {
+            if (Object.prototype.hasOwnProperty.call(scales, longInterpVal)) {
+                matchedKey = longInterpVal;
+                const scaleData = scales[matchedKey];
+                // Extract the scale object from the JSON structure
+                matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
+                matchedScale.rubric = (scaleData && scaleData.rubric) ? scaleData.rubric : null;
+            }
+        }
+
+        // debug: log match info to help diagnose rendering issues
+        try { console.debug && console.debug('setupScaleSelector: longInterpVal, matchedKey, hasMatchedScale', longInterpVal, matchedKey, !!matchedScale); } catch (e) {}
+
+        // If matchedScale exists but lacks a uri, use the filename key as a fallback URI so selector can match it
+        if (matchedScale && !matchedScale.uri && matchedKey) {
+            try {
+                matchedScale.uri = matchedKey;
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        // Compute initial URI to pass to the selector: prefer matchedScale.uri then outcome.interpretation then matchedKey
+        const initUri = (matchedScale && matchedScale.uri) ? matchedScale.uri : (outcome.interpretation || matchedKey || '');
+
+        try { console.debug && console.debug('setupScaleSelector: initUri', initUri); } catch (e) {}
+
+        // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
+        const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
+        const scaleFilename = longInterpVal || `scales/${filenameBase}_scale.json`;
+        // if longInterpretation not set, store generated filename into hidden input so model persists
+        if (!longInterpVal) {
+            const $longInput = $outcomeContainer.find('.longinterpretation').find('input');
+            if ($longInput.length) {
+                $longInput.val(scaleFilename);
+            }
+        }
+
+        // helper to emit scale JSON content based on matchedScale and rubric input
+        function emitScaleJsonUpdate() {
+            const rubricVal = $rubricInput.val() || '';
+
+            let content;
+            if (matchedScale && typeof matchedScale === 'object') {
+                // matchedScale is the scale object itself, create full structure
+                content = {
+                    scale: _.cloneDeep(matchedScale),
+                    rubric: rubricVal
+                };
+            } else {
+                // create minimal structure if no matchedScale
+                content = {
+                    scale: {
+                        label: outcome.interpretation || '',
+                        values: {}
+                    },
+                    rubric: rubricVal
+                };
+            }
+
+            // Ensure the scale has a URI
+            if (!content.scale.uri) {
+                const scaleUri = outcome.interpretation || matchedKey || null;
+                if (scaleUri) {
+                    content.scale.uri = scaleUri;
+                }
+            }
+
+            $outcomeContainer.trigger('scale-json-changed', {
+                filename: scaleFilename,
+                content: content,
+                outcome: outcome
+            });
+        }
+
+        // matchedScale is now either the scale object for the exact key, or null
+
+        // If needed later: exact lookup in scales can use this value
+
+        scaleSelector.createForm(initUri || '');
+
+
+        // Force update of available scales to ensure Select2 is populated (covers timing/init races)
+        try {
+            const locked = syncManager && typeof syncManager.getActivePredefinedScale === 'function' ? syncManager.getActivePredefinedScale() : null;
+            if (typeof scaleSelector.updateAvailableScales === 'function') {
+                scaleSelector.updateAvailableScales(locked);
+            }
+        } catch (err) {
+            console.warn('setupScaleSelector: failed to force updateAvailableScales', err);
+        }
+
+        // Verify select2 got initialized on the underlying element; if not, attempt a forced update
+        try {
+            const $selectEl = $scaleSelectorContainer.find('[name="scale"], [name="interpretation"]');
+            const hasSelect2 = $selectEl.length && !!$selectEl.data('select2');
+            if (!hasSelect2) {
+                console.warn('setupScaleSelector: Select2 not initialized on scale field, forcing update');
+                if (syncManager && typeof scaleSelector.updateAvailableScales === 'function') {
+                    // attempt to populate options using current lock state
+                    scaleSelector.updateAvailableScales(syncManager.getActivePredefinedScale && syncManager.getActivePredefinedScale());
+                }
+            }
+        } catch (err) {
+            console.warn('setupScaleSelector: error verifying Select2 initialization', err);
+        }
+
+         // emit initial content so consumers can persist/create the scale file if needed
+         emitScaleJsonUpdate();
+
+        // If we have a matched scale (found from longInterpretation key), load its URI into the selector and rubric
+        if (matchedScale && matchedKey) {
+            try {
+                // Set the UI selection to the matched URI from the scale object
+                const initUri = matchedScale.uri || longInterpVal;
+                if (typeof scaleSelector.updateFormState === 'function') {
+                    scaleSelector.updateFormState(initUri);
+                }
+            } catch (err) {
+                console.warn('Failed to initialize scale selector state with matched key:', err);
+            }
+
+            // Populate rubric input from the parent scale data (scales[matchedKey].rubric)
+            try {
+                const scaleData = scales[matchedKey];
+                const rubricVal = (scaleData && scaleData.rubric) ? scaleData.rubric : '';
+                $rubricInput.val(rubricVal);
+                outcome.rubric = rubricVal;
+            } catch (err) {
+                console.warn('Failed to populate rubric from matched scale:', err);
+            }
+        }
+
+        // interpretation-change gives the selected URI (or raw string)
         scaleSelector.on('interpretation-change', function(interpretationValue) {
             const oldOutcome = Object.assign({}, outcome);
 
             outcome.interpretation = interpretationValue || '';
+
+            // interpretationValue is expected to be a URI; map it back to a filename/key in `scales`.
+            matchedScale = null;
+            matchedKey = null;
+            if (interpretationValue && scales && typeof scales === 'object') {
+                // 1) maybe the interpretationValue is already a filename key
+                if (Object.prototype.hasOwnProperty.call(scales, interpretationValue)) {
+                    matchedKey = interpretationValue;
+                    const scaleData = scales[matchedKey];
+                    matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
+                } else {
+                    // 2) search for an entry whose .scale.uri matches the interpretationValue
+                    for (const k in scales) {
+                        if (!Object.prototype.hasOwnProperty.call(scales, k)) {
+                            continue;
+                        }
+                        const scaleData = scales[k];
+                        if (scaleData && scaleData.scale && scaleData.scale.uri && scaleData.scale.uri === interpretationValue) {
+                            matchedKey = k;
+                            matchedScale = scaleData.scale;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // If we found a filename key for the selected URI, persist it into the longInterpretation hidden input
+            try {
+                if (matchedKey) {
+                    const $longInput = $outcomeContainer.find('.longinterpretation').find('input');
+                    if ($longInput.length) {
+                        $longInput.val(matchedKey);
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to persist matched longInterpretation key:', err);
+            }
+
+            // If a matched scale was found for this interpretation, update the rubric input to match
+            if (matchedScale && matchedKey) {
+                try {
+                    const scaleData = scales[matchedKey];
+                    const rubricVal = (scaleData && scaleData.rubric) ? scaleData.rubric : '';
+                    $rubricInput.val(rubricVal);
+                    outcome.rubric = rubricVal;
+                } catch (err) {
+                    console.warn('Failed to apply matched scale rubric:', err);
+                }
+            }
+
+            // emit updated scale json when user changes selection
+            emitScaleJsonUpdate();
 
             const hasInterpretation = !!interpretationValue;
 
@@ -313,11 +575,26 @@ define([
      * @param {jQuery} $editorPanel
      */
     function renderOutcomeDeclarationList(testModel, $editorPanel) {
-        const externalScoredOptions = {
-            none: 'none',
-            human: 'human',
-            externalMachine: 'externalMachine'
-        };
+        // Check if remote scale feature is enabled: either presets are provided or testScales has entries
+        const hasPresets = testModel && Array.isArray(testModel.scalePresets) && testModel.scalePresets.length > 0;
+        const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
+        const isRemoteScaleEnabled = hasPresets || hasTestScales;
+
+        // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
+        if (hasPresets) {
+            try {
+                if (typeof scaleSelectorFactory.setPresets === 'function') {
+                    scaleSelectorFactory.setPresets(testModel.scalePresets);
+                }
+            } catch (err) {
+                console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
+            }
+        }
+         const externalScoredOptions = {
+             none: 'none',
+             human: 'human',
+             externalMachine: 'externalMachine'
+         };
 
         const outcomesData = _.map(outcomeHelper.getNonReservedOutcomeDeclarations(testModel), function (outcome) {
             if (outcome.normalMinimum === undefined || outcome.normalMinimum === null) {
@@ -394,10 +671,32 @@ define([
 
         $editorPanel.find('.outcome-container').each(function() {
             const $outcomeContainer = $(this);
+            // Try to find the outcome declaration by identifier first, then by serial (data attribute).
             const identifierValue = $outcomeContainer.find('input.identifier').val();
-            const outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
+            let outcome = null;
 
-            if (outcome) {
+            if (identifierValue) {
+                outcome = testModel.outcomeDeclarations.find(o => o.identifier === identifierValue);
+            }
+
+            // If not found by identifier, try matching by serial stored on the container (used for newly created outcomes)
+            if (!outcome) {
+                const serial = $outcomeContainer.data('serial');
+                if (serial) {
+                    outcome = testModel.outcomeDeclarations.find(o => o.serial === serial);
+                }
+            }
+
+            // If still not found, create a lightweight temporary outcome object so the selector can initialize
+            if (!outcome) {
+                const serialFallback = $outcomeContainer.data('serial') || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                outcome = {
+                    serial: serialFallback,
+                    identifier: identifierValue || undefined,
+                    normalMinimum: 0,
+                    normalMaximum: 0
+                };
+            } else {
                 if (outcome.normalMinimum === undefined || outcome.normalMinimum === null || outcome.normalMinimum === '') {
                     outcome.normalMinimum = 0;
                     $outcomeContainer.find('input[name="normalMinimum"]').val('0');
@@ -406,12 +705,13 @@ define([
                     outcome.normalMaximum = 0;
                     $outcomeContainer.find('input[name="normalMaximum"]').val('0');
                 }
+            }
 
-                setupScaleSelector($outcomeContainer, outcome);
+            // Always initialize the scale selector so it is visible for new tests; setupScaleSelector is defensive
+            setupScaleSelector($outcomeContainer, outcome, testModel.testScales, testModel.scalePresets);
 
-                if (outcome.interpretation) {
-                    setMinMaxDisabled($outcomeContainer, true);
-                }
+            if (outcome.interpretation) {
+                setMinMaxDisabled($outcomeContainer, true);
             }
         });
 
@@ -431,7 +731,7 @@ define([
                 $outcomeContainer.removeClass('editable');
 
                 if (editedOutcomeDeclaration) {
-                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration);
+                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel.testScales, testModel.scalePresets);
                 }
 
                 $identifierInput.focus();

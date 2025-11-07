@@ -31,7 +31,8 @@ define([
     let currentTestId = null;
 
     function scaleSelectorFactory($container, outcomeId) {
-        const $scaleSelect = $container.find('[name="interpretation"]');
+        // Prefer new field name 'scale', fallback to legacy 'interpretation'
+        const $scaleSelect = $container.find('[name="scale"]');
         let lastKnownValue = null;
 
         const scaleSelector = {
@@ -136,10 +137,7 @@ define([
                 }
             },
 
-            /**
-             * Read the form state and trigger an event with the result
-             * @fires scaleSelector#interpretation-change
-             */
+            // Read the form state and trigger an event with the result (emits 'interpretation-change')
             updateScale() {
                 if (this._isInternalUpdate || this._destroyed) {
                     return;
@@ -170,6 +168,8 @@ define([
 
                 const lockedScale = syncManager.getActivePredefinedScale();
                 const selectData = this._buildSelectData(lockedScale, currentInterpretation);
+
+                try { console.debug && console.debug('scaleSelector.createForm: currentInterpretation, lockedScale, selectData.length', currentInterpretation, lockedScale, selectData && selectData.length); } catch (e) {}
 
                 this._initializeSelect2(selectData);
 
@@ -343,47 +343,66 @@ define([
                     return;
                 }
 
+                try { console.debug && console.debug('scaleSelector._initializeSelect2: selectData sample', selectData && selectData.slice(0,5)); } catch (e) {}
+
                 try {
                     $scaleSelect.empty();
 
                     $scaleSelect.append(new Option('', '', false, false));
 
-                    $scaleSelect
-                        .select2({
-                            width: '100%',
-                            tags: true,
-                            multiple: false,
-                            tokenSeparators: null,
-                            createSearchChoice: (scale) => {
-                                // Always allow custom scales to be entered
-                                return scale.match(/^[a-zA-Z0-9_-]+$/)
-                                    ? { id: scale, text: scale }
-                                    : null;
-                            },
-                            formatNoMatches: () => __('Scale name not allowed'),
-                            maximumSelectionSize: 1,
-                            maximumInputLength: 32,
-                            data: selectData,
-                            placeholder: __('Select or enter a scale'),
-                            openOnEnter: false,
-                            initSelection: function(element, callback) {
-                                const val = element.val();
-                                if (val) {
-                                    const data = selectData.find(item => item.id === val);
-                                    if (data) {
-                                        callback(data);
-                                    } else {
-                                        callback({ id: val, text: val });
-                                    }
+                    // Build select2 options and remove input-only options when initializing on <select>
+                    const select2Options = {
+                        width: '100%',
+                        tags: true,
+                        tokenSeparators: null,
+                        createSearchChoice: (scale) => {
+                            // Always allow custom scales to be entered
+                            return scale.match(/^[a-zA-Z0-9_-]+$/)
+                                ? { id: scale, text: scale }
+                                : null;
+                        },
+                        formatNoMatches: () => __('Scale name not allowed'),
+                        maximumSelectionSize: 1,
+                        maximumInputLength: 32,
+                        data: selectData,
+                        placeholder: __('Select or enter a scale'),
+                        openOnEnter: false,
+                        initSelection: function(element, callback) {
+                            const val = element.val();
+                            if (val) {
+                                const data = selectData.find(item => item.id === val);
+                                if (data) {
+                                    callback(data);
+                                } else {
+                                    callback({ id: val, text: val });
                                 }
                             }
-                        })
-                        .off('change.scaleSync')
-                        .on('change.scaleSync', () => {
-                            if (!this._isInternalUpdate && !this._destroyed) {
-                                this.updateScale();
+                        }
+                    };
+
+                    // Some Select2 options (like createSearchChoice) are only valid when Select2 is attached to a free-text input.
+                    // When attached to a <select>, Select2 validates options and will throw for unsupported options. Detect <select>
+                    // and remove input-only options to be defensive and avoid runtime errors.
+                    if ($scaleSelect.is('select')) {
+                        // remove input-only callbacks/options
+                        const removed = [];
+                        ['createSearchChoice', 'tokenSeparators', 'initSelection'].forEach(k => {
+                            if (k in select2Options) {
+                                delete select2Options[k];
+                                removed.push(k);
                             }
                         });
+                        try { console.debug && console.debug('scaleSelector._initializeSelect2: removed select-only options', removed); } catch (e) {}
+                    }
+
+                    $scaleSelect
+                        .select2(select2Options)
+                         .off('change.scaleSync')
+                         .on('change.scaleSync', () => {
+                             if (!this._isInternalUpdate && !this._destroyed) {
+                                 this.updateScale();
+                             }
+                         });
 
                     $scaleSelect.select2('close');
                 } catch (error) {

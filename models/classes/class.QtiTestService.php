@@ -113,6 +113,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
 
     private const IN_PROGRESS_LABEL = 'in progress';
+    private const ScaleDirectoryPath = 'scales';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -1282,6 +1283,24 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return $dir->getFile($file);
         }
         return $this->searchInTestDirectory($dir);
+    }
+
+    public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test)
+    {
+        $dir = $this->getQtiTestDir($test);
+        //I want to list all files in the test scale directory
+        $scaleDir = $dir->getDirectory(self::ScaleDirectoryPath);
+        //If there are any files I want to iterate over them
+        foreach ($scaleDir->getIterator() as $file) {
+            if ($file->getMimeType() === 'application/json') {
+                $content = $file->read();
+                $scale = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $scales[sprintf('%s/%s', self::ScaleDirectoryPath, $file->getBasename())] = $scale;
+                }
+            }
+        }
+        return $scales ?? [];
     }
 
     /**

@@ -22,10 +22,12 @@
 
 namespace oat\taoQtiTest\models;
 
+use core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\filesystem\Directory;
 use oat\taoTests\models\TestModel;
 use oat\tao\model\service\ServiceFileStorage;
+use taoQtiTest_models_classes_QtiTestService;
 
 /**
  * the qti TestModel
@@ -49,7 +51,7 @@ class TestModelService extends ConfigurableService implements
      */
     public function prepareContent(\core_kernel_classes_Resource $test, $items = [])
     {
-        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceManager()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->save($test, $items);
     }
 
@@ -59,7 +61,7 @@ class TestModelService extends ConfigurableService implements
      */
     public function deleteContent(\core_kernel_classes_Resource $test)
     {
-        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceManager()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->deleteContent($test);
     }
 
@@ -67,10 +69,19 @@ class TestModelService extends ConfigurableService implements
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::getItems()
      */
-    public function getItems(\core_kernel_classes_Resource $test)
+    public function getItems(core_kernel_classes_Resource $test)
     {
-        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
         return $service->getItems($test);
+    }
+
+    /**
+     * @return array
+     */
+    public function getScales(core_kernel_classes_Resource $test): array
+    {
+        $service = $this->getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
+        return $service->getTestOutcomeDeclarationScales($test);
     }
 
     /**
