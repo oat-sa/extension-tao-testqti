@@ -30,6 +30,8 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
+use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
@@ -215,6 +217,8 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
             ->args(
                 [
                     service(QtiTestService::class),
+                    service(ScalePreprocessor::class),
+                    service(RemoteScaleListService::class)
                 ]
             )
             ->public();

@@ -147,7 +147,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             if ($this->hasRequestParameter('model')) {
                 $parameters = $this->getRequest()->getRawParameters();
                 $test = $this->getCurrentTest();
-                $this->getScaleHandler()->handle($parameters['model'], $test);
+                $parameters['model'] = $this->getScaleHandler()->handle($parameters['model'], $test);
                 $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
                 $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);

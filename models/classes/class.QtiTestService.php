@@ -1309,67 +1309,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
-     * Check if any outcome declaration in the model has a scale defined
-     * @param array $model
-     * @return bool
-     */
-    private function isScaleDefined(array $model): bool
-    {
-        if (!isset($model['outcomeDeclarations']) || !is_array($model['outcomeDeclarations'])) {
-            return false;
-        }
-
-        foreach ($model['outcomeDeclarations'] as $outcomeDeclaration) {
-            if (isset($outcomeDeclaration['scale']) && !empty($outcomeDeclaration['scale'])) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function setTestOutcomeDeclarationScales(core_kernel_classes_Resource $test, array $model): array
-    {
-        $dir = $this->getQtiTestDir($test);
-        $scaleDir = $dir->getDirectory(self::ScaleDirectoryPath);
-        if (!$this->isScaleDefined($model)) {
-            if ($scaleDir->exists()) {
-                $scaleDir->deleteSelf();
-            }
-            return $model;
-        }
-        foreach ($model['outcomeDeclarations'] as &$outcomeDeclaration) {
-            if ($outcomeDeclaration['scale'] === null) {
-                continue;
-            }
-            $filename = $outcomeDeclaration['identifier'] . '.json';
-            $scaleFile = $scaleDir->getFile($filename);
-            // We need to get the scale where outcomeDeclaration.scale is equal to rs['uri'] using array filter
-            $scaleData = array_filter(
-                $this->getScalePreprocessor()->getScaleRemoteList(),
-                function ($scale) use ($outcomeDeclaration) {
-                    return $scale['uri'] === $outcomeDeclaration['scale'];
-                }
-            );
-
-            if (empty($scaleData)) {
-                continue;
-            }
-            $outcomeDeclaration['longInterpretation'] = 'scale/' . $scaleFile->getBasename();
-            //delete array key
-            unset($outcomeDeclaration['scale']);
-            unset($outcomeDeclaration['rubric']);
-
-            $scaleToSave = [
-                'rubric' => $outcomeDeclaration['rubric'],
-                'scale' => array_values($scaleData)[0] ?? null,
-            ];
-            $scaleFile->put(json_encode($scaleToSave));
-        }
-        return $model;
-    }
-
-    /**
      *
      * @param core_kernel_classes_Resource $test
      * @return string
@@ -1788,10 +1727,5 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
     {
         return $this->getPsrContainer()->get(FeatureFlagChecker::class);
-    }
-
-    private function getScalePreprocessor(): ScalePreprocessor
-    {
-        return $this->getPsrContainer()->get(ScalePreprocessor::class);
     }
 }
