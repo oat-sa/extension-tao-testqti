@@ -33,6 +33,7 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\converter\ManifestConverter;
 use oat\taoQtiItem\model\qti\ImportService;
+use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\importer\MetaMetadataImportMapper;
 use oat\taoQtiItem\model\qti\metadata\importer\PropertyDoesNotExistException;
@@ -384,13 +385,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
-        $file,
-        bool $overwriteTest = false,
-        ?string $itemClassUri = null,
-        array $form = [],
-        ?string $overwriteTestUri = null,
-        ?string $packageLabel = null
-    ) {
+                                  $file,
+        bool                      $overwriteTest = false,
+        ?string                   $itemClassUri = null,
+        array                     $form = [],
+        ?string                   $overwriteTestUri = null,
+        ?string                   $packageLabel = null
+    )
+    {
         $testClass = $targetClass;
         $report = new Report(Report::TYPE_INFO);
         $validPackage = false;
@@ -580,17 +582,18 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @return common_report_Report A report about how the importation behaved.
      */
     protected function importTest(
-        core_kernel_classes_Class $testClass,
-        Resource $qtiTestResource,
+        core_kernel_classes_Class                $testClass,
+        Resource                                 $qtiTestResource,
         taoQtiTest_models_classes_ManifestParser $manifestParser,
-        $folder,
-        array $ignoreQtiResources = [],
-        bool $overwriteTest = false,
-        ?string $itemClassUri = null,
-        bool $importMetadata = false,
-        ?string $overwriteTestUri = null,
-        ?string $packageLabel = null
-    ) {
+                                                 $folder,
+        array                                    $ignoreQtiResources = [],
+        bool                                     $overwriteTest = false,
+        ?string                                  $itemClassUri = null,
+        bool                                     $importMetadata = false,
+        ?string                                  $overwriteTestUri = null,
+        ?string                                  $packageLabel = null
+    )
+    {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
@@ -790,9 +793,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         } else {
                                             if (!$itemReport->getMessage()) {
                                                 $itemReport->setMessage(
-                                                    // phpcs:disable Generic.Files.LineLength
+                                                // phpcs:disable Generic.Files.LineLength
                                                     __('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $resourceIdentifier)
-                                                    // phpcs:enable Generic.Files.LineLength
+                                                // phpcs:enable Generic.Files.LineLength
                                                 );
                                             }
 
@@ -814,7 +817,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             common_report_Report::TYPE_SUCCESS,
                                             // phpcs:disable Generic.Files.LineLength
                                             __('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier)
-                                            // phpcs:enable Generic.Files.LineLength
+                                        // phpcs:enable Generic.Files.LineLength
                                         )
                                     );
                                 }
@@ -935,7 +938,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         common_report_Report::TYPE_ERROR,
                         // phpcs:disable Generic.Files.LineLength
                         __("Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint.", implode(', ', $e->getInvalidItemIdentifiers()))
-                        // phpcs:enable Generic.Files.LineLength
+                    // phpcs:enable Generic.Files.LineLength
                     )
                 );
             }
@@ -1004,12 +1007,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     protected function importTestDefinition(
         core_kernel_classes_Resource $testResource,
-        XmlDocument $testDefinition,
-        Resource $qtiResource,
-        array $itemMapping,
-        $extractionFolder,
-        common_report_Report $report
-    ) {
+        XmlDocument                  $testDefinition,
+        Resource                     $qtiResource,
+        array                        $itemMapping,
+                                     $extractionFolder,
+        common_report_Report         $report
+    )
+    {
 
         foreach ($itemMapping as $itemRefId => $itemResource) {
             $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
@@ -1067,11 +1071,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param common_report_Report A report about how the importation behaved.
      */
     protected function importTestAuxiliaryFiles(
-        Directory $testContent,
-        Resource $qtiResource,
-        $extractionFolder,
+        Directory            $testContent,
+        Resource             $qtiResource,
+                             $extractionFolder,
         common_report_Report $report
-    ) {
+    )
+    {
 
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {
@@ -1132,8 +1137,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the path of the QTI XML test definition of a given $test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      * @return string The absolute path to the QTI XML Test definition related to $test.
+     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      */
     public function getDocPath(core_kernel_classes_Resource $test)
     {
@@ -1269,8 +1274,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * If it doesn't exist, it will be created
      *
      * @param core_kernel_classes_Resource $test
-     * @throws \Exception If file is not found.
      * @return File
+     * @throws \Exception If file is not found.
      */
     public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
@@ -1304,10 +1309,71 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Check if any outcome declaration in the model has a scale defined
+     * @param array $model
+     * @return bool
+     */
+    private function isScaleDefined(array $model): bool
+    {
+        if (!isset($model['outcomeDeclarations']) || !is_array($model['outcomeDeclarations'])) {
+            return false;
+        }
+
+        foreach ($model['outcomeDeclarations'] as $outcomeDeclaration) {
+            if (isset($outcomeDeclaration['scale']) && !empty($outcomeDeclaration['scale'])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function setTestOutcomeDeclarationScales(core_kernel_classes_Resource $test, array $model): array
+    {
+        $dir = $this->getQtiTestDir($test);
+        $scaleDir = $dir->getDirectory(self::ScaleDirectoryPath);
+        if (!$this->isScaleDefined($model)) {
+            if ($scaleDir->exists()) {
+                $scaleDir->deleteSelf();
+            }
+            return $model;
+        }
+        foreach ($model['outcomeDeclarations'] as &$outcomeDeclaration) {
+            if ($outcomeDeclaration['scale'] === null) {
+                continue;
+            }
+            $filename = $outcomeDeclaration['identifier'] . '.json';
+            $scaleFile = $scaleDir->getFile($filename);
+            // We need to get the scale where outcomeDeclaration.scale is equal to rs['uri'] using array filter
+            $scaleData = array_filter(
+                $this->getScalePreprocessor()->getScaleRemoteList(),
+                function ($scale) use ($outcomeDeclaration) {
+                    return $scale['uri'] === $outcomeDeclaration['scale'];
+                }
+            );
+
+            if (empty($scaleData)) {
+                continue;
+            }
+            $outcomeDeclaration['longInterpretation'] = 'scale/' . $scaleFile->getBasename();
+            //delete array key
+            unset($outcomeDeclaration['scale']);
+            unset($outcomeDeclaration['rubric']);
+
+            $scaleToSave = [
+                'rubric' => $outcomeDeclaration['rubric'],
+                'scale' => array_values($scaleData)[0] ?? null,
+            ];
+            $scaleFile->put(json_encode($scaleToSave));
+        }
+        return $model;
+    }
+
+    /**
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception
      * @return string
+     * @throws Exception
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
@@ -1470,11 +1536,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      *
+     * @return string|boolean The QTI Test template file content or false if it could not be read.
      * @deprecated
      *
      * Get the content of the QTI Test template file as an XML string.
      *
-     * @return string|boolean The QTI Test template file content or false if it could not be read.
      */
     public function getQtiTestTemplateFileAsString()
     {
@@ -1591,12 +1657,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws \oat\tao\model\metadata\exception\MetadataImportException
      */
     private function getMappedProperties(
-        bool $importMetadata,
-        DOMDocument $domManifest,
-        stdClass $reportCtx,
+        bool                      $importMetadata,
+        DOMDocument               $domManifest,
+        stdClass                  $reportCtx,
         core_kernel_classes_Class $testClass,
         core_kernel_classes_Class $targetItemClass
-    ): array {
+    ): array
+    {
         if ($importMetadata === true) {
             $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
             $reportCtx->metaMetadata = $metaMetadataValues;
@@ -1679,7 +1746,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return;
         }
 
-        $uniqueId = (string) $test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
+        $uniqueId = (string)$test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
         $decodedJson = json_decode($json, true);
 
         if (!empty($uniqueId) && $uniqueId !== $decodedJson['identifier']) {
@@ -1721,5 +1788,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
     {
         return $this->getPsrContainer()->get(FeatureFlagChecker::class);
+    }
+
+    private function getScalePreprocessor(): ScalePreprocessor
+    {
+        return $this->getPsrContainer()->get(ScalePreprocessor::class);
     }
 }

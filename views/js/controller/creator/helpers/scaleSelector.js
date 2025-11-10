@@ -137,7 +137,7 @@ define([
                 }
             },
 
-            // Read the form state and trigger an event with the result (emits 'interpretation-change')
+            // Read the form state and trigger an event with the result (emits 'scale-change')
             updateScale() {
                 if (this._isInternalUpdate || this._destroyed) {
                     return;
@@ -153,7 +153,7 @@ define([
                         syncManager.onScaleChange(outcomeId, normalizedValue);
                     }
 
-                    this.trigger('interpretation-change', normalizedValue);
+                    this.trigger('scale-change', normalizedValue);
                 }
             },
 
@@ -240,7 +240,7 @@ define([
                         if (outcomeId) {
                             syncManager.onScaleChange(outcomeId, null);
                         }
-                        this.trigger('interpretation-change', null);
+                        this.trigger('scale-change', null);
                     }
                 } catch (error) {
                     console.warn('Error clearing selection:', error);

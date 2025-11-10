@@ -74,10 +74,10 @@ define([
             $incrementerWrappers.addClass('disabled');
             $incrementerControls.addClass('disabled');
 
-            $incrementerButtons.each(function() {
+            $incrementerButtons.each(function () {
                 const $button = $(this);
 
-                $button.on('click.outcome-disabled mousedown.outcome-disabled', function(e) {
+                $button.on('click.outcome-disabled mousedown.outcome-disabled', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
@@ -102,7 +102,7 @@ define([
             $incrementerControls.removeClass('disabled');
             $minMaxContainer.removeClass('incrementer-disabled');
 
-            $incrementerButtons.each(function() {
+            $incrementerButtons.each(function () {
                 const $button = $(this);
 
                 $button.off('.outcome-disabled');
@@ -155,7 +155,7 @@ define([
 
         for (const [selectorId, selectorInfo] of scaleSelectors.entries()) {
             if (selectorInfo.outcomeStableId === stableId) {
-                return { selectorId, selectorInfo };
+                return {selectorId, selectorInfo};
             }
         }
 
@@ -219,7 +219,7 @@ define([
         // Ensure the scale field exists (some consumers may have altered the template). Create fallback select if not found.
         if ($scaleSelectorContainer.find('[name="scale"], [name="interpretation"]').length === 0) {
             console.warn('setupScaleSelector: no scale field found in container; creating fallback select[name="scale"]');
-            const $fallback = $('<select/>', { name: 'scale', class: 'select2', 'data-has-search': 'false' });
+            const $fallback = $('<select/>', {name: 'scale', class: 'select2', 'data-has-search': 'false'});
             $scaleSelectorContainer.append($fallback);
             formElement.initWidget($scaleSelectorContainer); // re-init widgets so select2 is applied
         }
@@ -295,7 +295,10 @@ define([
         }
 
         // debug: log match info to help diagnose rendering issues
-        try { console.debug && console.debug('setupScaleSelector: longInterpVal, matchedKey, hasMatchedScale', longInterpVal, matchedKey, !!matchedScale); } catch (e) {}
+        try {
+            console.debug && console.debug('setupScaleSelector: longInterpVal, matchedKey, hasMatchedScale', longInterpVal, matchedKey, !!matchedScale);
+        } catch (e) {
+        }
 
         // If matchedScale exists but lacks a uri, use the filename key as a fallback URI so selector can match it
         if (matchedScale && !matchedScale.uri && matchedKey) {
@@ -309,7 +312,10 @@ define([
         // Compute initial URI to pass to the selector: prefer matchedScale.uri then outcome.interpretation then matchedKey
         const initUri = (matchedScale && matchedScale.uri) ? matchedScale.uri : (outcome.interpretation || matchedKey || '');
 
-        try { console.debug && console.debug('setupScaleSelector: initUri', initUri); } catch (e) {}
+        try {
+            console.debug && console.debug('setupScaleSelector: initUri', initUri);
+        } catch (e) {
+        }
 
         // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
         const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
@@ -337,7 +343,7 @@ define([
                 // create minimal structure if no matchedScale
                 content = {
                     scale: {
-                        label: outcome.interpretation || '',
+                        uri: outcome.longInterpretation || '',
                         values: {}
                     },
                     rubric: rubricVal
@@ -346,7 +352,7 @@ define([
 
             // Ensure the scale has a URI
             if (!content.scale.uri) {
-                const scaleUri = outcome.interpretation || matchedKey || null;
+                const scaleUri = outcome.longInterpretation || matchedKey || null;
                 if (scaleUri) {
                     content.scale.uri = scaleUri;
                 }
@@ -391,8 +397,8 @@ define([
             console.warn('setupScaleSelector: error verifying Select2 initialization', err);
         }
 
-         // emit initial content so consumers can persist/create the scale file if needed
-         emitScaleJsonUpdate();
+        // emit initial content so consumers can persist/create the scale file if needed
+        emitScaleJsonUpdate();
 
         // If we have a matched scale (found from longInterpretation key), load its URI into the selector and rubric
         if (matchedScale && matchedKey) {
@@ -418,28 +424,26 @@ define([
         }
 
         // interpretation-change gives the selected URI (or raw string)
-        scaleSelector.on('interpretation-change', function(interpretationValue) {
+        scaleSelector.on('scale-change', function (scaleUri) {
             const oldOutcome = Object.assign({}, outcome);
 
-            outcome.interpretation = interpretationValue || '';
+            outcome.scale = scaleUri || '';
 
-            // interpretationValue is expected to be a URI; map it back to a filename/key in `scales`.
+            // longInterpretation is expected to be file name included in test directory.
             matchedScale = null;
             matchedKey = null;
-            if (interpretationValue && scales && typeof scales === 'object') {
-                // 1) maybe the interpretationValue is already a filename key
-                if (Object.prototype.hasOwnProperty.call(scales, interpretationValue)) {
-                    matchedKey = interpretationValue;
+            if (scaleUri && scales && typeof scales === 'object') {
+                if (Object.prototype.hasOwnProperty.call(scales, scaleUri)) {
+                    matchedKey = scaleUri;
                     const scaleData = scales[matchedKey];
                     matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
                 } else {
-                    // 2) search for an entry whose .scale.uri matches the interpretationValue
                     for (const k in scales) {
                         if (!Object.prototype.hasOwnProperty.call(scales, k)) {
                             continue;
                         }
                         const scaleData = scales[k];
-                        if (scaleData && scaleData.scale && scaleData.scale.uri && scaleData.scale.uri === interpretationValue) {
+                        if (scaleData && scaleData.scale && scaleData.scale.uri && scaleData.scale.uri === longInterpretation) {
                             matchedKey = k;
                             matchedScale = scaleData.scale;
                             break;
@@ -475,7 +479,7 @@ define([
             // emit updated scale json when user changes selection
             emitScaleJsonUpdate();
 
-            const hasInterpretation = !!interpretationValue;
+            const hasInterpretation = !!scaleUri;
 
             setMinMaxDisabled($outcomeContainer, hasInterpretation);
             updateExternalScored($outcomeContainer, hasInterpretation);
@@ -525,7 +529,7 @@ define([
     function cleanupSelector(selectorId) {
         const selectorInfo = scaleSelectors.get(selectorId);
         if (selectorInfo) {
-            const { selector, outcome } = selectorInfo;
+            const {selector, outcome} = selectorInfo;
 
             const syncManager = scaleSelectorFactory.__getSyncManager ? scaleSelectorFactory.__getSyncManager() : null;
             if (syncManager && typeof syncManager.unregisterSelector === 'function') {
@@ -582,27 +586,27 @@ define([
             ? testModel.scalePresets
             : (testModel && Array.isArray(testModel.scalesPresets) && testModel.scalesPresets.length > 0 ? testModel.scalesPresets : null);
         const hasPresets = !!(suppliedPresets && suppliedPresets.length);
-         const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
+        const hasTestScales = testModel && testModel.testScales && typeof testModel.testScales === 'object' && Object.keys(testModel.testScales).length > 0;
 
-         // Determine the label to use for the interpretation field: when scale presets or test scales are present, use 'Label'
-         const interpretationLabel = (hasPresets || hasTestScales) ? __('Label') : __('Interpretation');
+        // Determine the label to use for the interpretation field: when scale presets or test scales are present, use 'Label'
+        const interpretationLabel = (hasPresets || hasTestScales) ? __('Label') : __('Interpretation');
 
-         // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
-         if (hasPresets) {
-             try {
-                 if (typeof scaleSelectorFactory.setPresets === 'function') {
--                    scaleSelectorFactory.setPresets(testModel.scalePresets);
-+                    scaleSelectorFactory.setPresets(suppliedPresets);
-                 }
-             } catch (err) {
-                 console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
-             }
-         }
-         const externalScoredOptions = {
-             none: 'none',
-             human: 'human',
-             externalMachine: 'externalMachine'
-         };
+        // Ensure the scale selector factory has presets for this test so selectors can initialize options immediately.
+        if (hasPresets) {
+            try {
+                if (typeof scaleSelectorFactory.setPresets === 'function') {
+                    -scaleSelectorFactory.setPresets(testModel.scalePresets);
+                    +scaleSelectorFactory.setPresets(suppliedPresets);
+                }
+            } catch (err) {
+                console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
+            }
+        }
+        const externalScoredOptions = {
+            none: 'none',
+            human: 'human',
+            externalMachine: 'externalMachine'
+        };
 
         const outcomesData = _.map(outcomeHelper.getNonReservedOutcomeDeclarations(testModel), function (outcome) {
             if (outcome.normalMinimum === undefined || outcome.normalMinimum === null) {
@@ -617,21 +621,17 @@ define([
             }
 
             const externalScored = {
-                none: { label: __('None'), selected: !outcome.externalScored },
-                human: { label: __('Human'), selected: outcome.externalScored === externalScoredOptions.human },
+                none: {label: __('None'), selected: !outcome.externalScored},
+                human: {label: __('Human'), selected: outcome.externalScored === externalScoredOptions.human},
                 externalMachine: {
                     label: __('External Machine'),
                     selected: outcome.externalScored === externalScoredOptions.externalMachine
                 }
             };
 
-            let interpretationValue = '';
-            if (outcome.interpretation) {
-                if (typeof outcome.interpretation === 'object' && outcome.interpretation.uri) {
-                    interpretationValue = outcome.interpretation.uri;
-                } else if (typeof outcome.interpretation === 'string') {
-                    interpretationValue = outcome.interpretation;
-                }
+            let scaleValue = '';
+            if (outcome.scale && typeof outcome.scale === 'string') {
+                scale = outcome.longInterpretation;
             }
 
             let normalMinimum, normalMaximum;
@@ -658,7 +658,7 @@ define([
             return {
                 serial: outcome.serial || outcome.identifier || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                 identifier: outcome.identifier,
-                interpretation: interpretationValue,
+                interpretation: outcome.interpretation,
                 longInterpretation: outcome.longInterpretation,
                 externalScored: externalScored,
                 externalScoredDisabled: outcome.interpretation ? 1 : (outcomeHelper.shouldDisableExternalScored(testModel, outcome.identifier) ? 1 : 0),
@@ -692,7 +692,7 @@ define([
             console.warn('renderOutcomeDeclarationList: failed to update interpretation label in DOM', err);
         }
 
-        $editorPanel.find('.outcome-container').each(function() {
+        $editorPanel.find('.outcome-container').each(function () {
             const $outcomeContainer = $(this);
             // Try to find the outcome declaration by identifier first, then by serial (data attribute).
             const identifierValue = $outcomeContainer.find('input.identifier').val();
