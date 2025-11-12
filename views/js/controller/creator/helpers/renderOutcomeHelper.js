@@ -216,14 +216,6 @@ define([
         // Initialize form widgets in the scale-selector container (ensures select2/init hooks are applied)
         formElement.initWidget($scaleSelectorContainer);
 
-        // Ensure the scale field exists (some consumers may have altered the template). Create fallback select if not found.
-        if ($scaleSelectorContainer.find('[name="scale"], [name="interpretation"]').length === 0) {
-            console.warn('setupScaleSelector: no scale field found in container; creating fallback select[name="scale"]');
-            const $fallback = $('<select/>', {name: 'scale', class: 'select2', 'data-has-search': 'false'});
-            $scaleSelectorContainer.append($fallback);
-            formElement.initWidget($scaleSelectorContainer); // re-init widgets so select2 is applied
-        }
-
         // Find and show the rubric panel
         const $rubricContainer = $outcomeContainer.find('.rubric');
         $rubricContainer.removeClass('hidden');
@@ -242,7 +234,6 @@ define([
 
         const existing = findExistingSelectorForOutcome(outcome);
         if (existing) {
-
             if (existing.selectorInfo.selector && typeof existing.selectorInfo.selector.destroy === 'function') {
                 try {
                     existing.selectorInfo.selector.destroy();
@@ -294,28 +285,7 @@ define([
             }
         }
 
-        // debug: log match info to help diagnose rendering issues
-        try {
-            console.debug && console.debug('setupScaleSelector: longInterpVal, matchedKey, hasMatchedScale', longInterpVal, matchedKey, !!matchedScale);
-        } catch (e) {
-        }
-
-        // If matchedScale exists but lacks a uri, use the filename key as a fallback URI so selector can match it
-        if (matchedScale && !matchedScale.uri && matchedKey) {
-            try {
-                matchedScale.uri = matchedKey;
-            } catch (e) {
-                // ignore
-            }
-        }
-
-        // Compute initial URI to pass to the selector: prefer matchedScale.uri then outcome.interpretation then matchedKey
-        const initUri = (matchedScale && matchedScale.uri) ? matchedScale.uri : (outcome.interpretation || matchedKey || '');
-
-        try {
-            console.debug && console.debug('setupScaleSelector: initUri', initUri);
-        } catch (e) {
-        }
+        const initUri = (matchedScale && matchedScale.uri) ? matchedScale.uri : '';
 
         // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
         const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
@@ -429,7 +399,6 @@ define([
 
             outcome.scale = scaleUri || '';
 
-            // longInterpretation is expected to be file name included in test directory.
             matchedScale = null;
             matchedKey = null;
             if (scaleUri && scales && typeof scales === 'object') {
@@ -443,7 +412,7 @@ define([
                             continue;
                         }
                         const scaleData = scales[k];
-                        if (scaleData && scaleData.scale && scaleData.scale.uri && scaleData.scale.uri === longInterpretation) {
+                        if (scaleData && scaleData.scale && scaleData.scale.uri === scaleUri) {
                             matchedKey = k;
                             matchedScale = scaleData.scale;
                             break;
@@ -629,10 +598,6 @@ define([
                 }
             };
 
-            let scaleValue = '';
-            if (outcome.scale && typeof outcome.scale === 'string') {
-                scale = outcome.longInterpretation;
-            }
 
             let normalMinimum, normalMaximum;
 
