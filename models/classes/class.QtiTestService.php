@@ -113,7 +113,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
 
     private const IN_PROGRESS_LABEL = 'in progress';
-    private const ScaleDirectoryPath = 'scales';
+    private const SCALE_DIRECTORY_PATH = 'scales';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -384,14 +384,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
-                                  $file,
-        bool                      $overwriteTest = false,
-        ?string                   $itemClassUri = null,
-        array                     $form = [],
-        ?string                   $overwriteTestUri = null,
-        ?string                   $packageLabel = null
-    )
-    {
+        $file,
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null,
+        array $form = [],
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
+    ) {
         $testClass = $targetClass;
         $report = new Report(Report::TYPE_INFO);
         $validPackage = false;
@@ -581,18 +580,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @return common_report_Report A report about how the importation behaved.
      */
     protected function importTest(
-        core_kernel_classes_Class                $testClass,
-        Resource                                 $qtiTestResource,
+        core_kernel_classes_Class $testClass,
+        Resource $qtiTestResource,
         taoQtiTest_models_classes_ManifestParser $manifestParser,
-                                                 $folder,
-        array                                    $ignoreQtiResources = [],
-        bool                                     $overwriteTest = false,
-        ?string                                  $itemClassUri = null,
-        bool                                     $importMetadata = false,
-        ?string                                  $overwriteTestUri = null,
-        ?string                                  $packageLabel = null
-    )
-    {
+        $folder,
+        array $ignoreQtiResources = [],
+        bool $overwriteTest = false,
+        ?string $itemClassUri = null,
+        bool $importMetadata = false,
+        ?string $overwriteTestUri = null,
+        ?string $packageLabel = null
+    ) {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
@@ -1006,13 +1004,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     protected function importTestDefinition(
         core_kernel_classes_Resource $testResource,
-        XmlDocument                  $testDefinition,
-        Resource                     $qtiResource,
-        array                        $itemMapping,
-                                     $extractionFolder,
-        common_report_Report         $report
-    )
-    {
+        XmlDocument $testDefinition,
+        Resource $qtiResource,
+        array $itemMapping,
+        $extractionFolder,
+        common_report_Report $report
+    ) {
 
         foreach ($itemMapping as $itemRefId => $itemResource) {
             $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
@@ -1070,12 +1067,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param common_report_Report A report about how the importation behaved.
      */
     protected function importTestAuxiliaryFiles(
-        Directory            $testContent,
-        Resource             $qtiResource,
-                             $extractionFolder,
+        Directory $testContent,
+        Resource $qtiResource,
+        $extractionFolder,
         common_report_Report $report
-    )
-    {
+    ) {
 
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {
@@ -1595,13 +1591,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws \oat\tao\model\metadata\exception\MetadataImportException
      */
     private function getMappedProperties(
-        bool                      $importMetadata,
-        DOMDocument               $domManifest,
-        stdClass                  $reportCtx,
+        bool $importMetadata,
+        DOMDocument $domManifest,
+        stdClass $reportCtx,
         core_kernel_classes_Class $testClass,
         core_kernel_classes_Class $targetItemClass
-    ): array
-    {
+    ): array {
         if ($importMetadata === true) {
             $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
             $reportCtx->metaMetadata = $metaMetadataValues;

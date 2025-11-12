@@ -354,7 +354,10 @@ class ScaleHandlerTest extends TestCase
         $resultModel = json_decode($result, true);
 
         // Scale and rubric should not be removed since no match was found
-        $this->assertEquals('http://www.tao.lu/Ontologies/TAO.rdf#NONEXISTENT', $resultModel['outcomeDeclarations'][0]['scale']);
+        $this->assertEquals(
+            'http://www.tao.lu/Ontologies/TAO.rdf#NONEXISTENT',
+            $resultModel['outcomeDeclarations'][0]['scale']
+        );
     }
 
     public function testHandleWithMultipleOutcomeDeclarations(): void
