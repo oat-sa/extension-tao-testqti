@@ -69,21 +69,23 @@
         </div>
     </div>
 
-    <!-- MNOP - Maximum Number of Points Achievable -->
-    <div class="grid-row">
-        <div class="col-11">
-            <label>{{__ 'Maximum number of points achievable'}}</label>
-        </div>
-        <div class="col-1 help">
-            <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
-            <div class="tooltip-content">
-                {{__ 'The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections.'}}
+    <!-- MNOP - Maximum Number of Points Achievable (hidden by default, shown via feature flag) -->
+    <div class="test-mnop-section" style="display: none;">
+        <div class="grid-row">
+            <div class="col-11">
+                <label>{{__ 'Maximum number of points achievable'}}</label>
+            </div>
+            <div class="col-1 help">
+                <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
+                <div class="tooltip-content">
+                    {{__ 'The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections.'}}
+                </div>
             </div>
         </div>
-    </div>
-    <div class="grid-row">
-        <div class="col-12">
-            <div class="test-mnop-container"></div>
+        <div class="grid-row">
+            <div class="col-12">
+                <div class="test-mnop-container"></div>
+            </div>
         </div>
     </div>
 

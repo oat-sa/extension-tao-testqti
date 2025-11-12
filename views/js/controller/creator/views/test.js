@@ -274,23 +274,27 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            // Initialize MNOP table
-            const $mnopContainer = $view.find('.test-mnop-container');
-            if ($mnopContainer.length) {
-                // Initialize mnopHelper with item scores before rendering table
-                mnopHelper.init(testModel, {
-                    getItemsMaxScores: {
-                        url: config.routes && config.routes.getItemsMaxScores || '/taoQtiTest/Items/getItemsMaxScores'
-                    }
-                }).then(function() {
-                    const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer);
-                    mnopView.init();
+            if (features.isVisible('taoQtiTest/creator/property/mnop')) {
+                const $mnopContainer = $view.find('.test-mnop-container');
+                const $mnopSection = $view.find('.test-mnop-section');
 
-                    // Store for cleanup
-                    propView.mnopView = mnopView;
-                }).catch(function(err) {
-                    console.error('Failed to initialize MNOP helper:', err);
-                });
+                $mnopSection.css('display', '');
+                hider.show($mnopSection);
+
+                if ($mnopContainer.length) {
+                    mnopHelper.init(testModel, {
+                        getItemsMaxScores: {
+                            url: config.routes && config.routes.getItemsMaxScores
+                        }
+                    }).then(function() {
+                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer);
+                        mnopView.init();
+
+                        propView.mnopView = mnopView;
+                    }).catch(function(err) {
+                        console.error('Failed to initialize MNOP helper:', err);
+                    });
+                }
             }
         }
 

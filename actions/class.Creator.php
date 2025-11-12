@@ -92,6 +92,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         }
 
         $this->setData('identifierUrl', _url('getIdentifier', null, null, ['uri' => $testUri]));
+        $this->setData('getItemsMaxScoresUrl', _url('getItemsMaxScores', 'Items'));
 
         if ($this->isScaleEnabled()) {
             $this->setData(
