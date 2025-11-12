@@ -36,6 +36,7 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/subsection',
     'tpl!taoQtiTest/controller/creator/templates/menu-button',
     'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
+    'tpl!taoQtiTest/controller/creator/templates/mnop-table'
 ], function (
     defaults,
     testPart,
@@ -53,7 +54,8 @@ define([
     categoryPresets,
     subsection,
     menuButton,
-    outcomeListing
+    outcomeListing,
+    mnopTable
 ) {
     'use strict';
 
@@ -72,6 +74,7 @@ define([
         subsection: applyTemplateConfiguration(subsection),
         menuButton: applyTemplateConfiguration(menuButton),
         outcomeListing: applyTemplateConfiguration(outcomeListing),
+        mnopTable: mnopTable,
         properties: {
             test: applyTemplateConfiguration(testProps),
             testpart: applyTemplateConfiguration(testPartProps),
