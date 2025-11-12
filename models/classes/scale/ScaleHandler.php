@@ -154,7 +154,16 @@ class ScaleHandler
             $outcomeDeclaration['longInterpretation'] = 'scales/' . $scaleFile->getBasename();
             unset($outcomeDeclaration['scale']);
             unset($outcomeDeclaration['rubric']);
-            $scaleFile->put(json_encode($scaleToSave));
+
+            try {
+                $scaleFile->put(json_encode($scaleToSave));
+            } catch (\Exception $e) {
+                throw new \RuntimeException(
+                    sprintf('Failed to write scale file "%s": %s', $filename, $e->getMessage()),
+                    0,
+                    $e
+                );
+            }
         }
 
         return json_encode($model);
