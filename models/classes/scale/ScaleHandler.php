@@ -135,8 +135,10 @@ class ScaleHandler
                 continue;
             }
 
+            $rubric = $outcomeDeclaration['rubric'] ?? null;
+
             $scaleToSave = [
-                'rubric' => $outcomeDeclaration['rubric'],
+                'rubric' => $rubric,
                 'scale' => array_values($scaleData)[0] ?? null,
             ];
 
