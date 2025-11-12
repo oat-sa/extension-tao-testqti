@@ -150,7 +150,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
                 $parameters['model'] = $this->getScaleHandler()->handle($parameters['model'], $test);
                 $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
-                $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
+                 $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
 
                 $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
                 $eventManager->trigger(new ResourceUpdated($test));

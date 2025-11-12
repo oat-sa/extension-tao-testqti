@@ -31,7 +31,6 @@ use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 class ScaleHandler
 {
     private const ScaleDirectoryPath = 'scales';
-    private Ontology $ontology;
     private QtiTestService $qtiTestService;
     private ScalePreprocessor $scalePreprocessor;
     private RemoteScaleListService $remoteScaleListService;
@@ -101,7 +100,7 @@ class ScaleHandler
                 'scale' => array_values($scaleData)[0] ?? null,
             ];
 
-            $outcomeDeclaration['longInterpretation'] = 'scale/' . $scaleFile->getBasename();
+            $outcomeDeclaration['longInterpretation'] = 'scales/' . $scaleFile->getBasename();
             unset($outcomeDeclaration['scale']);
             unset($outcomeDeclaration['rubric']);
             $scaleFile->put(json_encode($scaleToSave));
