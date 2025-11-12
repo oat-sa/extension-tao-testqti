@@ -76,7 +76,12 @@ class TestModelService extends ConfigurableService implements
     }
 
     /**
-     * @return array
+     * Get outcome declaration scales for a test
+     *
+     * Retrieves scale definitions stored as JSON files in the test's scales directory.
+     *
+     * @param core_kernel_classes_Resource $test The test resource
+     * @return array Associative array of scale data keyed by file path
      */
     public function getScales(core_kernel_classes_Resource $test): array
     {

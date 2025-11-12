@@ -31,7 +31,7 @@ define([
     let currentTestId = null;
 
     function scaleSelectorFactory($container, outcomeId) {
-        // Prefer new field name 'scale', fallback to legacy 'interpretation'
+        // Select the scale input field
         const $scaleSelect = $container.find('[name="scale"]');
         let lastKnownValue = null;
 

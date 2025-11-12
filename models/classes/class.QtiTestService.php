@@ -1285,11 +1285,27 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $this->searchInTestDirectory($dir);
     }
 
+    /**
+     * Get outcome declaration scales for a test
+     *
+     * Reads and parses scale JSON files from the test scales directory.
+     *
+     * @param core_kernel_classes_Resource $test The test resource
+     * @return array Associative array of scale data keyed by file path (scales/filename.json)
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If directory traversal fails
+     */
     public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test)
     {
         $dir = $this->getQtiTestDir($test);
+        $scales = [];
+
         //I want to list all files in the test scale directory
         $scaleDir = $dir->getDirectory(self::ScaleDirectoryPath);
+
+        if (!$scaleDir->exists()) {
+            return $scales;
+        }
+
         //If there are any files I want to iterate over them
         foreach ($scaleDir->getIterator() as $file) {
             if ($file->getMimeType() === 'application/json') {
@@ -1300,7 +1316,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 }
             }
         }
-        return $scales ?? [];
+        return $scales;
     }
 
     /**

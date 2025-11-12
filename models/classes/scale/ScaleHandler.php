@@ -105,17 +105,29 @@ class ScaleHandler
             return json_encode($model);
         }
 
+        // Get remote scale list and convert to array if it's an iterator
+        $scaleList = $this->scalePreprocessor->getScaleRemoteList();
+        if ($scaleList instanceof \Traversable) {
+            $scaleList = iterator_to_array($scaleList);
+        } elseif (!is_array($scaleList)) {
+            $scaleList = [];
+        }
+
         foreach ($model['outcomeDeclarations'] as &$outcomeDeclaration) {
-            if ($outcomeDeclaration['scale'] === null) {
+            if (
+                !isset($outcomeDeclaration['scale'])
+                || $outcomeDeclaration['scale'] === null
+                || $outcomeDeclaration['scale'] === ''
+            ) {
                 continue;
             }
             $filename = $outcomeDeclaration['identifier'] . '.json';
             $scaleFile = $scaleDir->getFile($filename);
             // We need to get the scale where outcomeDeclaration.scale is equal to rs['uri'] using array filter
             $scaleData = array_filter(
-                $this->scalePreprocessor->getScaleRemoteList(),
+                $scaleList,
                 function ($scale) use ($outcomeDeclaration) {
-                    return $scale['uri'] === $outcomeDeclaration['scale'];
+                    return isset($scale['uri']) && $scale['uri'] === $outcomeDeclaration['scale'];
                 }
             );
 

@@ -431,7 +431,7 @@ class ScaleHandlerTest extends TestCase
         $scaleFile2->method('getBasename')->willReturn('OUTCOME_2.json');
 
         $this->scalePreprocessor
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getScaleRemoteList')
             ->willReturn($scaleRemoteList);
 

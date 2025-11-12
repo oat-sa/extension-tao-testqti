@@ -281,7 +281,6 @@ define([
                 const scaleData = scales[matchedKey];
                 // Extract the scale object from the JSON structure
                 matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
-                matchedScale.rubric = (scaleData && scaleData.rubric) ? scaleData.rubric : null;
             }
         }
 
