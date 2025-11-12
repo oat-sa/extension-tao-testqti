@@ -33,7 +33,6 @@ use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\converter\ManifestConverter;
 use oat\taoQtiItem\model\qti\ImportService;
-use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\qti\metadata\importer\MetadataImporter;
 use oat\taoQtiItem\model\qti\metadata\importer\MetaMetadataImportMapper;
 use oat\taoQtiItem\model\qti\metadata\importer\PropertyDoesNotExistException;

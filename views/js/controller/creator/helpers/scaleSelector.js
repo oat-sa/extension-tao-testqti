@@ -168,9 +168,6 @@ define([
 
                 const lockedScale = syncManager.getActivePredefinedScale();
                 const selectData = this._buildSelectData(lockedScale, currentInterpretation);
-
-                try { console.debug && console.debug('scaleSelector.createForm: currentInterpretation, lockedScale, selectData.length', currentInterpretation, lockedScale, selectData && selectData.length); } catch (e) {}
-
                 this._initializeSelect2(selectData);
 
                 if (currentInterpretation) {
