@@ -28,24 +28,52 @@ use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 
+/**
+ * Service for handling scale persistence for QTI test outcome declarations.
+ *
+ * This handler processes outcome declarations that reference scales, saving scale
+ * data to JSON files in the test directory and transforming the model to store
+ * references via longInterpretation fields.
+ */
 class ScaleHandler
 {
-    private const ScaleDirectoryPath = 'scales';
+    private const SCALE_DIRECTORY_PATH = 'scales';
     private QtiTestService $qtiTestService;
     private ScalePreprocessor $scalePreprocessor;
     private RemoteScaleListService $remoteScaleListService;
 
+    /**
+     * ScaleHandler constructor.
+     *
+     * @param QtiTestService $qtiTestService Service for accessing test directory and files
+     * @param ScalePreprocessor $scalePreprocessor Service for accessing remote scale list
+     * @param RemoteScaleListService $remoteScaleListService Service for checking if remote list is enabled
+     */
     public function __construct(
-        QtiTestService         $qtiTestService,
-        ScalePreprocessor      $scalePreprocessor,
+        QtiTestService $qtiTestService,
+        ScalePreprocessor $scalePreprocessor,
         RemoteScaleListService $remoteScaleListService
-    )
-    {
+    ) {
         $this->qtiTestService = $qtiTestService;
         $this->scalePreprocessor = $scalePreprocessor;
         $this->remoteScaleListService = $remoteScaleListService;
     }
 
+    /**
+     * Process and persist outcome declaration scales for a test.
+     *
+     * This method:
+     * - Validates and decodes the JSON model
+     * - Strips scale data when remote list is disabled
+     * - Saves scale JSON files to the test scales directory
+     * - Transforms outcome declarations to reference scales via longInterpretation
+     * - Cleans up the scales directory when no scales are defined
+     *
+     * @param string $model JSON-encoded test model containing outcome declarations
+     * @param core_kernel_classes_Resource $test The test resource
+     * @return string JSON-encoded updated model with scale references
+     * @throws \InvalidArgumentException If the model JSON is invalid
+     */
     public function handle(string $model, core_kernel_classes_Resource $test): string
     {
         $model = json_decode($model, true);
@@ -67,7 +95,7 @@ class ScaleHandler
 
         $scaleDir = $this->qtiTestService
             ->getQtiTestDir($test)
-            ->getDirectory(self::ScaleDirectoryPath);
+            ->getDirectory(self::SCALE_DIRECTORY_PATH);
 
         // If no scales are defined, remove the scales directory if it exists
         if (!$this->isScaleDefined($model)) {
@@ -109,18 +137,6 @@ class ScaleHandler
         return json_encode($model);
     }
 
-    private function getScaledFromOutcomeDeclarations(array $model)
-    {
-        $scaledOutcomes = [];
-        if (isset($model['outcomeDeclarations']) && is_array($model['outcomeDeclarations'])) {
-            foreach ($model['outcomeDeclarations'] as $outcomeDeclaration) {
-                if (isset($outcomeDeclaration['scale'])) {
-                    $scaledOutcomes[] = $outcomeDeclaration['identifier'];
-                }
-            }
-        }
-        return $scaledOutcomes;
-    }
 
     /**
      * Check if any outcome declaration in the model has a scale defined
