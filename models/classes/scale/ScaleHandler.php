@@ -73,6 +73,7 @@ class ScaleHandler
      * @param core_kernel_classes_Resource $test The test resource
      * @return string JSON-encoded updated model with scale references
      * @throws \InvalidArgumentException If the model JSON is invalid
+     * @throws \RuntimeException If scale directory deletion fails due to I/O or permission errors
      */
     public function handle(string $model, core_kernel_classes_Resource $test): string
     {
@@ -100,7 +101,15 @@ class ScaleHandler
         // If no scales are defined, remove the scales directory if it exists
         if (!$this->isScaleDefined($model)) {
             if ($scaleDir->exists()) {
-                $scaleDir->deleteSelf();
+                try {
+                    $scaleDir->deleteSelf();
+                } catch (\Exception $e) {
+                    throw new \RuntimeException(
+                        'Failed to delete scales directory: ' . $e->getMessage(),
+                        0,
+                        $e
+                    );
+                }
             }
             return json_encode($model);
         }
