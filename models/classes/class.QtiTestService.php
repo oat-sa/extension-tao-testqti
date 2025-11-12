@@ -1300,7 +1300,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $scales = [];
 
         //I want to list all files in the test scale directory
-        $scaleDir = $dir->getDirectory(self::ScaleDirectoryPath);
+        $scaleDir = $dir->getDirectory(self::SCALE_DIRECTORY_PATH);
 
         if (!$scaleDir->exists()) {
             return $scales;
@@ -1312,7 +1312,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 $content = $file->read();
                 $scale = json_decode($content, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
-                    $scales[sprintf('%s/%s', self::ScaleDirectoryPath, $file->getBasename())] = $scale;
+                    $scales[sprintf('%s/%s', self::SCALE_DIRECTORY_PATH, $file->getBasename())] = $scale;
                 }
             }
         }
