@@ -447,4 +447,3 @@ class ScaleHandlerTest extends TestCase
         $this->assertArrayNotHasKey('scale', $resultModel['outcomeDeclarations'][1]);
     }
 }
-
