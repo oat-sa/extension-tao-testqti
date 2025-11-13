@@ -262,7 +262,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
                     common_Logger::w('Skipping non-JSON file in scales directory: ' . $f->getBasename());
                     continue;
                 }
-                
+
                 // Add scale files with correct path: scales/filename.json
                 $scaleFilePath = $newTestDir . 'scales/' . $f->getBasename();
                 try {
