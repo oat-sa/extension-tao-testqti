@@ -41,8 +41,7 @@ define([
     'taoQtiTest/controller/creator/helpers/translation',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'services/features',
-    'tpl!taoQtiTest/controller/creator/templates/translation-status',
-    'taoQtiTest/controller/creator/views/mnopTable'
+    'tpl!taoQtiTest/controller/creator/templates/translation-status'
 ], function (
     $,
     _,
@@ -65,8 +64,7 @@ define([
     translationHelper,
     featureVisibility,
     servicesFeatures,
-    translationStatusTpl,
-    mnopTableView
+    translationStatusTpl
 ) {
     ('use strict');
 
