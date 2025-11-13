@@ -377,6 +377,9 @@ define([
                 if (typeof scaleSelector.updateFormState === 'function') {
                     scaleSelector.updateFormState(initUri);
                 }
+
+                // Set outcome.scale to the matched scale URI (similar to how rubric is set below)
+                outcome.scale = initUri || '';
             } catch (err) {
                 console.warn('Failed to initialize scale selector state with matched key:', err);
             }

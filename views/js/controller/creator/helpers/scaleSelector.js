@@ -31,7 +31,6 @@ define([
     let currentTestId = null;
 
     function scaleSelectorFactory($container, outcomeId) {
-        // Select the scale input field
         const $scaleSelect = $container.find('[name="scale"]');
         let lastKnownValue = null;
 
