@@ -566,8 +566,7 @@ define([
         if (hasPresets) {
             try {
                 if (typeof scaleSelectorFactory.setPresets === 'function') {
-                    -scaleSelectorFactory.setPresets(testModel.scalePresets);
-                    +scaleSelectorFactory.setPresets(suppliedPresets);
+                    scaleSelectorFactory.setPresets(suppliedPresets);
                 }
             } catch (err) {
                 console.warn('renderOutcomeDeclarationList: failed to set scale presets on factory', err);
@@ -698,7 +697,7 @@ define([
             }
 
             // Always initialize the scale selector so it is visible for new tests; setupScaleSelector is defensive
-            setupScaleSelector($outcomeContainer, outcome, testModel.testScales, testModel.scalePresets);
+            setupScaleSelector($outcomeContainer, outcome, testModel.testScales, suppliedPresets);
 
             if (outcome.interpretation) {
                 setMinMaxDisabled($outcomeContainer, true);
@@ -721,7 +720,7 @@ define([
                 $outcomeContainer.removeClass('editable');
 
                 if (editedOutcomeDeclaration) {
-                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel.testScales, testModel.scalePresets);
+                    setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel.testScales, suppliedPresets);
                 }
 
                 $identifierInput.focus();
