@@ -256,7 +256,13 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         foreach ($iterator as $f) {
             // Check if file is in scales directory
             $prefix = $f->getPrefix();
-            if (!empty($prefix) && strpos($prefix, 'scales') !== false) {
+            if (!empty($prefix) && (rtrim($prefix, '/') === 'scales' || strpos($prefix, 'scales/') === 0)) {
+                // Optionally validate that it's a JSON file
+                if (pathinfo($f->getBasename(), PATHINFO_EXTENSION) !== 'json') {
+                    common_Logger::w('Skipping non-JSON file in scales directory: ' . $f->getBasename());
+                    continue;
+                }
+                
                 // Add scale files with correct path: scales/filename.json
                 $scaleFilePath = $newTestDir . 'scales/' . $f->getBasename();
                 try {
