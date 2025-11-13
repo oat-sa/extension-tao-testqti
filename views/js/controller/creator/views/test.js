@@ -38,7 +38,8 @@ define([
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
-    'taoQtiTest/controller/creator/helpers/mnop'
+    'taoQtiTest/controller/creator/helpers/mnop',
+    'taoQtiTest/controller/creator/helpers/featureFlags'
 ], function (
     $,
     _,
@@ -59,7 +60,8 @@ define([
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
-    mnopHelper
+    mnopHelper,
+    featureFlags
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -274,7 +276,7 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (features.isVisible('taoQtiTest/creator/property/mnop')) {
+            if (featureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
