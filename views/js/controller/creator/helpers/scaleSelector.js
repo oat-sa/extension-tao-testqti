@@ -339,8 +339,6 @@ define([
                     return;
                 }
 
-                try { console.debug && console.debug('scaleSelector._initializeSelect2: selectData sample', selectData && selectData.slice(0,5)); } catch (e) {}
-
                 try {
                     $scaleSelect.empty();
 
