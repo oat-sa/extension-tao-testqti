@@ -176,12 +176,6 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
 
-        // 4. Include scale object in manifest from test outcome declaration
-        $this->getScalePreprocessor()->includeScaleObject(
-            $this->getManifest(),
-            $this->getTestDocument()->getDomDocument()
-        );
-
         $this->genericLomOntologyExtractor()->extract(
             [$this->getItem()],
             $this->getManifest()
@@ -258,6 +252,19 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
         $indexFile = pathinfo(QtiTestService::QTI_TEST_DEFINITION_INDEX, PATHINFO_BASENAME);
         foreach ($iterator as $f) {
+            // Check if file is in scales directory
+            $prefix = $f->getPrefix();
+            if (!empty($prefix) && strpos($prefix, 'scales') !== false) {
+                // Add scale files with correct path: scales/filename.json
+                $scaleFilePath = $newTestDir . 'scales/' . $f->getBasename();
+                $this->getZip()->addFromString(
+                    $scaleFilePath,
+                    $f->read()
+                );
+                common_Logger::t('SCALE FILE AT: ' . $scaleFilePath);
+                continue;
+            }
+
             // Only add dependency files...
             if ($f->getBasename() !== QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
                 // Add the file to the archive.
@@ -367,10 +374,5 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
     {
         return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
-    }
-
-    private function getScalePreprocessor(): ScalePreprocessor
-    {
-        return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
     }
 }
