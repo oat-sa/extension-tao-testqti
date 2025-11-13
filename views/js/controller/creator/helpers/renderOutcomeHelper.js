@@ -294,6 +294,7 @@ define([
             const $longInput = $outcomeContainer.find('.longinterpretation').find('input');
             if ($longInput.length) {
                 $longInput.val(scaleFilename);
+                outcome.longInterpretation = scaleFilename;
             }
         }
 
