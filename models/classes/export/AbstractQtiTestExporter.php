@@ -30,6 +30,7 @@ use core_kernel_persistence_Exception;
 use DOMDocument;
 use DOMException;
 use DOMXPath;
+use Exception;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
@@ -42,6 +43,7 @@ use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
+use RuntimeException;
 use tao_helpers_Uri;
 use taoItems_models_classes_ItemExporter as ItemExporter;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
@@ -257,11 +259,16 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
             if (!empty($prefix) && strpos($prefix, 'scales') !== false) {
                 // Add scale files with correct path: scales/filename.json
                 $scaleFilePath = $newTestDir . 'scales/' . $f->getBasename();
-                $this->getZip()->addFromString(
-                    $scaleFilePath,
-                    $f->read()
-                );
-                common_Logger::t('SCALE FILE AT: ' . $scaleFilePath);
+                try {
+                    $content = $f->read();
+                    if ($this->getZip()->addFromString($scaleFilePath, $content) === false) {
+                        throw new RuntimeException('Failed to add scale file to ZIP archive: ' . $scaleFilePath);
+                    }
+                    common_Logger::t('SCALE FILE AT: ' . $scaleFilePath);
+                } catch (Exception $e) {
+                    common_Logger::e('Failed to export scale file: ' . $f->getBasename() . ' - ' . $e->getMessage());
+                    throw new RuntimeException('Scale file export failed: ' . $f->getBasename(), 0, $e);
+                }
                 continue;
             }
 
