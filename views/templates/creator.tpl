@@ -77,7 +77,8 @@ requirejs.config({
                 save  : '<?=get_data('saveUrl')?>',
                 blueprintsById : '<?=get_data('blueprintsByIdUrl')?>',
                 blueprintByTestSection : '<?=get_data('blueprintsByTestSectionUrl')?>',
-                identifier : '<?=get_data('identifierUrl')?>'
+                identifier : '<?=get_data('identifierUrl')?>',
+                getItemsMaxScores : '<?=get_data('getItemsMaxScoresUrl')?>'
             },
             translation : <?=get_data('translation')?>,
             originResourceUri : <?=get_data('originResourceUri')?>,

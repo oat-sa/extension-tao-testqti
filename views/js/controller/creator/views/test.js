@@ -37,6 +37,9 @@ define([
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiTest/controller/creator/views/mnopTable',
+    'taoQtiTest/controller/creator/helpers/mnop',
+    'taoQtiTest/controller/creator/helpers/featureFlags'
 ], function (
     $,
     _,
@@ -55,7 +58,10 @@ define([
     baseTypeHelper,
     outcome,
     { renderOutcomeDeclarationList },
-    scaleSelectorFactory
+    scaleSelectorFactory,
+    mnopTableView,
+    mnopHelper,
+    featureFlags
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -269,6 +275,29 @@ define([
             changeScoring(testModel.scoring);
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
+
+            if (featureFlags.isMNOPEnabled()) {
+                const $mnopContainer = $view.find('.test-mnop-container');
+                const $mnopSection = $view.find('.test-mnop-section');
+
+                $mnopSection.css('display', '');
+                hider.show($mnopSection);
+
+                if ($mnopContainer.length) {
+                    mnopHelper.init(testModel, {
+                        getItemsMaxScores: {
+                            url: config.routes && config.routes.getItemsMaxScores
+                        }
+                    }).then(function() {
+                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer);
+                        mnopView.init();
+
+                        propView.mnopView = mnopView;
+                    }).catch(function(err) {
+                        console.error('Failed to initialize MNOP helper:', err);
+                    });
+                }
+            }
         }
 
         /**

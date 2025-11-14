@@ -23,7 +23,7 @@ define(['services/features'], function(features) {
     'use strict';
 
     return {
-        isMNOPEnabled: function() {
+            isMNOPEnabled: function() {
             return features.isVisible('taoQtiTest/creator/property/mnop');
         }
     };
