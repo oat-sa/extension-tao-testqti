@@ -51,6 +51,7 @@ use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
 use oat\taoQtiTest\models\classes\scale\ScaleHandler;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestModelService;
@@ -221,6 +222,10 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(RemoteScaleListService::class)
                 ]
             )
+            ->public();
+
+        $services
+            ->set(ScaleStorageService::class, ScaleStorageService::class)
             ->public();
     }
 }

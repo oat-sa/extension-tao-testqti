@@ -50,6 +50,7 @@ use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
 use oat\taoQtiTest\models\Qti\Converter\TestConverter;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
@@ -63,6 +64,7 @@ use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
+use Throwable;
 use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 use taoTests_models_classes_TestsService as TestService;
 
@@ -606,7 +608,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
 
-        // Setting qtiIdentifier property
         $qtiIdentifierProperty = $this->getProperty(self::PROPERTY_QTI_TEST_IDENTIFIER);
         $testResource->editPropertyValues($qtiIdentifierProperty, $qtiTestResourceIdentifier);
 
@@ -844,9 +845,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $report
                         );
 
+                        $scaleAuxiliaryFiles = $this->extractScaleAuxiliaryFiles($qtiTestResource);
+
                         if ($testContent !== false) {
                             // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
+                            $this->storeTestScaleFiles($testContent, $scaleAuxiliaryFiles, $folder, $report);
 
                             // 3. Give meaningful names to resources.
                             $testResource->setLabel($packageLabel ?? $testLabel);
@@ -1085,6 +1089,97 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                 );
             }
         }
+    }
+
+    /**
+     * Copy scale files referenced by the test into the destination test content directory.
+     */
+    protected function storeTestScaleFiles(
+        Directory $testContent,
+        array $scaleFiles,
+        string $extractionFolder,
+        common_report_Report $report
+    ): void {
+        if (empty($scaleFiles)) {
+            return;
+        }
+
+        try {
+            $this->getScaleStorageService()->storeScaleFiles($testContent, $scaleFiles, $extractionFolder);
+        } catch (Throwable $exception) {
+            $report->add(
+                new common_report_Report(
+                    common_report_Report::TYPE_WARNING,
+                    __('Scale files could not be stored: %s', $exception->getMessage())
+                )
+            );
+        }
+    }
+
+    /**
+     * Extract scale related auxiliary files from the manifest resource while keeping other entries intact.
+     *
+     * @return string[]
+     */
+    private function extractScaleAuxiliaryFiles(Resource $qtiResource): array
+    {
+        $auxiliaryFiles = $qtiResource->getAuxiliaryFiles();
+
+        if (!is_array($auxiliaryFiles) || $auxiliaryFiles === []) {
+            return [];
+        }
+
+        $scaleFiles = [];
+        $regularFiles = [];
+
+        foreach ($auxiliaryFiles as $filePath) {
+            if (!is_string($filePath) || $filePath === '') {
+                continue;
+            }
+
+            $normalized = $this->normalizeAuxiliaryPath($filePath);
+
+            if ($this->isScaleAuxiliaryPath($normalized)) {
+                $scaleFiles[] = $filePath;
+                continue;
+            }
+
+            $regularFiles[] = $filePath;
+        }
+
+        if ($regularFiles !== $auxiliaryFiles) {
+            $qtiResource->setAuxiliaryFiles($regularFiles);
+        }
+
+        return $scaleFiles;
+    }
+
+    private function normalizeAuxiliaryPath(string $path): string
+    {
+        $normalized = str_replace('\\', '/', $path);
+        $normalized = preg_replace('#/+#', '/', $normalized);
+
+        return $normalized === null ? $path : $normalized;
+    }
+
+    private function isScaleAuxiliaryPath(string $path): bool
+    {
+        $trimmed = ltrim($path, '/');
+
+        if ($trimmed === 'scales' || strpos($trimmed, 'scales/') === 0) {
+            return true;
+        }
+
+        if (str_contains($trimmed, '/scales/')) {
+            return true;
+        }
+
+        return substr($trimmed, -7) === '/scales';
+    }
+
+    private function getScaleStorageService(): ScaleStorageService
+    {
+        return $this->getServiceLocator()->get(ScaleStorageService::class);
     }
 
     /**
