@@ -254,9 +254,13 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
         $indexFile = pathinfo(QtiTestService::QTI_TEST_DEFINITION_INDEX, PATHINFO_BASENAME);
         foreach ($iterator as $f) {
+            $relativePath = ltrim(
+                str_replace(rtrim($testRootDir->getPrefix(), '/') . '/', '', $f->getPrefix()),
+                '/'
+            );
+
             // Check if file is in scales directory
-            $prefix = $f->getPrefix();
-            if (!empty($prefix) && (rtrim($prefix, '/') === 'scales' || strpos($prefix, 'scales/') === 0)) {
+            if ($relativePath !== '' && (strpos($relativePath, 'scales/') === 0 || $relativePath === 'scales')) {
                 // Optionally validate that it's a JSON file
                 if (pathinfo($f->getBasename(), PATHINFO_EXTENSION) !== 'json') {
                     common_Logger::w('Skipping non-JSON file in scales directory: ' . $f->getBasename());
@@ -264,12 +268,13 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
                 }
 
                 // Add scale files with correct path: scales/filename.json
-                $scaleFilePath = $newTestDir . 'scales/' . $f->getBasename();
+                $scaleFilePath = $newTestDir . $relativePath;
                 try {
                     $content = $f->read();
                     if ($this->getZip()->addFromString($scaleFilePath, $content) === false) {
                         throw new RuntimeException('Failed to add scale file to ZIP archive: ' . $scaleFilePath);
                     }
+                    $this->referenceAuxiliaryFile($scaleFilePath);
                     common_Logger::t('SCALE FILE AT: ' . $scaleFilePath);
                 } catch (Exception $e) {
                     common_Logger::e('Failed to export scale file: ' . $f->getBasename() . ' - ' . $e->getMessage());
