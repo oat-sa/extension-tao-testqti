@@ -1092,6 +1092,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      * Copy scale files referenced by the test into the destination test content directory.
+     *
+     * @param Directory $testContent Target directory for the imported test content
+     * @param string[] $scaleFiles Relative paths of scale files inside the extraction folder
+     * @param string $extractionFolder Folder where the package was extracted
+     * @param common_report_Report $report Report instance used to log warnings
+     * @return void
      */
     protected function storeTestScaleFiles(
         Directory $testContent,
@@ -1117,7 +1123,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      * Extract scale related auxiliary files from the manifest resource while keeping other entries intact.
+     * Modifies the provided resource by removing scale-related entries from its auxiliary file list.
      *
+     * @param Resource $qtiResource The manifest resource to inspect and update
      * @return string[]
      */
     private function extractScaleAuxiliaryFiles(Resource $qtiResource): array
@@ -1161,21 +1169,28 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         return $normalized === null ? $path : $normalized;
     }
 
+    /**
+     * Determine whether a normalized path references the test-level scales directory.
+     *
+     * @param string $path Normalized auxiliary file path
+     * @return bool
+     */
     private function isScaleAuxiliaryPath(string $path): bool
     {
         $trimmed = ltrim($path, '/');
 
-        if ($trimmed === 'scales' || strpos($trimmed, 'scales/') === 0) {
+        if ($trimmed === 'scales') {
             return true;
         }
 
-        if (str_contains($trimmed, '/scales/')) {
-            return true;
-        }
-
-        return substr($trimmed, -7) === '/scales';
+        return strpos($trimmed, 'scales/') === 0;
     }
 
+    /**
+     * Retrieve the scale storage service from the locator.
+     *
+     * @return ScaleStorageService
+     */
     private function getScaleStorageService(): ScaleStorageService
     {
         return $this->getServiceLocator()->get(ScaleStorageService::class);
