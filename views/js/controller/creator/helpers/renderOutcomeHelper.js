@@ -186,6 +186,41 @@ define([
     }
 
     /**
+     * Resolve a scale entry either by manifest key or by the scale URI
+     * @param {Object} scales - Map/object of available scales
+     * @param {string} lookupValue - key or URI to resolve
+     * @returns {{key: (string|null), scale: (Object|null)}} resolved scale data
+     */
+    function resolveScaleData(scales, lookupValue) {
+        if (!lookupValue || !scales || typeof scales !== 'object') {
+            return {key: null, scale: null};
+        }
+
+        if (Object.prototype.hasOwnProperty.call(scales, lookupValue)) {
+            const scaleData = scales[lookupValue];
+            return {
+                key: lookupValue,
+                scale: (scaleData && scaleData.scale) ? scaleData.scale : null
+            };
+        }
+
+        for (const candidateKey in scales) {
+            if (!Object.prototype.hasOwnProperty.call(scales, candidateKey)) {
+                continue;
+            }
+            const scaleData = scales[candidateKey];
+            if (scaleData && scaleData.scale && scaleData.scale.uri === lookupValue) {
+                return {
+                    key: candidateKey,
+                    scale: scaleData.scale
+                };
+            }
+        }
+
+        return {key: null, scale: null};
+    }
+
+    /**
      * Create and setup scale selector for an outcome
      * @param {jQuery} $outcomeContainer - Container element for the outcome UI
      * @param {Object} outcome - Outcome declaration object (may be temporary for new outcomes)
@@ -275,16 +310,19 @@ define([
         // scales entries should have format: { scale: { uri, label, values }, rubric }
         let matchedScale = null;
         let matchedKey = null;
-        if (longInterpVal && scales && typeof scales === 'object') {
-            if (Object.prototype.hasOwnProperty.call(scales, longInterpVal)) {
-                matchedKey = longInterpVal;
-                const scaleData = scales[matchedKey];
-                // Extract the scale object from the JSON structure
-                matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
-            }
+        if (longInterpVal) {
+            const resolved = resolveScaleData(scales, longInterpVal);
+            matchedScale = resolved.scale;
+            matchedKey = resolved.key;
         }
 
-        const initUri = (matchedScale && matchedScale.uri) ? matchedScale.uri : '';
+        if (!matchedScale && outcome.scale) {
+            const resolved = resolveScaleData(scales, outcome.scale);
+            matchedScale = resolved.scale;
+            matchedKey = resolved.key;
+        }
+
+        const initialScaleUri = outcome.scale || (matchedScale && matchedScale.uri) || '';
 
         // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
         const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
@@ -339,7 +377,7 @@ define([
 
         // If needed later: exact lookup in scales can use this value
 
-        scaleSelector.createForm(initUri || '');
+        scaleSelector.createForm(initialScaleUri || '');
 
 
         // Force update of available scales to ensure Select2 is populated (covers timing/init races)
@@ -374,13 +412,13 @@ define([
         if (matchedScale && matchedKey) {
             try {
                 // Set the UI selection to the matched URI from the scale object
-                const initUri = matchedScale.uri || longInterpVal;
+                const matchedUri = matchedScale.uri || longInterpVal;
                 if (typeof scaleSelector.updateFormState === 'function') {
-                    scaleSelector.updateFormState(initUri);
+                    scaleSelector.updateFormState(matchedUri);
                 }
 
                 // Set outcome.scale to the matched scale URI (similar to how rubric is set below)
-                outcome.scale = initUri || '';
+                outcome.scale = matchedUri || '';
             } catch (err) {
                 console.warn('Failed to initialize scale selector state with matched key:', err);
             }
@@ -402,27 +440,9 @@ define([
 
             outcome.scale = scaleUri || '';
 
-            matchedScale = null;
-            matchedKey = null;
-            if (scaleUri && scales && typeof scales === 'object') {
-                if (Object.prototype.hasOwnProperty.call(scales, scaleUri)) {
-                    matchedKey = scaleUri;
-                    const scaleData = scales[matchedKey];
-                    matchedScale = (scaleData && scaleData.scale) ? scaleData.scale : null;
-                } else {
-                    for (const k in scales) {
-                        if (!Object.prototype.hasOwnProperty.call(scales, k)) {
-                            continue;
-                        }
-                        const scaleData = scales[k];
-                        if (scaleData && scaleData.scale && scaleData.scale.uri === scaleUri) {
-                            matchedKey = k;
-                            matchedScale = scaleData.scale;
-                            break;
-                        }
-                    }
-                }
-            }
+            const resolvedAfterChange = resolveScaleData(scales, scaleUri);
+            matchedKey = resolvedAfterChange.key;
+            matchedScale = resolvedAfterChange.scale;
 
             // If we found a filename key for the selected URI, persist it into the longInterpretation hidden input
             try {
