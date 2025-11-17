@@ -64,7 +64,6 @@ use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
-use Throwable;
 use taoQtiTest_models_classes_import_TestImportForm as TestImportForm;
 use taoTests_models_classes_TestsService as TestService;
 
