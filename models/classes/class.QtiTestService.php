@@ -1388,19 +1388,17 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @return array Associative array of scale data keyed by file path (scales/filename.json)
      * @throws taoQtiTest_models_classes_QtiTestServiceException If directory traversal fails
      */
-    public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test)
+    public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test): array
     {
         $dir = $this->getQtiTestDir($test);
         $scales = [];
 
-        //I want to list all files in the test scale directory
         $scaleDir = $dir->getDirectory(self::SCALE_DIRECTORY_PATH);
 
         if (!$scaleDir->exists()) {
             return $scales;
         }
 
-        //If there are any files I want to iterate over them
         foreach ($scaleDir->getIterator() as $file) {
             if ($file->getMimeType() === 'application/json') {
                 $content = $file->read();
