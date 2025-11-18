@@ -384,7 +384,7 @@ define([
 
         var modelOverseer = modelOverseerFactory(model);
 
-        assert.expect(4);
+        assert.expect(3);
 
         modelOverseer.on('scoring-init', function() {
             model.scoring.outcomeProcessing = 'grade';
