@@ -295,15 +295,15 @@ define([
                 modelOverseer.trigger('scoring-change');
             });
 
-            modelOverseer.on('scoring-write', function(writtenModel) {
+        modelOverseer.on('scoring-write', function(writtenModel) {
 
-                model = _.omit(model, 'scoring');
-                writtenModel = _.omit(writtenModel, 'scoring');
+            model = _.omit(model, 'scoring');
+            writtenModel = _.omit(writtenModel, 'scoring');
 
-                assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
-                assert.deepEqual(model, data.expected, 'The score processing has been set');
+            assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
+            assert.deepEqual(model, data.expected, 'The score processing has been set');
 
-                ready();
+            ready();
         });
 
         scoringHelper.init(modelOverseer);
