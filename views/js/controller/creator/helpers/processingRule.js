@@ -281,19 +281,14 @@ define([
         },
 
         /**
-         * Creates an `equal` rule (defaults to toleranceMode="exact")
+         * Creates an `equal` rule
          * @param {Object|Array} left - the left operand
          * @param {Object|Array} right - the right operand
-         * @param {String} [toleranceMode='exact']
          * @returns {Object}
          * @throws {TypeError} if the operands are not valid QTI elements
          */
-        equal: function equal(left, right, toleranceMode) {
-            var processingRule = binaryOperator('equal', left, right, cardinalityHelper.SAME, cardinalityHelper.SAME);
-
-            processingRule.toleranceMode = toleranceMode || 'exact';
-
-            return processingRule;
+        equal: function equal(left, right) {
+            return binaryOperator('equal', left, right, cardinalityHelper.SAME, cardinalityHelper.SAME);
         },
 
         /**

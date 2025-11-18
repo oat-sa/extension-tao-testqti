@@ -153,8 +153,12 @@ define([
         },
         grade: {
             key: 'grade',
-            signature: /^GRADE(_MAX)?$/,
+            signature: /^(GRADE(_MAX)?|SCORE)$/,
             outcomes: [
+                {
+                    writer: 'grade_score',
+                    identifier: defaultScoreIdentifier,
+                },
                 {
                     writer: 'grade',
                     identifier: 'GRADE',
@@ -334,14 +338,17 @@ define([
         },
 
         grade: function writerGrade(descriptor, scoring, outcomes) {
-            addScoreOutcome(outcomes, defaultScoreIdentifier);
-            addGradeScoreProcessing(outcomes, defaultScoreIdentifier, scoring.scalePresets);
             addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
             addGradeOutcomeMapping(outcomes, descriptor.identifier, defaultScoreIdentifier, scoring.scalePresets);
         },
 
         grade_max: function writerGradeMax(descriptor, scoring, outcomes) {
             addGradeMaxOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
+        },
+
+        grade_score: function writerGradeScore(descriptor, scoring, outcomes) {
+            addScoreOutcome(outcomes, descriptor.identifier || defaultScoreIdentifier);
+            addGradeScoreProcessing(outcomes, descriptor.identifier || defaultScoreIdentifier, scoring.scalePresets);
         }
     };
 
@@ -617,6 +624,23 @@ define([
         outcomeHelper.addOutcome(outcomes, outcome);
     }
 
+    function removeExistingScoreProcessing(outcomes, scoreIdentifier) {
+        var outcomeProcessing = outcomes.outcomeProcessing;
+
+        if (!outcomeProcessing || !_.isArray(outcomeProcessing.outcomeRules)) {
+            return;
+        }
+
+        outcomeProcessing.outcomeRules = _.filter(outcomeProcessing.outcomeRules, function(rule) {
+            return !(
+                rule['qti-type'] === 'setOutcomeValue' &&
+                rule.identifier === scoreIdentifier &&
+                rule.expression &&
+                rule.expression['qti-type'] === 'min'
+            );
+        });
+    }
+
     function addGradeOutcome(outcomes, identifier, scalePresets) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
         outcome.interpretation = getCommonScaleUri(outcomes, scalePresets);
@@ -636,16 +660,13 @@ define([
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
         outcome.interpretation = commonScaleUri;
 
-        var maxScaleLabel = getMaxScaleLabel(outcomes, scalePresets);
-        if (!maxScaleLabel) {
-            return;
-        }
+        var maxScaleValue = getMaxScaleValue(outcomes, scalePresets);
 
         outcome.defaultValue = {
             'qti-type': 'defaultValue',
             'values': [{
                 'qti-type': 'value',
-                'value': maxScaleLabel,
+                'value': maxScaleValue,
                 'baseType': baseTypeHelper.STRING
             }]
         };
@@ -671,6 +692,31 @@ define([
         return urlInterpretations[0];
     }
 
+    function getMaxScaleValue(outcomes, scalePresets) {
+        var scale = _.find(scalePresets, { uri: getCommonScaleUri(outcomes, scalePresets) });
+        if (!scale || !scale.values) {
+            return null;
+        }
+
+        var numericKeys = _.chain(scale.values)
+            .keys()
+            .map(function(key) { return Number(key); })
+            .filter(function(value) { return !_.isNaN(value); })
+            .value();
+
+        if (!numericKeys.length) {
+            return null;
+        }
+
+        var maxKey = _.max(numericKeys);
+
+        if (_.isUndefined(maxKey) || maxKey === null) {
+            return null;
+        }
+
+        return getScaleValueLabel(scale, String(maxKey));
+    }
+
     function getSelectedScale(outcomes, scalePresets) {
         var scaleUri = getCommonScaleUri(outcomes, scalePresets);
         if (!scaleUri) {
@@ -694,35 +740,6 @@ define([
         return value;
     }
 
-    function getMaxScaleLabel(outcomes, scalePresets) {
-        var scale = getSelectedScale(outcomes, scalePresets);
-
-        if (!scale || !scale.values) {
-            return null;
-        }
-
-        var keys = Object.keys(scale.values);
-        if (!keys.length) {
-            return null;
-        }
-
-        var maxKey = null;
-        _.forEach(keys, function(key) {
-            var numericKey = Number(key);
-            if (!_.isNaN(numericKey)) {
-                if (maxKey === null || numericKey > maxKey) {
-                    maxKey = numericKey;
-                }
-            }
-        });
-
-        if (maxKey === null) {
-            return null;
-        }
-
-        return getScaleValueLabel(scale, String(maxKey));
-    }
-
     function addGradeScoreProcessing(outcomes, scoreIdentifier, scalePresets) {
         var commonScaleUri = getCommonScaleUri(outcomes, scalePresets)
 
@@ -739,99 +756,77 @@ define([
             return processingRuleHelper.variable(outcome.identifier);
         });
 
-        // Create a min expression with all the variables
-        var minExpression = processingRuleHelper.min(scaleVariableExpressions);
+        removeExistingScoreProcessing(outcomes, scoreIdentifier);
 
-        // Create a setOutcomeValue rule that assigns the min to SCORE
-        var processingRule = processingRuleHelper.setOutcomeValue(
-            scoreIdentifier,
-            minExpression
-        );
+        if (scaleVariableExpressions.length) {
+            // Create a min expression with all the variables
+            var minExpression = processingRuleHelper.min(scaleVariableExpressions);
 
-        // Add the processing rule to the model
-        outcomeHelper.addOutcomeProcessing(outcomes, processingRule);
+            // Create a setOutcomeValue rule that assigns the min to SCORE
+            var processingRule = processingRuleHelper.setOutcomeValue(
+                scoreIdentifier,
+                minExpression
+            );
+
+            // Add the processing rule to the model
+            outcomeHelper.addOutcomeProcessing(outcomes, processingRule);
+        }
     }
 
 
     function addGradeOutcomeMapping(outcomes, gradeIdentifier, scoreIdentifier, scalePresets) {
         var scale = getSelectedScale(outcomes, scalePresets);
-        var conditions = [
-            { score: -1, grade: 'Not enough basis for assessment' },
-            { score: 1, grade: 'Under A1' },
-            { score: 2, grade: 'A1' },
-            { score: 3, grade: 'A2' },
-            { score: 4, grade: 'B1' },
-            { score: 5, grade: 'B2' }
-        ];
 
-        var newNestedCondition = null;
-        _.forEachRight(conditions, function(condition) {
-            var outcomeIf = processingRuleHelper.outcomeIf(
-                processingRuleHelper.equal(
-                    processingRuleHelper.variable('SCORE'),
-                    processingRuleHelper.baseValue(condition.score, baseTypeHelper.INTEGER)
-                ),
-                processingRuleHelper.setOutcomeValue(
-                    'GRADE',
-                    processingRuleHelper.baseValue(condition.grade, baseTypeHelper.STRING)
-                )
-            );
-            var outcomeElse = newNestedCondition ? processingRuleHelper.outcomeElse(newNestedCondition) : null;
-            newNestedCondition = processingRuleHelper.outcomeCondition(outcomeIf, outcomeElse);
-        });
-
-        if (scale && scale.values) {
-            var valueKeys = Object.keys(scale.values).filter(function(key) {
-                return !_.isNaN(Number(key));
-            });
-
-            if (valueKeys.length) {
-                valueKeys.sort(function(a, b) {
-                    return Number(a) - Number(b);
-                });
-
-                var nestedCondition = null;
-
-                _.forEachRight(valueKeys, function(key) {
-                    var numericValue = Number(key);
-                    var label = getScaleValueLabel(scale, key);
-
-                    if (_.isNil(label) || label === '' || _.isNaN(numericValue)) {
-                        return;
-                    }
-
-                    var baseType = Number.isInteger(numericValue) ? baseTypeHelper.INTEGER : baseTypeHelper.FLOAT;
-
-                    var equalExpression = processingRuleHelper.equal(
-                        processingRuleHelper.variable(scoreIdentifier),
-                        processingRuleHelper.baseValue(numericValue, baseType)
-                    );
-
-                    var setGradeInstruction = processingRuleHelper.setOutcomeValue(
-                        gradeIdentifier,
-                        processingRuleHelper.baseValue(label, baseTypeHelper.STRING)
-                    );
-
-                    var outcomeIf = processingRuleHelper.outcomeIf(equalExpression, setGradeInstruction);
-                    var outcomeElse = nestedCondition ? processingRuleHelper.outcomeElse(nestedCondition) : null;
-
-                    nestedCondition = processingRuleHelper.outcomeCondition(outcomeIf, outcomeElse);
-                });
-
-                if (newNestedCondition) {
-                    var lastElse = newNestedCondition;
-                    while (lastElse && lastElse.outcomeElse) {
-                        lastElse = lastElse.outcomeElse.outcomeRules[0];
-                    }
-                    if (lastElse && nestedCondition) {
-                        lastElse.outcomeElse = processingRuleHelper.outcomeElse(nestedCondition);
-                    }
-                }
-            }
+        if (!scale || !scale.values) {
+            return;
         }
 
-        if (newNestedCondition) {
-            outcomeHelper.addOutcomeProcessing(outcomes, newNestedCondition);
+        var entries = _.chain(scale.values)
+            .keys()
+            .map(function(key) {
+                var numericValue = Number(key);
+                var label = getScaleValueLabel(scale, key);
+
+                return {
+                    key: key,
+                    numericValue: numericValue,
+                    label: label
+                };
+            })
+            .filter(function(entry) {
+                return !_.isNaN(entry.numericValue) && !_.isNil(entry.label) && entry.label !== '';
+            })
+            .sortBy(function(entry) {
+                return entry.numericValue;
+            })
+            .value();
+
+        if (!entries.length) {
+            return;
+        }
+
+        var nestedCondition = null;
+
+        _.forEachRight(entries, function(entry) {
+            var baseType = Number.isInteger(entry.numericValue) ? baseTypeHelper.INTEGER : baseTypeHelper.FLOAT;
+
+            var outcomeIf = processingRuleHelper.outcomeIf(
+                processingRuleHelper.equal(
+                    processingRuleHelper.variable(scoreIdentifier),
+                    processingRuleHelper.baseValue(entry.numericValue, baseType)
+                ),
+                processingRuleHelper.setOutcomeValue(
+                    gradeIdentifier,
+                    processingRuleHelper.baseValue(entry.label, baseTypeHelper.STRING)
+                )
+            );
+
+            var outcomeElse = nestedCondition ? processingRuleHelper.outcomeElse(nestedCondition) : null;
+            nestedCondition = processingRuleHelper.outcomeCondition(outcomeIf, outcomeElse);
+        });
+
+        if (nestedCondition) {
+            outcomeHelper.addOutcomeProcessing(outcomes, nestedCondition);
         }
     }
 
