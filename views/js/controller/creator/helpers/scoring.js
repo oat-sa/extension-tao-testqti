@@ -334,6 +334,7 @@ define([
         },
 
         grade: function writerGrade(descriptor, scoring, outcomes) {
+            addScoreOutcome(outcomes, defaultScoreIdentifier);
             addGradeMinOutcomeProcessing(outcomes, descriptor.identifier, scoring.scalePresets)
             addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
         },
@@ -599,6 +600,20 @@ define([
 
         outcomeHelper.addOutcome(model, outcome);
         outcomeHelper.addOutcomeProcessing(model, processingRule);
+    }
+
+    function addScoreOutcome(outcomes, identifier) {
+        var hasScoreOutcome = _.some(outcomes.outcomeDeclarations, function(outcomeDeclaration) {
+            return outcomeHelper.getOutcomeIdentifier(outcomeDeclaration) === identifier;
+        });
+
+        if (hasScoreOutcome) {
+            return;
+        }
+
+        var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
+
+        outcomeHelper.addOutcome(outcomes, outcome);
     }
 
     function addGradeOutcome(outcomes, identifier, scalePresets) {

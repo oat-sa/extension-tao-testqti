@@ -33,6 +33,7 @@ define([
      * This is a list of outcomes that are reserved for the score processing
      */
     var reservedOutcomeDeclarations = [
+        'SCORE',
         'SCORE_TOTAL',
         'SCORE_TOTAL_MAX',
         'SCORE_TOTAL_WEIGHTED',
