@@ -21,6 +21,7 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
+    'jquery',
     'lodash',
     'i18n',
     'core/format',
@@ -28,7 +29,7 @@ define([
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/processingRule',
     'services/features'
-], function (_, __, format, baseTypeHelper, outcomeHelper, processingRuleHelper, features) {
+], function ($, _, __, format, baseTypeHelper, outcomeHelper, processingRuleHelper, features) {
     'use strict';
 
     /**
