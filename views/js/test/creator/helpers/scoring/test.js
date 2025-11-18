@@ -20,6 +20,7 @@
  */
 define([
 
+    'jquery',
     'lodash',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/modelOverseer',
@@ -38,6 +39,7 @@ define([
     'json!taoQtiTest/test/creator/samples/scoringGrade.json'
 ], function(
 
+    $,
     _,
     baseTypeHelper,
     modelOverseerFactory,
@@ -211,13 +213,15 @@ define([
         while (current && current.outcomeIf) {
             var expression = current.outcomeIf.expression || {};
             var expressions = expression.expressions || [];
-            var baseValue = expressions[1] || expressions[0] || {};
+            var scoreBaseValue = _.find(expressions, function(expr) {
+                return expr && typeof expr.value !== 'undefined';
+            }) || {};
             var setRule = current.outcomeIf.outcomeRules && current.outcomeIf.outcomeRules[0];
             var gradeBaseValue = setRule && setRule.expression ? setRule.expression.value : undefined;
 
-            if (typeof baseValue.value !== 'undefined' && typeof gradeBaseValue !== 'undefined') {
+            if (typeof scoreBaseValue.value !== 'undefined' && typeof gradeBaseValue !== 'undefined') {
                 mappings.push({
-                    score: Number(baseValue.value),
+                    score: Number(scoreBaseValue.value),
                     grade: gradeBaseValue
                 });
             }
@@ -315,7 +319,7 @@ define([
         var gradeScale = _.cloneDeep(model.scalePresets[0]);
         var modelOverseer = modelOverseerFactory(model);
 
-        assert.expect(7);
+        assert.expect(8);
 
         modelOverseer.on('scoring-init', function() {
             model.scoring.outcomeProcessing = 'grade';
@@ -380,7 +384,7 @@ define([
 
         var modelOverseer = modelOverseerFactory(model);
 
-        assert.expect(3);
+        assert.expect(4);
 
         modelOverseer.on('scoring-init', function() {
             model.scoring.outcomeProcessing = 'grade';
