@@ -30,10 +30,11 @@ define([
     });
 
     function createMockContainer() {
-        const $input = $('<input name="interpretation" />');
+        const $input = $('<input name="scale" />');
         const $container = $('<div></div>').append($input);
 
         let testValue = '';
+        let changeHandlers = [];
 
         $input.val = function(value) {
             if (arguments.length > 0) {
@@ -43,15 +44,33 @@ define([
             return testValue;
         };
 
-        $input.trigger = function() { return this; };
+        $input.trigger = function(eventName) {
+            if (eventName === 'change' || eventName === 'change.scaleSync') {
+                changeHandlers.forEach(function(handler) {
+                    handler.call($input[0]);
+                });
+            }
+            return this;
+        };
+
         $input.find = function() { return $(); };
         $input.append = function() { return this; };
         $input.select2 = function() { return this; };
         $input.hasClass = function() { return false; };
         $input.removeClass = function() { return this; };
         $input.next = function() { return $(); };
-        $input.off = function() { return this; };
-        $input.on = function() { return this; };
+        $input.off = function(eventName) {
+            if (eventName === 'change.scaleSync') {
+                changeHandlers = [];
+            }
+            return this;
+        };
+        $input.on = function(eventName, handler) {
+            if (eventName === 'change.scaleSync') {
+                changeHandlers.push(handler);
+            }
+            return this;
+        };
         $input.empty = function() { return this; };
         $input.data = function() { return null; };
         $input.length = 1;
@@ -141,7 +160,7 @@ define([
 
         assert.equal(scaleSelector.getCurrentValue(), null, 'Returns null when no value set');
 
-        $container.find('input').val('test-value');
+        $container.find('[name="scale"]').val('test-value');
         assert.equal(scaleSelector.getCurrentValue(), 'test-value', 'Returns current value');
     });
 
@@ -196,8 +215,15 @@ define([
         };
 
         scaleSelector.createForm();
-        $container.find('input').val('https://test.com/1');
-        scaleSelector.updateScale();
+
+        // Use setTimeout to ensure form is initialized
+        setTimeout(function() {
+            const $scaleInput = $container.find('[name="scale"]');
+            $scaleInput.val('https://test.com/1');
+
+            // Trigger change event to simulate user interaction
+            $scaleInput.trigger('change.scaleSync');
+        }, 50);
     });
 
     QUnit.test('destroy() - unregisters from sync manager', function(assert) {
@@ -217,7 +243,7 @@ define([
     });
 
     QUnit.test('clearSelection() - clears value and updates sync manager', function(assert) {
-        assert.expect(2);
+        assert.expect(3);
 
         scaleSelectorFactory.setTestId('test-123');
 
@@ -231,17 +257,29 @@ define([
 
         scaleSelector.createForm();
 
-        $container.find('input').val('https://test.com/1');
-        scaleSelector.updateScale(); // This will set lastKnownValue
+        // Set initial value
+        const $scaleInput = $container.find('[name="scale"]');
+        $scaleInput.val('https://test.com/1');
+
+        // Trigger change to set lastKnownValue
+        $scaleInput.trigger('change.scaleSync');
 
         const originalOnScaleChange = syncManager.onScaleChange;
+        let clearCalled = false;
 
         syncManager.onScaleChange = function(outcomeId, newScale) {
-            assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed');
-            assert.strictEqual(newScale, null, 'Scale cleared to null');
+            if (!clearCalled) {
+                clearCalled = true;
+                assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed on clear');
+                assert.strictEqual(newScale, null, 'Scale value is null after clear');
+            }
         };
 
+        // Clear selection
         scaleSelector.clearSelection();
+
+        // Verify value is cleared
+        assert.equal($scaleInput.val(), '', 'Input value is cleared');
 
         syncManager.onScaleChange = originalOnScaleChange;
     });
