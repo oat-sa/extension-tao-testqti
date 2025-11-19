@@ -1,0 +1,69 @@
+{
+  "qti-type": "assessmentTest",
+  "identifier": "TestGrade",
+  "title": "Grade scoring sample",
+  "outcomeDeclarations": [
+    {
+      "baseType": 3,
+      "cardinality": 0,
+      "externalScored": null,
+      "identifier": "GRAMMAR",
+      "interpretation": "http://www.tao.lu/Ontologies/TAO.rdf#CERF-A1-A2",
+      "longInterpretation": "",
+      "masteryValue": false,
+      "normalMaximum": false,
+      "normalMinimum": false,
+      "qti-type": "outcomeDeclaration",
+      "views": []
+    },
+    {
+      "baseType": 3,
+      "cardinality": 0,
+      "externalScored": null,
+      "identifier": "VOCABULARY",
+      "interpretation": "http://www.tao.lu/Ontologies/TAO.rdf#CERF-A1-A2",
+      "longInterpretation": "",
+      "masteryValue": false,
+      "normalMaximum": false,
+      "normalMinimum": false,
+      "qti-type": "outcomeDeclaration",
+      "views": []
+    },
+    {
+      "baseType": 3,
+      "cardinality": 0,
+      "externalScored": null,
+      "identifier": "SENSE_OF_HUMOR",
+      "interpretation": "http://www.tao.lu/Ontologies/TAO.rdf#CERF-A1-A2",
+      "longInterpretation": "",
+      "masteryValue": false,
+      "normalMaximum": false,
+      "normalMinimum": false,
+      "qti-type": "outcomeDeclaration",
+      "views": []
+    }
+  ],
+  "outcomeProcessing": {
+    "outcomeRules": []
+  },
+  "scalePresets": [
+    {
+      "uri": "http://www.tao.lu/Ontologies/TAO.rdf#CERF-A1-A2",
+      "label": "CEFR SCALE A1-A2",
+      "values": {
+        "1": "Under A1",
+        "2": "A1",
+        "3": "A2"
+      }
+    },
+    {
+      "uri": "http://www.tao.lu/Ontologies/TAO.rdf#CERF-BART-GOOD-BAD",
+      "label": "CEFR SCALE FOR BART GOOD OR BAD",
+      "values": {
+        "0": "BAD",
+        "1": "GOOD"
+      }
+    }
+  ],
+  "testParts": []
+}
