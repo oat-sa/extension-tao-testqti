@@ -20,7 +20,6 @@
  */
 define([
 
-    'jquery',
     'lodash',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/modelOverseer',
@@ -39,7 +38,6 @@ define([
     'json!taoQtiTest/test/creator/samples/scoringGrade.json'
 ], function(
 
-    $,
     _,
     baseTypeHelper,
     modelOverseerFactory,
