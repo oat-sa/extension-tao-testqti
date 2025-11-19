@@ -19,7 +19,6 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
-
     'lodash',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/modelOverseer',
