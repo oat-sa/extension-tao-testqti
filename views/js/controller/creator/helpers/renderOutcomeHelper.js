@@ -331,6 +331,12 @@ define([
                 outcome.externalScored = 'human';
             }
 
+            if (!outcome.serial) {
+                outcome.serial = getStableOutcomeId(outcome);
+            }
+
+            const serial = outcome.serial;
+
             const externalScored = {
                 none: { label: __('None'), selected: !outcome.externalScored },
                 human: { label: __('Human'), selected: outcome.externalScored === externalScoredOptions.human },
@@ -371,7 +377,7 @@ define([
             }
 
             return {
-                serial: outcome.serial || outcome.identifier || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                serial: serial,
                 identifier: outcome.identifier,
                 interpretation: interpretationValue,
                 longInterpretation: outcome.longInterpretation,
