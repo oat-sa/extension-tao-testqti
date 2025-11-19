@@ -315,6 +315,7 @@ define([
                                 creatorContext.on('save', function () {
                                     if (!$saver.hasClass('disabled')) {
                                         $saver.prop('disabled', true).addClass('disabled');
+                                        modelOverseer.trigger('scoring-change');
                                         binder.save(
                                             function () {
                                                 Promise.resolve()
