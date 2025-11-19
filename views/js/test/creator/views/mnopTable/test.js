@@ -52,17 +52,34 @@ define([
                     };
                 }
             };
+            this.view = null;
+        },
+        afterEach: function() {
+            // Destroy view instance if created
+            if (this.view && typeof this.view.destroy === 'function') {
+                this.view.destroy();
+            }
+
+            // Remove DOM container
+            if (this.$container) {
+                this.$container.remove();
+            }
+
+            // Clear references to prevent memory leaks
+            this.view = null;
+            this.$container = null;
+            this.mockModelOverseer = null;
         }
     });
 
     QUnit.test('_prepareTemplateData - basic MNOP with no categories or weights', function(assert) {
         assert.expect(5);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {Total: 10, Weighted: 10};
         var testModel = {scoring: {}};
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.ok(result.hasData, 'Should have data when Total > 0');
         assert.notOk(result.hasCategories, 'Should not have categories when categoryScore is disabled');
@@ -74,7 +91,7 @@ define([
     QUnit.test('_prepareTemplateData - MNOP with weighted scoring', function(assert) {
         assert.expect(3);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {Total: 10, Weighted: 15};
         var testModel = {
             scoring: {
@@ -82,7 +99,7 @@ define([
             }
         };
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.ok(result.hasWeighted, 'Should have weighted column when Total differs from Weighted');
         assert.equal(result.totalValue, '10.00', 'Total value should be 10.00');
@@ -92,7 +109,7 @@ define([
     QUnit.test('_prepareTemplateData - weighted scoring but values are equal', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {Total: 10, Weighted: 10};
         var testModel = {
             scoring: {
@@ -100,7 +117,7 @@ define([
             }
         };
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.notOk(result.hasWeighted, 'Should not show weighted column when values are equal');
     });
@@ -108,7 +125,7 @@ define([
     QUnit.test('_prepareTemplateData - no weightIdentifier set', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {Total: 10, Weighted: 15};
         var testModel = {
             scoring: {
@@ -116,7 +133,7 @@ define([
             }
         };
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.notOk(result.hasWeighted, 'Should not show weighted column when weightIdentifier is null');
     });
@@ -143,7 +160,7 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {
             Total: 10,
             Weighted: 10,
@@ -154,7 +171,7 @@ define([
         };
         var testModel = this.mockModelOverseer.getModel();
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.ok(result.hasCategories, 'Should have categories when categoryScore is enabled');
         assert.equal(result.categoryRows.length, 2, 'Should have 2 category rows');
@@ -186,7 +203,7 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {
             Total: 10,
             Weighted: 10,
@@ -199,7 +216,7 @@ define([
         };
         var testModel = this.mockModelOverseer.getModel();
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.equal(result.categoryRows.length, 1, 'Should only include categories with non-zero values');
         assert.equal(result.categoryRows[0].categoryName, 'math', 'Should only include math category');
@@ -228,7 +245,7 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {
             Total: 10,
             Weighted: 20,
@@ -237,7 +254,7 @@ define([
         };
         var testModel = this.mockModelOverseer.getModel();
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.ok(result.hasWeighted, 'Should show weighted column');
         assert.equal(result.categoryRows.length, 1, 'Should have 1 category row');
@@ -248,11 +265,11 @@ define([
     QUnit.test('_prepareTemplateData - empty MNOP (no data)', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {Total: 0, Weighted: 0};
         var testModel = {scoring: {}};
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.notOk(result.hasData, 'Should not have data when Total and Weighted are 0');
     });
@@ -260,7 +277,7 @@ define([
     QUnit.test('_prepareTemplateData - categoryScore disabled', function(assert) {
         assert.expect(2);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var mnop = {
             Total: 10,
             Weighted: 10,
@@ -272,7 +289,7 @@ define([
             }
         };
 
-        var result = view._prepareTemplateData(mnop, testModel);
+        var result = this.view._prepareTemplateData(mnop, testModel);
 
         assert.notOk(result.hasCategories, 'Should not have categories when disabled');
         assert.equal(result.categoryRows.length, 0, 'Category rows should be empty');
@@ -290,6 +307,23 @@ define([
                     };
                 }
             };
+            this.view = null;
+        },
+        afterEach: function() {
+            // Destroy view instance if created
+            if (this.view && typeof this.view.destroy === 'function') {
+                this.view.destroy();
+            }
+
+            // Remove DOM container
+            if (this.$container) {
+                this.$container.remove();
+            }
+
+            // Clear references to prevent memory leaks
+            this.view = null;
+            this.$container = null;
+            this.mockModelOverseer = null;
         }
     });
 
@@ -313,9 +347,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.equal(categories.length, 2, 'Should extract 2 categories');
         assert.ok(_.includes(categories, 'math'), 'Should include math');
@@ -360,9 +394,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.equal(categories.length, 3, 'Should extract categories from all nesting levels');
         assert.ok(_.includes(categories, 'math'), 'Should include math from level 1');
@@ -390,9 +424,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.equal(categories.length, 2, 'Should only include non-internal categories');
         assert.ok(_.includes(categories, 'math'), 'Should include math');
@@ -433,9 +467,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.equal(categories.length, 3, 'Should deduplicate categories (math appears 2x, science 2x)');
         var expectedCategories = ['math', 'science', 'history'];
@@ -462,9 +496,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.deepEqual(categories, [], 'Should return empty array when categoryScore is disabled');
     });
@@ -479,9 +513,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.deepEqual(categories, [], 'Should return empty array when testParts is missing');
     });
@@ -497,9 +531,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.deepEqual(categories, [], 'Should return empty array when testParts is empty');
     });
@@ -523,9 +557,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.deepEqual(categories, [], 'Should return empty array when scoring object is missing');
     });
@@ -533,7 +567,7 @@ define([
     QUnit.test('_extractSectionCategories - simple section', function(assert) {
         assert.expect(2);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var section = {
             sectionParts: [
                 {
@@ -543,7 +577,7 @@ define([
             ]
         };
 
-        var categories = view._extractSectionCategories(section);
+        var categories = this.view._extractSectionCategories(section);
 
         assert.equal(categories.length, 2, 'Should extract 2 categories');
         assert.deepEqual(_.sortBy(categories), ['algebra', 'math'], 'Should extract both categories');
@@ -552,7 +586,7 @@ define([
     QUnit.test('_extractSectionCategories - nested subsections', function(assert) {
         assert.expect(2);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var section = {
             sectionParts: [
                 {
@@ -571,7 +605,7 @@ define([
             ]
         };
 
-        var categories = view._extractSectionCategories(section);
+        var categories = this.view._extractSectionCategories(section);
 
         assert.equal(categories.length, 3, 'Should extract categories from nested sections');
         assert.deepEqual(_.sortBy(categories), ['math', 'physics', 'science'], 'Should extract all categories');
@@ -580,8 +614,8 @@ define([
     QUnit.test('_extractSectionCategories - null section returns empty', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
-        var categories = view._extractSectionCategories(null);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        var categories = this.view._extractSectionCategories(null);
 
         assert.deepEqual(categories, [], 'Should return empty array for null section');
     });
@@ -589,8 +623,8 @@ define([
     QUnit.test('_extractSectionCategories - undefined section returns empty', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
-        var categories = view._extractSectionCategories(undefined);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        var categories = this.view._extractSectionCategories(undefined);
 
         assert.deepEqual(categories, [], 'Should return empty array for undefined section');
     });
@@ -598,10 +632,10 @@ define([
     QUnit.test('_extractSectionCategories - section without sectionParts returns empty', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var section = {};
 
-        var categories = view._extractSectionCategories(section);
+        var categories = this.view._extractSectionCategories(section);
 
         assert.deepEqual(categories, [], 'Should return empty array when sectionParts is missing');
     });
@@ -609,12 +643,12 @@ define([
     QUnit.test('_extractSectionCategories - empty sectionParts returns empty', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var section = {
             sectionParts: []
         };
 
-        var categories = view._extractSectionCategories(section);
+        var categories = this.view._extractSectionCategories(section);
 
         assert.deepEqual(categories, [], 'Should return empty array when sectionParts is empty');
     });
@@ -622,7 +656,7 @@ define([
     QUnit.test('_extractSectionCategories - item without categories', function(assert) {
         assert.expect(1);
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var section = {
             sectionParts: [
                 {
@@ -632,7 +666,7 @@ define([
             ]
         };
 
-        var categories = view._extractSectionCategories(section);
+        var categories = this.view._extractSectionCategories(section);
 
         assert.deepEqual(categories, [], 'Should return empty array when items have no categories');
     });
@@ -669,9 +703,9 @@ define([
             };
         };
 
-        var view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
         var testModel = this.mockModelOverseer.getModel();
-        var categories = view._extractVisibleCategories(testModel);
+        var categories = this.view._extractVisibleCategories(testModel);
 
         assert.equal(categories.length, 2, 'Should extract categories from all test parts');
         assert.deepEqual(_.sortBy(categories), ['math', 'science'], 'Should include categories from both parts');
