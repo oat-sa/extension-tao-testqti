@@ -61,7 +61,7 @@ define([
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    featureFlags
+    mnopFeatureFlags
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -276,7 +276,7 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (featureFlags.isMNOPEnabled()) {
+            if (mnopFeatureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
