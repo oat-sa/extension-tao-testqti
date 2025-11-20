@@ -54,7 +54,8 @@ define([
             bindEvents: function() {
                 var self = this;
 
-                var updateWithInit = function() {
+                var updateWithInit = function(eventName) {
+                    console.log('[MNOP Debug] updateWithInit triggered by:', eventName);
                     var testModel = modelOverseer.getModel();
                     mnopHelper.init(testModel, {
                         getItemsMaxScores: {
@@ -68,22 +69,12 @@ define([
                     });
                 };
 
-                var simpleRender = function() {
-                    self.render();
-                };
-
-                this._reinitEvents = ['scoring-write', 'setmodel'];
-                this._renderEvents = ['change'];
+                this._reinitEvents = ['scoring-write', 'setmodel', 'change'];
 
                 this._updateHandler = _.debounce(updateWithInit, 300);
-                this._renderHandler = _.debounce(simpleRender, 300);
 
                 _.forEach(this._reinitEvents, function(eventName) {
                     modelOverseer.on(eventName, self._updateHandler);
-                });
-
-                _.forEach(this._renderEvents, function(eventName) {
-                    modelOverseer.on(eventName, self._renderHandler);
                 });
             },
 
@@ -285,14 +276,6 @@ define([
                     });
                     this._updateHandler = null;
                     this._reinitEvents = null;
-                }
-
-                if (this._renderHandler && this._renderEvents) {
-                    _.forEach(this._renderEvents, function(eventName) {
-                        modelOverseer.off(eventName, self._renderHandler);
-                    });
-                    this._renderHandler = null;
-                    this._renderEvents = null;
                 }
 
                 $container.empty();
