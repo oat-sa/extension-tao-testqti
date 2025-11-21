@@ -392,6 +392,13 @@ define([
          */
         clearCache: function clearCache() {
             this._maxScoreCache = {};
+        },
+
+        /**
+         * @returns {Object} CONSTANTS object
+         */
+        getConstants: function getConstants() {
+            return CONSTANTS;
         }
     };
 

@@ -38,10 +38,44 @@ define([
      * @param {Object} modelOverseer - Model overseer instance
      * @returns {Object} View instance
      */
-    return function mnopTableViewFactory($container, element, modelOverseer) {
-        return {
+    return function mnopTableViewFactory($container, element, modelOverseer, config) {
+        var MNOP_CONSTANTS = mnopHelper.getConstants();
+        var METRICS = MNOP_CONSTANTS.METRICS;
+
+        var viewInstance = {
+            _updateHandler: null,
+            _config: config || {},
+
             init: function() {
                 this.render();
+                this.bindEvents();
+            },
+
+            bindEvents: function() {
+                var self = this;
+
+                var updateWithInit = function(eventName) {
+                    console.log('[MNOP Debug] updateWithInit triggered by:', eventName);
+                    var testModel = modelOverseer.getModel();
+                    mnopHelper.init(testModel, {
+                        getItemsMaxScores: {
+                            url: self._config.getItemsMaxScoresUrl
+                        }
+                    }).then(function() {
+                        self.render();
+                    }).catch(function(err) {
+                        console.error('Failed to reinitialize MNOP helper:', err);
+                        self.render();
+                    });
+                };
+
+                this._reinitEvents = ['scoring-write', 'setmodel', 'change'];
+
+                this._updateHandler = _.debounce(updateWithInit, 300);
+
+                _.forEach(this._reinitEvents, function(eventName) {
+                    modelOverseer.on(eventName, self._updateHandler);
+                });
             },
 
             render: function() {
@@ -72,7 +106,7 @@ define([
                 var hasCategoryScore = testModel.scoring && testModel.scoring.categoryScore === true;
                 var weightIdentifier = testModel.scoring && testModel.scoring.weightIdentifier || null;
 
-                if (weightIdentifier && mnop.Weighted !== mnop.Total) {
+                if (weightIdentifier && mnop[METRICS.WEIGHTED] !== mnop[METRICS.TOTAL]) {
                     hasWeighted = true;
                 }
 
@@ -80,8 +114,8 @@ define([
                     var visibleCategories = this._extractVisibleCategories(testModel);
 
                     _.forEach(visibleCategories, function(category) {
-                        var totalKey = 'Category_' + category;
-                        var weightedKey = 'Weighted_Category_' + category;
+                        var totalKey = METRICS.CATEGORY_PREFIX + category;
+                        var weightedKey = METRICS.WEIGHTED_CATEGORY_PREFIX + category;
                         var totalValue = mnop[totalKey] || 0;
                         var weightedValue = mnop[weightedKey] || 0;
 
@@ -96,12 +130,12 @@ define([
                 }
 
                 return {
-                    hasData: mnop && (mnop.Total > 0 || mnop.Weighted > 0),
+                    hasData: mnop && (mnop[METRICS.TOTAL] > 0 || mnop[METRICS.WEIGHTED] > 0),
                     hasCategories: hasCategoryScore && categoryRows.length > 0,
                     hasWeighted: hasWeighted,
                     categoryRows: categoryRows,
-                    totalValue: (mnop.Total || 0).toFixed(2),
-                    weightedValue: (mnop.Weighted || 0).toFixed(2)
+                    totalValue: (mnop[METRICS.TOTAL] || 0).toFixed(2),
+                    weightedValue: (mnop[METRICS.WEIGHTED] || 0).toFixed(2)
                 };
             },
 
@@ -149,8 +183,12 @@ define([
              * @private
              */
             _computeMNOP: function(model, modelOverseer) {
+                var emptyMNOP = {};
+                emptyMNOP[METRICS.TOTAL] = 0;
+                emptyMNOP[METRICS.WEIGHTED] = 0;
+
                 if (!model) {
-                    return {Total: 0, Weighted: 0};
+                    return emptyMNOP;
                 }
 
                 var testModel = modelOverseer.getModel();
@@ -165,7 +203,7 @@ define([
                     return mnopHelper.computeSectionMNOP(model, weightIdentifier, visibleCategories);
                 }
 
-                return {Total: 0, Weighted: 0};
+                return emptyMNOP;
             },
 
             /**
@@ -230,8 +268,19 @@ define([
             },
 
             destroy: function() {
+                var self = this;
+
+                if (this._updateHandler && this._reinitEvents) {
+                    _.forEach(this._reinitEvents, function(eventName) {
+                        modelOverseer.off(eventName, self._updateHandler);
+                    });
+                    this._updateHandler = null;
+                    this._reinitEvents = null;
+                }
+
                 $container.empty();
             }
         };
+        return viewInstance;
     };
 });

@@ -284,12 +284,16 @@ define([
                 hider.show($mnopSection);
 
                 if ($mnopContainer.length) {
+                    const mnopConfig = {
+                        getItemsMaxScoresUrl: config.routes && config.routes.getItemsMaxScores
+                    };
+
                     mnopHelper.init(testModel, {
                         getItemsMaxScores: {
-                            url: config.routes && config.routes.getItemsMaxScores
+                            url: mnopConfig.getItemsMaxScoresUrl
                         }
                     }).then(function() {
-                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer);
+                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer, mnopConfig);
                         mnopView.init();
 
                         propView.mnopView = mnopView;
