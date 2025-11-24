@@ -96,7 +96,7 @@ define([
         const ns = '.branchOptions-sync';
         const debouncedRefresh = _.debounce(() => refreshBranchRulesOptions(modelOverseer), 0);
 
-        // DELETE / UNDO DELETE happen on the .testparts container
+        // DELETE / UNDO DELETE: happen on the .testparts container
         $('.testparts')
             .off(`deleted.deleter${ns} undo.deleter${ns}`)
             .on(`deleted.deleter${ns} undo.deleter${ns}`, function () {
@@ -104,7 +104,7 @@ define([
             debouncedRefresh();
             });
 
-        // RENAME (identifier change) already works for you, but make it global + namespaced
+        // RENAME: (identifier change) already works for you, but make it global + namespaced
         $(document)
             .off(`change.binder${ns}`)
             .on(`change.binder${ns}`, (e, changedModel) => {
@@ -114,6 +114,12 @@ define([
             }
             });
 
+        // OUTCOME: Also bind outcomeDeclaration changes to refresh branch options
+        if (typeof outcome.setChangeNotifier === 'function') {
+            outcome.setChangeNotifier(function () {
+                refreshBranchRulesOptions(modelOverseer);
+            });
+        }
         })();
 
         const $title = $('.test-creator-test > h1 [data-bind=title]');
@@ -229,11 +235,11 @@ define([
 
                 const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
 
-                if (!Array.isArray(testModel.outcomeDeclarations)) {
-                    testModel.outcomeDeclarations = [];
-                }
+                // Add to model through helper (fires notifier if present)
+                outcome.addOutcome(testModel, newOutcome);
 
-                testModel.outcomeDeclarations.push(newOutcome);
+                // Refresh variables list used by branch editor
+                refreshBranchRulesOptions(modelOverseer);
 
                 // Re-render the outcome declarations
                 renderOutcomeDeclarationList(testModel, $view);
@@ -298,6 +304,22 @@ define([
                 }
             });
 
+            $(document)
+            .off('change.binder.branchOutcomes')
+            .on('change.binder.branchOutcomes', function (e, changedModel) {
+                if (e.namespace !== 'binder') return;
+                if (changedModel && changedModel['qti-type'] === 'outcomeDeclaration') {
+                refreshBranchRulesOptions(modelOverseer);
+                }
+            });
+
+            $(document)
+            .off('deleted.deleter.branchOutcomes undo.deleter.branchOutcomes', '.outcome-declarations-manual')
+            .on('deleted.deleter.branchOutcomes undo.deleter.branchOutcomes', '.outcome-declarations-manual', function () {
+                // Let the binder finish removing/restoring first
+                setTimeout(() => refreshBranchRulesOptions(modelOverseer), 0);
+            });
+
             $view.on('change.binder.branchOptions', (e, changedModel) => {
                 if (e.namespace !== 'binder') return;
                 if (changedModel && changedModel['qti-type'] === 'testPart') {
@@ -305,7 +327,10 @@ define([
                 }
             });
 
-            modelOverseer.on('scoring-write', updateOutcomes);
+            modelOverseer.on('scoring-write', () => {
+                updateOutcomes();
+                refreshBranchRulesOptions(modelOverseer); // outcomes may have changed
+            });
             changeScoring(testModel.scoring);
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
