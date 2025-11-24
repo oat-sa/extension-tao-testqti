@@ -24,7 +24,6 @@ define([
     'lodash',
     'i18n',
     'ui/feedback',
-    'taoQtiTest/controller/creator/helpers/baseType',
     'core/databindcontroller',
     'services/translation',
     'taoQtiTest/controller/creator/qtiTestCreator',
@@ -47,14 +46,14 @@ define([
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection',
-    'taoQtiTest/controller/creator/helpers/scaleSelector'
+    'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiTest/controller/creator/helpers/branchRules'
 ], function (
     module,
     $,
     _,
     __,
     feedback,
-    baseTypeHelper,
     DataBindController,
     translationService,
     qtiTestCreatorFactory,
@@ -77,7 +76,8 @@ define([
     previewerFactory,
     loggerFactory,
     subsectionView,
-    scaleSelector
+    scaleSelector,
+    branchRules
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -225,7 +225,7 @@ define([
                         },
                         templates: templates,
                         beforeSave(model) {
-                            serializeBranchRulesToQti(model);
+                            branchRules.serializeModel(model);
                             //ensure the qti-type is present
                             qtiTestHelper.addMissingQtiType(model);
 
@@ -238,119 +238,12 @@ define([
                             } catch (err) {
                                 $saver.attr('disabled', false).removeClass('disabled');
                                 feedback().error(`${__('The test has not been saved.')} + ${err}`);
-                                normalizeBranchRulesFromQti(model);
+                                branchRules.normalizeModel(model);
                                 return false;
                             }
                             return true;
                         }
                     });
-
-                    // maybe need to move somewhere else later
-
-                    // --- Branch Rules <-> QTI conversion helpers ---
-                    const _opToQti = {
-                        lt:  'lt',
-                        lte: 'lte',
-                        eq:  'equal', // if your engine expects 'eq' instead, switch this
-                        gt:  'gt',
-                        gte: 'gte'
-                    };
-
-                    const _qtiToOp = {
-                        lt:   'lt',
-                        lte:  'lte',
-                        eq:   'eq',
-                        equal:'eq',
-                        gt:   'gt',
-                        gte:  'gte'
-                    };
-
-                    // Build a QTI branchRule object from a flat row used by the UI table
-                    function buildQtiBranchRule(row) {
-                        const op = _opToQti[row.operator] || 'lt';
-
-                        let n = Number(row.value);
-                        if (!Number.isFinite(n)) n = 0;
-
-                        const type = Number.isInteger(n) ? baseTypeHelper.INTEGER : baseTypeHelper.FLOAT;
-                        const baseType = baseTypeHelper.getValid(type, baseTypeHelper.FLOAT);
-
-                        return {
-                            'qti-type': 'branchRule',
-                            target: row.target || '',
-                            expression: {
-                                'qti-type': op,
-                                expressions: [
-                                    {
-                                        'qti-type': 'variable',
-                                        identifier: row.variable || '',
-                                    },
-                                    {
-                                        'qti-type': 'baseValue',
-                                        baseType,
-                                        value: n
-                                    }
-                                ]
-                            }
-                        };
-                    }
-
-                    // Parse a QTI branchRule object back into a flat row for the UI
-                    function parseQtiBranchRule(qtiRule) {
-                        const expr      = qtiRule && qtiRule.expression || {};
-                        const op        = _qtiToOp[(expr && expr['qti-type']) || 'lt'] || 'lt';
-                        const parts     = (expr && expr.expressions) || [];
-                        const varExpr   = parts.find(p => p && p['qti-type'] === 'variable') || {};
-                        const valueExpr = parts.find(p => p && p['qti-type'] === 'baseValue') || {};
-
-                        // baseValue value might come as string; coerce to number if possible
-                        const raw = valueExpr.value;
-                        const num = raw === '' || raw === undefined ? 0 : Number(raw);
-                        const value = Number.isFinite(num) ? num : 0;
-
-                        return {
-                            target:   qtiRule.target || '',
-                            variable: varExpr.identifier || '',
-                            operator: op,
-                            value,
-                            // keep original for potential advanced editor actions / diff
-                            __qti: qtiRule
-                        };
-                    }
-
-                    // Normalize the whole model on LOAD: convert each testPart's QTI branchRules -> flat rows
-                    function normalizeBranchRulesFromQti(testModel) {
-                        if (!testModel || !Array.isArray(testModel.testParts)) return;
-
-                        testModel.testParts.forEach(tp => {
-                            if (!tp) return;
-
-                            // If it's already flat rows (user navigated back), leave it
-                            if (!Array.isArray(tp.branchRules)) {
-                                tp.branchRules = [];
-                                return;
-                            }
-
-                            if (tp.branchRules.length && tp.branchRules[0] && tp.branchRules[0]['qti-type']) {
-                                // Convert only if the first entry looks like a QTI object
-                                tp.branchRules = tp.branchRules.map(parseQtiBranchRule);
-                            }
-                        });
-                    }
-
-                    // Serialize the model on SAVE: convert each testPart's flat rows -> QTI branchRules
-                    function serializeBranchRulesToQti(testModel) {
-                        if (!testModel || !Array.isArray(testModel.testParts)) return;
-
-                        testModel.testParts.forEach(tp => {
-                            if (!tp || !Array.isArray(tp.branchRules)) return;
-
-                            // If already in QTI shape (e.g., re-save w/out edits), keep it
-                            if (tp.branchRules.length && tp.branchRules[0] && tp.branchRules[0]['qti-type']) return;
-
-                            tp.branchRules = tp.branchRules.map(buildQtiBranchRule);
-                        });
-                    }
 
                     //set up the databinder
                     const binder = DataBindController.takeControl($container, binderOptions).get(model => {
@@ -403,7 +296,9 @@ define([
                                 creatorContext.setTestModel(model);
                                 modelOverseer = creatorContext.getModelOverseer();
 
-                                normalizeBranchRulesFromQti(model);
+                                branchRules.normalizeModel(model);
+                                branchRules.refreshOptions(modelOverseer);
+                                branchRules.bindSync(modelOverseer);
 
                                 //detect the scoring mode
                                 scoringHelper.init(modelOverseer);
@@ -453,12 +348,12 @@ define([
 
                                                         feedback().success(__('Test Saved'));
                                                         isTestContainsItems();
-                                                        normalizeBranchRulesFromQti(creatorContext.getModelOverseer().getModel());
+                                                        branchRules.normalizeModel(creatorContext.getModelOverseer().getModel());
                                                         creatorContext.trigger('saved');
                                                     });
                                             },
                                             function () {
-                                                normalizeBranchRulesFromQti(creatorContext.getModelOverseer().getModel());
+                                                branchRules.normalizeModel(creatorContext.getModelOverseer().getModel());
                                                 $saver.prop('disabled', false).removeClass('disabled');
                                             }
                                         );

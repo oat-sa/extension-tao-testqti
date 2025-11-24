@@ -20,7 +20,6 @@
  */
 define([
     'jquery',
-    'lodash',
     'i18n',
     'context',
     'ui/hider',
@@ -39,10 +38,10 @@ define([
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
-    'taoQtiTest/controller/creator/helpers/featureFlags'
+    'taoQtiTest/controller/creator/helpers/featureFlags',
+    'taoQtiTest/controller/creator/helpers/branchRules'
 ], function (
     $,
-    _,
     __,
     context,
     hider,
@@ -61,7 +60,8 @@ define([
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    mnopFeatureFlags
+    featureFlags,
+    branchRules
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -80,47 +80,17 @@ define([
         //add feature visibility properties to testModel
         featureVisibility.addTestVisibilityProps(testModel);
 
-        const { featureFlags } = context;
-        if (featureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
+        const { featureFlags: ctxFeatureFlags } = context;
+        if (ctxFeatureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
             testModel.readonlyTestIdentifier = true;
         }
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
         addTestPart();
-        // build options for branch rules editor
-        refreshBranchRulesOptions(modelOverseer);
 
-        // keep branchOptions in sync with add / delete / undo-delete / rename
-        (function bindBranchOptionRefreshers() {
-        const ns = '.branchOptions-sync';
-        const debouncedRefresh = _.debounce(() => refreshBranchRulesOptions(modelOverseer), 0);
-
-        // DELETE / UNDO DELETE: happen on the .testparts container
-        $('.testparts')
-            .off(`deleted.deleter${ns} undo.deleter${ns}`)
-            .on(`deleted.deleter${ns} undo.deleter${ns}`, function () {
-            // wait one tick so the databinder removes the model entry first
-            debouncedRefresh();
-            });
-
-        // RENAME: (identifier change) already works for you, but make it global + namespaced
-        $(document)
-            .off(`change.binder${ns}`)
-            .on(`change.binder${ns}`, (e, changedModel) => {
-            if (e.namespace !== 'binder') return;
-            if (changedModel && changedModel['qti-type'] === 'testPart' && typeof changedModel.identifier === 'string') {
-                debouncedRefresh();
-            }
-            });
-
-        // OUTCOME: Also bind outcomeDeclaration changes to refresh branch options
-        if (typeof outcome.setChangeNotifier === 'function') {
-            outcome.setChangeNotifier(function () {
-                refreshBranchRulesOptions(modelOverseer);
-            });
-        }
-        })();
+        branchRules.refreshOptions(modelOverseer);
+        branchRules.bindSync(modelOverseer);
 
         const $title = $('.test-creator-test > h1 [data-bind=title]');
         let titleFormat = '%title%';
@@ -238,8 +208,8 @@ define([
                 // Add to model through helper (fires notifier if present)
                 outcome.addOutcome(testModel, newOutcome);
 
-                // Refresh variables list used by branch editor
-                refreshBranchRulesOptions(modelOverseer);
+                // Refresh branch options in case new outcome affects them
+                branchRules.refreshOptions(modelOverseer);
 
                 // Re-render the outcome declarations
                 renderOutcomeDeclarationList(testModel, $view);
@@ -304,38 +274,15 @@ define([
                 }
             });
 
-            $(document)
-            .off('change.binder.branchOutcomes')
-            .on('change.binder.branchOutcomes', function (e, changedModel) {
-                if (e.namespace !== 'binder') return;
-                if (changedModel && changedModel['qti-type'] === 'outcomeDeclaration') {
-                refreshBranchRulesOptions(modelOverseer);
-                }
-            });
-
-            $(document)
-            .off('deleted.deleter.branchOutcomes undo.deleter.branchOutcomes', '.outcome-declarations-manual')
-            .on('deleted.deleter.branchOutcomes undo.deleter.branchOutcomes', '.outcome-declarations-manual', function () {
-                // Let the binder finish removing/restoring first
-                setTimeout(() => refreshBranchRulesOptions(modelOverseer), 0);
-            });
-
-            $view.on('change.binder.branchOptions', (e, changedModel) => {
-                if (e.namespace !== 'binder') return;
-                if (changedModel && changedModel['qti-type'] === 'testPart') {
-                    refreshBranchRulesOptions(modelOverseer);
-                }
-            });
-
             modelOverseer.on('scoring-write', () => {
                 updateOutcomes();
-                refreshBranchRulesOptions(modelOverseer); // outcomes may have changed
+                branchRules.refreshOptions(modelOverseer);
             });
             changeScoring(testModel.scoring);
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (mnopFeatureFlags.isMNOPEnabled()) {
+            if (featureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
@@ -426,9 +373,8 @@ define([
                         testPartView.setUp(creatorContext, partModel, $testPart);
                         // set index for new section
                         actions.updateTitleIndex($('.section', $testPart));
-
-                        // refresh options after adding a part
-                        refreshBranchRulesOptions(modelOverseer);
+                        // make the new test part appear in Branch targets immediately
+                        branchRules.refreshOptions(modelOverseer);
 
                         /**
                          * @event modelOverseer#part-add
@@ -437,54 +383,6 @@ define([
                         modelOverseer.trigger('part-add', partModel);
                     }
                 });
-        }
-
-        function buildGlobalBranchOptions(testModel) {
-            const targets = [
-                ...(testModel.testParts || []).map(tp => ({
-                    value: tp.identifier,
-                    label: tp.identifier
-                })),
-                { value: 'EXIT_TEST', label: 'End of the test' }
-            ];
-
-            const variables = (testModel.outcomeDeclarations || []).map(o => ({
-                value: o.identifier,
-                label: o.identifier
-            }));
-
-            // operators are static – keep them here once
-            const operators = [
-                { value: 'lt',  label: '<' },
-                { value: 'lte', label: '≤' },
-                { value: 'eq',  label: '=' },
-                { value: 'gt',  label: '>' },
-                { value: 'gte', label: '≥' }
-            ];
-
-            return { targets, variables, operators };
-        }
-
-        function refreshBranchRulesOptions(modelOverseer) {
-            const testModel = modelOverseer.getModel();
-            const config = modelOverseer.getConfig();
-
-            const next = buildGlobalBranchOptions(testModel);
-            const prev = config.branchOptions;
-
-            // dumb compare to avoid noisy re-renders
-            const changed =
-                !prev ||
-                prev.targets.length !== next.targets.length ||
-                prev.variables.length !== next.variables.length ||
-                prev.operators.length !== next.operators.length ||
-                prev.targets.some((t, i) => !next.targets[i] || next.targets[i].value !== t.value) ||
-                prev.variables.some((v, i) => !next.variables[i] || next.variables[i].value !== v.value);
-
-            if (changed) {
-                config.branchOptions = next;              // store in config (not persisted to QTI)
-                modelOverseer.trigger('branch-options-update'); // tell panels to re-render selects
-            }
         }
     }
 
