@@ -403,7 +403,7 @@ define([
          * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
          */
         generate: function generate(modelOverseer) {
-            var model, scoring, outcomes, outcomeRecipe, recipes, categories;
+            var model, scoring, outcomes, outcomeRecipe, recipes, categories, config;
 
             if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
                 throw new TypeError('You must provide a valid modelOverseer');
@@ -411,11 +411,12 @@ define([
 
             model = modelOverseer.getModel();
             scoring = model.scoring;
+            config = modelOverseer.getConfig();
             outcomes = getOutcomes(model);
 
             // write the score processing mode by generating the outcomes variables, but only if the mode has been set
             if (scoring) {
-                scoring.scalePresets = model.scalePresets;
+                scoring.scalePresets = model.scalePresets || config.scalePresets || [];
                 outcomeRecipe = outcomesRecipes[scoring.outcomeProcessing];
                 if (outcomeRecipe) {
                     if (outcomeRecipe.clean) {
