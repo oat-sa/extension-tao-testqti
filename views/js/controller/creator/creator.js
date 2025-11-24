@@ -130,7 +130,6 @@ define([
             options.labels = options.labels || {};
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.scalesPresets = options.scalesPresets || [];
-            options.testScales = options.testScales || [];
             options.guidedNavigation = options.guidedNavigation === true;
             options.translation = options.translation === true;
 
@@ -287,8 +286,7 @@ define([
                                     labels: options.labels,
                                     routes: options.routes,
                                     guidedNavigation: options.guidedNavigation,
-                                    scalePresets: options.scalesPresets,
-                                    testScales: options.testScales
+                                    scalePresets: options.scalesPresets
                                 });
 
                                 creatorContext.setTestModel(model);
