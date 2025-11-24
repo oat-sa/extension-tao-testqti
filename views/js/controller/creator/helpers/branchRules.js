@@ -1,23 +1,44 @@
 define([
   'jquery',
   'lodash',
+  'i18n',
   'taoQtiTest/controller/creator/helpers/baseType'
-], function ($, _, baseTypeHelper) {
+], function ($, _, __, baseTypeHelper) {
   'use strict';
 
-  // ---------- operator maps ----------
+  /**
+   * Operator mappings between UI short codes and QTI operator names.
+   * @type {Object<string,string>}
+   */
   const opToQti = { lt: 'lt', lte: 'lte', eq: 'equal', gt: 'gt', gte: 'gte' };
+
+  /**
+   * Reverse mapping from QTI operator to UI short codes.
+   * @type {Object<string,string>}
+   */
   const qtiToOp = { lt: 'lt', lte: 'lte', eq: 'eq', equal: 'eq', gt: 'gt', gte: 'gte' };
 
-  // ---------- guards ----------
+  /**
+   * Check whether a given node is a QTI BranchRule element.
+   * @param {*} node - Any node to inspect.
+   * @returns {boolean} True if node represents a QTI branchRule.
+   */
   function isQtiBranchRule(node) {
     return node && typeof node === 'object' && node['qti-type'] === 'branchRule';
   }
 
-  // ---------- converters ----------
+  /**
+   * Convert a UI branch rule row into a QTI-compatible branchRule object.
+   *
+   * @param {Object} row - The flat UI rule object.
+   * @param {string} row.target - The target testPart identifier.
+   * @param {string} row.variable - The variable (outcome identifier).
+   * @param {string} row.operator - The operator code (lt, lte, eq, gt, gte).
+   * @param {number|string} row.value - The comparison value.
+   * @returns {Object} A QTI branchRule object ready for serialization.
+   */
   function buildQtiBranchRule(row) {
     const op = opToQti[row.operator] || 'lt';
-
     let n = Number(row.value);
     if (!Number.isFinite(n)) n = 0;
 
@@ -37,12 +58,18 @@ define([
     };
   }
 
+  /**
+   * Parse a QTI branchRule into a flat UI row structure.
+   *
+   * @param {Object} qtiRule - The QTI branchRule node.
+   * @returns {Object} The normalized UI branch rule row.
+   */
   function parseQtiBranchRule(qtiRule) {
     const expr = (qtiRule && qtiRule.expression) || {};
     const op = qtiToOp[expr['qti-type']] || 'lt';
     const parts = expr.expressions || [];
 
-    const varExpr   = parts.find(p => p && p['qti-type'] === 'variable')   || {};
+    const varExpr = parts.find(p => p && p['qti-type'] === 'variable') || {};
     const valueExpr = parts.find(p => p && p['qti-type'] === 'baseValue') || {};
 
     const raw = valueExpr.value;
@@ -50,7 +77,7 @@ define([
     const value = Number.isFinite(num) ? num : 0;
 
     return {
-      target:   qtiRule.target || '',
+      target: qtiRule.target || '',
       variable: varExpr.identifier || '',
       operator: op,
       value,
@@ -58,7 +85,12 @@ define([
     };
   }
 
-  // ---------- normalize/serialize the whole model ----------
+  /**
+   * Convert all QTI-formatted branchRules within a test model
+   * into UI-friendly flat objects (used on load or re-entry).
+   *
+   * @param {Object} testModel - The assessment test model.
+   */
   function normalizeModel(testModel) {
     if (!testModel || !Array.isArray(testModel.testParts)) return;
 
@@ -76,24 +108,33 @@ define([
     });
   }
 
+  /**
+   * Serialize all UI-formatted branchRules in a test model
+   * back to QTI branchRule objects (used before save).
+   *
+   * @param {Object} testModel - The assessment test model.
+   */
   function serializeModel(testModel) {
     if (!testModel || !Array.isArray(testModel.testParts)) return;
 
     testModel.testParts.forEach(tp => {
       if (!tp || !Array.isArray(tp.branchRules)) return;
-
-      // Already QTI? leave as is.
       if (tp.branchRules.length && isQtiBranchRule(tp.branchRules[0])) return;
-
       tp.branchRules = tp.branchRules.map(buildQtiBranchRule);
     });
   }
 
-  // ---------- options (targets/variables/operators) ----------
+  /**
+   * Build global branch rule options (targets, variables, operators)
+   * based on the current test model.
+   *
+   * @param {Object} testModel - The full test model.
+   * @returns {Object} branchOptions containing targets, variables, operators arrays.
+   */
   function buildGlobalBranchOptions(testModel) {
     const targets = [
       ...(testModel.testParts || []).map(tp => ({ value: tp.identifier, label: tp.identifier })),
-      { value: 'EXIT_TEST', label: 'End of the test' }
+      { value: 'EXIT_TEST', label: __('End of the test') }
     ];
 
     const variables = (testModel.outcomeDeclarations || [])
@@ -110,6 +151,13 @@ define([
     return { targets, variables, operators };
   }
 
+  /**
+   * Refresh and broadcast global branch options if they changed.
+   * Triggers 'branch-options-update' on modelOverseer when updated.
+   *
+   * @param {Object} modelOverseer - The test creator model overseer.
+   * @returns {Object} The updated branchOptions configuration.
+   */
   function refreshOptions(modelOverseer) {
     const cfg = modelOverseer.getConfig();
     const mdl = modelOverseer.getModel();
@@ -133,27 +181,32 @@ define([
     return cfg.branchOptions;
   }
 
+  /**
+   * Bind live synchronization of branch options with model changes.
+   * Handles adds, deletes, renames, and outcome updates.
+   *
+   * @param {Object} modelOverseer - The model overseer instance to observe.
+   */
   function bindSync(modelOverseer) {
     const ns = '.branchOptions-sync';
     const debounced = _.debounce(() => refreshOptions(modelOverseer), 0);
 
     // testPart add (adder fires add.binder on .testparts)
     $(document)
-    .off(`add.binder${ns}`, '.testparts')
-    .on(`add.binder${ns}`, '.testparts', function (e, $node /*, added */) {
+      .off(`add.binder${ns}`, '.testparts')
+      .on(`add.binder${ns}`, '.testparts', function (e, $node /* , added */) {
         if (e.namespace !== 'binder') return;
         if ($node && $node.hasClass('testpart')) {
-        // let binder update the model first, then refresh
-        setTimeout(debounced, 0);
+          setTimeout(debounced, 0);
         }
-    });
+      });
 
-    // testPart delete/undo
+    // testPart delete / undo
     $('.testparts')
       .off(`deleted.deleter${ns} undo.deleter${ns}`)
       .on(`deleted.deleter${ns} undo.deleter${ns}`, debounced);
 
-    // testPart rename (identifier changed by binder)
+    // testPart rename (identifier change)
     $(document)
       .off(`change.binder${ns}`)
       .on(`change.binder${ns}`, (e, model) => {
@@ -161,7 +214,7 @@ define([
         if (model && model['qti-type'] === 'testPart') debounced();
       });
 
-    // outcomes add/rename (binder change)
+    // outcome add / rename
     $(document)
       .off(`change.binder.branchOutcomes${ns}`)
       .on(`change.binder.branchOutcomes${ns}`, (e, model) => {
@@ -169,7 +222,7 @@ define([
         if (model && model['qti-type'] === 'outcomeDeclaration') debounced();
       });
 
-    // outcomes delete/undo (deleter)
+    // outcome delete / undo
     $(document)
       .off(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual')
       .on(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual', () => {
@@ -179,14 +232,17 @@ define([
 
   // ---------- public API ----------
   return {
-    // conversions
+    /** Convert all QTI branch rules in the model to flat rows. */
     normalizeModel,
+    /** Convert all flat branch rules in the model to QTI objects. */
     serializeModel,
+    /** Build a single QTI branchRule from a flat row. */
     buildQtiBranchRule,
+    /** Parse a single QTI branchRule into a flat row. */
     parseQtiBranchRule,
-
-    // options
+    /** Refresh global branch options from the model. */
     refreshOptions,
+    /** Bind event listeners to auto-refresh branch options. */
     bindSync
   };
 });
