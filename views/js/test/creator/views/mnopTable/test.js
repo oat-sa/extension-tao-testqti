@@ -710,4 +710,129 @@ define([
         assert.equal(categories.length, 2, 'Should extract categories from all test parts');
         assert.deepEqual(_.sortBy(categories), ['math', 'science'], 'Should include categories from both parts');
     });
+
+    QUnit.module('Reactive Update System (T8)', {
+        beforeEach: function() {
+            this.$container = $('<div>');
+            this.mockModelOverseer = {
+                getModel: function() {
+                    return {
+                        scoring: {outcomeProcessing: 'total'},
+                        testMeta: {branchRules: false},
+                        testParts: []
+                    };
+                },
+                on: function() {},
+                off: function() {}
+            };
+            this.view = null;
+        },
+        afterEach: function() {
+            if (this.view && typeof this.view.destroy === 'function') {
+                this.view.destroy();
+            }
+            if (this.$container) {
+                this.$container.remove();
+            }
+            this.view = null;
+            this.$container = null;
+            this.mockModelOverseer = null;
+        }
+    });
+
+    QUnit.test('init() calls render() and bindEvents()', function(assert) {
+        assert.expect(2);
+
+        var renderCalled = false;
+        var bindEventsCalled = false;
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+
+        // Spy on methods
+        var originalRender = this.view.render;
+        var originalBindEvents = this.view.bindEvents;
+
+        this.view.render = function() {
+            renderCalled = true;
+            return originalRender.call(this);
+        };
+
+        this.view.bindEvents = function() {
+            bindEventsCalled = true;
+            return originalBindEvents.call(this);
+        };
+
+        this.view.init();
+
+        assert.ok(renderCalled, 'render() should be called during init');
+        assert.ok(bindEventsCalled, 'bindEvents() should be called during init');
+    });
+
+    QUnit.test('bindEvents() subscribes to setmodel and scoring-write events', function(assert) {
+        assert.expect(2);
+
+        var eventsSubscribed = [];
+
+        this.mockModelOverseer.on = function(eventName, handler) {
+            eventsSubscribed.push(eventName);
+        };
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view.bindEvents();
+
+        assert.ok(eventsSubscribed.indexOf('setmodel') !== -1, 'Should subscribe to setmodel event');
+        assert.ok(eventsSubscribed.indexOf('scoring-write') !== -1, 'Should subscribe to scoring-write event');
+    });
+
+    QUnit.test('bindEvents() creates debounced update handler', function(assert) {
+        assert.expect(2);
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view.bindEvents();
+
+        assert.ok(this.view._updateHandler, '_updateHandler should be created');
+        assert.equal(typeof this.view._updateHandler, 'function', '_updateHandler should be a function');
+    });
+
+    QUnit.test('destroy() unbinds event listeners', function(assert) {
+        assert.expect(2);
+
+        var eventsUnsubscribed = [];
+
+        this.mockModelOverseer.off = function(eventName, handler) {
+            eventsUnsubscribed.push(eventName);
+        };
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view.bindEvents();
+        this.view.destroy();
+
+        assert.ok(eventsUnsubscribed.indexOf('setmodel') !== -1, 'Should unsubscribe from setmodel event');
+        assert.ok(eventsUnsubscribed.indexOf('scoring-write') !== -1, 'Should unsubscribe from scoring-write event');
+    });
+
+    QUnit.test('destroy() clears update handler', function(assert) {
+        assert.expect(2);
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view.bindEvents();
+
+        assert.ok(this.view._updateHandler, '_updateHandler should exist before destroy');
+
+        this.view.destroy();
+
+        assert.equal(this.view._updateHandler, null, '_updateHandler should be null after destroy');
+    });
+
+    QUnit.test('destroy() clears DOM container', function(assert) {
+        assert.expect(2);
+
+        this.$container.html('<div class="test-content">Some content</div>');
+        assert.ok(this.$container.children().length > 0, 'Container should have content before destroy');
+
+        this.view = mnopTableViewFactory(this.$container, {}, this.mockModelOverseer);
+        this.view.destroy();
+
+        assert.equal(this.$container.children().length, 0, 'Container should be empty after destroy');
+    });
 });
