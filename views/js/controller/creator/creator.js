@@ -223,6 +223,7 @@ define([
                         },
                         templates: templates,
                         beforeSave(model) {
+                            console.log(model)
                             //ensure the qti-type is present
                             qtiTestHelper.addMissingQtiType(model);
 

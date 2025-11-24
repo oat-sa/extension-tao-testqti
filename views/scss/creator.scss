@@ -39,6 +39,10 @@
     $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
 
+    $infoBorderColor: #176998;
+    $infoBgColor: #D4DFE8;
+
+
     position: relative;
     height: calc(100vh - 99px);
     min-height: $minHeight;
@@ -209,7 +213,8 @@
         }
 
         .grid-row {
-            padding-left: 6px;
+            padding-left: 0.6rem;
+            padding-right: 0.6rem;
             width: 100%;
 
             input {
@@ -982,6 +987,93 @@
     background-color: $errorBgColor !important;
     span.icon-warning {
         color: $error !important;
+    }
+}
+
+.info-card {
+    border: 1px solid $infoBorderColor;
+    border-radius: 0.5rem;
+    background-color: $infoBgColor;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+
+    span.icon-info {
+        color: $info;
+        font-size: 2.6rem;
+    }
+
+    & :first-child {
+        text-align: center;
+    }
+
+    & :nth-child(2) {
+        margin-bottom: 0;
+    }
+}
+
+.branch-rules-table {
+    font-size: 1.2rem;
+
+    & .select2 {
+        width: 100%;
+    }
+
+    // 1.5 col for operator & value
+    & .custom-col {
+        margin-inline-start: 1.43%;
+        inline-size: 11.07%;
+    }
+}
+
+#test-creator .test-creator-props .branch-rules-table .grid-row input {
+    height: 2.6rem;
+}
+
+// fix for select2 inside a branch table cell
+.branch-rules-table .select2-container .select2-choice>.select2-chosen {
+    margin-right: 1.4rem;
+}
+
+//  fix for table items padding
+#test-creator .test-creator-props .branch-rules-table .branch-rules-table-item {
+    padding-right: 0;
+}
+
+.branch-rules-add-btn {
+    margin-bottom: 1rem;
+}
+
+.branch-rules-table-actions {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    & .branch-rules-table-action {
+        height: 2.4rem;
+        width: 2.8rem;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        &:hover {
+            background-color: $infoBorderColor;
+            color: #fff;
+        }
+        &.disabled {
+            background-color: #fff !important;
+            opacity: 0.25 !important;
+        }
+    }
+
+    & .action-separator {
+        float: left;
+        background-color: silver;
+        background-color: rgba(0, 0, 0, .2);
+        margin: 0.1rem 0.2rem 0;
+        height: 1.8rem;
+        width: 0.1rem;
     }
 }
 

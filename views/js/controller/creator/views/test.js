@@ -88,6 +88,33 @@ define([
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
         addTestPart();
+        // build options for branch rules editor
+        refreshBranchRulesOptions(modelOverseer);
+
+        // keep branchOptions in sync with add / delete / undo-delete / rename
+        (function bindBranchOptionRefreshers() {
+        const ns = '.branchOptions-sync';
+        const debouncedRefresh = _.debounce(() => refreshBranchRulesOptions(modelOverseer), 0);
+
+        // DELETE / UNDO DELETE happen on the .testparts container
+        $('.testparts')
+            .off(`deleted.deleter${ns} undo.deleter${ns}`)
+            .on(`deleted.deleter${ns} undo.deleter${ns}`, function () {
+            // wait one tick so the databinder removes the model entry first
+            debouncedRefresh();
+            });
+
+        // RENAME (identifier change) already works for you, but make it global + namespaced
+        $(document)
+            .off(`change.binder${ns}`)
+            .on(`change.binder${ns}`, (e, changedModel) => {
+            if (e.namespace !== 'binder') return;
+            if (changedModel && changedModel['qti-type'] === 'testPart' && typeof changedModel.identifier === 'string') {
+                debouncedRefresh();
+            }
+            });
+
+        })();
 
         const $title = $('.test-creator-test > h1 [data-bind=title]');
         let titleFormat = '%title%';
@@ -271,6 +298,13 @@ define([
                 }
             });
 
+            $view.on('change.binder.branchOptions', (e, changedModel) => {
+                if (e.namespace !== 'binder') return;
+                if (changedModel && changedModel['qti-type'] === 'testPart') {
+                    refreshBranchRulesOptions(modelOverseer);
+                }
+            });
+
             modelOverseer.on('scoring-write', updateOutcomes);
             changeScoring(testModel.scoring);
             updateOutcomes();
@@ -368,6 +402,9 @@ define([
                         // set index for new section
                         actions.updateTitleIndex($('.section', $testPart));
 
+                        // refresh options after adding a part
+                        refreshBranchRulesOptions(modelOverseer);
+
                         /**
                          * @event modelOverseer#part-add
                          * @param {Object} partModel
@@ -375,6 +412,54 @@ define([
                         modelOverseer.trigger('part-add', partModel);
                     }
                 });
+        }
+
+        function buildGlobalBranchOptions(testModel) {
+            const targets = [
+                ...(testModel.testParts || []).map(tp => ({
+                    value: tp.identifier,
+                    label: tp.identifier
+                })),
+                { value: 'EXIT_TEST', label: 'End of the test' }
+            ];
+
+            const variables = (testModel.outcomeDeclarations || []).map(o => ({
+                value: o.identifier,
+                label: o.identifier
+            }));
+
+            // operators are static – keep them here once
+            const operators = [
+                { value: 'lt',  label: '<' },
+                { value: 'lte', label: '≤' },
+                { value: 'eq',  label: '=' },
+                { value: 'gt',  label: '>' },
+                { value: 'gte', label: '≥' }
+            ];
+
+            return { targets, variables, operators };
+        }
+
+        function refreshBranchRulesOptions(modelOverseer) {
+            const testModel = modelOverseer.getModel();
+            const config = modelOverseer.getConfig();
+
+            const next = buildGlobalBranchOptions(testModel);
+            const prev = config.branchOptions;
+
+            // dumb compare to avoid noisy re-renders
+            const changed =
+                !prev ||
+                prev.targets.length !== next.targets.length ||
+                prev.variables.length !== next.variables.length ||
+                prev.operators.length !== next.operators.length ||
+                prev.targets.some((t, i) => !next.targets[i] || next.targets[i].value !== t.value) ||
+                prev.variables.some((v, i) => !next.variables[i] || next.variables[i].value !== v.value);
+
+            if (changed) {
+                config.branchOptions = next;              // store in config (not persisted to QTI)
+                modelOverseer.trigger('branch-options-update'); // tell panels to re-render selects
+            }
         }
     }
 

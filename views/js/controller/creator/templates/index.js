@@ -20,6 +20,7 @@
  */
 define([
     'taoQtiTest/controller/creator/config/defaults',
+    'handlebars',
     'tpl!taoQtiTest/controller/creator/templates/testpart',
     'tpl!taoQtiTest/controller/creator/templates/section',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock',
@@ -36,9 +37,11 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/subsection',
     'tpl!taoQtiTest/controller/creator/templates/menu-button',
     'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
-    'tpl!taoQtiTest/controller/creator/templates/mnop-table'
+    'tpl!taoQtiTest/controller/creator/templates/mnop-table',
+    'tpl!taoQtiTest/controller/creator/templates/branch-rules',
 ], function (
     defaults,
+    handlebars,
     testPart,
     section,
     rubricBlock,
@@ -55,12 +58,14 @@ define([
     subsection,
     menuButton,
     outcomeListing,
-    mnopTable
+    mnopTable,
+    branchRules
 ) {
     'use strict';
 
     const applyTemplateConfiguration = template => config => template(defaults(config));
 
+    handlebars.registerPartial('branchRules', branchRules);
     /**
      * Expose all the templates used by the test creator
      * @exports taoQtiTest/controller/creator/templates/index
@@ -75,6 +80,7 @@ define([
         menuButton: applyTemplateConfiguration(menuButton),
         outcomeListing: applyTemplateConfiguration(outcomeListing),
         mnopTable: mnopTable,
+        branchRules: applyTemplateConfiguration(branchRules),
         properties: {
             test: applyTemplateConfiguration(testProps),
             testpart: applyTemplateConfiguration(testPartProps),

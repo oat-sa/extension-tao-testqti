@@ -73,6 +73,10 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
+        // TODO: temp solution
+        if (true) {
+            model.showBranchRules = true;
+        }
     }
 
     /**

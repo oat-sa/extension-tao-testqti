@@ -58,7 +58,11 @@ define([
         const $actionContainer = $('h1', $testPart);
         const $titleWithActions = $testPart.children('h1');
         const modelOverseer = creatorContext.getModelOverseer();
-        const config = modelOverseer.getConfig();
+
+        // Ensure rules array exists
+        if (!Array.isArray(partModel.branchRules)) {
+            partModel.branchRules = [];
+        }
 
         //add feature visibility properties to testPartModel
         featureVisibility.addTestPartVisibilityProps(partModel);
@@ -76,6 +80,18 @@ define([
          */
         function propHandler(propView) {
             const $view = propView.getView();
+            const mo = modelOverseer;
+            const ns = `.branchOptions-${partModel.identifier}`;
+
+            // 1) initial paint
+            renderBranchRules($view);
+            categoriesProperty($view);
+            addBranchRulesEditorEvents($view);
+
+            // 2) re-render when test-level options change
+            mo.off(`branch-options-update${ns}`).on(`branch-options-update${ns}`, () => {
+                renderBranchRules($view);
+            });
 
             //listen for databinder change to update the test part title
             const $identifier = $('[data-bind=identifier]', $titleWithActions);
@@ -91,17 +107,112 @@ define([
                 }
             });
 
-            //destroy it when it's testpart is removed
-            $testPart.parents('.testparts').on('deleted.deleter', function (e, $deletedNode) {
-                if (propView !== null && $deletedNode.attr('id') === $testPart.attr('id')) {
+            // cleanup on this testpart removal
+            $testPart.parents('.testparts').on('deleted.deleter', (e, $deletedNode) => {
+                if (propView && $deletedNode.attr('id') === $testPart.attr('id')) {
+                mo.off(`branch-options-update${ns}`);
                     propView.destroy();
                 }
             });
 
-            //testPart level category configuration
-            categoriesProperty($view);
-
             actions.displayCategoryPresets($testPart, 'testpart');
+        }
+
+        function addBranchRulesEditorEvents(view) {
+            const config = creatorContext.getModelOverseer().getConfig();
+            view
+                .off('click', '.branch-rules-add-btn')
+                .off('click', '[data-testid="branch-rule-delete"]')
+                .off('click', '[data-testid="branch-rule-move-up"]')
+                .off('click', '[data-testid="branch-rule-move-down"]')
+                .off('change', 'select[name="branch-rules-target"]')
+                .off('change', 'select[name="branch-rules-variable"]')
+                .off('change', 'select[name="branch-rules-operator"]')
+                .off('input',  '.branch-rules-value');
+
+            // add
+            view.on('click', '.branch-rules-add-btn', () => {
+                partModel.branchRules.push({
+                    target: config.branchOptions?.targets?.[0]?.value   || '',
+                    variable: config.branchOptions?.variables?.[0]?.value || '',
+                    operator: 'lt',
+                    value: 0
+                });
+                renderBranchRules(view);
+            });
+
+            // delete
+            view.on('click', '[data-testid="branch-rule-delete"]', (e) => {
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                if (!Number.isNaN(i)) {
+                    partModel.branchRules.splice(i, 1);
+                    renderBranchRules(view);
+                }
+            });
+
+            // move up
+            view.on('click', '[data-testid="branch-rule-move-up"]', (e) => {
+                if (isDisabled(e.currentTarget)) return;
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                if (i > 0) {
+                    const [row] = partModel.branchRules.splice(i, 1);
+                    partModel.branchRules.splice(i - 1, 0, row);
+                    renderBranchRules(view);
+                }
+            });
+
+            // move down
+            view.on('click', '[data-testid="branch-rule-move-down"]', (e) => {
+                if (isDisabled(e.currentTarget)) return;
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                if (i < partModel.branchRules.length - 1) {
+                    const [row] = partModel.branchRules.splice(i, 1);
+                    partModel.branchRules.splice(i + 1, 0, row);
+                    renderBranchRules(view);
+                }
+            });
+
+            // bind changes
+            view.on('change', 'select[name="branch-rules-target"]', (e) => {
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                partModel.branchRules[i].target = $(e.currentTarget).val();
+            });
+            view.on('change', 'select[name="branch-rules-variable"]', (e) => {
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                partModel.branchRules[i].variable = $(e.currentTarget).val();
+            });
+            view.on('change', 'select[name="branch-rules-operator"]', (e) => {
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                partModel.branchRules[i].operator = $(e.currentTarget).val();
+            });
+            view.on('input', '.branch-rules-value', (e) => {
+                const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
+                partModel.branchRules[i].value = $(e.currentTarget).val();
+            });
+
+            function isDisabled(el) {
+                return $(el).hasClass('disabled') || $(el).attr('aria-disabled') === 'true';
+            }
+        }
+
+        function renderBranchRules(view) {
+            const cfg = creatorContext.getModelOverseer().getConfig();
+            const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
+
+            const html = templates.branchRules({
+                branchRules: partModel.branchRules,
+                branchOptions: options
+            });
+
+            const $tbody = $('.branch-rules-table-body', view);
+
+            // destroy any existing Select2 instances
+            $tbody.find('select.select2').each(function () {
+                if ($(this).data('select2')) $(this).select2('destroy');
+            });
+
+            $tbody.html(html);
+            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
         }
 
         /**
@@ -161,6 +272,7 @@ define([
                         const index = $section.data('bind-index');
                         const sectionModel = partModel.assessmentSections[index];
 
+                        const config = modelOverseer.getConfig();
                         if (partModel.translation) {
                             const originIdentifiers = translationHelper.registerModelIdentifiers(config.originModel);
                             const originSection = originIdentifiers[sectionModel.identifier];
@@ -204,7 +316,7 @@ define([
             categorySelector.on('category-change', function (selected, indeterminate) {
                 testPartCategory.setCategories(partModel, selected, indeterminate);
 
-                modelOverseer.trigger('category-change');
+                creatorContext.getModelOverseer().trigger('category-change');
             });
         }
 
