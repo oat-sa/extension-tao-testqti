@@ -31,7 +31,7 @@ define([
     let currentTestId = null;
 
     function scaleSelectorFactory($container, outcomeId) {
-        const $scaleSelect = $container.find('[name="scale"]');
+        const $scaleSelect = $container.find('[name="interpretation"]');
         let lastKnownValue = null;
 
         const scaleSelector = {
@@ -136,7 +136,10 @@ define([
                 }
             },
 
-            // Read the form state and trigger an event with the result (emits 'scale-change')
+            /**
+             * Read the form state and trigger an event with the result
+             * @fires scaleSelector#interpretation-change
+             */
             updateScale() {
                 if (this._isInternalUpdate || this._destroyed) {
                     return;
@@ -152,7 +155,7 @@ define([
                         syncManager.onScaleChange(outcomeId, normalizedValue);
                     }
 
-                    this.trigger('scale-change', normalizedValue);
+                    this.trigger('interpretation-change', normalizedValue);
                 }
             },
 
@@ -167,6 +170,7 @@ define([
 
                 const lockedScale = syncManager.getActivePredefinedScale();
                 const selectData = this._buildSelectData(lockedScale, currentInterpretation);
+
                 this._initializeSelect2(selectData);
 
                 if (currentInterpretation) {
@@ -236,7 +240,7 @@ define([
                         if (outcomeId) {
                             syncManager.onScaleChange(outcomeId, null);
                         }
-                        this.trigger('scale-change', null);
+                        this.trigger('interpretation-change', null);
                     }
                 } catch (error) {
                     console.warn('Error clearing selection:', error);
@@ -348,6 +352,7 @@ define([
                         .select2({
                             width: '100%',
                             tags: true,
+                            multiple: false,
                             tokenSeparators: null,
                             createSearchChoice: (scale) => {
                                 // Always allow custom scales to be entered
@@ -373,12 +378,12 @@ define([
                                 }
                             }
                         })
-                         .off('change.scaleSync')
-                         .on('change.scaleSync', () => {
-                             if (!this._isInternalUpdate && !this._destroyed) {
-                                 this.updateScale();
-                             }
-                         });
+                        .off('change.scaleSync')
+                        .on('change.scaleSync', () => {
+                            if (!this._isInternalUpdate && !this._destroyed) {
+                                this.updateScale();
+                            }
+                        });
 
                     $scaleSelect.select2('close');
                 } catch (error) {
