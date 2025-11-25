@@ -61,7 +61,7 @@ define([
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    featureFlags
+    mnopFeatureFlags
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -276,7 +276,7 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (featureFlags.isMNOPEnabled()) {
+            if (mnopFeatureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
@@ -284,12 +284,16 @@ define([
                 hider.show($mnopSection);
 
                 if ($mnopContainer.length) {
+                    const mnopConfig = {
+                        getItemsMaxScoresUrl: config.routes && config.routes.getItemsMaxScores
+                    };
+
                     mnopHelper.init(testModel, {
                         getItemsMaxScores: {
-                            url: config.routes && config.routes.getItemsMaxScores
+                            url: mnopConfig.getItemsMaxScoresUrl
                         }
                     }).then(function() {
-                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer);
+                        const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer, mnopConfig);
                         mnopView.init();
 
                         propView.mnopView = mnopView;
