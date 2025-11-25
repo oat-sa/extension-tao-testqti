@@ -20,6 +20,7 @@
           <div class="col-3 target-col">
             <select class="select2"
                     name="branch-rules-target"
+                    aria-label="{{__ 'Target'}}"
                     data-bind="branchRules[{{@index}}].target"
                     data-bind-encoder="string"
                     data-has-search="false">
@@ -36,6 +37,7 @@
           <div class="col-3 variable-col">
             <select class="select2"
                     name="branch-rules-variable"
+                    aria-label="{{__ 'Variable'}}"
                     data-bind="branchRules[{{@index}}].variable"
                     data-bind-encoder="string"
                     data-has-search="false">
@@ -52,6 +54,7 @@
           <div class="col-2 operator-col">
             <select class="select2"
                     name="branch-rules-operator"
+                    aria-label="{{__ 'Operator'}}"
                     data-bind="branchRules[{{@index}}].operator"
                     data-bind-encoder="string"
                     data-has-search="false">
@@ -68,6 +71,7 @@
           <div class="col-1 value-col">
             <input type="text"
                   class="branch-rules-value"
+                  aria-label="{{__ 'Value'}}"
                   data-bind="branchRules[{{@index}}].value"
                   value="{{value}}">
           </div>
