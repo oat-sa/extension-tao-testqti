@@ -117,7 +117,7 @@ define([
             // cleanup on this testpart removal
             $testPart.parents('.testparts').on('deleted.deleter', (e, $deletedNode) => {
                 if (propView && $deletedNode.attr('id') === $testPart.attr('id')) {
-                mo.off(`branch-options-update${ns}`);
+                    mo.off(`branch-options-update${ns}`);
                     propView.destroy();
                 }
             });
@@ -137,10 +137,10 @@ define([
                 .off('change', 'select[name="branch-rules-operator"]')
                 .off('input',  '.branch-rules-value');
 
-            // add
+            // add rule
             view.on('click', '.branch-rules-add-btn', function () {
-                var t = _.get(config, 'branchOptions.targets[0].value', '');
-                var v = _.get(config, 'branchOptions.variables[0].value', '');
+                const t = _.get(config, 'branchOptions.targets[0].value', '');
+                const v = _.get(config, 'branchOptions.variables[0].value', '');
 
                 partModel.branchRules.push({
                     target: t,
@@ -152,7 +152,7 @@ define([
                 renderBranchRules(view);
             });
 
-            // delete
+            // delete rule
             view.on('click', '[data-testid="branch-rule-delete"]', (e) => {
                 const i = +$(e.currentTarget).closest('.branch-rules-table-item').data('index');
                 if (!Number.isNaN(i)) {
