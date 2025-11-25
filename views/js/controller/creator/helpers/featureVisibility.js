@@ -73,10 +73,8 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        // we can toggle this functionality from BE later from model if needed.
-        if (true) {
-            model.showBranchRules = true;
-        }
+        // TODO: Toggle via features.isVisible() when BE support is added
+        model.showBranchRules = true;
     }
 
     /**

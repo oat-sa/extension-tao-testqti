@@ -74,18 +74,27 @@
 
           <div class="branch-rules-table-actions col-3">
             <a class="branch-rules-table-action {{#if @first}}br-action-disabled{{/if}}"
+                role="button"
+                tabindex="{{#if @first}}-1{{else}}0{{/if}}"
                 data-testid="branch-rule-move-up"
                 aria-disabled="{{#if @first}}true{{else}}false{{/if}}">
               <span class="icon-up"></span>
             </a>
 
             <a class="branch-rules-table-action {{#if @last}}br-action-disabled{{/if}}"
-                data-testid="branch-rule-move-down"
-                aria-disabled="{{#if @last}}true{{else}}false{{/if}}">
-              <span class="icon-down"></span>
+              role="button"
+              tabindex="{{#if @last}}-1{{else}}0{{/if}}"
+              data-testid="branch-rule-move-down"
+              aria-disabled="{{#if @last}}true{{else}}false{{/if}}">
+                <span class="icon-down"></span>
             </a>
             <span class="action-separator"></span>
-            <a class="branch-rules-table-action" data-testid="branch-rule-delete"><span class="icon-bin"></span></a>
+            <a class="branch-rules-table-action"
+              role="button"
+              tabindex="0"
+              data-testid="branch-rule-delete">
+                <span class="icon-bin"></span>
+            </a>
           </div>
         </div>
       {{/each}}

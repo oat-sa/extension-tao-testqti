@@ -22,6 +22,12 @@
     @include respond-to(wide) { #{$key} : $wide;  }
 }
 
+$infoBorderColor: #176998;
+$infoBgColor: #D4DFE8;
+$bgWhite: #fff;
+$brActionColor: #222;
+$brActionBorderColor: #ddd;
+
 
 #test-creator{
 
@@ -38,9 +44,6 @@
     $subsectionColor: #d2e9f3;
     $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
-
-    $infoBorderColor: #176998;
-    $infoBgColor: #D4DFE8;
 
 
     position: relative;
@@ -1065,8 +1068,8 @@
 .branch-rules-table-actions {
     display: flex;
     align-items: center;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: $bgWhite;
+    border: 1px solid $brActionBorderColor;
 
     .branch-rules-table-action {
         height: 2.4rem;
@@ -1077,18 +1080,18 @@
         justify-content: center;
         cursor: pointer;
         text-decoration: none;
-        color: #222;
+        color: $brActionColor;
         transition: background-color 0.2s ease;
 
         &.br-action-disabled {
-            background-color: #fff;
+            background-color: $bgWhite;
             opacity: 0.25;
             cursor: not-allowed;
         }
 
         &:not(.br-action-disabled):not([aria-disabled="true"]):hover {
             background-color: $infoBorderColor;
-            color: #fff;
+            color: $bgWhite;
         }
     }
 
