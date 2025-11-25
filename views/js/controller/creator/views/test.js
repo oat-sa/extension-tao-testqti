@@ -25,6 +25,7 @@ define([
     'context',
     'ui/hider',
     'ui/feedback',
+    'ui/dialog',
     'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
@@ -47,6 +48,7 @@ define([
     context,
     hider,
     feedback,
+    dialog,
     features,
     defaults,
     actions,
@@ -180,18 +182,49 @@ define([
                 width: '100%'
             });
 
-            $generate.on('click', () => {
-                $generate.addClass('disabled').attr('disabled', true);
-                modelOverseer
-                    .on('scoring-write.regenerate', () => {
-                        modelOverseer.off('scoring-write.regenerate');
-                        feedback()
-                            .success(__('The outcomes have been regenerated!'))
-                            .on('destroy', () => {
+            $generate.off('click.branchGuard').on('click.branchGuard', function () {
+                const modelOverseer = creatorContext.getModelOverseer();
+                const testModel = modelOverseer.getModel();
+
+                const hasRules = (testModel.testParts || []).some(tp =>
+                    (tp.branchRules || []).length
+                );
+
+                // Only warn if any branch rules exist
+                if (hasRules) {
+                    dialog({
+                        message: __('Regenerating outcomes may remove some variables used in paths. Any paths that use removed variables will be cleared. Continue?'),
+                        buttons: [
+                            { id: 'cancel', type: 'regular', label: __('Cancel'), close: true },
+                            { id: 'proceed', type: 'info', label: __('Proceed'), close: true }
+                        ],
+                        autoRender: true,
+                        autoDestroy: true,
+                        onProceedBtn: function () {
+                            runRegenerate();
+                        }
+                    });
+                } else {
+                    runRegenerate();
+                }
+
+                function runRegenerate() {
+                    $generate.addClass('disabled').attr('disabled', true);
+                    modelOverseer
+                        .on('scoring-write.regenerate', function () {
+                            modelOverseer.off('scoring-write.regenerate');
+
+                            // purge rules for missing variables
+                            branchRules.purgeRulesWithMissingVariables(testModel);
+                            modelOverseer.trigger('branch-options-update');
+                            branchRules.refreshOptions(modelOverseer);
+
+                            feedback().success(__('The outcomes have been regenerated!')).on('destroy', function () {
                                 $generate.removeClass('disabled').removeAttr('disabled');
                             });
-                    })
-                    .trigger('scoring-change');
+                        })
+                        .trigger('scoring-change');
+                }
             });
 
             $addOutcomeDeclaration.on(`click${_ns}`, () => {
@@ -208,9 +241,6 @@ define([
 
                 // Add to model through helper (fires notifier if present)
                 outcome.addOutcome(testModel, newOutcome);
-
-                // Refresh branch options in case new outcome affects them
-                branchRules.refreshOptions(modelOverseer);
 
                 // Re-render the outcome declarations
                 renderOutcomeDeclarationList(testModel, $view);

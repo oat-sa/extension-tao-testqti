@@ -360,7 +360,7 @@ define([
 
             const model = modelOverseer.getModel();
             const partId = partModel.identifier;
-            const refs = collectBranchRuleRefs(model, partId);
+            const refs = branchRules.collectBranchRuleRefsByTarget(model, partId);
 
             if (refs.count === 0) {
                 // Safe – proceed with native deleter
@@ -385,7 +385,7 @@ define([
                 autoDestroy: true,
                 onRemoveBtn: () => {
                     // 1) Purge rules that target this test part
-                    purgeBranchRules(model, partId);
+                    branchRules.purgeRulesWithMissingTargets(model, partId);
 
                     // 2) Refresh options
                     branchRules.refreshOptions(modelOverseer);
@@ -407,40 +407,6 @@ define([
                     $(e.currentTarget).off(`deleted.deleter${ns}`);
                 }
             });
-    }
-
-    /**
-     * Find all branch rules that target a given testPart id.
-     * @param {Object} testModel
-     * @param {string} targetId
-     * @returns {{count:number, samples:Array<{part:string,index:number}>}}
-     */
-    function collectBranchRuleRefs(testModel, targetId) {
-        const out = [];
-        (testModel.testParts || []).forEach(tp => {
-            (tp.branchRules || []).forEach((r, idx) => {
-                if (r && r.target === targetId) {
-                    out.push({ part: tp.identifier, index: idx });
-                }
-            });
-        });
-        return {
-            count: out.length,
-            samples: out.slice(0, 5) // show up to 5 refs
-        };
-    }
-
-    /**
-     * Remove all rules across the test that target a given testPart id.
-     * @param {Object} testModel
-     * @param {string} targetId
-     */
-    function purgeBranchRules(testModel, targetId) {
-        (testModel.testParts || []).forEach(tp => {
-            if (Array.isArray(tp.branchRules)) {
-                tp.branchRules = tp.branchRules.filter(r => r && r.target !== targetId);
-            }
-        });
     }
 
     /**

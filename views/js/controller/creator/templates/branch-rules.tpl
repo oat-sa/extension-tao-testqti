@@ -85,7 +85,6 @@
                 aria-label="{{__ 'Move rule up'}}">
               <span class="icon-up"></span>
             </a>
-
             <a class="branch-rules-table-action {{#if @last}}br-action-disabled{{/if}}"
               role="button"
               tabindex="{{#if @last}}-1{{else}}0{{/if}}"
