@@ -81,7 +81,8 @@
                 role="button"
                 tabindex="{{#if @first}}-1{{else}}0{{/if}}"
                 data-testid="branch-rule-move-up"
-                aria-disabled="{{#if @first}}true{{else}}false{{/if}}">
+                aria-disabled="{{#if @first}}true{{else}}false{{/if}}"
+                aria-label="{{__ 'Move rule up'}}">
               <span class="icon-up"></span>
             </a>
 
@@ -89,14 +90,16 @@
               role="button"
               tabindex="{{#if @last}}-1{{else}}0{{/if}}"
               data-testid="branch-rule-move-down"
-              aria-disabled="{{#if @last}}true{{else}}false{{/if}}">
+              aria-disabled="{{#if @last}}true{{else}}false{{/if}}"
+              aria-label="{{__ 'Move rule down'}}">
                 <span class="icon-down"></span>
             </a>
             <span class="action-separator"></span>
             <a class="branch-rules-table-action"
               role="button"
               tabindex="0"
-              data-testid="branch-rule-delete">
+              data-testid="branch-rule-delete"
+              aria-label="{{__ 'Delete rule'}}">
                 <span class="icon-bin"></span>
             </a>
           </div>
