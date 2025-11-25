@@ -19,8 +19,8 @@
  * @author Jean-Sébastien Conan <jean-sebastien@taotesting.com>
  */
 define([
-
     'lodash',
+    'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/modelOverseer',
     'taoQtiTest/controller/creator/helpers/scoring',
     'json!taoQtiTest/test/creator/samples/scoring.json',
@@ -33,10 +33,12 @@ define([
     'json!taoQtiTest/test/creator/samples/scoringTotalCategoryWeighted.json',
     'json!taoQtiTest/test/creator/samples/scoringCut.json',
     'json!taoQtiTest/test/creator/samples/scoringCutCategory.json',
-    'json!taoQtiTest/test/creator/samples/scoringNoOutcomes.json'
+    'json!taoQtiTest/test/creator/samples/scoringNoOutcomes.json',
+    'json!taoQtiTest/test/creator/samples/scoringGrade.json'
 ], function(
 
     _,
+    baseTypeHelper,
     modelOverseerFactory,
     scoringHelper,
     scoringSample,
@@ -49,7 +51,8 @@ define([
     scoringTotalCategoryWeightedSample,
     scoringCutSample,
     scoringCutCategorySample,
-    scoringNoOutcomesSample
+    scoringNoOutcomesSample,
+    scoringGradeSample
 ) {
     'use strict';
 
@@ -200,6 +203,35 @@ define([
 
     QUnit.module('helpers/scoring');
 
+    function collectGradeMappings(condition) {
+        var mappings = [];
+        var current = condition;
+
+        while (current && current.outcomeIf) {
+            var expression = current.outcomeIf.expression || {};
+            var expressions = expression.expressions || [];
+            var scoreBaseValue = _.find(expressions, function(expr) {
+                return expr && typeof expr.value !== 'undefined';
+            }) || {};
+            var setRule = current.outcomeIf.outcomeRules && current.outcomeIf.outcomeRules[0];
+            var gradeBaseValue = setRule && setRule.expression ? setRule.expression.value : undefined;
+
+            if (typeof scoreBaseValue.value !== 'undefined' && typeof gradeBaseValue !== 'undefined') {
+                mappings.push({
+                    score: Number(scoreBaseValue.value),
+                    grade: gradeBaseValue
+                });
+            }
+
+            if (!current.outcomeElse || !current.outcomeElse.outcomeRules || !current.outcomeElse.outcomeRules.length) {
+                break;
+            }
+            current = current.outcomeElse.outcomeRules[0];
+        }
+
+        return mappings;
+    }
+
     QUnit.test('module', function(assert) {
         assert.expect(1);
         assert.equal(typeof scoringHelper, 'object', 'The scoring helper module exposes an object');
@@ -264,19 +296,127 @@ define([
                 modelOverseer.trigger('scoring-change');
             });
 
-            modelOverseer.on('scoring-write', function(writtenModel) {
+        modelOverseer.on('scoring-write', function(writtenModel) {
 
-                model = _.omit(model, 'scoring');
-                writtenModel = _.omit(writtenModel, 'scoring');
+            model = _.omit(model, 'scoring');
+            writtenModel = _.omit(writtenModel, 'scoring');
 
-                assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
-                assert.deepEqual(model, data.expected, 'The score processing has been set');
+            assert.deepEqual(writtenModel, data.expected, 'The written model is as expected');
+            assert.deepEqual(model, data.expected, 'The score processing has been set');
 
-                ready();
+            ready();
+        });
+
+        scoringHelper.init(modelOverseer);
+    });
+
+    QUnit.test('helpers/scoring.generate() - grade mode uses selected scale', function(assert) {
+        var ready = assert.async();
+        var model = _.cloneDeep(scoringGradeSample);
+        var gradeScale = _.cloneDeep(model.scalePresets[0]);
+        var modelOverseer = modelOverseerFactory(model);
+
+        assert.expect(8);
+
+        modelOverseer.on('scoring-init', function() {
+            model.scoring.outcomeProcessing = 'grade';
+            modelOverseer.trigger('scoring-change');
+        });
+
+        modelOverseer.on('scoring-write', function(writtenModel) {
+            var gradeOutcome = _.find(writtenModel.outcomeDeclarations, {identifier: 'GRADE'});
+            var gradeMaxOutcome = _.find(writtenModel.outcomeDeclarations, {identifier: 'GRADE_MAX'});
+            var scoreOutcome = _.find(writtenModel.outcomeDeclarations, {identifier: 'SCORE'});
+
+            assert.equal(gradeOutcome.baseType, baseTypeHelper.STRING, 'GRADE outcome is string');
+            assert.equal(gradeMaxOutcome.baseType, baseTypeHelper.STRING, 'GRADE_MAX outcome is string');
+            assert.equal(scoreOutcome.baseType, baseTypeHelper.FLOAT, 'SCORE outcome is float');
+
+            var maxGradeKey = _.max(_.map(_.keys(gradeScale.values), Number));
+            assert.equal(
+                gradeMaxOutcome.defaultValue.values[0].value,
+                gradeScale.values[String(maxGradeKey)],
+                'GRADE_MAX defaults to highest scale label'
+            );
+
+            var minRules = _.filter(writtenModel.outcomeProcessing.outcomeRules, function(rule) {
+                return rule['qti-type'] === 'setOutcomeValue' && rule.identifier === 'SCORE';
+            });
+            assert.equal(minRules.length, 1, 'Only one SCORE min rule is created');
+
+            var minRule = minRules[0];
+
+            assert.equal(minRule.expression['qti-type'], 'min', 'SCORE is calculated with min operator');
+            var minIdentifiers = _.map(minRule.expression.expressions, 'identifier').sort();
+            assert.deepEqual(minIdentifiers, ['GRAMMAR', 'SENSE_OF_HUMOR', 'VOCABULARY'], 'Min operator uses every graded outcome');
+
+            var conditionRule = _.find(writtenModel.outcomeProcessing.outcomeRules, function(rule) {
+                return rule['qti-type'] === 'outcomeCondition';
+            });
+            var mappings = _.sortBy(collectGradeMappings(conditionRule), 'score');
+            var expectedMappings = _.sortBy(_.map(gradeScale.values, function(label, key) {
+                return {
+                    score: Number(key),
+                    grade: label
+                };
+            }), 'score');
+
+            assert.deepEqual(mappings, expectedMappings, 'Outcome condition mirrors the selected scale values');
+
+            ready();
+        });
+
+        scoringHelper.init(modelOverseer);
+    });
+
+    QUnit.test('helpers/scoring.generate() - grade mode supports custom scale values', function(assert) {
+        var ready = assert.async();
+        var model = _.cloneDeep(scoringGradeSample);
+        var customScale = _.cloneDeep(model.scalePresets[1]);
+
+        model.scalePresets = [customScale];
+        _.forEach(model.outcomeDeclarations, function(outcomeDeclaration) {
+            outcomeDeclaration.interpretation = customScale.uri;
+        });
+
+        var modelOverseer = modelOverseerFactory(model);
+
+        assert.expect(3);
+
+        modelOverseer.on('scoring-init', function() {
+            model.scoring.outcomeProcessing = 'grade';
+            modelOverseer.trigger('scoring-change');
+        });
+
+        modelOverseer.on('scoring-write', function(writtenModel) {
+            var conditionRule = _.find(writtenModel.outcomeProcessing.outcomeRules, function(rule) {
+                return rule['qti-type'] === 'outcomeCondition';
             });
 
-            scoringHelper.init(modelOverseer);
+            var mappings = _.sortBy(collectGradeMappings(conditionRule), 'score');
+            var expectedMappings = _.sortBy(_.map(customScale.values, function(label, key) {
+                return {
+                    score: Number(key),
+                    grade: label
+                };
+            }), 'score');
+
+            assert.deepEqual(mappings, expectedMappings, 'Custom scale mappings are respected');
+
+            var gradeMaxOutcome = _.find(writtenModel.outcomeDeclarations, {identifier: 'GRADE_MAX'});
+            var maxGradeKey = _.max(_.map(_.keys(customScale.values), Number));
+            assert.equal(
+                gradeMaxOutcome.defaultValue.values[0].value,
+                customScale.values[String(maxGradeKey)],
+                'GRADE_MAX uses the highest custom scale label'
+            );
+            assert.equal(gradeMaxOutcome.baseType, baseTypeHelper.STRING, 'Custom GRADE_MAX remains a string outcome');
+
+            ready();
         });
+
+        scoringHelper.init(modelOverseer);
+    });
 
     QUnit.test('helpers/scoring.generate() #no scoring', function(assert) {
         var ready = assert.async();
