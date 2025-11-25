@@ -13,15 +13,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
-
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
+
 define([
     'jquery',
     'lodash',
+    'i18n',
+    'ui/dialog',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/views/section',
@@ -30,10 +32,13 @@ define([
     'taoQtiTest/controller/creator/helpers/testPartCategory',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/translation',
-    'taoQtiTest/controller/creator/helpers/featureVisibility'
+    'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'taoQtiTest/controller/creator/helpers/branchRules'
 ], function (
     $,
     _,
+    __,
+    dialog,
     defaults,
     actions,
     sectionView,
@@ -42,7 +47,8 @@ define([
     testPartCategory,
     categorySelectorFactory,
     translationHelper,
-    featureVisibility
+    featureVisibility,
+    branchRules
 ) {
     'use strict';
 
@@ -72,6 +78,7 @@ define([
         actions.move($actionContainer, 'testparts', 'testpart');
         sections();
         addSection();
+        bindDeleteGuard(creatorContext, partModel, $testPart);
 
         /**
          * Perform some binding once the property view is created
@@ -131,13 +138,17 @@ define([
                 .off('input',  '.branch-rules-value');
 
             // add
-            view.on('click', '.branch-rules-add-btn', () => {
+            view.on('click', '.branch-rules-add-btn', function () {
+                var t = _.get(config, 'branchOptions.targets[0].value', '');
+                var v = _.get(config, 'branchOptions.variables[0].value', '');
+
                 partModel.branchRules.push({
-                    target: config.branchOptions?.targets?.[0]?.value   || '',
-                    variable: config.branchOptions?.variables?.[0]?.value || '',
+                    target: t,
+                    variable: v,
                     operator: 'lt',
                     value: 0
                 });
+
                 renderBranchRules(view);
             });
 
@@ -324,6 +335,112 @@ define([
             const categoriesSummary = testPartCategory.getCategories(partModel);
             categorySelector.updateFormState(categoriesSummary.propagated, categoriesSummary.partial);
         }
+    }
+
+    /**
+     * Guard deleting a testpart if it is targeted by any branch rules.
+     * If confirmed, purge those rules, refresh options, then proceed with native deletion.
+     * @param {Object} creatorContext
+     * @param {Object} partModel
+     * @param {jQuery} $testPart
+     */
+    function bindDeleteGuard(creatorContext, partModel, $testPart) {
+        const modelOverseer = creatorContext.getModelOverseer();
+        const $deleteBtn = $testPart.find('[data-testid="remove-test-part"]');
+        let suppressGuard = false;
+
+        // Namespaced to avoid collisions and allow cleanup
+        const ns = '.guard';
+
+        // Ensure we don’t double-bind
+        $deleteBtn.off(ns).on(`click${ns}`, function (e) {
+            if (suppressGuard) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+            const model = modelOverseer.getModel();
+            const partId = partModel.identifier;
+            const refs = collectBranchRuleRefs(model, partId);
+
+            if (refs.count === 0) {
+                // Safe – proceed with native deleter
+                suppressGuard = true;
+                $deleteBtn.trigger('click');
+                suppressGuard = false;
+                return;
+            }
+
+            const msg = `
+                ${__('This test part is used as a target in %s path(s).', refs.count)}<br/><br/>
+                ${__('If you continue, those paths will be removed.')}
+            `;
+
+            dialog({
+                message: msg,
+                buttons: [
+                    { id: 'cancel', type: 'regular', label: __('Cancel'),  close: true },
+                    { id: 'remove', type: 'info',    label: __('Remove'),  close: true }
+                ],
+                autoRender: true,
+                autoDestroy: true,
+                onRemoveBtn: () => {
+                    // 1) Purge rules that target this test part
+                    purgeBranchRules(model, partId);
+
+                    // 2) Refresh options
+                    branchRules.refreshOptions(modelOverseer);
+
+                    // 3) Proceed with the actual deletion
+                    suppressGuard = true;
+                    $deleteBtn.trigger('click');
+                    suppressGuard = false;
+                }
+            });
+        });
+
+        // Clean up bindings when this specific testpart node is actually removed
+        $testPart.parents('.testparts')
+            .off(`deleted.deleter${ns}`)
+            .on(`deleted.deleter${ns}`, (e, $deletedNode) => {
+                if ($deletedNode.attr('id') === $testPart.attr('id')) {
+                    $deleteBtn.off(ns);
+                    $(e.currentTarget).off(`deleted.deleter${ns}`);
+                }
+            });
+    }
+
+    /**
+     * Find all branch rules that target a given testPart id.
+     * @param {Object} testModel
+     * @param {string} targetId
+     * @returns {{count:number, samples:Array<{part:string,index:number}>}}
+     */
+    function collectBranchRuleRefs(testModel, targetId) {
+        const out = [];
+        (testModel.testParts || []).forEach(tp => {
+            (tp.branchRules || []).forEach((r, idx) => {
+                if (r && r.target === targetId) {
+                    out.push({ part: tp.identifier, index: idx });
+                }
+            });
+        });
+        return {
+            count: out.length,
+            samples: out.slice(0, 5) // show up to 5 refs
+        };
+    }
+
+    /**
+     * Remove all rules across the test that target a given testPart id.
+     * @param {Object} testModel
+     * @param {string} targetId
+     */
+    function purgeBranchRules(testModel, targetId) {
+        (testModel.testParts || []).forEach(tp => {
+            if (Array.isArray(tp.branchRules)) {
+                tp.branchRules = tp.branchRules.filter(r => r && r.target !== targetId);
+            }
+        });
     }
 
     /**

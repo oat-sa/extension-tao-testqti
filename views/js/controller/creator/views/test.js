@@ -18,6 +18,7 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
+
 define([
     'jquery',
     'i18n',

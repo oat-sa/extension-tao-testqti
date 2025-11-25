@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2022 (original work) Open Assessment Technologies SA
+ * Copyright (c) 2022-2025 (original work) Open Assessment Technologies SA
  *
  */
 
@@ -73,7 +73,7 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        // TODO: temp solution
+        // we can toggle this functionality from BE later from model if needed.
         if (true) {
             model.showBranchRules = true;
         }

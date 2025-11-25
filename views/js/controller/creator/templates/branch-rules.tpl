@@ -73,13 +73,13 @@
           </div>
 
           <div class="branch-rules-table-actions col-3">
-            <a class="branch-rules-table-action {{#if @first}}disabled{{/if}}"
+            <a class="branch-rules-table-action {{#if @first}}br-action-disabled{{/if}}"
                 data-testid="branch-rule-move-up"
                 aria-disabled="{{#if @first}}true{{else}}false{{/if}}">
               <span class="icon-up"></span>
             </a>
 
-            <a class="branch-rules-table-action {{#if @last}}disabled{{/if}}"
+            <a class="branch-rules-table-action {{#if @last}}br-action-disabled{{/if}}"
                 data-testid="branch-rule-move-down"
                 aria-disabled="{{#if @last}}true{{else}}false{{/if}}">
               <span class="icon-down"></span>
