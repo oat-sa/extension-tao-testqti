@@ -346,32 +346,7 @@
         {{#if showBranchRules}}
             <h4 class="toggler closed" data-toggle="~ .testpart-branch-rules">{{__ 'Paths'}}</h4>
             <div class="testpart-branch-rules toggled">
-                <div class="grid-row">
-                    <div class="info-card grid-row">
-                        <div class="col-2"><span class="icon-info"></span></div>
-                        <div class="col-10">
-                            {{__ "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."}}
-                        </div>
-                    </div>
-                </div>
-                <div class="branch-rules-table">
-                    <div class="branch-rules-table-header grid-row">
-                        <div class="col-3">{{__ 'Target'}}</div>
-                        <div class="col-3">{{__ 'Variable'}}</div>
-                        <div class="col-2 custom-col">{{__ 'Op.'}}</div>
-                        <div class="col-1 custom-col">{{__ 'Value'}}</div>
-                        <div class="col-3"></div>
-                    </div>
-                    <div class="branch-rules-table-body">
-                        {{> branchRules}}
-                    </div>
-                </div>
-                <div class="grid-row">
-                    <button type="button" class="branch-rules-add-btn btn-info small" data-action="add-outcome-declaration">
-                        <span class="icon-add"></span>
-                        {{__ 'Add a Path'}}
-                    </button>
-                </div>
+                {{> branchRules}}
             </div>
         {{/if}}
     {{/unless}}

@@ -204,7 +204,7 @@ define([
                 branchOptions: options
             });
 
-            const $tbody = $('.branch-rules-table-body', view);
+            const $tbody = $('.testpart-branch-rules', view);
 
             // destroy any existing Select2 instances
             $tbody.find('select.select2').each(function () {

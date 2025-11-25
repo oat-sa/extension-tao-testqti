@@ -1015,14 +1015,27 @@
 .branch-rules-table {
     font-size: 1.2rem;
 
+    .branch-rules-table-header div {
+        margin-right: 0.1rem;
+    }
+
     & .select2 {
         width: 100%;
     }
 
-    // 1.5 col for operator & value
-    & .custom-col {
-        margin-inline-start: 1.43%;
-        inline-size: 11.07%;
+    .target-col {
+        margin-inline-start: 0%;
+        inline-size: 22.5%;
+    }
+
+    .variable-col {
+        margin-inline-start: 1%;
+        inline-size: 27%;
+    }
+
+    .operator-col, .value-col {
+        margin-inline-start: 1%;
+        inline-size: 10.5%;
     }
 }
 
@@ -1038,6 +1051,11 @@
 //  fix for table items padding
 #test-creator .test-creator-props .branch-rules-table .branch-rules-table-item {
     padding-right: 0;
+}
+
+// fix for select 2 dropdown font size
+.select2-drop .select2-results li {
+    font-size: 1.2rem;
 }
 
 .branch-rules-add-btn {
@@ -1057,6 +1075,8 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        text-decoration: none;
+        color: #222;
         &:hover {
             background-color: $infoBorderColor;
             color: #fff;
