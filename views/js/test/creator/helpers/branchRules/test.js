@@ -568,7 +568,7 @@ define([
         assert.expect(4);
         assert.equal(refs.count, 3, 'Should count all matching rules');
         assert.ok(Array.isArray(refs.samples), 'Samples should be an array');
-        assert.ok(refs.samples.length <= 3, 'Samples should contain up to count items');
+        assert.equal(refs.samples.length, 3, 'Samples should contain all 3 matching items');
         assert.deepEqual(
             _.map(refs.samples, 'part'),
             ['P1', 'P1', 'P2'],
