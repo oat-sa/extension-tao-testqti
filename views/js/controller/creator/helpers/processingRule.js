@@ -281,6 +281,17 @@ define([
         },
 
         /**
+         * Creates an `equal` rule
+         * @param {Object|Array} left - the left operand
+         * @param {Object|Array} right - the right operand
+         * @returns {Object}
+         * @throws {TypeError} if the operands are not valid QTI elements
+         */
+        equal: function equal(left, right) {
+            return binaryOperator('equal', left, right, cardinalityHelper.SAME, cardinalityHelper.SAME);
+        },
+
+        /**
          * Creates a `isNull` rule
          * @param {Object|Array} expression - the operand
          * @returns {Object}

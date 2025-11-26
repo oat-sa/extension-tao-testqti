@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MNOP Stress Tests</title>
+    <base href="../../../../../../../tao/views/" />
+    <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css">
+    <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
+    <script type="text/javascript" src="js/lib/require.js"></script>
+    <script type="text/javascript">
+        QUnit.config.autostart = false;
+
+        require(['/tao/ClientConfig/config'], function(){
+            require(['taoQtiTest/test/creator/helpers/mnop/stress'], function(){
+                QUnit.start();
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+
+    <div style="margin: 20px; padding: 20px; background: #f0f0f0; border-radius: 5px;">
+        <h2>MNOP Stress Test Suite</h2>
+        <p>This test suite evaluates MNOP calculation performance under various stress conditions:</p>
+        <ul>
+            <li><strong>50 items</strong> - Basic performance baseline</li>
+            <li><strong>100 items</strong> - With categories and weights</li>
+            <li><strong>500 items</strong> - Large test stress</li>
+            <li><strong>1000 items</strong> - Extreme stress test</li>
+            <li><strong>Deep nesting</strong> - Nested section performance</li>
+            <li><strong>Sequential calculations</strong> - Cache efficiency</li>
+            <li><strong>Category aggregation</strong> - Multi-category stress</li>
+            <li><strong>Memory cycles</strong> - Init/clear cycle efficiency</li>
+            <li><strong>Selection rules</strong> - Complex rule handling</li>
+            <li><strong>Real-world scenario</strong> - 250 items with full complexity</li>
+        </ul>
+        <p><strong>Performance Targets:</strong></p>
+        <ul>
+            <li>50 items: &lt;100ms</li>
+            <li>100 items: &lt;200ms</li>
+            <li>500 items: &lt;500ms</li>
+            <li>1000 items: &lt;1000ms</li>
+        </ul>
+        <p style="color: #666; font-style: italic;">
+            Check browser console for detailed timing information.
+        </p>
+    </div>
+</body>
+</html>
