@@ -999,7 +999,7 @@ $brActionBorderColor: #ddd;
     background-color: $infoBgColor;
     padding: 1.5rem;
     margin-bottom: 1rem;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 
     span.icon-info {
         color: $info;
@@ -1049,6 +1049,7 @@ $brActionBorderColor: #ddd;
 // fix for select2 inside a branch table cell
 .branch-rules-table .select2-container .select2-choice>.select2-chosen {
     margin-right: 1.4rem;
+    font-size: 1rem;
 }
 
 //  fix for table items padding
@@ -1058,11 +1059,11 @@ $brActionBorderColor: #ddd;
 
 // fix for select 2 dropdown font size
 .select2-drop .select2-results li {
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .branch-rules-add-btn {
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
 }
 
 .branch-rules-table-actions {
