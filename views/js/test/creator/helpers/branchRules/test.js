@@ -215,6 +215,7 @@ define([
     });
 
     QUnit.test('normalizeModel - ensures branchRules array exists', function (assert) {
+        var existingBranchRules;
         var testModel = {
             testParts: [
                 { identifier: 'P1' },
@@ -222,12 +223,13 @@ define([
             ]
         };
 
+        existingBranchRules = testModel.testParts[1].branchRules;
         branchRuleHelper.normalizeModel(testModel);
 
         assert.expect(3);
         assert.ok(Array.isArray(testModel.testParts[0].branchRules), 'Missing branchRules should be created as array');
         assert.equal(testModel.testParts[0].branchRules.length, 0, 'New branchRules array should be empty');
-        assert.strictEqual(testModel.testParts[1].branchRules, testModel.testParts[1].branchRules, 'Existing branchRules array should be preserved');
+        assert.strictEqual(testModel.testParts[1].branchRules, existingBranchRules, 'Existing branchRules array should be preserved');
     });
 
     QUnit.test('normalizeModel - converts QTI branchRules to flat rows', function (assert) {
