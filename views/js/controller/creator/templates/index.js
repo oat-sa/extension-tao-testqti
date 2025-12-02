@@ -40,6 +40,7 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
     'tpl!taoQtiTest/controller/creator/templates/mnop-table',
     'tpl!taoQtiTest/controller/creator/templates/branch-rules',
+    'tpl!taoQtiTest/controller/creator/templates/preconditions',
 ], function (
     defaults,
     handlebars,
@@ -60,13 +61,15 @@ define([
     menuButton,
     outcomeListing,
     mnopTable,
-    branchRules
+    branchRules,
+    preConditions
 ) {
     'use strict';
 
     const applyTemplateConfiguration = template => config => template(defaults(config));
 
     handlebars.registerPartial('branchRules', branchRules);
+    handlebars.registerPartial('preConditions', preConditions);
     /**
      * Expose all the templates used by the test creator
      * @exports taoQtiTest/controller/creator/templates/index
@@ -82,6 +85,7 @@ define([
         outcomeListing: applyTemplateConfiguration(outcomeListing),
         mnopTable: mnopTable,
         branchRules: applyTemplateConfiguration(branchRules),
+        preConditions: applyTemplateConfiguration(preConditions),
         properties: {
             test: applyTemplateConfiguration(testProps),
             testpart: applyTemplateConfiguration(testPartProps),

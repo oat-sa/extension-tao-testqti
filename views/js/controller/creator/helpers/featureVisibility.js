@@ -75,6 +75,7 @@ define(['services/features'], function (features) {
         }
         // TODO: Toggle via features.isVisible() when BE support is added
         model.showBranchRules = true;
+        model.showPreconditions = true;
     }
 
     /**

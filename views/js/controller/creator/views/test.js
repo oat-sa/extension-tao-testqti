@@ -41,7 +41,8 @@ define([
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
     'taoQtiTest/controller/creator/helpers/featureFlags',
-    'taoQtiTest/controller/creator/helpers/branchRules'
+    'taoQtiTest/controller/creator/helpers/branchRules',
+    'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (
     $,
     __,
@@ -64,7 +65,8 @@ define([
     mnopTableView,
     mnopHelper,
     featureFlags,
-    branchRules
+    branchRules,
+    preConditions
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -190,13 +192,20 @@ define([
                     (tp.branchRules || []).length
                 );
 
-                // Only warn if any branch rules exist
-                if (hasRules) {
+                const hasPreconditions = (testModel.testParts || []).some(tp =>
+                    (tp.preConditions || []).length
+                );
+
+                const needsWarning = hasRules || hasPreconditions;
+
+                if (needsWarning) {
                     dialog({
-                        message: __('Regenerating outcomes may remove some variables used in paths. Any paths that use removed variables will be cleared. Continue?'),
+                        message: __(
+                            'Regenerating outcomes may remove some variables used in paths or prerequisites. Any paths or prerequisites that use removed variables will be cleared. Continue?'
+                        ),
                         buttons: [
-                            { id: 'cancel', type: 'regular', label: __('Cancel'), close: true },
-                            { id: 'proceed', type: 'info', label: __('Proceed'), close: true }
+                            { id: 'cancel', type: 'regular', label: __('Cancel'),  close: true },
+                            { id: 'proceed', type: 'info',    label: __('Proceed'), close: true }
                         ],
                         autoRender: true,
                         autoDestroy: true,
@@ -214,10 +223,17 @@ define([
                         .on('scoring-write.regenerate', function () {
                             modelOverseer.off('scoring-write.regenerate');
 
-                            // purge rules for missing variables
+                            // purge branch rules that reference removed variables
                             branchRules.purgeRulesWithMissingVariables(testModel);
-                            modelOverseer.trigger('branch-options-update');
+
+                            // purge preconditions that reference removed variables
+                            preConditions.purgeConditionsWithMissingVariables(testModel);
+
+                            // rebuild branch options (if needed)
                             branchRules.refreshOptions(modelOverseer);
+
+                            // ensure branch / preconditions editors re-render even if options are unchanged
+                            modelOverseer.trigger('branch-options-update');
 
                             feedback().success(__('The outcomes have been regenerated!')).on('destroy', function () {
                                 $generate.removeClass('disabled').removeAttr('disabled');

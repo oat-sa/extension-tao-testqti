@@ -20,22 +20,13 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'taoQtiTest/controller/creator/helpers/baseType'
-], function ($, _, __, baseTypeHelper) {
+    'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/operatorMap'
+], function ($, _, __, baseTypeHelper, operatorMap) {
     'use strict';
 
-    /**
-     * Operator mappings between UI short codes and QTI operator names.
-     * @type {Object<string,string>}
-     */
-    const opToQti = { lt: 'lt', lte: 'lte', eq: 'equal', gt: 'gt', gte: 'gte' };
-
-    /**
-     * Reverse mapping from QTI operator to UI short codes.
-     * @type {Object<string,string>}
-     */
-    const qtiToOp = { lt: 'lt', lte: 'lte', eq: 'eq', equal: 'eq', gt: 'gt', gte: 'gte' };
-
+    const { opToQti, qtiToOp } = operatorMap;
+    
     /**
      * Check whether a given node is a QTI BranchRule element.
      * @param {*} node - Any node to inspect.

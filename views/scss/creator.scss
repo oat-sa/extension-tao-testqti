@@ -1015,10 +1015,10 @@ $brActionBorderColor: #ddd;
     }
 }
 
-.branch-rules-table {
+.branch-rules-table, .preconditions-table {
     font-size: 1.2rem;
 
-    .branch-rules-table-header div {
+    .branch-rules-table-header div, .preconditions-table-header div {
         margin-right: 0.1rem;
     }
 
@@ -1045,15 +1045,25 @@ $brActionBorderColor: #ddd;
 #test-creator .test-creator-props .branch-rules-table .grid-row input {
     height: 2.6rem;
 }
+#test-creator .test-creator-props .preconditions-table .grid-row input {
+    height: 2.6rem;
+}
 
 // fix for select2 inside a branch table cell
 .branch-rules-table .select2-container .select2-choice>.select2-chosen {
     margin-right: 1.4rem;
     font-size: 1rem;
 }
+.preconditions-table .select2-container .select2-choice>.select2-chosen {
+    margin-right: 1.4rem;
+    font-size: 1rem;
+}
 
 //  fix for table items padding
 #test-creator .test-creator-props .branch-rules-table .branch-rules-table-item {
+    padding-right: 0;
+}
+#test-creator .test-creator-props .preconditions-table .precondition-table-item {
     padding-right: 0;
 }
 
@@ -1066,13 +1076,13 @@ $brActionBorderColor: #ddd;
     margin-bottom: 2rem;
 }
 
-.branch-rules-table-actions {
+.branch-rules-table-actions, .precondition-table-actions {
     display: flex;
     align-items: center;
     background: $bgWhite;
     border: 1px solid $brActionBorderColor;
 
-    .branch-rules-table-action {
+    .branch-rules-table-action, .precondition-table-action {
         height: 2.4rem;
         width: 2.8rem;
         font-size: 1.6rem;
@@ -1102,6 +1112,10 @@ $brActionBorderColor: #ddd;
         height: 1.8rem;
         width: 0.11rem;
     }
+}
+.precondition-table-actions {
+    width: fit-content;
+    margin-left: 0.5rem;
 }
 
 @import "inc/solar/creator";

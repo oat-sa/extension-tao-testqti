@@ -70,6 +70,11 @@ define([
             partModel.branchRules = [];
         }
 
+        // Ensure preConditions array exists
+        if (!Array.isArray(partModel.preConditions)) {
+            partModel.preConditions = [];
+        }
+
         //add feature visibility properties to testPartModel
         featureVisibility.addTestPartVisibilityProps(partModel);
 
@@ -92,12 +97,15 @@ define([
 
             // 1) initial paint
             renderBranchRules($view);
+            renderPreConditions($view);
             categoriesProperty($view);
             addBranchRulesEditorEvents($view);
+            addPreConditionsEditorEvents($view);
 
             // 2) re-render when test-level options change
             mo.off(`branch-options-update${ns}`).on(`branch-options-update${ns}`, () => {
                 renderBranchRules($view);
+                renderPreConditions($view);
             });
 
             //listen for databinder change to update the test part title
@@ -206,6 +214,55 @@ define([
             }
         }
 
+        function addPreConditionsEditorEvents(view) {
+            const config = creatorContext.getModelOverseer().getConfig();
+
+            view
+                .off('click', '.precondition-add-btn')
+                .off('click', '[data-testid="precondition-delete"]')
+                .off('change', 'select[name="precondition-variable"]')
+                .off('change', 'select[name="precondition-operator"]')
+                .off('input',  '.precondition-value');
+
+            // add precondition
+            view.on('click', '.precondition-add-btn', function () {
+                const v = _.get(config, 'branchOptions.variables[0].value', '');
+
+                partModel.preConditions.push({
+                    variable: v,
+                    operator: 'lt',
+                    value: 0
+                });
+
+                renderPreConditions(view);
+            });
+
+            // delete precondition
+            view.on('click', '[data-testid="precondition-delete"]', (e) => {
+                const i = +$(e.currentTarget).closest('.precondition-table-item').data('index');
+                if (!Number.isNaN(i)) {
+                    partModel.preConditions.splice(i, 1);
+                    renderPreConditions(view);
+                }
+            });
+
+            // bind changes
+            view.on('change', 'select[name="precondition-variable"]', (e) => {
+                const i = +$(e.currentTarget).closest('.precondition-table-item').data('index');
+                partModel.preConditions[i].variable = $(e.currentTarget).val();
+            });
+
+            view.on('change', 'select[name="precondition-operator"]', (e) => {
+                const i = +$(e.currentTarget).closest('.precondition-table-item').data('index');
+                partModel.preConditions[i].operator = $(e.currentTarget).val();
+            });
+
+            view.on('input', '.precondition-value', (e) => {
+                const i = +$(e.currentTarget).closest('.precondition-table-item').data('index');
+                partModel.preConditions[i].value = $(e.currentTarget).val();
+            });
+        }
+
         function renderBranchRules(view) {
             const cfg = creatorContext.getModelOverseer().getConfig();
             const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
@@ -216,6 +273,26 @@ define([
             });
 
             const $tbody = $('.testpart-branch-rules', view);
+
+            // destroy any existing Select2 instances
+            $tbody.find('select.select2').each(function () {
+                if ($(this).data('select2')) $(this).select2('destroy');
+            });
+
+            $tbody.html(html);
+            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
+        }
+
+        function renderPreConditions(view) {
+            const cfg = creatorContext.getModelOverseer().getConfig();
+            const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
+
+            const html = templates.preConditions({
+                preConditions: partModel.preConditions,
+                branchOptions: options
+            });
+
+            const $tbody = $('.testpart-preconditions', view);
 
             // destroy any existing Select2 instances
             $tbody.find('select.select2').each(function () {
