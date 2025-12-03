@@ -19,6 +19,7 @@
 */
 
 use qtism\common\datatypes\QtiPair;
+use qtism\data\rules\BranchRule;
 use qtism\data\state\ExternalScored;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
@@ -471,7 +472,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
         $newInstance = $class->newInstanceArgs($arguments);
 
-        if ($parentComponent && $newInstance && method_exists($newInstance, 'setParentIdentifier')) {
+        if ($parentComponent && $newInstance instanceof BranchRule) {
             $newInstance->setParentIdentifier($parentComponent->getIdentifier());
         }
 
