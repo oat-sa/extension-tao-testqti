@@ -351,6 +351,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param mixed $value
      * @param object|null $class
+     * @param QtiComponent|null $parentComponent
      * @return QtiDuration|QtiComponentCollection|mixed|null
      */
     private function componentValue($value, $class, ?QtiComponent $parentComponent = null)
@@ -374,6 +375,7 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param ReflectionClass $class
      * @param array $values
+     * @param QtiComponent|null $parentComponent
      * @return \qtism\data\QtiComponentCollection|null
      */
     private function createComponentCollection(ReflectionClass $class, $values, ?QtiComponent $parentComponent = null)
@@ -408,9 +410,10 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param ReflectionClass $class
      * @param array|string $properties
+     * @param QtiComponent|null $parentComponent
      * @return QtiComponent
      */
-    private function createInstance(ReflectionClass $class, $properties, ?QtiComponent $parentComponent)
+    private function createInstance(ReflectionClass $class, $properties, ?QtiComponent $parentComponent = null)
     {
         $arguments = [];
         if (is_string($properties) && $class->implementsInterface('qtism\common\enums\Enumeration')) {
