@@ -21,8 +21,9 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/helpers/baseType',
+    'taoQtiTest/controller/creator/helpers/operatorMap',
     'taoQtiTest/controller/creator/helpers/branchRule'
-], function ($, _, __, baseTypeHelper, branchRuleHelper) {
+], function ($, _, __, baseTypeHelper, operatorMap, branchRuleHelper) {
     'use strict';
 
     var branchRuleApi = [
@@ -72,7 +73,11 @@ define([
         assert.equal(rule['qti-type'], 'branchRule', 'Should create a branchRule node');
         assert.equal(rule.target, 'PART_A', 'Target should be taken from row.target');
         assert.ok(rule.expression, 'Should have an expression');
-        assert.equal(rule.expression['qti-type'], 'gte', 'Operator should map directly from "gte"');
+        assert.equal(
+            rule.expression['qti-type'],
+            operatorMap.opToQti.gte,
+            'Operator should map using operatorMap.opToQti'
+        );
         assert.equal(rule.expression.expressions[0]['qti-type'], 'variable', 'First expression is a variable');
         assert.equal(rule.expression.expressions[0].identifier, 'SCORE', 'Variable identifier should match');
         assert.equal(rule.expression.expressions[1].value, 12.5, 'Numeric value should be parsed to number');

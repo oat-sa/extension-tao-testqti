@@ -2,7 +2,7 @@
     <div class="info-card grid-row">
         <div class="col-2"><span class="icon-info"></span></div>
         <div class="col-10">
-            {{__ "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."}}
+            {{__ "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."}}
         </div>
     </div>
 </div>
@@ -107,7 +107,7 @@
     </div>
 </div>
 <div class="grid-row">
-    <button type="button" class="branch-rules-add-btn btn-info small" data-action="add-outcome-declaration">
+    <button type="button" class="branch-rules-add-btn btn-info small" data-action="add-branch-rule">
         <span class="icon-add"></span>
         {{__ 'Add a Path'}}
     </button>
