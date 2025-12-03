@@ -443,8 +443,6 @@ class taoQtiTest_models_classes_QtiTestConverter
                     }
                 } elseif (array_key_exists($name, $properties)) {
                     $arguments[] = $properties[$name];
-                } elseif ($parentComponent && $name === 'parentIdentifier') {
-                    $arguments[] = $parentComponent->getIdentifier();
                 } else {
                     $hint = $this->getHint($docComment, $name);
                     switch ($hint) {
@@ -471,7 +469,13 @@ class taoQtiTest_models_classes_QtiTestConverter
             }
         }
 
-        return $class->newInstanceArgs($arguments);
+        $newInstance = $class->newInstanceArgs($arguments);
+
+        if ($parentComponent && $newInstance && method_exists($newInstance, 'setParentIdentifier')) {
+            $newInstance->setParentIdentifier($parentComponent->getIdentifier());
+        }
+
+        return $newInstance;
     }
 
     /**
