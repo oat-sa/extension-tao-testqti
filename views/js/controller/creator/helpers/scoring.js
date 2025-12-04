@@ -339,7 +339,7 @@ define([
         },
 
         grade: function writerGrade(descriptor, scoring, outcomes) {
-            addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
+            addGradeOutcome(outcomes, descriptor.identifier);
             addGradeOutcomeMapping(outcomes, descriptor.identifier, defaultScoreIdentifier, scoring.scalePresets);
         },
 
@@ -642,9 +642,8 @@ define([
         });
     }
 
-    function addGradeOutcome(outcomes, identifier, scalePresets) {
+    function addGradeOutcome(outcomes, identifier) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.scale = getCommonScaleUri(outcomes, scalePresets);
 
         outcomeHelper.addOutcome(outcomes, outcome);
     }
@@ -659,7 +658,6 @@ define([
 
         errorMessage.addClass('hidden');
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.scale = commonScaleUri;
 
         var maxScaleValue = getMaxScaleValue(outcomes, scalePresets);
 
