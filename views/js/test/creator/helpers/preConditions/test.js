@@ -20,8 +20,8 @@ define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/operatorMap',
-    'taoQtiTest/controller/creator/helpers/preCondition'
-], function (_, baseTypeHelper, operatorMap, preConditionHelper) {
+    'taoQtiTest/controller/creator/helpers/preConditions'
+], function (_, baseTypeHelper, operatorMap, preConditionsHelper) {
     'use strict';
 
     var preConditionApi = [
@@ -36,7 +36,7 @@ define([
 
     QUnit.test('module', function (assert) {
         assert.expect(1);
-        assert.equal(typeof preConditionHelper, 'object', 'The preCondition helper module exposes an object');
+        assert.equal(typeof preConditionsHelper, 'object', 'The preCondition helper module exposes an object');
     });
 
     QUnit.cases
@@ -44,7 +44,7 @@ define([
         .test('helpers/preCondition API ', function (data, assert) {
             assert.expect(1);
             assert.equal(
-                typeof preConditionHelper[data.title],
+                typeof preConditionsHelper[data.title],
                 'function',
                 'The preCondition helper exposes a "' + data.title + '" function'
             );
@@ -59,7 +59,7 @@ define([
             value: '12.5'
         };
 
-        var pre = preConditionHelper.buildQtiPreCondition(row);
+        var pre = preConditionsHelper.buildQtiPreCondition(row);
 
         assert.expect(7);
         assert.equal(pre['qti-type'], 'preCondition', 'Should create a preCondition node');
@@ -78,7 +78,7 @@ define([
             value: '5'
         };
 
-        var pre = preConditionHelper.buildQtiPreCondition(row);
+        var pre = preConditionsHelper.buildQtiPreCondition(row);
 
         assert.expect(1);
         assert.equal(pre.expression['qti-type'], 'lt', 'Unknown operator should fallback to "lt"');
@@ -91,7 +91,7 @@ define([
             value: 'not-a-number'
         };
 
-        var pre = preConditionHelper.buildQtiPreCondition(row);
+        var pre = preConditionsHelper.buildQtiPreCondition(row);
 
         assert.expect(2);
         assert.equal(pre.expression.expressions[1].value, 0, 'Invalid value should fallback to 0');
@@ -102,8 +102,8 @@ define([
         var rowInt = { variable: 'SCORE', operator: 'gt', value: 10 };
         var rowFloat = { variable: 'SCORE', operator: 'gt', value: 10.5 };
 
-        var preInt = preConditionHelper.buildQtiPreCondition(rowInt);
-        var preFloat = preConditionHelper.buildQtiPreCondition(rowFloat);
+        var preInt = preConditionsHelper.buildQtiPreCondition(rowInt);
+        var preFloat = preConditionsHelper.buildQtiPreCondition(rowFloat);
 
         var expectedIntType = baseTypeHelper.getValid(baseTypeHelper.INTEGER, baseTypeHelper.FLOAT);
         var expectedFloatType = baseTypeHelper.getValid(baseTypeHelper.FLOAT, baseTypeHelper.FLOAT);
@@ -121,7 +121,7 @@ define([
             value: 3
         };
 
-        var pre = preConditionHelper.buildQtiPreCondition(row);
+        var pre = preConditionsHelper.buildQtiPreCondition(row);
 
         assert.expect(2);
         assert.equal(pre.expression.expressions[0].identifier, '', 'Missing variable should default to empty string');
@@ -142,7 +142,7 @@ define([
             }
         };
 
-        var row = preConditionHelper.parseQtiPreCondition(qtiPre);
+        var row = preConditionsHelper.parseQtiPreCondition(qtiPre);
 
         assert.expect(6);
         assert.equal(row.variable, 'SCORE', 'Variable should come from variable expression');
@@ -162,7 +162,7 @@ define([
             }
         };
 
-        var row = preConditionHelper.parseQtiPreCondition(qtiPre);
+        var row = preConditionsHelper.parseQtiPreCondition(qtiPre);
 
         assert.expect(3);
         assert.equal(row.variable, '', 'Missing variable should default to empty string');
@@ -182,7 +182,7 @@ define([
             }
         };
 
-        var row = preConditionHelper.parseQtiPreCondition(qtiPre);
+        var row = preConditionsHelper.parseQtiPreCondition(qtiPre);
 
         assert.expect(2);
         assert.equal(row.value, 0, 'Invalid numeric value should fallback to 0');
@@ -194,10 +194,10 @@ define([
     QUnit.test('normalizeModel - handles null or invalid models gracefully', function (assert) {
         assert.expect(2);
 
-        preConditionHelper.normalizeModel(null);
+        preConditionsHelper.normalizeModel(null);
         assert.ok(true, 'normalizeModel(null) should not throw');
 
-        preConditionHelper.normalizeModel({});
+        preConditionsHelper.normalizeModel({});
         assert.ok(true, 'normalizeModel({}) should not throw');
     });
 
@@ -209,7 +209,7 @@ define([
             ]
         };
 
-        preConditionHelper.normalizeModel(testModel);
+        preConditionsHelper.normalizeModel(testModel);
 
         assert.expect(3);
         assert.ok(Array.isArray(testModel.testParts[0].preConditions), 'Missing preConditions should be created as array');
@@ -238,7 +238,7 @@ define([
             ]
         };
 
-        preConditionHelper.normalizeModel(testModel);
+        preConditionsHelper.normalizeModel(testModel);
 
         var row = testModel.testParts[0].preConditions[0];
 
@@ -265,7 +265,7 @@ define([
             ]
         };
 
-        preConditionHelper.normalizeModel(testModel);
+        preConditionsHelper.normalizeModel(testModel);
 
         assert.expect(2);
         assert.strictEqual(testModel.testParts[0].preConditions[0], uiPre, 'Non-QTI preConditions should stay untouched');
@@ -277,10 +277,10 @@ define([
     QUnit.test('serializeModel - handles null or invalid models gracefully', function (assert) {
         assert.expect(2);
 
-        preConditionHelper.serializeModel(null);
+        preConditionsHelper.serializeModel(null);
         assert.ok(true, 'serializeModel(null) should not throw');
 
-        preConditionHelper.serializeModel({});
+        preConditionsHelper.serializeModel({});
         assert.ok(true, 'serializeModel({}) should not throw');
     });
 
@@ -300,7 +300,7 @@ define([
             ]
         };
 
-        preConditionHelper.serializeModel(testModel);
+        preConditionsHelper.serializeModel(testModel);
 
         var pre = testModel.testParts[0].preConditions[0];
 
@@ -329,7 +329,7 @@ define([
             ]
         };
 
-        preConditionHelper.serializeModel(testModel);
+        preConditionsHelper.serializeModel(testModel);
 
         assert.expect(1);
         assert.strictEqual(testModel.testParts[0].preConditions[0], qtiPre, 'Existing QTI preConditions should be preserved');
@@ -361,7 +361,7 @@ define([
             ]
         };
 
-        preConditionHelper.purgeConditionsWithMissingVariables(testModel);
+        preConditionsHelper.purgeConditionsWithMissingVariables(testModel);
 
         assert.expect(4);
         assert.equal(testModel.testParts[0].preConditions.length, 1, 'First part should only keep 1 preCondition');
@@ -382,7 +382,7 @@ define([
             ]
         };
 
-        preConditionHelper.purgeConditionsWithMissingVariables(testModel);
+        preConditionsHelper.purgeConditionsWithMissingVariables(testModel);
 
         assert.expect(2);
         assert.equal(testModel.testParts[0].preConditions.length, 0, 'All preConditions should be removed when no outcomes exist');
