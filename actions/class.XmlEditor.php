@@ -72,7 +72,7 @@ class taoQtiTest_actions_XmlEditor extends tao_actions_ServiceModule
                 foreach ($errors->getArrayCopy() as $error) {
                     $message .= $error->message;
                 }
-                $this->setData('errorMessage', $message);
+                $this->setData('errorMessage', empty($message) ? $e->getMessage() : $message);
             } catch (Throwable $e) {
                 $this->setData('errorMessage', __('Something went wrong...'));
                 common_Logger::e($e->getMessage());

@@ -342,6 +342,20 @@
                 {{/if}}
             </div>
         {{/if}}
+
+        {{#if showBranchRules}}
+            <h4 class="toggler closed" data-toggle="~ .testpart-branch-rules">{{__ 'Paths'}}</h4>
+            <div class="testpart-branch-rules toggled">
+                {{> branchRules}}
+            </div>
+        {{/if}}
+
+        {{#if showPreconditions}}
+            <h4 class="toggler closed" data-toggle="~ .testpart-preconditions">{{__ 'Prerequisites'}}</h4>
+            <div class="testpart-preconditions toggled">
+                {{> preConditions}}
+            </div>
+        {{/if}}
     {{/unless}}
     </form>
 </div>

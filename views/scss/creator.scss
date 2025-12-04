@@ -22,6 +22,12 @@
     @include respond-to(wide) { #{$key} : $wide;  }
 }
 
+$infoBorderColor: #176998;
+$infoBgColor: #D4DFE8;
+$bgWhite: #fff;
+$brActionColor: #222;
+$brActionBorderColor: #ddd;
+
 
 #test-creator{
 
@@ -38,6 +44,7 @@
     $subsectionColor: #d2e9f3;
     $sub2sectionColor: #d4d5d7;
     $rubColor: whiten($info, 0.3);
+
 
     position: relative;
     height: calc(100vh - 99px);
@@ -209,7 +216,8 @@
         }
 
         .grid-row {
-            padding-left: 6px;
+            padding-left: 0.6rem;
+            padding-right: 0.6rem;
             width: 100%;
 
             input {
@@ -983,6 +991,131 @@
     span.icon-warning {
         color: $error !important;
     }
+}
+
+.info-card {
+    border: 1px solid $infoBorderColor;
+    border-radius: 0.5rem;
+    background-color: $infoBgColor;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+
+    span.icon-info {
+        color: $info;
+        font-size: 2.6rem;
+    }
+
+    & :first-child {
+        text-align: center;
+    }
+
+    & :nth-child(2) {
+        margin-bottom: 0;
+    }
+}
+
+.branch-rules-table, .preconditions-table {
+    font-size: 1.2rem;
+
+    .branch-rules-table-header div, .preconditions-table-header div {
+        margin-right: 0.1rem;
+    }
+
+    & .select2 {
+        width: 100%;
+    }
+
+    .target-col {
+        margin-inline-start: 0%;
+        inline-size: 22.5%;
+    }
+
+    .variable-col {
+        margin-inline-start: 1%;
+        inline-size: 27%;
+    }
+
+    .operator-col, .value-col {
+        margin-inline-start: 1%;
+        inline-size: 10.5%;
+    }
+}
+
+#test-creator .test-creator-props .branch-rules-table .grid-row input {
+    height: 2.6rem;
+}
+#test-creator .test-creator-props .preconditions-table .grid-row input {
+    height: 2.6rem;
+}
+
+// fix for select2 inside a branch table cell
+.branch-rules-table .select2-container .select2-choice>.select2-chosen {
+    margin-right: 1.4rem;
+    font-size: 1rem;
+}
+.preconditions-table .select2-container .select2-choice>.select2-chosen {
+    margin-right: 1.4rem;
+    font-size: 1rem;
+}
+
+//  fix for table items padding
+#test-creator .test-creator-props .branch-rules-table .branch-rules-table-item {
+    padding-right: 0;
+}
+#test-creator .test-creator-props .preconditions-table .precondition-table-item {
+    padding-right: 0;
+}
+
+// fix for select 2 dropdown font size
+.select2-drop .select2-results li {
+    font-size: 1rem;
+}
+
+.branch-rules-add-btn {
+    margin-bottom: 2rem;
+}
+
+.branch-rules-table-actions, .precondition-table-actions {
+    display: flex;
+    align-items: center;
+    background: $bgWhite;
+    border: 1px solid $brActionBorderColor;
+
+    .branch-rules-table-action, .precondition-table-action {
+        height: 2.4rem;
+        width: 2.8rem;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        text-decoration: none;
+        color: $brActionColor;
+        transition: background-color 0.2s ease;
+
+        &.br-action-disabled {
+            background-color: $bgWhite;
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
+        &:not(.br-action-disabled):not([aria-disabled="true"]):hover {
+            background-color: $infoBorderColor;
+            color: $bgWhite;
+        }
+    }
+
+    .action-separator {
+        background-color: rgba(0, 0, 0, 0.2);
+        margin: 0.1rem 0.2rem 0;
+        height: 1.8rem;
+        width: 0.11rem;
+    }
+}
+.precondition-table-actions {
+    width: fit-content;
+    margin-left: 0.5rem;
 }
 
 @import "inc/solar/creator";
