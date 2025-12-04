@@ -13,13 +13,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
+
 define([
     'taoQtiTest/controller/creator/config/defaults',
+    'handlebars',
     'tpl!taoQtiTest/controller/creator/templates/testpart',
     'tpl!taoQtiTest/controller/creator/templates/section',
     'tpl!taoQtiTest/controller/creator/templates/rubricblock',
@@ -36,9 +38,12 @@ define([
     'tpl!taoQtiTest/controller/creator/templates/subsection',
     'tpl!taoQtiTest/controller/creator/templates/menu-button',
     'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
-    'tpl!taoQtiTest/controller/creator/templates/mnop-table'
+    'tpl!taoQtiTest/controller/creator/templates/mnop-table',
+    'tpl!taoQtiTest/controller/creator/templates/branch-rules',
+    'tpl!taoQtiTest/controller/creator/templates/preconditions',
 ], function (
     defaults,
+    handlebars,
     testPart,
     section,
     rubricBlock,
@@ -55,12 +60,16 @@ define([
     subsection,
     menuButton,
     outcomeListing,
-    mnopTable
+    mnopTable,
+    branchRules,
+    preConditions
 ) {
     'use strict';
 
     const applyTemplateConfiguration = template => config => template(defaults(config));
 
+    handlebars.registerPartial('branchRules', branchRules);
+    handlebars.registerPartial('preConditions', preConditions);
     /**
      * Expose all the templates used by the test creator
      * @exports taoQtiTest/controller/creator/templates/index
@@ -75,6 +84,8 @@ define([
         menuButton: applyTemplateConfiguration(menuButton),
         outcomeListing: applyTemplateConfiguration(outcomeListing),
         mnopTable: mnopTable,
+        branchRules: applyTemplateConfiguration(branchRules),
+        preConditions: applyTemplateConfiguration(preConditions),
         properties: {
             test: applyTemplateConfiguration(testProps),
             testpart: applyTemplateConfiguration(testPartProps),

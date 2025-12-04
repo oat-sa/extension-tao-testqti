@@ -19,6 +19,7 @@
 */
 
 use qtism\common\datatypes\QtiPair;
+use qtism\data\rules\BranchRule;
 use qtism\data\state\ExternalScored;
 use qtism\data\state\OutcomeDeclaration;
 use qtism\data\storage\xml\XmlDocument;
@@ -301,7 +302,7 @@ class taoQtiTest_models_classes_QtiTestConverter
 
             if (! empty($compName)) {
                 $reflector = new ReflectionClass($compName);
-                $component = $this->createInstance($reflector, $testArray);
+                $component = $this->createInstance($reflector, $testArray, $parent);
 
                 $properties = [];
                 foreach ($this->getProperties($reflector) as $property) {
@@ -315,7 +316,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                         if (is_array($value) && array_key_exists('qti-type', $value)) {
                             $this->arrayToComponent($value, $component, true);
                         } else {
-                            $assignableValue = $this->componentValue($value, $class);
+                            $assignableValue = $this->componentValue($value, $class, $component);
 
                             if ($assignableValue !== null) {
                                 if (is_string($assignableValue) && $key === 'content') {
@@ -351,16 +352,17 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param mixed $value
      * @param object|null $class
+     * @param QtiComponent|null $parentComponent
      * @return QtiDuration|QtiComponentCollection|mixed|null
      */
-    private function componentValue($value, $class)
+    private function componentValue($value, $class, ?QtiComponent $parentComponent = null)
     {
         if ($class === null) {
             return $value;
         }
 
         if (is_array($value)) {
-            return $this->createComponentCollection(new ReflectionClass($class->name), $value);
+            return $this->createComponentCollection(new ReflectionClass($class->name), $value, $parentComponent);
         }
         if ($class->name === QtiDuration::class) {
             return new QtiDuration('PT' . $value . 'S');
@@ -374,9 +376,10 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param ReflectionClass $class
      * @param array $values
+     * @param QtiComponent|null $parentComponent
      * @return \qtism\data\QtiComponentCollection|null
      */
-    private function createComponentCollection(ReflectionClass $class, $values)
+    private function createComponentCollection(ReflectionClass $class, $values, ?QtiComponent $parentComponent = null)
     {
         $collection = $class->newInstance();
         if ($collection instanceof ViewCollection) {
@@ -387,7 +390,7 @@ class taoQtiTest_models_classes_QtiTestConverter
         }
         if ($collection instanceof QtiComponentCollection) {
             foreach ($values as $value) {
-                $collection->attach($this->arrayToComponent($value, null, false));
+                $collection->attach($this->arrayToComponent($value, $parentComponent, false));
             }
             return $collection;
         }
@@ -408,9 +411,10 @@ class taoQtiTest_models_classes_QtiTestConverter
      *
      * @param ReflectionClass $class
      * @param array|string $properties
+     * @param QtiComponent|null $parentComponent
      * @return QtiComponent
      */
-    private function createInstance(ReflectionClass $class, $properties)
+    private function createInstance(ReflectionClass $class, $properties, ?QtiComponent $parentComponent = null)
     {
         $arguments = [];
         if (is_string($properties) && $class->implementsInterface('qtism\common\enums\Enumeration')) {
@@ -429,7 +433,7 @@ class taoQtiTest_models_classes_QtiTestConverter
                 if ($paramClass !== null) {
                     if (is_array($properties[$name])) {
                         $component = $this->arrayToComponent($properties[$name]);
-                        if (! $component) {
+                        if (!$component) {
                             $component = $this->createComponentCollection(
                                 new ReflectionClass($paramClass->name),
                                 $properties[$name]
@@ -466,7 +470,13 @@ class taoQtiTest_models_classes_QtiTestConverter
             }
         }
 
-        return $class->newInstanceArgs($arguments);
+        $newInstance = $class->newInstanceArgs($arguments);
+
+        if ($parentComponent && $newInstance instanceof BranchRule) {
+            $newInstance->setParentIdentifier($parentComponent->getIdentifier());
+        }
+
+        return $newInstance;
     }
 
     /**

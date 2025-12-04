@@ -46,7 +46,9 @@ define([
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection',
-    'taoQtiTest/controller/creator/helpers/scaleSelector'
+    'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiTest/controller/creator/helpers/branchRules',
+    'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (
     module,
     $,
@@ -75,7 +77,9 @@ define([
     previewerFactory,
     loggerFactory,
     subsectionView,
-    scaleSelector
+    scaleSelector,
+    branchRules,
+    preConditions
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -223,6 +227,9 @@ define([
                         },
                         templates: templates,
                         beforeSave(model) {
+                            branchRules.serializeModel(model);
+                            preConditions.serializeModel(model);
+
                             //ensure the qti-type is present
                             qtiTestHelper.addMissingQtiType(model);
 
@@ -235,6 +242,8 @@ define([
                             } catch (err) {
                                 $saver.attr('disabled', false).removeClass('disabled');
                                 feedback().error(`${__('The test has not been saved.')} + ${err}`);
+                                branchRules.normalizeModel(model);
+                                preConditions.normalizeModel(model);
                                 return false;
                             }
                             return true;
@@ -292,6 +301,12 @@ define([
                                 creatorContext.setTestModel(model);
                                 modelOverseer = creatorContext.getModelOverseer();
 
+                                branchRules.normalizeModel(model);
+                                preConditions.normalizeModel(model);
+
+                                branchRules.refreshOptions(modelOverseer);
+                                branchRules.bindSync(modelOverseer);
+
                                 //detect the scoring mode
                                 scoringHelper.init(modelOverseer);
 
@@ -340,10 +355,14 @@ define([
 
                                                         feedback().success(__('Test Saved'));
                                                         isTestContainsItems();
+                                                        branchRules.normalizeModel(creatorContext.getModelOverseer().getModel());
+                                                        preConditions.normalizeModel(creatorContext.getModelOverseer().getModel());
                                                         creatorContext.trigger('saved');
                                                     });
                                             },
                                             function () {
+                                                branchRules.normalizeModel(creatorContext.getModelOverseer().getModel());
+                                                preConditions.normalizeModel(creatorContext.getModelOverseer().getModel());
                                                 $saver.prop('disabled', false).removeClass('disabled');
                                             }
                                         );
