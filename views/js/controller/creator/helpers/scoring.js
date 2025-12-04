@@ -644,7 +644,7 @@ define([
 
     function addGradeOutcome(outcomes, identifier, scalePresets) {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.interpretation = getCommonScaleUri(outcomes, scalePresets);
+        outcome.scale = getCommonScaleUri(outcomes, scalePresets);
 
         outcomeHelper.addOutcome(outcomes, outcome);
     }
@@ -659,7 +659,7 @@ define([
 
         errorMessage.addClass('hidden');
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.interpretation = commonScaleUri;
+        outcome.scale = commonScaleUri;
 
         var maxScaleValue = getMaxScaleValue(outcomes, scalePresets);
 
@@ -678,19 +678,19 @@ define([
     function getCommonScaleUri(outcomes, scalePresets) {
         var scaleUris = _.map(scalePresets, 'uri');
 
-        var urlInterpretations = _.chain(outcomes.outcomeDeclarations)
-            .map('interpretation')
-            .filter(function(i) {
-                return typeof i === 'string' && _.includes(scaleUris, i);
+        var scales = _.chain(outcomes.outcomeDeclarations)
+            .map('scale')
+            .filter(function(scale) {
+                return typeof scale === 'string' && _.includes(scaleUris, scale);
             })
             .uniq()
             .value();
 
-        if (urlInterpretations.length !== 1) {
+        if (scales.length !== 1) {
             return null;
         }
 
-        return urlInterpretations[0];
+        return scales[0];
     }
 
     function getMaxScaleValue(outcomes, scalePresets) {
@@ -748,7 +748,7 @@ define([
             return;
         }
         var scaleOrientedOutcomeDeclarations = _.filter(outcomes.outcomeDeclarations, function(outcome) {
-            return outcome.interpretation === commonScaleUri;
+            return outcome.scale === commonScaleUri;
         });
 
 
@@ -1030,6 +1030,105 @@ define([
     }
 
     /**
+     * Detects if outcome processing rules structurally match the "grade" mode pattern
+     * Checks for outcomeConditions that set GRADE based on SCORE equality comparisons
+     * Pattern: outcomeCondition > outcomeIf > [equal(variable(SCORE), baseValue)] + [setOutcomeValue(GRADE)]
+     * @param {Array} outcomeRules
+     * @returns {Boolean}
+     */
+    function detectGradeOutcomeRules(outcomeRules) {
+        if (!_.isArray(outcomeRules) || outcomeRules.length === 0) {
+            return false;
+        }
+
+        var hasGradePattern = false;
+
+        function browseRules(rules) {
+            if (!_.isArray(rules)) {
+                return;
+            }
+
+            _.forEach(rules, function(rule) {
+                // Check for the grade pattern: outcomeCondition with SCORE comparison and GRADE setter
+                if (rule['qti-type'] === 'outcomeCondition' && rule.outcomeIf) {
+                    var outcomeIf = rule.outcomeIf;
+                    var hasScoreVariable = false;
+                    var hasGradeSetter = false;
+
+                    // Check if expression contains SCORE variable
+                    if (outcomeIf.expression) {
+                        var expressions = outcomeIf.expression.expressions;
+                        if (_.isArray(expressions)) {
+                            _.forEach(expressions, function(expr) {
+                                if (expr['qti-type'] === 'variable' && expr.identifier === 'SCORE') {
+                                    hasScoreVariable = true;
+                                }
+                            });
+                        }
+                    }
+
+                    // Check if outcomeIf contains setOutcomeValue for GRADE
+                    if (outcomeIf['qti-type'] === 'outcomeIf') {
+                        // Collect all rules from outcomeIf
+                        var outcomeIfRules = [];
+                        if (outcomeIf.outcomeRules && _.isArray(outcomeIf.outcomeRules)) {
+                            outcomeIfRules = outcomeIfRules.concat(outcomeIf.outcomeRules);
+                        }
+
+                        _.forEach(outcomeIfRules, function(ifRule) {
+                            if (ifRule['qti-type'] === 'setOutcomeValue' && ifRule.identifier === 'GRADE') {
+                                hasGradeSetter = true;
+                            }
+                        });
+                    }
+
+                    // If this condition has both patterns, we found a match
+                    if (hasScoreVariable && hasGradeSetter) {
+                        hasGradePattern = true;
+                    }
+
+                    // Recursively check nested conditions in outcomeElse
+                    if (rule.outcomeElse && rule.outcomeElse.outcomeRules) {
+                        browseRules(rule.outcomeElse.outcomeRules);
+                    }
+                    if (rule.outcomeElseIfs && _.isArray(rule.outcomeElseIfs)) {
+                        _.forEach(rule.outcomeElseIfs, function(elseIf) {
+                            if (elseIf.outcomeRules) {
+                                browseRules(elseIf.outcomeRules);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        browseRules(outcomeRules);
+
+        // Grade pattern is detected when we find at least one matching condition
+        return hasGradePattern;
+    }
+
+    /**
+     * Detects scoring modes from outcome processing rules
+     * Uses pattern detection to identify grade mode from nested outcomeConditions
+     * @param {Array} outcomeRules
+     * @returns {Array}
+     */
+    function detectProcessingModes(outcomeRules) {
+        var modes = [];
+
+        // Check if outcome rules contain grade pattern
+        if (_.isArray(outcomeRules) && outcomeRules.length > 0) {
+            var firstItem = outcomeRules[0];
+            if (firstItem['qti-type'] === 'outcomeCondition' && detectGradeOutcomeRules(outcomeRules)) {
+                modes.push('grade');
+            }
+        }
+
+        return modes;
+    }
+
+    /**
      * Checks whether the categories have to be taken into account
      * @param {modelOverseer} modelOverseer
      * @returns {Boolean}
@@ -1106,7 +1205,12 @@ define([
 
         // walk through each outcome declaration, and tries to identify the score processing mode
         var declarations = listScoringModes(outcomeDeclarations);
-        var processing = listScoringModes(outcomeRules);
+        // Detect recipe using listScoringModes and map outcomeRules to recipes
+        var processing = _.union(
+            listScoringModes(outcomeRules),
+            detectProcessingModes(outcomeRules)
+        );
+
         var diff = _.difference(declarations, processing);
         var count = _.size(declarations);
         var included;
