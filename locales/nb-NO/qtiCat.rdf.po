@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-06-07 09:14\n"
+"PO-Revision-Date: 2025-12-05 14:34\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nb_NO\n"
@@ -14,7 +14,7 @@ msgstr ""
 "X-Crowdin-Project-ID: 590867\n"
 "X-Crowdin-Language: nb\n"
 "X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/qtiCat.rdf.po\n"
-"X-Crowdin-File-ID: 533\n"
+"X-Crowdin-File-ID: 1211\n"
 "Language-Team: Norwegian Bokmal\n"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections
