@@ -376,7 +376,7 @@ define([
 
         model.scalePresets = [customScale];
         _.forEach(model.outcomeDeclarations, function(outcomeDeclaration) {
-            outcomeDeclaration.interpretation = customScale.uri;
+            outcomeDeclaration.scale = customScale.uri;
         });
 
         var modelOverseer = modelOverseerFactory(model);
