@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2023-06-07 09:15\n"
+"PO-Revision-Date: 2025-12-05 14:35\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -14,28 +14,28 @@ msgstr ""
 "X-Crowdin-Project-ID: 590867\n"
 "X-Crowdin-Language: ja\n"
 "X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/taoQtiTestItemRunner.rdf.po\n"
-"X-Crowdin-File-ID: 537\n"
+"X-Crowdin-File-ID: 1215\n"
 "Language-Team: Japanese\n"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTIテスト親サービスコールID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTIテスト親サービスコールID"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Item Runner"
-msgstr "QTIテストアイテムランナー"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr "アイテムをQTIに埋込み実行。このサービスはTAOのAPIとコンテキストを初期化します。"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
