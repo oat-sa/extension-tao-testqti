@@ -1,14 +1,21 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:06\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2025-12-06 15:05\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: lt-LT\n"
+"Language: lt\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: lt-LT\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: lt\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/qtitest.rdf.po\n"
+"X-Crowdin-File-ID: 1213\n"
+"Language-Team: Lithuanian\n"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.2 Test Driver"
@@ -21,27 +28,27 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Definition"
-msgstr "QTI Testo Apibrėžimas"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition Uri"
-msgstr "QTI Testo Apibrėžimo Uri"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Compilation"
-msgstr "QTI Testo Kompiliacija"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr "QTI Testo Kompiliacijos Uri"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr "QTI testo vykdytojas"
+msgstr ""
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.2 test"
@@ -60,7 +67,7 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Testo Tvarkyklė"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
@@ -70,7 +77,7 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
-msgstr "paleidžia QTI 2.1 testą"
+msgstr ""
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
