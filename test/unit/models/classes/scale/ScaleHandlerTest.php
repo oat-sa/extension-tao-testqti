@@ -30,6 +30,7 @@ use oat\oatbox\filesystem\File;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\models\classes\scale\ScaleHandler;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 
 class ScaleHandlerTest extends TestCase
