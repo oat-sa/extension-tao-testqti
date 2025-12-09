@@ -112,6 +112,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             );
         } else {
             $this->setData('scalesPresets', json_encode([]));
+            $this->setData('testScales', json_encode([]));
         }
 
         $guidedNavigation = false;
