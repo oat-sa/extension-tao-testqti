@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\classes\scale;
 
 use core_kernel_classes_Resource;
+use oat\generis\model\data\Ontology;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
@@ -57,7 +58,6 @@ class ScaleHandler
         $this->scalePreprocessor = $scalePreprocessor;
         $this->remoteScaleListService = $remoteScaleListService;
     }
-
 
     /**
      * Process and persist outcome declaration scales for a test.
