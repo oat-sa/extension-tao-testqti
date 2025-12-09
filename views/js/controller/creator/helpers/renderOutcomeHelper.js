@@ -5,7 +5,7 @@ define([
     'taoQtiTest/controller/creator/helpers/outcome',
     'tpl!taoQtiTest/controller/creator/templates/outcome-listing',
     'taoQtiItem/qtiCreator/widgets/helpers/formElement',
-    'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiItem/qtiCreator/helper/scaleSelector',
     'services/features'
 ], function (
     $,

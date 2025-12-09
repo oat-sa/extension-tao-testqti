@@ -46,7 +46,7 @@ define([
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection',
-    'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiItem/qtiCreator/helper/scaleSelector',
     'taoQtiTest/controller/creator/helpers/branchRules',
     'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (

@@ -37,7 +37,7 @@ define([
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
-    'taoQtiTest/controller/creator/helpers/scaleSelector',
+    'taoQtiItem/qtiCreator/helper/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
     'taoQtiTest/controller/creator/helpers/featureFlags',
