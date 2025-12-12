@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:05\n"
+"PO-Revision-Date: 2025-12-12 11:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es\n"
@@ -20,10 +20,10 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "CAT Sections"
-msgstr ""
+msgstr "Secciones CAT"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiCatAdaptiveSections
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI CAT Section identifiers"
-msgstr ""
+msgstr "Identificadores de la sección CAT QTI"
 
