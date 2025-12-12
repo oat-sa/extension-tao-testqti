@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:05\n"
+"PO-Revision-Date: 2025-12-12 11:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -19,83 +19,83 @@ msgstr ""
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.2 Test Driver"
-msgstr ""
+msgstr "QTI 2.2 Testchauffeur"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.2 tests"
-msgstr ""
+msgstr "Chauffeurs, configuratie-/schrijftool voor het implementeren van de testinterface voor rij-conforme QTI 2.2 tests"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Definition"
-msgstr ""
+msgstr "QTI-test definitie"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition Uri"
-msgstr ""
+msgstr "QTest-definitie Uri"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Compilation"
-msgstr ""
+msgstr "QTI test compilatie"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr ""
+msgstr "QTI test compilatie Uri"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr ""
+msgstr "QTI test runner"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.2 test"
-msgstr ""
+msgstr "voert een QTI 2.2 test uit"
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "Test XML Editor"
-msgstr ""
+msgstr "Test XML Editor"
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "The Test XML Editor Role"
-msgstr ""
+msgstr "De rol van de test XML editor"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 Test Chauffeur"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
-msgstr ""
+msgstr "Chauffeurs, configuratie/schrijftool voor het implementeren van de testinterface voor rij-conforme QTI 2.1 tests"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
-msgstr ""
+msgstr "voert een QTI 2.1 test uit"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 Test Chauffeur"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition"
-msgstr ""
+msgstr "QTI-test definitie"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation"
-msgstr ""
+msgstr "QTI test compilatie"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI test runner"
-msgstr ""
+msgstr "QTI test runner"
 
