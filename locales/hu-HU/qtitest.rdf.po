@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:05\n"
+"PO-Revision-Date: 2025-12-12 11:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: hu\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.2 Test Driver"
-msgstr ""
+msgstr "QTI 2.2 tesztpilóta"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.2 tests"
@@ -67,7 +67,7 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 tesztpilóta"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
@@ -82,7 +82,7 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI 2.1 Test Driver"
-msgstr ""
+msgstr "QTI 2.1 tesztpilóta"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
