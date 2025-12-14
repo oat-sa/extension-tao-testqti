@@ -151,15 +151,11 @@ class QtiTestRepositoryTest extends TestCase
             ->willReturn(self::TEST_URI);
 
         $this->ontology
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('getResource')
-            ->with(self::DELIVERY_URI)
-            ->willReturn($delivery);
-
-        $this->ontology
-            ->expects($this->at(1))
-            ->method('getResource')
-            ->with(self::TEST_URI)
-            ->willReturn($test);
+            ->willReturnMap([
+                [self::DELIVERY_URI, $delivery],
+                [self::TEST_URI, $test],
+            ]);
     }
 }

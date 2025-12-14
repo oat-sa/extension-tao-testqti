@@ -24,12 +24,15 @@ namespace oat\taoQtiTest\test\unit\model\Infrastructure\Validation;
 
 use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
 use oat\taoQtiTest\model\Infrastructure\Validation\InteractionResponseValidationStrategy;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use qtism\runtime\common\State;
 
 class ExtraQtiInteractionResponseValidatorTest extends TestCase
 {
     private ExtraQtiInteractionResponseValidator $subject;
+    private InteractionResponseValidationStrategy|MockObject $interactionResponseValidationStrategy;
+    private InteractionResponseValidationStrategy|MockObject $interactionResponseValidationStrategy2;
 
     public function setUp(): void
     {

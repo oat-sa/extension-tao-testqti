@@ -850,7 +850,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             break;
                     }
                 } else {
-                    $msg = "The remote resource referenced by '${url}' could not be retrieved.";
+                    $msg = "The remote resource referenced by '{$url}' could not be retrieved.";
                     throw new taoQtiTest_models_classes_QtiTestCompilationFailedException(
                         $msg,
                         $this->getResource(),
@@ -954,7 +954,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     // Deal with AssessmentSection Compiling.
                     $compilationDataService->writeCompilationData(
                         $this->getPrivateDirectory(),
-                        "adaptive-assessment-section-${sectionIdentifier}",
+                        "adaptive-assessment-section-{$sectionIdentifier}",
                         $current
                     );
 
@@ -967,7 +967,7 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                             // Deal with AssessmentItemRef Compiling.
                             $compilationDataService->writeCompilationData(
                                 $this->getPrivateDirectory(),
-                                "adaptive-assessment-item-ref-${sectionPartIdentifier}",
+                                "adaptive-assessment-item-ref-{$sectionPartIdentifier}",
                                 $sectionPart
                             );
 
@@ -976,9 +976,9 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                     }
 
                     if (count($sectionParts) === 0) {
-                        $placeholderIdentifier = "adaptive-placeholder-${sectionIdentifier}";
+                        $placeholderIdentifier = "adaptive-placeholder-{$sectionIdentifier}";
                         // Make the placeholder's href something predictable for later use...
-                        $placeholderHref = "x-tao-qti-adaptive://section/${sectionIdentifier}";
+                        $placeholderHref = "x-tao-qti-adaptive://section/{$sectionIdentifier}";
 
                         $placeholder = new ExtendedAssessmentItemRef($placeholderIdentifier, $placeholderHref);
 
@@ -987,8 +987,8 @@ class taoQtiTest_models_classes_QtiTestCompiler extends taoTests_models_classes_
                         $sectionParts[] = $placeholder;
 
                         \common_Logger::d(
-                            "Adaptive AssessmentItemRef Placeholder '${placeholderIdentifier}' injected in "
-                                . "AssessmentSection '${sectionIdentifier}'."
+                            "Adaptive AssessmentItemRef Placeholder '{$placeholderIdentifier}' injected in "
+                                . "AssessmentSection '{$sectionIdentifier}'."
                         );
 
                         // Ask for section setup to the CAT Engine.

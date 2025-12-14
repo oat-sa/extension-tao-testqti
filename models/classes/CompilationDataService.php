@@ -80,7 +80,7 @@ abstract class CompilationDataService extends ConfigurableService
             $meta = \taoQtiTest_helpers_TestCompilerUtils::testMeta($test);
             $compilationDirectory->write($filename, json_encode($meta));
         } catch (\Exception $e) {
-            throw new \common_Exception("Unable to write file '${filename}'.");
+            throw new \common_Exception("Unable to write file '{$filename}'.");
         }
     }
 
@@ -107,7 +107,7 @@ abstract class CompilationDataService extends ConfigurableService
                 $data = str_replace('?>', '', $data);
                 return eval($data);
             } catch (\Exception $e) {
-                throw new \common_Exception("Unable to read file '${filename}'.");
+                throw new \common_Exception("Unable to read file '{$filename}'.");
             }
         }
     }

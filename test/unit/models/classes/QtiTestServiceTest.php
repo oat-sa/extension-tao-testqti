@@ -8,7 +8,7 @@ use core_kernel_classes_Resource as KernelResource;
 use DOMDocument;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\fileReference\FileReferenceSerializer;
-use oat\generis\test\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
 use oat\oatbox\filesystem\Directory;
@@ -19,7 +19,6 @@ use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\service\ApplicationService;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
-use qtism\common\utils\Format;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -41,26 +40,14 @@ XML;
 
     private const PLATFORM_VERSION = 'v1-test';
 
-    /** @var Directory|MockObject */
-    private $defaultDirectoryMock;
-
-    /** @var FileReferenceSerializer|MockObject */
-    private $fileReferenceSerializerMock;
-
-    /** @var KernelProperty|MockObject */
-    private $testContentPropertyMock;
-
-    /** @var AssessmentTestXmlFactory */
-    private $xmlFactory;
-
-    /** @var DefaultConfigurationRegistry */
-    private $xmlTemplateOptionsRegistry;
-
-    /** @var QtiTestService */
-    private $sut;
-
-    /** @var IdentifierGeneratorInterface|MockObject */
-    private IdentifierGeneratorInterface $identifierGenerator;
+    private Directory|MockObject $defaultDirectoryMock;
+    private FileReferenceSerializer|MockObject $fileReferenceSerializerMock;
+    private KernelProperty|MockObject $testContentPropertyMock;
+    private AssessmentTestXmlFactory $xmlFactory;
+    private DefaultConfigurationRegistry $xmlTemplateOptionsRegistry;
+    private QtiTestService $sut;
+    private IdentifierGeneratorInterface|MockObject $identifierGenerator;
+    private IdentifierGeneratorInterface|MockObject $identifierGeneratorProxy;
 
     /**
      * @before

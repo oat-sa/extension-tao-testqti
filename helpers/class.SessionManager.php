@@ -129,7 +129,7 @@ class taoQtiTest_helpers_SessionManager extends AbstractSessionManager
         // Test Session class instantiation, depending on configuration.
         if (!isset($config) || !isset($config['test-session'])) {
             $className = self::DEFAULT_TEST_SESSION;
-            \common_Logger::w("Missing configuration for TestRunner session class, using '${className}' by default!");
+            \common_Logger::w("Missing configuration for TestRunner session class, using '{$className}' by default!");
         } else {
             $className = $config['test-session'];
         }
