@@ -28,6 +28,8 @@ use PHPUnit\Framework\TestCase;
 
 class MetadataLomServiceTest extends TestCase
 {
+    private MetadataLomService $metadataLomService;
+
     public function setUp(): void
     {
         $this->metadataLomService = new MetadataLomService();

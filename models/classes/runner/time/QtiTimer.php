@@ -263,21 +263,21 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
                 if ($clientDuration) {
                     $duration = $clientDuration;
                     \common_Logger::t(
-                        "No client duration provided to adjust the timer, but a range already exist: ${duration}"
+                        "No client duration provided to adjust the timer, but a range already exist: {$duration}"
                     );
                 } else {
                     $duration = $serverDuration;
                     \common_Logger::t(
-                        "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+                        "No client duration provided to adjust the timer, fallback to server duration: {$duration}"
                     );
                 }
             }
 
             $removed = $this->timeLine->remove($tags, TimePoint::TARGET_CLIENT);
             if ($removed == $clientRangeLength) {
-                \common_Logger::t("Replace client duration in timer: ${clientDuration} to ${duration}");
+                \common_Logger::t("Replace client duration in timer: {$clientDuration} to {$duration}");
             } else {
-                \common_Logger::w("Unable to replace client duration in timer: ${clientDuration} to ${duration}");
+                \common_Logger::w("Unable to replace client duration in timer: {$clientDuration} to {$duration}");
             }
         }
 
@@ -285,11 +285,11 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
         if (is_null($duration)) {
             $duration = $serverDuration;
             \common_Logger::t(
-                "No client duration provided to adjust the timer, fallback to server duration: ${duration}"
+                "No client duration provided to adjust the timer, fallback to server duration: {$duration}"
             );
         } elseif ($duration > $serverDuration) {
             \common_Logger::w(
-                "A client duration must not be larger than the server time range! (${duration} > ${serverDuration})"
+                "A client duration must not be larger than the server time range! ({$duration} > {$serverDuration})"
             );
             $duration = $serverDuration;
         }
@@ -399,7 +399,7 @@ class QtiTimer implements Timer, ExtraTime, \JsonSerializable
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

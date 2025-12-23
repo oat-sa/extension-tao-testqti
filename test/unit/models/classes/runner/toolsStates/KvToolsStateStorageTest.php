@@ -21,34 +21,33 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
-use common_persistence_AdvKeyValuePersistence;
+use oat\generis\persistence\PersistenceManager;
+use oat\generis\test\KeyValueMockTrait;
 use oat\taoQtiTest\models\runner\toolsStates\KvToolsStateStorage;
-use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
-use Prophecy\Argument;
 
 class KvToolsStateStorageTest extends ToolsStateStorageTestCase
 {
-    private $storage;
+    use KeyValueMockTrait;
 
-    /**
-     * @return RdsToolsStateStorage
-     */
-    protected function getStorage()
+    private KvToolsStateStorage $storage;
+
+    protected function getStorage(): KvToolsStateStorage
     {
         return $this->storage;
     }
 
     public function setUp(): void
     {
-        $persistence = new common_persistence_AdvKeyValuePersistence([], new \common_persistence_InMemoryAdvKvDriver());
+        $persistenceManagerMock = $this->getAdvancedKeyValueMock('kv');
 
         $this->storage = new KvToolsStateStorage();
-        $this->storage->setOption(KvToolsStateStorage::OPTION_PERSISTENCE, $persistence);
+        $this->storage->setOption(
+            KvToolsStateStorage::OPTION_PERSISTENCE,
+            $persistenceManagerMock->getPersistenceById('kv')
+        );
 
-        $persistanceManagerProphecy = $this->prophesize(\common_persistence_Manager::class);
-        $persistanceManagerProphecy->getPersistenceById(Argument::any())->willReturn($persistence);
         $serviceManagerMock = $this->getServiceLocatorMock([
-            \common_persistence_Manager::SERVICE_ID => $persistanceManagerProphecy,
+            PersistenceManager::SERVICE_ID => $persistenceManagerMock,
         ]);
         $this->storage->setServiceLocator($serviceManagerMock);
     }

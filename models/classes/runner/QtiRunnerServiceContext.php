@@ -228,7 +228,7 @@ class QtiRunnerServiceContext extends RunnerServiceContext
             $testTaker = $this->getTestTakerFromSessionOrRds();
             taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         } else {
-            common_Logger::d("Retrieving QTI Assessment Test Session '${sessionId}'...");
+            common_Logger::d("Retrieving QTI Assessment Test Session '{$sessionId}'...");
             $this->setTestSession($storage->retrieve($this->getTestDefinition(), $sessionId));
         }
 

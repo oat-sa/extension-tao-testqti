@@ -61,7 +61,7 @@ class QtiRunnerRubric extends ConfigurableService implements RunnerRubric
                     $routeItem = $routeItem[0];
                 }
             } catch (OutOfBoundsException $obe) {
-                \common_Logger::d("Could not retrieve the route for item '${itemRef}'.");
+                \common_Logger::d("Could not retrieve the route for item '{$itemRef}'.");
             }
         } else {
             $routeItem = $session->getRoute()->current();

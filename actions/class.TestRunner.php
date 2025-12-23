@@ -404,7 +404,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             echo json_encode($ctx);
         }
 
-        common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
+        common_Logger::t("Persisting QTI Assessment Test Session '{$sessionId}'...");
         $this->getStorage()->persist($testSession);
         $this->getServiceManager()->get(StorageManager::SERVICE_ID)->persist();
     }
@@ -535,7 +535,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                 $this->handleAssessmentTestSessionException($e);
             }
 
-            common_Logger::t("Persisting QTI Assessment Test Session '${sessionId}'...");
+            common_Logger::t("Persisting QTI Assessment Test Session '{$sessionId}'...");
             $this->getStorage()->persist($testSession);
         }
     }
@@ -832,9 +832,9 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                             $responses->setVariable($var);
                         }
                     } catch (OutOfRangeException $e) {
-                        common_Logger::d("Could not convert client-side value for variable '${id}'.");
+                        common_Logger::d("Could not convert client-side value for variable '{$id}'.");
                     } catch (OutOfBoundsException $e) {
-                        common_Logger::d("Could not find variable with identifier '${id}' in current item.");
+                        common_Logger::d("Could not find variable with identifier '{$id}' in current item.");
                     }
                 }
             } else {
@@ -890,7 +890,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             $item = $testSession->getCurrentAssessmentItemRef()->getIdentifier();
             $occurence = $testSession->getCurrentAssessmentItemRefOccurence();
             $sessionId = $testSession->getSessionId();
-            $transmissionId = "${sessionId}.${item}.${occurence}";
+            $transmissionId = "{$sessionId}.{$item}.{$occurence}";
 
             // retrieve comment's intrinsic value.
             $comment = $this->getRequestParameter('comment');
@@ -954,7 +954,7 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             $testTaker = \common_session_SessionManager::getSession()->getUser();
             taoQtiTest_helpers_TestRunnerUtils::setInitialOutcomes($this->getTestSession(), $testTaker);
         } else {
-            common_Logger::t("Retrieving QTI Assessment Test Session '${sessionId}'...");
+            common_Logger::t("Retrieving QTI Assessment Test Session '{$sessionId}'...");
             $this->setTestSession($qtiStorage->retrieve($this->getTestDefinition(), $sessionId));
         }
 

@@ -58,7 +58,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
         $path .= '.' . self::OUTPUT_FILE_TYPE;
         $dir = $this->ensureCacheDirectory($compilationDirectory);
         $cacheKey = $this->cacheKey($cacheInfo);
-        $cacheFile = "${dir}/${cacheKey}." . self::OUTPUT_FILE_TYPE;
+        $cacheFile = "{$dir}/{$cacheKey}." . self::OUTPUT_FILE_TYPE;
 
         if ($this->useCompactCacheFile() && !is_file($cacheFile)) {
             file_put_contents($cacheFile, $compilationDirectory->read($path));
@@ -98,7 +98,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
             $dirId = substr_replace($dirId, '/', $i, 0);
         }
 
-        $path = $this->cacheDir . "/${dirId}";
+        $path = $this->cacheDir . "/{$dirId}";
 
         if (!is_dir($path)) {
             @mkdir($path, 0700, true);
@@ -112,7 +112,7 @@ class PhpCodeCompilationDataService extends CompilationDataService
         $key = 'php-data';
 
         if (!empty($cacheInfo)) {
-            $key .= "-${cacheInfo}";
+            $key .= "-{$cacheInfo}";
         }
 
         return $key;

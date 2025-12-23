@@ -8,7 +8,7 @@ use core_kernel_classes_Resource as KernelResource;
 use DOMDocument;
 use oat\generis\model\data\Ontology;
 use oat\generis\model\fileReference\FileReferenceSerializer;
-use oat\generis\test\MockObject;
+use PHPUnit\Framework\MockObject\MockObject;
 use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
 use oat\oatbox\filesystem\Directory;
@@ -19,7 +19,6 @@ use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\service\ApplicationService;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoQtiTest\models\test\Template\DefaultConfigurationRegistry;
-use qtism\common\utils\Format;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -41,26 +40,13 @@ XML;
 
     private const PLATFORM_VERSION = 'v1-test';
 
-    /** @var Directory|MockObject */
-    private $defaultDirectoryMock;
-
-    /** @var FileReferenceSerializer|MockObject */
-    private $fileReferenceSerializerMock;
-
-    /** @var KernelProperty|MockObject */
-    private $testContentPropertyMock;
-
-    /** @var AssessmentTestXmlFactory */
-    private $xmlFactory;
-
-    /** @var DefaultConfigurationRegistry */
-    private $xmlTemplateOptionsRegistry;
-
-    /** @var QtiTestService */
-    private $sut;
-
-    /** @var IdentifierGeneratorInterface|MockObject */
-    private IdentifierGeneratorInterface $identifierGenerator;
+    private Directory|MockObject $defaultDirectoryMock;
+    private FileReferenceSerializer|MockObject $fileReferenceSerializerMock;
+    private KernelProperty|MockObject $testContentPropertyMock;
+    private AssessmentTestXmlFactory $xmlFactory;
+    private DefaultConfigurationRegistry $xmlTemplateOptionsRegistry;
+    private QtiTestService $sut;
+    private IdentifierGeneratorInterface|MockObject $identifierGeneratorProxy;
 
     /**
      * @before
@@ -76,7 +62,6 @@ XML;
                 AssessmentTestXmlFactory::OPTION_CONFIGURATION_REGISTRY => $this->xmlTemplateOptionsRegistry
             ]
         );
-        $this->identifierGeneratorProxy = $this->createMock(IdentifierGeneratorInterface::class);
 
         $this->xmlTemplateOptionsRegistry
             ->method('getMap')
@@ -94,7 +79,7 @@ XML;
                 ]
             );
 
-        $this->identifierGenerator = $this->createMock(IdentifierGeneratorInterface::class);
+        $this->identifierGeneratorProxy = $this->createMock(IdentifierGeneratorInterface::class);
 
         $serviceLocator = $this->createServiceManagerMock();
 
@@ -124,7 +109,7 @@ XML;
     {
         $test = $this->createTestMock('https://example.com', '0label-with_sømę-exötïč_charæctêrß');
 
-        $this->identifierGenerator
+        $this->identifierGeneratorProxy
             ->expects($this->once())
             ->method('generate')
             ->with([
@@ -322,22 +307,8 @@ XML;
             FileReferenceSerializer::SERVICE_ID => $this->fileReferenceSerializerMock,
             AssessmentTestXmlFactory::class => $this->xmlFactory,
             DefaultConfigurationRegistry::class => $this->xmlTemplateOptionsRegistry,
-            IdentifierGeneratorProxy::class => $this->identifierGenerator,
+            IdentifierGeneratorProxy::class => $this->identifierGeneratorProxy,
         ]);
-//        $serviceLocatorMock = $this->createMock(ServiceLocatorInterface::class);
-//
-//        $serviceLocatorMock
-//            ->method('get')
-//            ->willReturnMap(
-//                [
-//                    [ApplicationService::SERVICE_ID, $this->createApplicationServiceMock()],
-//                    [FileReferenceSerializer::SERVICE_ID, $this->fileReferenceSerializerMock],
-//                    [AssessmentTestXmlFactory::class, $this->xmlFactory],
-//                    [DefaultConfigurationRegistry::class, $this->xmlTemplateOptionsRegistry],
-//                ]
-//            );
-//
-//        return $serviceLocatorMock;
     }
 
     private function createModelMock(): Ontology

@@ -150,7 +150,7 @@ class taoQtiTest_helpers_TestRunnerUtils
         $sessionId = $session->getSessionId();
         $itemId = $session->getCurrentAssessmentItemRef()->getIdentifier();
         $occurence = $session->getCurrentAssessmentItemRefOccurence();
-        return "${sessionId}.${itemId}.${occurence}";
+        return "{$sessionId}.{$itemId}.{$occurence}";
     }
 
     /**
