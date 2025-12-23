@@ -23,18 +23,22 @@
  * @author Christophe Noël <christophe@taotesting.com>
  */
 
+declare(strict_types=1);
+
 namespace oat\taoQtiTest\test\unit;
 
-use oat\generis\test\TestCase;
+use oat\generis\test\ServiceManagerMockTrait;
+use PHPUnit\Framework\TestCase;
 use oat\tao\model\plugins\PluginModule;
 use oat\taoQtiTest\models\TestCategoryPreset;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoTests\models\runner\plugins\TestPluginService;
-use Prophecy\Argument;
 use RuntimeException;
 
 class TestCategoryPresetProviderTest extends TestCase
 {
+    use ServiceManagerMockTrait;
+
     /**
      * @param bool $keepGroupKeys
      *
@@ -45,87 +49,87 @@ class TestCategoryPresetProviderTest extends TestCase
     {
         $allPresets = [
             'group3' => [
-                'groupId'    => 'group3',
+                'groupId' => 'group3',
                 'groupLabel' => __('group1'),
                 'groupOrder' => 3,
-                'presets'    => [
+                'presets' => [
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset45',
-                        'label'         => __('preset45'),
-                        'qtiCategory'   => 'x-tao-option-preset45',
-                        'order'         => 45
+                        'id' => 'preset45',
+                        'label' => __('preset45'),
+                        'qtiCategory' => 'x-tao-option-preset45',
+                        'order' => 45
                     ]),
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset137',
-                        'label'         => __('preset137'),
-                        'qtiCategory'   => 'x-tao-option-preset137',
-                        'order'         => 137
+                        'id' => 'preset137',
+                        'label' => __('preset137'),
+                        'qtiCategory' => 'x-tao-option-preset137',
+                        'order' => 137
                     ]),
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset8',
-                        'label'         => __('preset8'),
-                        'qtiCategory'   => 'x-tao-option-preset8',
-                        'order'         => 8
+                        'id' => 'preset8',
+                        'label' => __('preset8'),
+                        'qtiCategory' => 'x-tao-option-preset8',
+                        'order' => 8
                     ]),
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset1',
-                        'label'         => __('preset1'),
-                        'qtiCategory'   => 'x-tao-option-preset1',
-                        'order'         => 1
+                        'id' => 'preset1',
+                        'label' => __('preset1'),
+                        'qtiCategory' => 'x-tao-option-preset1',
+                        'order' => 1
                     ]),
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset23',
-                        'label'         => __('preset23'),
-                        'qtiCategory'   => 'x-tao-option-preset23',
-                        'order'         => 23
+                        'id' => 'preset23',
+                        'label' => __('preset23'),
+                        'qtiCategory' => 'x-tao-option-preset23',
+                        'order' => 23
                     ])
                 ]
             ],
             'group1' => [
-                'groupId'    => 'group1',
+                'groupId' => 'group1',
                 'groupLabel' => __('group1'),
                 'groupOrder' => 1,
-                'presets'    => [
+                'presets' => [
                     TestCategoryPreset::fromArray([
-                        'id'            => 'presetX',
-                        'label'         => __('presetX'),
-                        'qtiCategory'   => 'x-tao-option-presetx',
-                        'order'         => 1
+                        'id' => 'presetX',
+                        'label' => __('presetX'),
+                        'qtiCategory' => 'x-tao-option-presetx',
+                        'order' => 1
                     ])
                 ]
             ],
             'group5' => [
-                'groupId'    => 'group5',
+                'groupId' => 'group5',
                 'groupLabel' => __('group5'),
                 'groupOrder' => 5,
-                'presets'    => [
+                'presets' => [
                     TestCategoryPreset::fromArray([
-                        'id'            => 'presetX',
-                        'label'         => __('presetX'),
-                        'qtiCategory'   => 'x-tao-option-presetx',
-                        'order'         => 1
+                        'id' => 'presetX',
+                        'label' => __('presetX'),
+                        'qtiCategory' => 'x-tao-option-presetx',
+                        'order' => 1
                     ])
                 ]
             ],
             'group2' => [
-                'groupId'    => 'group2',
+                'groupId' => 'group2',
                 'groupLabel' => __('group2'),
                 'groupOrder' => 2,
-                'presets'    => [
+                'presets' => [
                     TestCategoryPreset::fromArray([
-                        'id'            => 'presetX',
-                        'label'         => __('presetX'),
-                        'qtiCategory'   => 'x-tao-option-presetx',
-                        'order'         => 1
+                        'id' => 'presetX',
+                        'label' => __('presetX'),
+                        'qtiCategory' => 'x-tao-option-presetx',
+                        'order' => 1
                     ])
                 ]
             ]
         ];
 
-        $pluginService = $this->prophesize(TestPluginService::class);
+        $pluginService = $this->createMock(TestPluginService::class);
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
-            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        $presetProvider->setServiceLocator($this->getServiceManagerMock([
+            TestPluginService::SERVICE_ID => $pluginService
         ]));
         $sortedPresetGroups = $presetProvider->getPresets($keepGroupKeys);
 
@@ -159,91 +163,108 @@ class TestCategoryPresetProviderTest extends TestCase
         $allPresets = [
             // group with presets: will stay
             'group1' => [
-                'groupId'    => 'group1',
+                'groupId' => 'group1',
                 'groupLabel' => __('group1'),
                 'groupOrder' => 1,
-                'presets'    => [
+                'presets' => [
                     // related plugin is active: will stay
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset1',
-                        'label'         => __('preset1'),
-                        'qtiCategory'   => 'x-tao-option-preset1',
-                        'order'         => 1,
-                        'pluginId'      => 'plugin1'
+                        'id' => 'preset1',
+                        'label' => __('preset1'),
+                        'qtiCategory' => 'x-tao-option-preset1',
+                        'order' => 1,
+                        'pluginId' => 'plugin1'
                     ]),
                     // related plugin is NOT active: will be removed
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset2',
-                        'label'         => __('preset2'),
-                        'qtiCategory'   => 'x-tao-option-preset2',
-                        'order'         => 2,
-                        'pluginId'      => 'plugin2'
+                        'id' => 'preset2',
+                        'label' => __('preset2'),
+                        'qtiCategory' => 'x-tao-option-preset2',
+                        'order' => 2,
+                        'pluginId' => 'plugin2'
                     ]),
                     // related plugin does not exist or is not registered: will be removed
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset3',
-                        'label'         => __('preset3'),
-                        'qtiCategory'   => 'x-tao-option-preset3',
-                        'order'         => 3,
-                        'pluginId'      => 'plugin3'
+                        'id' => 'preset3',
+                        'label' => __('preset3'),
+                        'qtiCategory' => 'x-tao-option-preset3',
+                        'order' => 3,
+                        'pluginId' => 'plugin3'
                     ]),
                     // no related plugin: will stay
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset4',
-                        'label'         => __('preset4'),
-                        'qtiCategory'   => 'x-tao-option-preset4',
-                        'order'         => 4
+                        'id' => 'preset4',
+                        'label' => __('preset4'),
+                        'qtiCategory' => 'x-tao-option-preset4',
+                        'order' => 4
                     ])
                 ]
             ],
             // group with a preset related to an inactive plugin: will be removed
             'group2' => [
-                'groupId'    => 'group2',
+                'groupId' => 'group2',
                 'groupLabel' => __('group2'),
                 'groupOrder' => 2,
-                'presets'    => [
+                'presets' => [
                     // will be removed because plugin is inactive
                     TestCategoryPreset::fromArray([
-                        'id'            => 'preset10',
-                        'label'         => __('preset10'),
-                        'qtiCategory'   => 'x-tao-option-preset10',
-                        'order'         => 1,
-                        'pluginId'      => 'plugin10'
+                        'id' => 'preset10',
+                        'label' => __('preset10'),
+                        'qtiCategory' => 'x-tao-option-preset10',
+                        'order' => 1,
+                        'pluginId' => 'plugin10'
                     ])
                 ]
             ],
             // group without preset: will be removed
             'group3' => [
-                'groupId'    => 'group3',
+                'groupId' => 'group3',
                 'groupLabel' => __('group3'),
                 'groupOrder' => 3,
-                'presets'    => []
+                'presets' => []
             ]
         ];
 
-        $pluginService = $this->prophesize(TestPluginService::class);
-        $pluginService->getPlugin('plugin1')->willReturn(PluginModule::fromArray([
-            'id'          => 'plugin1',
-            'module'      => 'test/plugin1',
-            'category'    => 'plugins',
-            'active'      => true
-        ]));
-        $pluginService->getPlugin('plugin2')->willReturn(PluginModule::fromArray([
-            'id'          => 'plugin2',
-            'module'      => 'test/plugin2',
-            'category'    => 'plugins',
-            'active'      => false
-        ]));
-        $pluginService->getPlugin('plugin3')->willReturn(null);
-        $pluginService->getPlugin('plugin10')->willReturn(PluginModule::fromArray([
-            'id'          => 'plugin10',
-            'module'      => 'test/plugin10',
-            'category'    => 'plugins',
-            'active'      => false
-        ]));
+        $pluginService = $this->createMock(TestPluginService::class);
+        $pluginService
+            ->expects($this->exactly(4))
+            ->method('getPlugin')
+            ->willReturnMap([
+                [
+                    'plugin1',
+                    PluginModule::fromArray([
+                        'id' => 'plugin1',
+                        'module' => 'test/plugin1',
+                        'category' => 'plugins',
+                        'active' => true
+                    ]),
+                ],
+                [
+                    'plugin2',
+                    PluginModule::fromArray([
+                        'id' => 'plugin2',
+                        'module' => 'test/plugin2',
+                        'category' => 'plugins',
+                        'active' => false
+                    ]),
+                ],
+                [
+                    'plugin3',
+                    null,
+                ],
+                [
+                    'plugin10',
+                    PluginModule::fromArray([
+                        'id' => 'plugin10',
+                        'module' => 'test/plugin10',
+                        'category' => 'plugins',
+                        'active' => false
+                    ]),
+                ],
+            ]);
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
-            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        $presetProvider->setServiceLocator($this->getServiceManagerMock([
+            TestPluginService::SERVICE_ID => $pluginService
         ]));
 
         $filteredPresetGroups = $presetProvider->getPresets();
@@ -266,96 +287,96 @@ class TestCategoryPresetProviderTest extends TestCase
     public function presetsConfigDataProvider(): array
     {
         $preset1 = TestCategoryPreset::fromArray([
-            'id'            => 'preset1',
-            'label'         => 'preset1',
-            'qtiCategory'   => 'x-tao-option-preset1',
-            'order'         => 1,
-            'pluginId'      => 'plugin1'
+            'id' => 'preset1',
+            'label' => 'preset1',
+            'qtiCategory' => 'x-tao-option-preset1',
+            'order' => 1,
+            'pluginId' => 'plugin1'
         ]);
         $preset2 = TestCategoryPreset::fromArray([
-            'id'            => 'preset2',
-            'label'         => 'preset2',
-            'qtiCategory'   => 'x-tao-option-preset2',
-            'order'         => 2,
-            'pluginId'      => 'plugin2',
-            'featureFlag'   => 'enable-option-2'
+            'id' => 'preset2',
+            'label' => 'preset2',
+            'qtiCategory' => 'x-tao-option-preset2',
+            'order' => 2,
+            'pluginId' => 'plugin2',
+            'featureFlag' => 'enable-option-2'
         ]);
         $preset3 = TestCategoryPreset::fromArray([
-            'id'            => 'preset3',
-            'label'         => __('preset3'),
-            'qtiCategory'   => 'x-tao-option-preset3',
-            'order'         => 3,
-            'pluginId'      => 'plugin3',
-            'featureFlag'   => 'enable-option-3'
+            'id' => 'preset3',
+            'label' => __('preset3'),
+            'qtiCategory' => 'x-tao-option-preset3',
+            'order' => 3,
+            'pluginId' => 'plugin3',
+            'featureFlag' => 'enable-option-3'
         ]);
         $preset10 = TestCategoryPreset::fromArray([
-            'id'            => 'preset10',
-            'label'         => __('preset10'),
-            'qtiCategory'   => 'x-tao-option-preset10',
-            'order'         => 1,
-            'pluginId'      => 'plugin10',
-            'featureFlag'   => 'enable-option-10'
+            'id' => 'preset10',
+            'label' => __('preset10'),
+            'qtiCategory' => 'x-tao-option-preset10',
+            'order' => 1,
+            'pluginId' => 'plugin10',
+            'featureFlag' => 'enable-option-10'
         ]);
 
-        $allPresets =  [
+        $allPresets = [
             'group1' => [
-                'groupId'    => 'group1',
+                'groupId' => 'group1',
                 'groupLabel' => 'group1',
                 'groupOrder' => 1,
-                'presets'    => [ $preset1, $preset2, $preset3 ]
+                'presets' => [$preset1, $preset2, $preset3]
             ],
             'group2' => [
-                'groupId'    => 'group2',
+                'groupId' => 'group2',
                 'groupLabel' => 'group2',
                 'groupOrder' => 2,
-                'presets'    => [ $preset10 ]
+                'presets' => [$preset10]
             ]
         ];
 
         return [
             [   //no config, all presets are available
                 'allPresets' => $allPresets,
-                'config'     => [],
-                'result'     => [[
+                'config' => [],
+                'result' => [[
                     'groupId' => 'group1',
                     'groupLabel' => 'group1',
                     'groupOrder' => 1,
-                    'presets' => [ $preset1, $preset2, $preset3 ]
+                    'presets' => [$preset1, $preset2, $preset3]
                 ], [
                     'groupId' => 'group2',
                     'groupLabel' => 'group2',
                     'groupOrder' => 2,
-                    'presets' => [ $preset10 ]
+                    'presets' => [$preset10]
                 ]],
             ], [ // all options are defined
                 'allPresets' => $allPresets,
-                'config'     => [
+                'config' => [
                     'enable-option-2' => true,
                     'enable-option-3' => false,
                     'enable-option-10' => true
                 ],
-                'result'     => [[
+                'result' => [[
                     'groupId' => 'group1',
                     'groupLabel' => 'group1',
                     'groupOrder' => 1,
-                    'presets' => [ $preset1, $preset2 ]
+                    'presets' => [$preset1, $preset2]
                 ], [
                     'groupId' => 'group2',
                     'groupLabel' => 'group2',
                     'groupOrder' => 2,
-                    'presets' => [ $preset10 ]
+                    'presets' => [$preset10]
                 ]],
             ], [ //missing option 2 and empty group 2
                 'allPresets' => $allPresets,
-                'config'     => [
+                'config' => [
                     'enable-option-3' => true,
                     'enable-option-10' => false
                 ],
-                'result'     => [[
+                'result' => [[
                     'groupId' => 'group1',
                     'groupLabel' => 'group1',
                     'groupOrder' => 1,
-                    'presets' => [ $preset1, $preset2, $preset3 ]
+                    'presets' => [$preset1, $preset2, $preset3]
                 ]]
             ]
         ];
@@ -368,15 +389,15 @@ class TestCategoryPresetProviderTest extends TestCase
      */
     public function testGetAvailablePresets(array $allPresets, array $config, array $result): void
     {
-        $plugin = $this->prophesize(PluginModule::class);
-        $plugin->isActive()->willReturn(true);
+        $plugin = $this->createMock(PluginModule::class);
+        $plugin->method('isActive')->willReturn(true);
 
-        $pluginService = $this->prophesize(TestPluginService::class);
-        $pluginService->getPlugin(Argument::type('string'))->willReturn($plugin->reveal());
+        $pluginService = $this->createMock(TestPluginService::class);
+        $pluginService->method('getPlugin')->with($this->isType('string'))->willReturn($plugin);
 
         $presetProvider = new TestCategoryPresetProvider([], $allPresets);
-        $presetProvider->setServiceLocator($this->getServiceLocatorMock([
-            TestPluginService::SERVICE_ID => $pluginService->reveal()
+        $presetProvider->setServiceLocator($this->getServiceManagerMock([
+            TestPluginService::SERVICE_ID => $pluginService
         ]));
 
         $availablePresets = $presetProvider->getAvailablePresets($config);
@@ -417,10 +438,10 @@ class TestCategoryPresetProviderTest extends TestCase
     {
         $preset = TestCategoryPreset::fromArray(
             [
-                'id'          => 'preset',
-                'label'       => 'preset',
+                'id' => 'preset',
+                'label' => 'preset',
                 'qtiCategory' => 'x-tao-option-preset',
-                'order'       => 1,
+                'order' => 1,
             ]
         );
 
@@ -428,20 +449,20 @@ class TestCategoryPresetProviderTest extends TestCase
 
         foreach ($groupIds as $groupId) {
             $presetGroups[$groupId] = [
-                'groupId'    => $groupId,
+                'groupId' => $groupId,
                 'groupLabel' => $groupId,
                 'groupOrder' => 1,
-                'presets'    => $hasPresets ? [$preset] : [],
+                'presets' => $hasPresets ? [$preset] : [],
             ];
         }
 
         $sut = new TestCategoryPresetProvider([], $presetGroups);
 
-        $pluginService = $this->prophesize(TestPluginService::class);
+        $pluginService = $this->createMock(TestPluginService::class);
         $sut->setServiceLocator(
-            $this->getServiceLocatorMock(
+            $this->getServiceManagerMock(
                 [
-                    TestPluginService::SERVICE_ID => $pluginService->reveal(),
+                    TestPluginService::SERVICE_ID => $pluginService,
                 ]
             )
         );

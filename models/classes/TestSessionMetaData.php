@@ -118,7 +118,7 @@ class TestSessionMetaData
 
                     $itemUri = $this->getItemUri($itemRef);
 
-                    $transmissionId = "${sessionId}.${itemRef}.${occurence}";
+                    $transmissionId = "{$sessionId}.{$itemRef}.{$occurence}";
                     $resultStore->storeItemVariable($testUri, $itemUri, $metaVariable, $transmissionId);
                 } elseif (strcasecmp($type, 'TEST') === 0) {
                     $resultStore->storeTestVariable($testUri, $metaVariable, $sessionId);

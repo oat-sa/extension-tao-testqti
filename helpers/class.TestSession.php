@@ -223,7 +223,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $itemSession = $this->getItemSession($item, $occurence);
 
             foreach ($itemSession->getKeys() as $identifier) {
-                common_Logger::t("Examination of variable '${identifier}'");
+                common_Logger::t("Examination of variable '{$identifier}'");
                 $itemVariableSet[] = $itemSession->getVariable($identifier);
             }
 
@@ -284,7 +284,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $var = $this->getVariable('LtiOutcome');
             $varIdentifier = $var->getIdentifier();
 
-            common_Logger::t("Submitting test result '${varIdentifier}' related to test '${testUri}'.");
+            common_Logger::t("Submitting test result '{$varIdentifier}' related to test '{$testUri}'.");
             $this->triggerResultTestVariablesTransmissionEvent(
                 [$var],
                 $testUri
@@ -342,7 +342,7 @@ class taoQtiTest_helpers_TestSession extends AssessmentTestSession
             $route->setPosition($oldPosition);
             throw $e;
         } catch (OutOfBoundsException $e) {
-            $msg = "Position '${position}' is out of the Route bounds.";
+            $msg = "Position '{$position}' is out of the Route bounds.";
             throw new AssessmentTestSessionException($msg, AssessmentTestSessionException::FORBIDDEN_JUMP, $e);
         }
     }

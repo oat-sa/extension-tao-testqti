@@ -86,7 +86,7 @@ class RecompileHrefIndexes extends AbstractAction
                                         new Report(
                                             Report::TYPE_SUCCESS,
                                             "HrefIndex for assessmentItemRef identifier "
-                                                . "'${assessmentItemRefIdentifier}' compiled."
+                                                . "'{$assessmentItemRefIdentifier}' compiled."
                                         )
                                     );
                                 }
