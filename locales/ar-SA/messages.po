@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-12 11:55\n"
+"PO-Revision-Date: 2025-12-25 13:44\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar\n"
@@ -1780,5 +1780,5 @@ msgid "Enforce Item Constraints"
 msgstr "فرض قيود العنصر"
 
 msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr "التحقق من هذا المربع يمنع أخذ الاختبار من الانتقال إلى العناصر الأخرى حتى يتم الوفاء بقيود العنصر الحالي، إن وجدت. إلغاء تحديد هذا المربع سيسمح بحرية التنقل حتى إذا كانت الردود لا تمتثل لمجموعة قيود العنصر."
+msgstr "التحقق من هذا المربع يمنع أخذ الاختبار من الانتقال إلى العناصر الأخرى حتى يتم الوفاء بقيود العنصر الحالي، إن وجدت. إلغاء تحديد هذا المربع سيسمح بحرية التنقل حتى إذا كانت الردود لا تمتثل مجموعة قيود العنصر."
 
