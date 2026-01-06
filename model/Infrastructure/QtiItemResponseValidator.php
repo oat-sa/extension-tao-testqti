@@ -107,7 +107,7 @@ class QtiItemResponseValidator
     private function getResponseValidation(AssessmentTestSession $testSession): bool
     {
         /** @var RouteItemSessionControl|null $itemSessionControl */
-        if ($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl() === null) {
+        if (($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl()) === null) {
             return false;
         }
 
@@ -117,7 +117,7 @@ class QtiItemResponseValidator
     private function getAllowSkip(AssessmentTestSession $testSession): bool
     {
         /** @var RouteItemSessionControl|null $itemSessionControl */
-        if ($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl() === null) {
+        if (($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl()) === null) {
             return false;
         }
 
