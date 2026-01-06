@@ -26,6 +26,7 @@ use oat\taoQtiTest\models\runner\QtiRunnerEmptyResponsesException;
 use qtism\runtime\common\State;
 use qtism\runtime\tests\AssessmentItemSessionException;
 use qtism\runtime\tests\AssessmentTestSession;
+use qtism\runtime\tests\RouteItemSessionControl;
 
 class QtiItemResponseValidator
 {
@@ -105,20 +106,22 @@ class QtiItemResponseValidator
 
     private function getResponseValidation(AssessmentTestSession $testSession): bool
     {
-        return $testSession->getRoute()
-            ->current()
-            ->getItemSessionControl()
-            ->getItemSessionControl()
-            ->mustValidateResponses();
+        /** @var RouteItemSessionControl|null $itemSessionControl */
+        if ($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl() === null) {
+            return false;
+        }
+
+        return $itemSessionControl->getItemSessionControl()->mustValidateResponses();
     }
 
     private function getAllowSkip(AssessmentTestSession $testSession): bool
     {
-        return $testSession->getRoute()
-            ->current()
-            ->getItemSessionControl()
-            ->getItemSessionControl()
-            ->doesAllowSkipping();
+        /** @var RouteItemSessionControl|null $itemSessionControl */
+        if ($itemSessionControl = $testSession->getRoute()->current()->getItemSessionControl() === null) {
+            return false;
+        }
+
+        return $itemSessionControl->getItemSessionControl()->doesAllowSkipping();
     }
 
     /**
