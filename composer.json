@@ -64,7 +64,7 @@
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.30.0",
     "oat-sa/generis": ">=16.2.2",
-    "oat-sa/tao-core": ">=54.49.5",
+    "oat-sa/tao-core": "dev-fix/update-dependency as 99.99.99",
     "oat-sa/extension-tao-item": ">=12.4.0",
     "oat-sa/extension-tao-itemqti": ">=30.54.0",
     "oat-sa/extension-tao-test": ">=16.4.3",
