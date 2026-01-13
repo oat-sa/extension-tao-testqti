@@ -13,21 +13,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2017 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
  *
  */
 
 namespace oat\taoQtiTest\models;
 
-use core_kernel_classes_Resource;
 use oat\oatbox\service\ConfigurableService;
 use oat\oatbox\filesystem\Directory;
 use oat\taoTests\models\TestModel;
 use oat\tao\model\service\ServiceFileStorage;
-use taoQtiTest_models_classes_QtiTestService;
 
 /**
  * the qti TestModel
@@ -51,7 +49,7 @@ class TestModelService extends ConfigurableService implements
      */
     public function prepareContent(\core_kernel_classes_Resource $test, $items = [])
     {
-        $service = $this->getServiceManager()->get(\taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->save($test, $items);
     }
 
@@ -61,7 +59,7 @@ class TestModelService extends ConfigurableService implements
      */
     public function deleteContent(\core_kernel_classes_Resource $test)
     {
-        $service = $this->getServiceManager()->get(\taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         $service->deleteContent($test);
     }
 
@@ -69,24 +67,10 @@ class TestModelService extends ConfigurableService implements
      * {@inheritDoc}
      * @see \taoTests_models_classes_TestModel::getItems()
      */
-    public function getItems(core_kernel_classes_Resource $test)
+    public function getItems(\core_kernel_classes_Resource $test)
     {
-        $service = $this->getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
+        $service = $this->getServiceLocator()->get(\taoQtiTest_models_classes_QtiTestService::class);
         return $service->getItems($test);
-    }
-
-    /**
-     * Get outcome declaration scales for a test
-     *
-     * Retrieves scale definitions stored as JSON files in the test's scales directory.
-     *
-     * @param core_kernel_classes_Resource $test The test resource
-     * @return array Associative array of scale data keyed by file path
-     */
-    public function getScales(core_kernel_classes_Resource $test): array
-    {
-        $service = $this->getServiceManager()->get(taoQtiTest_models_classes_QtiTestService::class);
-        return $service->getTestOutcomeDeclarationScales($test);
     }
 
     /**

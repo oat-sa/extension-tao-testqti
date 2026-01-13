@@ -13,9 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2014-2022 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -30,7 +30,6 @@ use core_kernel_persistence_Exception;
 use DOMDocument;
 use DOMException;
 use DOMXPath;
-use Exception;
 use oat\oatbox\filesystem\Directory;
 use oat\oatbox\reporting\Report;
 use oat\oatbox\reporting\ReportInterface;
@@ -43,7 +42,6 @@ use oat\taoQtiTest\models\export\preprocessor\AssessmentItemRefPreProcessor;
 use qtism\data\storage\xml\marshalling\MarshallingException;
 use qtism\data\storage\xml\XmlDocument;
 use qtism\data\storage\xml\XmlStorageException;
-use RuntimeException;
 use tao_helpers_Uri;
 use taoItems_models_classes_ItemExporter as ItemExporter;
 use taoQtiTest_models_classes_QtiTestService as QtiTestService;
@@ -178,6 +176,12 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         // 3. Export test metadata to manifest
         $this->getMetadataExporter()->export($this->getItem(), $this->getManifest());
 
+        // 4. Include scale object in manifest from test outcome declaration
+        $this->getScalePreprocessor()->includeScaleObject(
+            $this->getManifest(),
+            $this->getTestDocument()->getDomDocument()
+        );
+
         $this->genericLomOntologyExtractor()->extract(
             [$this->getItem()],
             $this->getManifest()
@@ -254,35 +258,6 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $iterator = $testRootDir->getFlyIterator(Directory::ITERATOR_RECURSIVE | Directory::ITERATOR_FILE);
         $indexFile = pathinfo(QtiTestService::QTI_TEST_DEFINITION_INDEX, PATHINFO_BASENAME);
         foreach ($iterator as $f) {
-            $relativePath = ltrim(
-                str_replace(rtrim($testRootDir->getPrefix(), '/') . '/', '', $f->getPrefix()),
-                '/'
-            );
-
-            // Check if file is in scales directory
-            if ($relativePath !== '' && (strpos($relativePath, 'scales/') === 0 || $relativePath === 'scales')) {
-                // Optionally validate that it's a JSON file
-                if (pathinfo($f->getBasename(), PATHINFO_EXTENSION) !== 'json') {
-                    common_Logger::w('Skipping non-JSON file in scales directory: ' . $f->getBasename());
-                    continue;
-                }
-
-                // Add scale files with correct path: scales/filename.json
-                $scaleFilePath = $newTestDir . $relativePath;
-                try {
-                    $content = $f->read();
-                    if ($this->getZip()->addFromString($scaleFilePath, $content) === false) {
-                        throw new RuntimeException('Failed to add scale file to ZIP archive: ' . $scaleFilePath);
-                    }
-                    $this->referenceAuxiliaryFile($scaleFilePath);
-                    common_Logger::t('SCALE FILE AT: ' . $scaleFilePath);
-                } catch (Exception $e) {
-                    common_Logger::e('Failed to export scale file: ' . $f->getBasename() . ' - ' . $e->getMessage());
-                    throw new RuntimeException('Scale file export failed: ' . $f->getBasename(), 0, $e);
-                }
-                continue;
-            }
-
             // Only add dependency files...
             if ($f->getBasename() !== QtiTestService::TAOQTITEST_FILENAME && $f->getBasename() !== $indexFile) {
                 // Add the file to the archive.
@@ -392,5 +367,10 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
     private function genericLomOntologyExtractor(): GenericLomOntologyExtractor
     {
         return $this->getServiceManager()->getContainer()->get(GenericLomOntologyExtractor::class);
+    }
+
+    private function getScalePreprocessor(): ScalePreprocessor
+    {
+        return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
     }
 }
