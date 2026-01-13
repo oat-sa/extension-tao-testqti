@@ -161,7 +161,6 @@ define([
                 hider.hide($scoringError);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
                 testModel.scalePresets = config.scalePresets;
-                testModel.testScales = config.testScales;
 
                 if (scoringState !== newScoringState) {
                     /**
