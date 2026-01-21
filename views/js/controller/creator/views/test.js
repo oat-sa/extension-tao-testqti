@@ -40,7 +40,6 @@ define([
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
-    'taoQtiTest/controller/creator/helpers/featureFlags',
     'taoQtiTest/controller/creator/helpers/branchRules',
     'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (
@@ -64,7 +63,6 @@ define([
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    featureFlags,
     branchRules,
     preConditions
 ) {
@@ -329,7 +327,6 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (featureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
@@ -354,7 +351,6 @@ define([
                         console.error('Failed to initialize MNOP helper:', err);
                     });
                 }
-            }
         }
 
         /**
