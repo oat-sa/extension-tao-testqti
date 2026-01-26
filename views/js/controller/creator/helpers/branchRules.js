@@ -143,7 +143,7 @@ define([
     function buildGlobalBranchOptions(testModel) {
         const targets = [
         ...(testModel.testParts || []).map(tp => ({ value: tp.identifier, label: tp.identifier })),
-        { value: 'EXIT_TEST', label: __('Test end') }
+        { value: 'EXIT_TEST', label: __('End of the test') }
         ];
 
         const variables = (testModel.outcomeDeclarations || [])
