@@ -18,13 +18,14 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
+
 define([
     'jquery',
-    'lodash',
     'i18n',
     'context',
     'ui/hider',
     'ui/feedback',
+    'ui/dialog',
     'services/features',
     'taoQtiTest/controller/creator/config/defaults',
     'taoQtiTest/controller/creator/views/actions',
@@ -39,14 +40,15 @@ define([
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
-    'taoQtiTest/controller/creator/helpers/featureFlags'
+    'taoQtiTest/controller/creator/helpers/branchRules',
+    'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (
     $,
-    _,
     __,
     context,
     hider,
     feedback,
+    dialog,
     features,
     defaults,
     actions,
@@ -61,7 +63,8 @@ define([
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    mnopFeatureFlags
+    branchRules,
+    preConditions
 ) {
     const _ns = '.outcome-declarations-manual';
 
@@ -80,14 +83,17 @@ define([
         //add feature visibility properties to testModel
         featureVisibility.addTestVisibilityProps(testModel);
 
-        const { featureFlags } = context;
-        if (featureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
+        const { featureFlags: ctxFeatureFlags } = context;
+        if (ctxFeatureFlags.FEATURE_FLAG_UNIQUE_NUMERIC_QTI_IDENTIFIER || testModel.translation) {
             testModel.readonlyTestIdentifier = true;
         }
 
         actions.properties($('.test-creator-test > h1'), 'test', testModel, propHandler);
         testParts();
         addTestPart();
+
+        branchRules.refreshOptions(modelOverseer);
+        branchRules.bindSync(modelOverseer);
 
         const $title = $('.test-creator-test > h1 [data-bind=title]');
         let titleFormat = '%title%';
@@ -176,18 +182,63 @@ define([
                 width: '100%'
             });
 
-            $generate.on('click', () => {
-                $generate.addClass('disabled').attr('disabled', true);
-                modelOverseer
-                    .on('scoring-write.regenerate', () => {
-                        modelOverseer.off('scoring-write.regenerate');
-                        feedback()
-                            .success(__('The outcomes have been regenerated!'))
-                            .on('destroy', () => {
+            $generate.off('click.branchGuard').on('click.branchGuard', function () {
+                const modelOverseer = creatorContext.getModelOverseer();
+                const testModel = modelOverseer.getModel();
+
+                const hasRules = (testModel.testParts || []).some(tp =>
+                    (tp.branchRules || []).length
+                );
+
+                const hasPreconditions = (testModel.testParts || []).some(tp =>
+                    (tp.preConditions || []).length
+                );
+
+                const needsWarning = hasRules || hasPreconditions;
+
+                if (needsWarning) {
+                    dialog({
+                        message: __(
+                            'Regenerating outcomes may remove some variables used in paths or prerequisites. Any paths or prerequisites that use removed variables will be cleared. Continue?'
+                        ),
+                        buttons: [
+                            { id: 'cancel', type: 'regular', label: __('Cancel'),  close: true },
+                            { id: 'proceed', type: 'info',    label: __('Proceed'), close: true }
+                        ],
+                        autoRender: true,
+                        autoDestroy: true,
+                        onProceedBtn: function () {
+                            runRegenerate();
+                        }
+                    });
+                } else {
+                    runRegenerate();
+                }
+
+                function runRegenerate() {
+                    $generate.addClass('disabled').attr('disabled', true);
+                    modelOverseer
+                        .on('scoring-write.regenerate', function () {
+                            modelOverseer.off('scoring-write.regenerate');
+
+                            // purge branch rules that reference removed variables
+                            branchRules.purgeRulesWithMissingVariables(testModel);
+
+                            // purge preconditions that reference removed variables
+                            preConditions.purgeConditionsWithMissingVariables(testModel);
+
+                            // rebuild branch options (if needed)
+                            branchRules.refreshOptions(modelOverseer);
+
+                            // ensure branch / preconditions editors re-render even if options are unchanged
+                            modelOverseer.trigger('branch-options-update');
+
+                            feedback().success(__('The outcomes have been regenerated!')).on('destroy', function () {
                                 $generate.removeClass('disabled').removeAttr('disabled');
                             });
-                    })
-                    .trigger('scoring-change');
+                        })
+                        .trigger('scoring-change');
+                }
             });
 
             $addOutcomeDeclaration.on(`click${_ns}`, () => {
@@ -202,11 +253,8 @@ define([
 
                 const newOutcome = outcome.createOutcome(newOutcomeIdentifier, baseTypeHelper.FLOAT);
 
-                if (!Array.isArray(testModel.outcomeDeclarations)) {
-                    testModel.outcomeDeclarations = [];
-                }
-
-                testModel.outcomeDeclarations.push(newOutcome);
+                // Add to model through helper (fires notifier if present)
+                outcome.addOutcome(testModel, newOutcome);
 
                 // Re-render the outcome declarations
                 renderOutcomeDeclarationList(testModel, $view);
@@ -271,12 +319,14 @@ define([
                 }
             });
 
-            modelOverseer.on('scoring-write', updateOutcomes);
+            modelOverseer.on('scoring-write', () => {
+                updateOutcomes();
+                branchRules.refreshOptions(modelOverseer);
+            });
             changeScoring(testModel.scoring);
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (mnopFeatureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
@@ -301,7 +351,6 @@ define([
                         console.error('Failed to initialize MNOP helper:', err);
                     });
                 }
-            }
         }
 
         /**
@@ -367,6 +416,8 @@ define([
                         testPartView.setUp(creatorContext, partModel, $testPart);
                         // set index for new section
                         actions.updateTitleIndex($('.section', $testPart));
+                        // make the new test part appear in Branch targets immediately
+                        branchRules.refreshOptions(modelOverseer);
 
                         /**
                          * @event modelOverseer#part-add

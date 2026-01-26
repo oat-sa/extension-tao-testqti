@@ -21,40 +21,26 @@
 
 namespace oat\taoQtiTest\test\unit\models\classes\runner\toolsStates;
 
+use oat\generis\persistence\PersistenceManager;
 use oat\taoQtiTest\models\runner\toolsStates\RdsToolsStateStorage;
 use oat\taoQtiTest\scripts\install\CreateTableForToolsStateStorage;
-use Prophecy\Argument;
 
 class RdsToolsStateStorageTest extends ToolsStateStorageTestCase
 {
-    /**
-     * @var RdsToolsStateStorage
-     */
-    private $storage;
+    private RdsToolsStateStorage $storage;
 
-    /**
-     * @return RdsToolsStateStorage
-     */
-    protected function getStorage()
+    protected function getStorage(): RdsToolsStateStorage
     {
         return $this->storage;
     }
 
-    /**
-     * Deploys the storage and prepares it for testing
-     *
-     * @throws \common_Exception
-     * @throws \oat\oatbox\service\exception\InvalidServiceManagerException
-     */
     public function setUp(): void
     {
         $databaseMock = $this->getSqlMock('tools_states');
         $persistence = $databaseMock->getPersistenceById('tools_states');
 
-        $persistenceManagerProphecy = $this->prophesize(\common_persistence_Manager::class);
-        $persistenceManagerProphecy->getPersistenceById(Argument::any())->willReturn($persistence);
         $serviceManagerMock = $this->getServiceLocatorMock([
-            \common_persistence_Manager::SERVICE_ID => $persistenceManagerProphecy,
+            PersistenceManager::SERVICE_ID => $databaseMock,
         ]);
 
         $tableCreator = new CreateTableForToolsStateStorage();

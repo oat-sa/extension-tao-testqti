@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\models\runner\config\Business\Domain;
 
 use IteratorAggregate;
+use ReturnTypeWillChange;
 
 class OptionCollection implements IteratorAggregate
 {
@@ -39,6 +40,7 @@ class OptionCollection implements IteratorAggregate
     /**
      * @return Option[]
      */
+    #[ReturnTypeWillChange]
     public function getIterator(): iterable
     {
         yield from $this->options;

@@ -34,20 +34,23 @@ use Throwable;
 class ChoiceResponseValidationStrategyTest extends TestCase
 {
     private ChoiceResponseValidationStrategy $subject;
+    private QtiIdentifier $definedChoiceId2;
+    private State $state;
+    private array $itemDefinition;
 
     public function setUp(): void
     {
-        $this->definedChoiceId1 = new QtiIdentifier('choice_1');
+        $definedChoiceId1 = new QtiIdentifier('choice_1');
         $this->definedChoiceId2 = new QtiIdentifier('choice_2');
-        $this->definedResponse1 = new ResponseVariable(
+        $definedResponse1 = new ResponseVariable(
             'RESPONSE_1',
             1,
             0,
-            new MultipleContainer(0, [$this->definedChoiceId1, $this->definedChoiceId2])
+            new MultipleContainer(0, [$definedChoiceId1, $this->definedChoiceId2])
         );
 
         $this->state = new State();
-        $this->state->setVariable($this->definedResponse1);
+        $this->state->setVariable($definedResponse1);
 
         $this->itemDefinition = [
             'data' => [
@@ -58,9 +61,9 @@ class ChoiceResponseValidationStrategyTest extends TestCase
                         ],
                         'interaction2' => [
                             'qtiClass' => 'choiceInteraction',
-                            'attributes' => ['responseIdentifier' => $this->definedResponse1->getIdentifier()],
+                            'attributes' => ['responseIdentifier' => $definedResponse1->getIdentifier()],
                             'choices' => [
-                                'choice_1' => ["identifier" => (string) $this->definedChoiceId1->getValue()],
+                                'choice_1' => ["identifier" => (string) $definedChoiceId1->getValue()],
                                 'choice_2' => ["identifier" => (string) $this->definedChoiceId2->getValue()],
                             ]
                         ],

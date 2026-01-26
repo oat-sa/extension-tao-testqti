@@ -140,7 +140,7 @@ class CatService extends ConfigurableService
 
         if (empty($this->engines[$endpointCached])) {
             // No configured endpoint found.
-            throw new CatEngineNotFoundException("CAT Engine for endpoint '${endpoint}' is not configured.", $endpoint);
+            throw new CatEngineNotFoundException("CAT Engine for endpoint '{$endpoint}' is not configured.", $endpoint);
         }
 
         return $this->engines[$endpointCached];
@@ -159,7 +159,7 @@ class CatService extends ConfigurableService
         $identifier
     ) {
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
-        $filename = "adaptive-assessment-item-ref-${identifier}";
+        $filename = "adaptive-assessment-item-ref-{$identifier}";
 
         return $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
@@ -204,7 +204,7 @@ class CatService extends ConfigurableService
         $adaptiveSectionId = ltrim($urlinfo['path'], '/');
 
         $compilationDataService = $this->getServiceLocator()->get(CompilationDataService::SERVICE_ID);
-        $filename = "adaptive-assessment-section-${adaptiveSectionId}";
+        $filename = "adaptive-assessment-section-{$adaptiveSectionId}";
 
         $component = $compilationDataService->readCompilationData(
             $privateCompilationDirectory,
@@ -256,7 +256,7 @@ class CatService extends ConfigurableService
             if (isset($info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef'])) {
                 $adaptiveInfo['adaptiveSectionIdentifier'] = trim(
                     $compilationDirectory->read(
-                        "./${basePath}/" . $info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef']
+                        "./{$basePath}/" . $info[$qtiAssessmentSectionIdentifier]['adaptiveSettingsRef']
                     )
                 );
             }
@@ -311,7 +311,7 @@ class CatService extends ConfigurableService
             $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
 
             if (isset($catInfo[$assessmentSectionIdentifier])) {
-                $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+                $settingsPath = "{$testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
                 $settingsContent = trim(file_get_contents($settingsPath));
                 $catProperties[$assessmentSectionIdentifier] = $settingsContent;
 
@@ -326,7 +326,7 @@ class CatService extends ConfigurableService
         }
 
         if (empty($catProperties)) {
-            \common_Logger::t("No QTI CAT property value to store for test '${testUri}'.");
+            \common_Logger::t("No QTI CAT property value to store for test '{$testUri}'.");
             return true;
         }
 
@@ -338,7 +338,7 @@ class CatService extends ConfigurableService
         ) {
             return true;
         } else {
-            throw new \common_Exception("Unable to store CAT property value to test '${testUri}'.");
+            throw new \common_Exception("Unable to store CAT property value to test '{$testUri}'.");
         }
     }
 
@@ -347,17 +347,17 @@ class CatService extends ConfigurableService
     {
         $assessmentSectionIdentifier = $assessmentSection->getIdentifier();
         $engine = $this->getEngine($catInfo[$assessmentSectionIdentifier]['adaptiveEngineRef']);
-        $settingsPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
+        $settingsPath = "{$testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['adaptiveSettingsRef'];
 
         $usagedataContent = null;
         if (isset($catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'])) {
-            $usagedataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'];
+            $usagedataPath = "{$testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiUsagedataRef'];
             $usagedataContent = trim(file_get_contents($usagedataPath));
         }
 
         $metadataContent = null;
         if (isset($catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'])) {
-            $metadataPath = "${testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'];
+            $metadataPath = "{$testBasePath}/" . $catInfo[$assessmentSectionIdentifier]['qtiMetadataRef'];
             $metadataContent = trim(file_get_contents($metadataPath));
         }
 
@@ -634,7 +634,7 @@ class CatService extends ConfigurableService
                     $this->catSession[$catSectionId] = $catSection->restoreSession($catSessionData);
                     \common_Logger::d(
                         "CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId()
-                            . "' for CAT Section '${catSectionId}' restored."
+                            . "' for CAT Section '{$catSectionId}' restored."
                     );
                 } else {
                     // First time the session is required, let's initialize it.
@@ -661,7 +661,7 @@ class CatService extends ConfigurableService
                     );
                     \common_Logger::d(
                         "CAT Session '" . $this->catSession[$catSectionId]->getTestTakerSessionId()
-                            . "' for CAT Section '${catSectionId}' initialized and persisted."
+                            . "' for CAT Section '{$catSectionId}' initialized and persisted."
                     );
                 }
             }

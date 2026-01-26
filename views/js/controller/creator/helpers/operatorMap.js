@@ -11,20 +11,39 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
  */
 
-/**
- * Feature Flags Helper for Test Creator
- */
-define(['services/features'], function (features) {
+define([], function () {
     'use strict';
 
+    /**
+     * Operator mappings between UI short codes and QTI operator names.
+     */
+    const opToQti = {
+        lt: 'lt',
+        lte: 'lte',
+        eq: 'equal',
+        gt: 'gt',
+        gte: 'gte'
+    };
+
+    /**
+     * Reverse mapping from QTI operator names to UI short codes.
+     */
+    const qtiToOp = {
+        lt: 'lt',
+        lte: 'lte',
+        eq: 'eq',
+        equal: 'eq',
+        gt: 'gt',
+        gte: 'gte'
+    };
+
     return {
-        isMNOPEnabled: function () {
-            return features.isVisible('taoQtiTest/creator/property/mnop');
-        }
+        opToQti,
+        qtiToOp
     };
 });

@@ -68,7 +68,7 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                                 $report->add(
                                     new Report(
                                         Report::TYPE_SUCCESS,
-                                        "File '${filePrefix}' successfully compiled for delivery '${deliveryUri}'."
+                                        "File '{$filePrefix}' successfully compiled for delivery '{$deliveryUri}'."
                                     )
                                 );
                             } else {
@@ -76,7 +76,7 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                                 $report->add(
                                     new Report(
                                         Report::TYPE_WARNING,
-                                        "File '${filePrefix}' could not be compiled for delivery '${deliveryUri}'."
+                                        "File '{$filePrefix}' could not be compiled for delivery '{$deliveryUri}'."
                                     )
                                 );
                             }
@@ -85,8 +85,8 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
                             $report->add(
                                 new Report(
                                     Report::TYPE_ERROR,
-                                    "An unexpected error occured while compiling file '${filePrefix}' for "
-                                        . "Delivery '${deliveryUri}'. The system returned the following error:\n"
+                                    "An unexpected error occured while compiling file '{$filePrefix}' for "
+                                        . "Delivery '{$deliveryUri}'. The system returned the following error:\n"
                                         . $e->getMessage()
                                 )
                             );
@@ -98,14 +98,14 @@ abstract class CompileDeliveriesPhpData extends AbstractAction
             $report->add(
                 new Report(
                     Report::TYPE_INFO,
-                    "${count} file(s) successfully compiled."
+                    "{$count} file(s) successfully compiled."
                 )
             );
 
             $report->add(
                 new Report(
                     Report::TYPE_INFO,
-                    "${failCount} file(s) not successfully compiled."
+                    "{$failCount} file(s) not successfully compiled."
                 )
             );
         } else {

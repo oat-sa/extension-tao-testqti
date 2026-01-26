@@ -30,6 +30,7 @@ use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseVa
 use oat\taoQtiTest\models\classes\runner\QtiRunnerInvalidResponsesException;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use qtism\data\ExtendedAssessmentItemRef;
 use qtism\runtime\common\State;
@@ -40,6 +41,10 @@ use qtism\runtime\tests\AssessmentTestSession;
 class QtiItemResponseRepositoryTest extends TestCase
 {
     private QtiItemResponseRepository $subject;
+    private QtiRunnerService|MockObject $runnerServiceMock;
+    private FeatureFlagChecker|MockObject $featureFlagCheckerMock;
+    private QtiItemResponseValidator|MockObject $itemResponseValidatorMock;
+    private ExtraQtiInteractionResponseValidator|MockObject $interactionResponseValidator;
 
     public function setUp(): void
     {

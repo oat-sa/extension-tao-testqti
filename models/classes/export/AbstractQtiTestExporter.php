@@ -314,7 +314,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
 
         $identifier = tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
 
-        $search = $xpath->query("//resource[@identifier='${identifier}']");
+        $search = $xpath->query("//resource[@identifier='{$identifier}']");
         $resourceElement = $search->item(0);
 
         // Append IMS Manifest <dependency> elements referencing $identifierRef.
@@ -337,7 +337,7 @@ abstract class AbstractQtiTestExporter extends ItemExporter implements QtiTestEx
         $testIdentifier = tao_helpers_Uri::getUniqueId($this->getItem()->getUri());
 
         // Find the first <dependency> element.
-        $dependencies = $xpath->query("//resource[@identifier='${testIdentifier}']/dependency");
+        $dependencies = $xpath->query("//resource[@identifier='{$testIdentifier}']/dependency");
         $firstDependencyElement = $dependencies->item(0);
 
         // Create an IMS Manifest <file> element.

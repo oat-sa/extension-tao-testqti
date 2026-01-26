@@ -28,6 +28,7 @@ use oat\taoQtiTest\models\classes\metadata\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\GenericLomOntologyExtractor;
 use oat\taoQtiTest\models\classes\metadata\MetadataLomService;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use oat\taoQtiItem\model\qti\metadata\MetadataExtractionException;
 use core_kernel_classes_Resource as Resource;
@@ -36,6 +37,11 @@ use core_kernel_classes_Triple as Triple;
 
 class GenericLomOntologyExtractorTest extends TestCase
 {
+    private MockObject|Ontology $ontologyMock;
+    private PropertyMapper|MockObject $propertyMapperMock;
+    private MetadataLomService|MockObject $metadataLomServiceMock;
+    private GenericLomOntologyExtractor $subject;
+
     public function setUp(): void
     {
         $this->ontologyMock = $this->createMock(Ontology::class);

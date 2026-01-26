@@ -28,21 +28,25 @@ use core_kernel_classes_Resource as Resource;
 use oat\generis\model\GenerisRdf;
 use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PropertyMapperTest extends TestCase
 {
+    private ChecksumGenerator|MockObject $checksumGeneratorMock;
+    private PropertyMapper $subject;
+
     public function setUp(): void
     {
         $this->checksumGeneratorMock = $this->createMock(ChecksumGenerator::class);
-        $this->metaMetadataCollectionToExport = [
+        $metaMetadataCollectionToExport = [
             'label' => RDFS_LABEL,
             'domain' => RDFS_DOMAIN,
             'alias' => GenerisRdf::PROPERTY_ALIAS,
             'multiple' => GenerisRdf::PROPERTY_MULTIPLE
         ];
 
-        $this->subject  = new PropertyMapper($this->checksumGeneratorMock, $this->metaMetadataCollectionToExport);
+        $this->subject  = new PropertyMapper($this->checksumGeneratorMock, $metaMetadataCollectionToExport);
     }
 
     public function testGetMetadataProperties(): void

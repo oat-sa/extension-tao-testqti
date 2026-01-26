@@ -405,15 +405,15 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
                 $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
                 common_Logger::e(
-                    "Unable to retrieve item with identifier '${itemIdentifier}' for user '${userIdentifier}'."
+                    "Unable to retrieve item with identifier '{$itemIdentifier}' for user '{$userIdentifier}'."
                 );
             }
 
             $this->getRunnerService()->startTimer($serviceContext);
         } catch (common_Exception $e) {
             $userIdentifier = common_session_SessionManager::getSession()->getUser()->getIdentifier();
-            $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '${itemIdentifier}' for "
-                . "user '${userIdentifier}'.\n";
+            $msg = __CLASS__ . "::getItem(): Unable to retrieve item with identifier '{$itemIdentifier}' for "
+                . "user '{$userIdentifier}'.\n";
             $msg .= "Exception of type '" . get_class($e) . "' was thrown in '" . $e->getFile() . "' l." . $e->getLine()
                 . " with message '" . $e->getMessage() . "'.";
 
