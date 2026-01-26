@@ -280,7 +280,39 @@ define([
             });
 
             $tbody.html(html);
-            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
+            $tbody.find('select.select2').each(function() {
+                const $select = $(this);
+                $select.select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%',
+                    dropdownCssClass: 'branch-rules-dropdown' 
+                });
+                // Override inline width styles when dropdown opens to control the options width
+                $select.on('select2-open', function (e) {
+                    const $dropdown = $('.select2-drop.branch-rules-dropdown');
+                    if ($dropdown.length) {
+                        const $parent = $select.parent();
+                        const $container = $parent.find('.select2-container');
+
+                        $dropdown.css({
+                            'width': 'auto',
+                            'max-width': '200px',
+                            'min-width': `${$container.width()}px`,
+                            'font-size': '1rem'
+                        });
+                        
+                        // Reposition dropdown to align with container after width change
+                        const containerOffset = $container.offset();
+                        const dropdownHeight = $('#select2-drop').height();
+                        
+                        // Set position to align with the container
+                        $dropdown.css({
+                            'left': containerOffset.left + 'px',
+                            'top': (containerOffset.top - dropdownHeight - 3) + 'px'
+                        });
+                    }
+                });
+            });
         }
 
         function renderPreConditions(view) {
@@ -300,7 +332,39 @@ define([
             });
 
             $tbody.html(html);
-            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
+            $tbody.find('select.select2').each(function() {
+                const $select = $(this);
+                $select.select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%',
+                    dropdownCssClass: 'preconditions-dropdown' 
+                });
+                // Override inline width styles when dropdown opens to control the options width
+                $select.on('select2-open', function (e) {
+                    const $dropdown = $('.select2-drop.preconditions-dropdown');
+                    if ($dropdown.length) {
+                        const $parent = $select.parent();
+                        const $container = $parent.find('.select2-container');
+
+                        $dropdown.css({
+                            'width': 'auto',
+                            'max-width': '200px',
+                            'min-width': `${$container.width()}px`,
+                            'font-size': '1rem'
+                        });
+                        
+                        // Reposition dropdown to align with container after width change
+                        const containerOffset = $container.offset();
+                        const dropdownHeight = $('#select2-drop').height();
+                        
+                        // Set position to align with the container
+                        $dropdown.css({
+                            'left': containerOffset.left + 'px',
+                            'top': (containerOffset.top - dropdownHeight - 3) + 'px'
+                        });
+                    }
+                });
+            });
         }
 
         /**
