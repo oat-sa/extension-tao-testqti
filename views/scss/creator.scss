@@ -1067,9 +1067,28 @@ $brActionBorderColor: #ddd;
     padding-right: 0;
 }
 
-// fix for select 2 dropdown font size
-.select2-drop .select2-results li {
-    font-size: 1rem;
+// Text overflow for Select2 dropdown options in branch rules and preconditions
+.select2-drop.branch-rules-dropdown,
+.select2-drop.preconditions-dropdown {
+    .select2-results {
+        max-width: 258px;
+        li {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            
+            // Target Select2's result label/option text
+            .select2-result-label,
+            .select2-result-label > * {
+                max-width: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                display: block;
+            }
+        }
+    }
 }
 
 .branch-rules-add-btn {
