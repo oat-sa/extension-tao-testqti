@@ -263,33 +263,24 @@ define([
             });
         }
 
-        function renderBranchRules(view) {
-            const cfg = creatorContext.getModelOverseer().getConfig();
-            const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
-
-            const html = templates.branchRules({
-                branchRules: partModel.branchRules,
-                branchOptions: options
-            });
-
-            const $tbody = $('.testpart-branch-rules', view);
-
-            // destroy any existing Select2 instances
-            $tbody.find('select.select2').each(function () {
-                if ($(this).data('select2')) $(this).select2('destroy');
-            });
-
-            $tbody.html(html);
-            $tbody.find('select.select2').each(function() {
+        /**
+         * Initialize Select2 dropdowns with custom width and positioning
+         * @param {jQuery} $selects - jQuery collection of select elements
+         * @param {string} dropdownCssClass - CSS class for the dropdown
+         * @private
+         */
+        function initializeSelect2Dropdowns($selects, dropdownCssClass) {
+            $selects.each(function() {
                 const $select = $(this);
                 $select.select2({
                     minimumResultsForSearch: -1,
                     width: '100%',
-                    dropdownCssClass: 'branch-rules-dropdown' 
+                    dropdownCssClass: dropdownCssClass
                 });
+                
                 // Override inline width styles when dropdown opens to control the options width
                 $select.on('select2-open', function (e) {
-                    const $dropdown = $('.select2-drop.branch-rules-dropdown');
+                    const $dropdown = $('.select2-drop.' + dropdownCssClass);
                     if ($dropdown.length) {
                         const $parent = $select.parent();
                         const $container = $parent.find('.select2-container');
@@ -315,6 +306,26 @@ define([
             });
         }
 
+        function renderBranchRules(view) {
+            const cfg = creatorContext.getModelOverseer().getConfig();
+            const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
+
+            const html = templates.branchRules({
+                branchRules: partModel.branchRules,
+                branchOptions: options
+            });
+
+            const $tbody = $('.testpart-branch-rules', view);
+
+            // destroy any existing Select2 instances
+            $tbody.find('select.select2').each(function () {
+                if ($(this).data('select2')) $(this).select2('destroy');
+            });
+
+            $tbody.html(html);
+            initializeSelect2Dropdowns($tbody.find('select.select2'), 'branch-rules-dropdown');
+        }
+
         function renderPreConditions(view) {
             const cfg = creatorContext.getModelOverseer().getConfig();
             const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
@@ -332,39 +343,7 @@ define([
             });
 
             $tbody.html(html);
-            $tbody.find('select.select2').each(function() {
-                const $select = $(this);
-                $select.select2({
-                    minimumResultsForSearch: -1,
-                    width: '100%',
-                    dropdownCssClass: 'preconditions-dropdown' 
-                });
-                // Override inline width styles when dropdown opens to control the options width
-                $select.on('select2-open', function (e) {
-                    const $dropdown = $('.select2-drop.preconditions-dropdown');
-                    if ($dropdown.length) {
-                        const $parent = $select.parent();
-                        const $container = $parent.find('.select2-container');
-
-                        $dropdown.css({
-                            'width': 'auto',
-                            'max-width': '200px',
-                            'min-width': `${$container.width()}px`,
-                            'font-size': '1rem'
-                        });
-                        
-                        // Reposition dropdown to align with container after width change
-                        const containerOffset = $container.offset();
-                        const dropdownHeight = $('#select2-drop').height();
-                        
-                        // Set position to align with the container
-                        $dropdown.css({
-                            'left': containerOffset.left + 'px',
-                            'top': (containerOffset.top - dropdownHeight - 3) + 'px'
-                        });
-                    }
-                });
-            });
+            initializeSelect2Dropdowns($tbody.find('select.select2'), 'preconditions-dropdown');
         }
 
         /**
