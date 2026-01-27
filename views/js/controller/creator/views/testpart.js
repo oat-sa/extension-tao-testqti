@@ -287,7 +287,7 @@ define([
 
                         $dropdown.css({
                             'width': 'auto',
-                            'max-width': '200px',
+                            'max-width': '258px',
                             'min-width': `${$container.width()}px`,
                             'font-size': '1rem'
                         });
