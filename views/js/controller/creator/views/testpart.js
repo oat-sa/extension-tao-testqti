@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -263,6 +263,49 @@ define([
             });
         }
 
+        /**
+         * Initialize Select2 dropdowns with custom width and positioning
+         * @param {jQuery} $selects - jQuery collection of select elements
+         * @param {string} dropdownCssClass - CSS class for the dropdown
+         * @private
+         */
+        function initializeSelect2Dropdowns($selects, dropdownCssClass) {
+            $selects.each(function() {
+                const $select = $(this);
+                $select.select2({
+                    minimumResultsForSearch: -1,
+                    width: '100%',
+                    dropdownCssClass: dropdownCssClass
+                });
+                
+                // Override inline width styles when dropdown opens to control the options width
+                $select.on('select2-open', function (e) {
+                    const $dropdown = $('.select2-drop.' + dropdownCssClass);
+                    if ($dropdown.length) {
+                        const $parent = $select.parent();
+                        const $container = $parent.find('.select2-container');
+
+                        $dropdown.css({
+                            'width': 'auto',
+                            'max-width': '258px',
+                            'min-width': `${$container.width()}px`,
+                            'font-size': '1rem'
+                        });
+                        
+                        // Reposition dropdown to align with container after width change
+                        const containerOffset = $container.offset();
+                        const dropdownHeight = $('#select2-drop').height();
+                        
+                        // Set position to align with the container
+                        $dropdown.css({
+                            'left': containerOffset.left + 'px',
+                            'top': (containerOffset.top - dropdownHeight - 3) + 'px'
+                        });
+                    }
+                });
+            });
+        }
+
         function renderBranchRules(view) {
             const cfg = creatorContext.getModelOverseer().getConfig();
             const options = (cfg && cfg.branchOptions) || { targets: [], variables: [], operators: [] };
@@ -280,7 +323,7 @@ define([
             });
 
             $tbody.html(html);
-            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
+            initializeSelect2Dropdowns($tbody.find('select.select2'), 'branch-rules-dropdown');
         }
 
         function renderPreConditions(view) {
@@ -300,7 +343,7 @@ define([
             });
 
             $tbody.html(html);
-            $tbody.find('select.select2').select2({ minimumResultsForSearch: -1, width: '100%' });
+            initializeSelect2Dropdowns($tbody.find('select.select2'), 'preconditions-dropdown');
         }
 
         /**
