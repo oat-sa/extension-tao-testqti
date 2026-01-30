@@ -36,6 +36,7 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -59,6 +60,7 @@ define([
     featureVisibility,
     baseTypeHelper,
     outcome,
+    outcomeValidator,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -300,7 +302,7 @@ define([
                 const isUnique = !testModel.outcomeDeclarations.some(outcome =>
                     outcome.identifier === identifier && outcome.serial
                 );
-                if (!isUnique || !identifier.trim()) {
+                if (!isUnique || !identifier.trim() || !outcomeValidator.validateIdentifier(identifier)) {
                     feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                     $input.focus();
                     $saveButton.addClass('disabled').attr('disabled', true);
