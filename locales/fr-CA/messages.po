@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T17:59:51\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:43:51\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fr-CA\n"
@@ -68,6 +68,12 @@ msgid "Activated"
 msgstr ""
 
 msgid "add a new weight"
+msgstr ""
+
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
 msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
@@ -268,6 +274,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr ""
 
@@ -388,6 +397,12 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
+msgstr ""
+
 msgid "Disable validation"
 msgstr ""
 
@@ -448,6 +463,12 @@ msgstr ""
 msgid "Download the pupil responses and submit manually."
 msgstr ""
 
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr ""
+
 msgid "Edit"
 msgstr ""
 
@@ -476,6 +497,9 @@ msgid "Enable the item review screen / navigator."
 msgstr ""
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr ""
+
+msgid "End of the test"
 msgstr ""
 
 msgid "End test"
@@ -651,6 +675,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr ""
 
 msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you continue, those paths will be removed."
 msgstr ""
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
@@ -861,6 +888,9 @@ msgstr "Durée maximale pour cette section."
 msgid "Maximum duration for this test part."
 msgstr "Durée maximale pour cette partie de test."
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
@@ -900,10 +930,25 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr ""
 
 msgid "Move Down"
+msgstr ""
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
 msgstr ""
 
 msgid "Move Up"
@@ -955,6 +1000,9 @@ msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -1020,10 +1068,16 @@ msgstr "Afficher seulement les éléments marqués pour révision"
 msgid "Only display the unanswered items"
 msgstr "Afficher seulement les éléments non répondus"
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr ""
 
 msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Operator"
 msgstr ""
 
 msgid "Option A"
@@ -1062,6 +1116,9 @@ msgstr "Partie %d"
 msgid "Passage"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr ""
 
@@ -1086,6 +1143,12 @@ msgstr ""
 msgid "Please wait while we try to restore the connection."
 msgstr "Veuillez attendre pendant que nous essayons de restaurer la connexion."
 
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
+msgstr ""
+
 msgid "Preview"
 msgstr ""
 
@@ -1096,6 +1159,9 @@ msgid "Previous"
 msgstr "Précédent"
 
 msgid "Print Out"
+msgstr ""
+
+msgid "Proceed"
 msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
@@ -1162,6 +1228,9 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "remaining %s %s"
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -1410,6 +1479,9 @@ msgstr ""
 msgid "SUBMIT THIS PART"
 msgstr ""
 
+msgid "Target"
+msgstr ""
+
 msgid "technical"
 msgstr ""
 
@@ -1532,6 +1604,9 @@ msgid "The IMS QTI Test Package could not be imported."
 msgstr ""
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
+msgstr ""
+
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
 msgstr ""
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
@@ -1657,6 +1732,9 @@ msgstr "Ce test a été suspendu"
 msgid "This test has been terminated"
 msgstr "Ce test a pris fin"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Limite de temps atteinte pour l'élément \"%s\"."
 
@@ -1688,6 +1766,9 @@ msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Toolbox"
+msgstr ""
+
+msgid "Total"
 msgstr ""
 
 msgid "Total score"
@@ -1741,6 +1822,9 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
+msgid "Variable"
+msgstr ""
+
 msgid "Viewed"
 msgstr "Vu"
 
@@ -1781,6 +1865,9 @@ msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
 msgid "Weight"
+msgstr ""
+
+msgid "Weighted"
 msgstr ""
 
 msgid "Weights"

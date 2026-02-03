@@ -1,27 +1,26 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:05\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:44:08\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: nb_NO\n"
+"Language: nb-NO\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: nb-NO\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: nb\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Norwegian Bokmal\n"
+
+msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr ""
 
 msgid "%s to answer %s"
 msgstr "%s for å svare på %s"
+
+msgid "%title% - Translation (%lang%)"
+msgstr ""
 
 msgid "(Visual) Clear all active highlights"
 msgstr "(Visuell) Fjern alle aktive uthevinger"
@@ -30,6 +29,9 @@ msgid "(Visual) Highlight Text"
 msgstr "(Visuell) Uthev tekst"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
+
+msgid "A human interpretation of the variable's value."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -46,6 +48,9 @@ msgstr "En ekstern ressurs referert til i QTI-prøven '%s' kunne ikke hentes."
 
 msgid "A response to every question in this item is required."
 msgstr "Du må angi et svar på hvert spørsmål i denne oppgaven."
+
+msgid "A response to this item is invalid."
+msgstr ""
 
 msgid "A response to this item is required."
 msgstr "Du må svare på denne oppgaven."
@@ -65,8 +70,17 @@ msgstr "Aktivert"
 msgid "add a new weight"
 msgstr "legg til ny vekting"
 
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
+msgstr ""
+
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Legg til en zip-fil som inneholder QTI/APIP-prøver og oppgaver"
+
+msgid "Add an outcome declaration"
+msgstr ""
 
 msgid "Add selected item(s) here."
 msgstr "Legg til valgt(e) oppgave(r) her."
@@ -82,6 +96,9 @@ msgstr "Etter at du har fullført delen, er det umulig å gå tilbake for å gj�
 
 msgid "All"
 msgstr "Alle"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr ""
 
 msgid "Allow Comment"
 msgstr "Tillat kommentarer"
@@ -149,6 +166,9 @@ msgstr "Det oppstod en feil under prøvenitialiseringen!"
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Det oppstod en feil under prøven. Kontakt administrator."
 
+msgid "An error occurred while loading the original test."
+msgstr ""
+
 msgid "An error occurred!"
 msgstr "Det oppstod en feil!"
 
@@ -163,6 +183,9 @@ msgstr "En oppgave i prøvesettet kan ikke leses eller er ikke QTI-kompatibel."
 
 msgid "An item involved in the test cannot be written."
 msgstr "Et oppgave som finnes i testen kan ikke skrives."
+
+msgid "An optional link to an extended interpretation of the outcome variable."
+msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr "Det oppstod en ukjent feil under kompilering av QTI-prøven '%s'."
@@ -221,6 +244,9 @@ msgstr "Koble en kopi"
 msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr "Minst én obligatorisk parameter var påkrevd, men det ble funnet mangler i forespørselen din"
 
+msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
+msgstr ""
+
 msgid "Author"
 msgstr "Forfatter"
 
@@ -248,6 +274,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Kalkulator"
 
@@ -257,11 +286,11 @@ msgstr "BODMAS kalkulator"
 msgid "Can not playback media file!"
 msgstr "Kan ikke spille av mediefil!"
 
-msgid "CANCEL"
-msgstr "AVBRYT"
-
 msgid "Cancel"
 msgstr "Avbryt"
+
+msgid "CANCEL"
+msgstr "AVBRYT"
 
 msgid "Candidate"
 msgstr "Elev"
@@ -272,11 +301,17 @@ msgstr "Kardinalitet"
 msgid "Categories"
 msgstr "Kategorier"
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr "Kategoriskår"
 
 msgid "Change the current color preset"
 msgstr "Endre gjeldende fargeinnstilling"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr ""
 
 msgid "Class"
 msgstr "Mappe"
@@ -353,6 +388,21 @@ msgstr "Poengsum"
 msgid "Cut score (pass ratio)"
 msgstr "Poengsum (bestått)"
 
+msgid "Define the status of the translation."
+msgstr ""
+
+msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Deaktiver validering"
 
@@ -401,6 +451,12 @@ msgstr "Ikke gi nytt navn."
 msgid "Do not show alert on timeout"
 msgstr "Ikke vis varsel ved timeout"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
+msgid "Don\'t save"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr ""
 
@@ -409,6 +465,15 @@ msgstr "Last ned"
 
 msgid "Download the pupil responses and submit manually."
 msgstr "Last ned elevbesvarelsene og lever manuelt."
+
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr ""
+
+msgid "Edit"
+msgstr ""
 
 msgid "Eliminate choices"
 msgstr "Fjern valgene"
@@ -437,11 +502,17 @@ msgstr "Aktiver oppgavegjennomgang/navigering på skjerm."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Aktiver muligheten til å  gå videre i oppgavesettet innen gitt oppgaveseksjon. Krever at valget se gjennom oppgavene på skjerm er aktivert."
 
+msgid "End of the test"
+msgstr ""
+
 msgid "End test"
 msgstr "Avslutt prøven"
 
 msgid "End Test"
 msgstr "Avslutt prøven"
+
+msgid "Enforce Item Constraints"
+msgstr ""
 
 msgid "Enter a blueprint"
 msgstr "Skriv inn en kopi"
@@ -485,6 +556,12 @@ msgstr "Eksporter QTI 2.2 Testpakke"
 
 msgid "Export successful for the test \"%s"
 msgstr "Oppgavesett \"%s ble eksportert"
+
+msgid "External Machine"
+msgstr ""
+
+msgid "External Scored"
+msgstr ""
 
 msgid "Feedback block"
 msgstr "Tilbakemeldingsboks"
@@ -576,6 +653,9 @@ msgstr "timer"
 msgid "Html title"
 msgstr "Html tittel"
 
+msgid "Human"
+msgstr ""
+
 msgid "Identifier"
 msgstr "Identifikator"
 
@@ -599,6 +679,12 @@ msgstr "Hvis kategorialternativet er angitt, blir skåren også behandlet per ka
 
 msgid "If the connection cannot be restored, see option B."
 msgstr "Hvis tilkoblingen ikke kan gjenopprettes, se alternativ B."
+
+msgid "If you continue, those paths will be removed."
+msgstr ""
+
+msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
+msgstr ""
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr ""
@@ -627,6 +713,9 @@ msgstr "IMS QTI-prøvepakke ble importert."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "IMS QTI-prøve referert til som \"%s\" i IMS dokument-filen ble importert."
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "I denne delen av prøven er navigasjon ikke tillatt."
 
@@ -645,6 +734,9 @@ msgstr "Informasjonsside"
 msgid "Internal server error!"
 msgstr "Intern serverfeil!"
 
+msgid "Interpretation"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr "er allerede brukt i prøven."
 
@@ -653,6 +745,9 @@ msgstr "er ikke en gyldig identifikator (alfanumeriske tegn, understreking, bind
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "er ikke en gyldig identifikator (alt unntatt mellomrom)"
+
+msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
+msgstr ""
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "Det er ikke mulig å lagre svarene dine når du jobber offline."
@@ -678,11 +773,11 @@ msgstr "Oppgavens svaridentifikator samsvarer ikke med gjeldende oppgave"
 msgid "Item Session Control"
 msgstr "Innstilling for gjennomføring"
 
-msgid "items"
-msgstr "oppgaver"
-
 msgid "Items"
 msgstr "Oppgaver"
+
+msgid "items"
+msgstr "oppgaver"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Oppgaver kan tilordnes en eller flere kategorier."
@@ -729,6 +824,12 @@ msgstr "Lenkevarighet for å aktivere den guidede navigasjonen"
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr "Låst varighet: guidet navigasjon. Prøveovergangen til neste oppgave når varigheten når 0."
 
+msgid "Long interpretation"
+msgstr ""
+
+msgid "Lowest Grade Achieved"
+msgstr ""
+
 msgid "Magnifier"
 msgstr "Forstørrelsesglass"
 
@@ -750,12 +851,12 @@ msgstr "Administrer rubrikkbokser"
 msgid "Manage test properties"
 msgstr "Administrer prøveegenskaper"
 
-msgid "Manage Tests"
-msgstr "Administrer Oppgavesett"
-
 #, tao-public
 msgid "Manage tests"
 msgstr "Administrer oppgavesett"
+
+msgid "Manage Tests"
+msgstr "Administrer Oppgavesett"
 
 msgid "Mark for review"
 msgstr "Marker for å se gjennom"
@@ -787,6 +888,9 @@ msgstr "Maksimal varighet for denne seksjonen."
 msgid "Maximum duration for this test part."
 msgstr "Maksimal varighet for denne prøvedelen."
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr "Metadataeksport er ikke tilgjengelig for prøve \"%s."
 
@@ -811,7 +915,7 @@ msgstr "Minste varighet for denne prøvedelen."
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\"
 msgstr ""
 
 msgid "Missed required parameter \\'id\\'"
@@ -826,11 +930,26 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr "Mangler nødvendig konfigurasjonsalternativ %s"
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr "Flytt"
 
 msgid "Move Down"
 msgstr "Flytte Ned"
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
+msgstr ""
 
 msgid "Move Up"
 msgstr "Flytte Opp"
@@ -868,11 +987,11 @@ msgstr "Neste"
 msgid "Next Section"
 msgstr "Neste seksjon"
 
-msgid "No"
-msgstr "Nei"
-
 msgid "NO"
 msgstr ""
+
+msgid "No"
+msgstr "Nei"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Ingen CAT-motor er konfigurert for CAT-endepunkt \"%s\"."
@@ -881,6 +1000,9 @@ msgid "No file found at location \"%s\"."
 msgstr "Fant ingen fil på stedet \"%s\"."
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -894,6 +1016,9 @@ msgstr "Ingen resultatbehandling. Slett eventuelle eksisterende regler."
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Ingen referanse til noen IMS QTI-oppgave ble funnet."
+
+msgid "No translation"
+msgstr ""
 
 msgid "Non Linear"
 msgstr "Ikke lineær"
@@ -912,6 +1037,9 @@ msgstr "Ikke sett"
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Ikke blandet, posisjonen forblir fast."
+
+msgid "Note: This mode does not use categories or weights."
+msgstr ""
 
 msgid "Offline"
 msgstr ""
@@ -940,11 +1068,17 @@ msgstr "Vis bare oppgavene som er merket for å se gjennom"
 msgid "Only display the unanswered items"
 msgstr "Vis bare de ubesvarte oppgavene"
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr "Åpne kalkulator"
 
 msgid "Open Keyboard Shortcuts"
 msgstr "Åpne tastatursnarveier"
+
+msgid "Operator"
+msgstr ""
 
 msgid "Option A"
 msgstr "Valg A"
@@ -958,11 +1092,17 @@ msgstr "eller"
 msgid "Ordering"
 msgstr "Rekkefølge på oppgaver"
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr ""
 
 msgid "Outcome declarations"
 msgstr "Skåringsvariabler"
+
+msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
+msgstr ""
 
 msgid "Outcome processing"
 msgstr "Resultatprosessering"
@@ -976,11 +1116,17 @@ msgstr "Del %d"
 msgid "Passage"
 msgstr "Innhold"
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr ""
 
 msgid "Pause the test"
 msgstr "Sett prøven på pause"
+
+msgid "Pending"
+msgstr ""
 
 msgid "Play"
 msgstr "Spille"
@@ -988,11 +1134,20 @@ msgstr "Spille"
 msgid "Please confirm you want to leave the test."
 msgstr "Bekreft at du vil avslutte prøven."
 
+msgid "Please fix the invalid settings and try again."
+msgstr ""
+
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "Prøv å laste inn siden på nytt eller sett prøven på pause. Hvis du setter den på pause, vil du kunne fortsette prøven fra denne siden."
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Vent mens vi prøver å gjenopprette tilkoblingen."
+
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
+msgstr ""
 
 msgid "Preview"
 msgstr "Forhåndsvis"
@@ -1002,6 +1157,12 @@ msgstr "Forhåndsvis merket området"
 
 msgid "Previous"
 msgstr "Forrige"
+
+msgid "Print Out"
+msgstr ""
+
+msgid "Proceed"
+msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "FORTSETT OG AVSLUTT VURDERING"
@@ -1018,11 +1179,17 @@ msgstr ""
 msgid "QTI Item Runner"
 msgstr ""
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTI Prøve \"%s\" publisering mislyktes."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI-prøven \"%s\" ble publisert."
+
+msgid "QTI test import failed"
+msgstr ""
 
 msgid "QTI Test Metadata"
 msgstr ""
@@ -1062,6 +1229,9 @@ msgstr "Last siden på nytt"
 
 msgid "remaining %s %s"
 msgstr "gjenværende %s %s"
+
+msgid "Remove"
+msgstr ""
 
 msgid "Remove Item Reference"
 msgstr "Fjern oppgavereferanse"
@@ -1114,6 +1284,9 @@ msgstr "Lagre"
 msgid "Saved"
 msgstr "Lagret"
 
+msgid "Scale name not allowed"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr "Vitenskapelig kalkulator"
 
@@ -1123,10 +1296,10 @@ msgstr "Skårer"
 msgid "Scoring"
 msgstr "Skåring"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Tegnebrett"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Tegnebrett"
 
 msgid "Scratchpad"
@@ -1153,8 +1326,14 @@ msgstr "Velge"
 msgid "Select a blueprint"
 msgstr "Velg en kopi"
 
+msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
+msgstr ""
+
 msgid "Select Items"
 msgstr "Velg oppgaver"
+
+msgid "Select or enter a scale"
+msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Velg måten svarene på prøven din skal behandles på"
@@ -1264,6 +1443,9 @@ msgstr "Hastighet"
 msgid "Start Test-part"
 msgstr "Start prøvedel"
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr "Trinn 1: Last ned filen (se nedenfor når den er tilgjengelig)"
 
@@ -1296,6 +1478,9 @@ msgstr "LEVER PRØVEN"
 
 msgid "SUBMIT THIS PART"
 msgstr "LEVER DENNE PRØVEDELEN"
+
+msgid "Target"
+msgstr ""
 
 msgid "technical"
 msgstr "teknisk"
@@ -1336,6 +1521,9 @@ msgstr "Prøvestatus og se gjennom struktur"
 msgid "Test Status and Structure"
 msgstr "Prøvestatus og struktur"
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr "Elevverktøy"
 
@@ -1346,10 +1534,10 @@ msgstr "Oppgavesett"
 msgid "Text content"
 msgstr "Tekstinnhold"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "Tekst-til-tale"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "Tekst-til-tale"
 
 msgid "that was being taken."
@@ -1400,6 +1588,9 @@ msgstr "Nedlastingen vil være tilgjengelig om <strong>%d </strong> sekunder"
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Følgende identifikatorer er ikke unike i testen: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr "Identifikatoren for oppgavereferansen."
 
@@ -1415,11 +1606,20 @@ msgstr "IMS QTI-prøvepakken kunne ikke importeres."
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "IMS QTI \\-prøven referert til som \"%s\" i IMS Dokument-filen kunne ikke importeres."
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr ""
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "Navigasjonsmodusen bestemmer mulighetene som eleven har for å navigere i oppgavesettet. En lineær modell begrenser eleven til å besvare hver oppgave etter tur. Ikke-lineær modell fjerner denne begrensningen."
 
 msgid "The number of child elements to be selected."
 msgstr "Antall underelementer som skal velges."
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
+msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "Resultatet \"%s\" finnes ikke, men det refereres til i en tilbakemeldingsboks!"
@@ -1466,6 +1666,9 @@ msgstr "Seksjonens tittel."
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "Innleveringsmodusen avgjør når elevens svar blir sendt til vurdering. En prøvedel i individuell modus krever at eleven leverer svarene sine enkeltvis. I samtidig modus sendes alleelevenes svar sammen på slutten av prøvedelen."
 
+msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr ""
+
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr ""
 
@@ -1500,6 +1703,12 @@ msgstr "Prøvenavn."
 msgid "The time limit has been reached for this part of the test."
 msgstr "Tidsbegrensningen er nådd for denne prøvedelen."
 
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
+
 msgid "There are %s unanswered questions"
 msgstr "Det er %s ubesvarte spørsmål"
 
@@ -1530,6 +1739,9 @@ msgstr "Denne prøven er suspendert"
 msgid "This test has been terminated"
 msgstr "Denne prøven er avsluttet"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Tidsbegrensningen er nådd for oppgave \"%s\"."
 
@@ -1548,6 +1760,9 @@ msgstr "Gjenstående tid"
 msgid "Title"
 msgstr "Tittel"
 
+msgid "to"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr "Slå av og på avspilling"
 
@@ -1560,8 +1775,20 @@ msgstr "Verktøykasse og flagging for å se gjennom"
 msgid "Toolbox"
 msgstr "Verktøykasse"
 
+msgid "Total"
+msgstr ""
+
 msgid "Total score"
 msgstr "Totalskår"
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
+msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "Prøv å koble maskinen til internett via kabel, eller flytt til et område med et bedre wifi-dekning."
@@ -1601,6 +1828,9 @@ msgstr "Valider svar"
 
 msgid "Value"
 msgstr "Verdi"
+
+msgid "Variable"
+msgstr ""
 
 msgid "Viewed"
 msgstr "Vist"
@@ -1643,6 +1873,9 @@ msgstr "Du kan ikke gå til neste oppgave da du ikke har kontakt med server."
 
 msgid "Weight"
 msgstr "Vekting"
+
+msgid "Weighted"
+msgstr ""
 
 msgid "Weights"
 msgstr "Vekting"
@@ -1690,11 +1923,11 @@ msgstr "XML-feil på linje %1$d kolonne %2 $ d \" %3 $ s\"."
 msgid "Yellow on Blue"
 msgstr "Gul på blå"
 
-msgid "Yes"
-msgstr "Ja"
-
 msgid "YES"
 msgstr ""
+
+msgid "Yes"
+msgstr "Ja"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "Du svarte %s av %s spørsmål på denne seksjonen av prøven"
@@ -1773,10 +2006,4 @@ msgstr "Zoom inn"
 
 msgid "Zoom out"
 msgstr "Zoom ut"
-
-msgid "Enforce Item Constraints"
-msgstr ""
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr ""
 
