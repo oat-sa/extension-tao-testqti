@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:21\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:44:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ru-RU\n"
@@ -69,6 +69,12 @@ msgstr "Активировано"
 
 msgid "add a new weight"
 msgstr "добавить новый весовой коэффициент"
+
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
+msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Добавить ZIP-файл, содержащий QTI/APIP-тесты и элементы"
@@ -268,6 +274,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Калькулятор"
 
@@ -385,6 +394,12 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
+msgstr ""
+
 msgid "Disable validation"
 msgstr "Отключить валидацию"
 
@@ -445,6 +460,12 @@ msgstr "Загрузить"
 msgid "Download the pupil responses and submit manually."
 msgstr ""
 
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr ""
+
 msgid "Edit"
 msgstr ""
 
@@ -474,6 +495,9 @@ msgstr "Включить экран пересмотра элемента/нав
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Включает пропуск до элементов в пределах этого раздела. Требуется опция экрана пересмотра."
+
+msgid "End of the test"
+msgstr ""
 
 msgid "End test"
 msgstr "Завершить тест"
@@ -648,6 +672,9 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr "Если задана опция категории, балл будет также обрабатываться по категориям, а все результаты будут включены в результат SCORE_xxx, где xxx — наименование категории."
 
 msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you continue, those paths will be removed."
 msgstr ""
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
@@ -858,6 +885,9 @@ msgstr "Максимальная длительность для данного 
 msgid "Maximum duration for this test part."
 msgstr "Максимальная длительность для этой части теста."
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr "Экспорт метаданных недоступен для теста «%s."
 
@@ -897,11 +927,26 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr ""
 
 msgid "Move Down"
 msgstr "Переместить вниз"
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
+msgstr ""
 
 msgid "Move Up"
 msgstr "Переместить вверх"
@@ -952,6 +997,9 @@ msgid "No file found at location \"%s\"."
 msgstr "По расположению «%s» не найдены файлы."
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -1017,10 +1065,16 @@ msgstr "Отображать только элементы, помеченные
 msgid "Only display the unanswered items"
 msgstr "Показывать только элементы без ответов"
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr "Открыть калькулятор"
 
 msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Operator"
 msgstr ""
 
 msgid "Option A"
@@ -1059,6 +1113,9 @@ msgstr "Часть %d"
 msgid "Passage"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr "Приостановить"
 
@@ -1083,6 +1140,12 @@ msgstr ""
 msgid "Please wait while we try to restore the connection."
 msgstr "Подождите, мы пытаемся восстановить подключение."
 
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
+msgstr ""
+
 msgid "Preview"
 msgstr ""
 
@@ -1093,6 +1156,9 @@ msgid "Previous"
 msgstr "Назад"
 
 msgid "Print Out"
+msgstr ""
+
+msgid "Proceed"
 msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
@@ -1159,6 +1225,9 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "remaining %s %s"
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -1407,6 +1476,9 @@ msgstr "ОТПРАВИТЬ ТЕСТ"
 msgid "SUBMIT THIS PART"
 msgstr ""
 
+msgid "Target"
+msgstr ""
+
 msgid "technical"
 msgstr "техническ."
 
@@ -1531,6 +1603,9 @@ msgstr "Невозможно импортировать пакет для тес
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "Невозможно импортировать тест IMS QTI, указанный в файле манифеста IMS как «%s»."
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr ""
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "В режиме навигации задаются общие пути действий для кандидата. В линейном режиме кандидат должен попытаться решить каждый элемент по очереди. В нелинейном режиме такого ограничения нет."
 
@@ -1654,6 +1729,9 @@ msgstr "Тест приостановлен"
 msgid "This test has been terminated"
 msgstr "Тест прекращен"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Для элемента «%s» достигнут временной лимит."
 
@@ -1685,6 +1763,9 @@ msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Toolbox"
+msgstr ""
+
+msgid "Total"
 msgstr ""
 
 msgid "Total score"
@@ -1738,6 +1819,9 @@ msgstr "Валидировать ответы"
 msgid "Value"
 msgstr "Значение"
 
+msgid "Variable"
+msgstr ""
+
 msgid "Viewed"
 msgstr "Просмотрен"
 
@@ -1779,6 +1863,9 @@ msgstr "Не удалось подключиться к серверу для п
 
 msgid "Weight"
 msgstr "Весовой коэффициент"
+
+msgid "Weighted"
+msgstr ""
 
 msgid "Weights"
 msgstr "Весовые коэффициенты"
