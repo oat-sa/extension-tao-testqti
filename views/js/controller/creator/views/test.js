@@ -36,11 +36,11 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
     'taoQtiTest/controller/creator/helpers/mnop',
-    'taoQtiTest/controller/creator/helpers/featureFlags',
     'taoQtiTest/controller/creator/helpers/branchRules',
     'taoQtiTest/controller/creator/helpers/preConditions'
 ], function (
@@ -60,11 +60,11 @@ define([
     featureVisibility,
     baseTypeHelper,
     outcome,
+    outcomeValidator,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
     mnopHelper,
-    featureFlags,
     branchRules,
     preConditions
 ) {
@@ -161,7 +161,6 @@ define([
                 hider.hide($scoringError);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
                 testModel.scalePresets = config.scalePresets;
-                testModel.testScales = config.testScales;
 
                 if (scoringState !== newScoringState) {
                     /**
@@ -303,7 +302,7 @@ define([
                 const isUnique = !testModel.outcomeDeclarations.some(outcome =>
                     outcome.identifier === identifier && outcome.serial
                 );
-                if (!isUnique || !identifier.trim()) {
+                if (!isUnique || !identifier.trim() || !outcomeValidator.validateIdentifier(identifier)) {
                     feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                     $input.focus();
                     $saveButton.addClass('disabled').attr('disabled', true);
@@ -330,7 +329,6 @@ define([
             updateOutcomes();
             renderOutcomeDeclarationList(testModel, $view);
 
-            if (featureFlags.isMNOPEnabled()) {
                 const $mnopContainer = $view.find('.test-mnop-container');
                 const $mnopSection = $view.find('.test-mnop-section');
 
@@ -355,7 +353,6 @@ define([
                         console.error('Failed to initialize MNOP helper:', err);
                     });
                 }
-            }
         }
 
         /**

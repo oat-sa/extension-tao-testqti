@@ -23,7 +23,6 @@
 
 use oat\tao\model\user\TaoRoles;
 use oat\taoQtiTest\model\Container\TestQtiServiceProvider;
-use oat\taoQtiTest\model\FeatureFlag\ServiceProvider\MnopFeatureFlagServiceProvider;
 use oat\taoQtiTest\models\classes\metadata\MetadataServiceProvider;
 use oat\taoQtiTest\models\classes\render\CustomInteraction\ServiceProvider\CustomInteractionPostProcessingServiceProvider;
 use oat\taoQtiTest\models\IdentifierGenerator\ServiceProvider\IdentifierGeneratorServiceProvider;
@@ -194,6 +193,5 @@ return [
         UniqueIdServiceProvider::class,
         IdentifierGeneratorServiceProvider::class,
         QtiServiceProvider::class,
-        MnopFeatureFlagServiceProvider::class,
     ],
 ];

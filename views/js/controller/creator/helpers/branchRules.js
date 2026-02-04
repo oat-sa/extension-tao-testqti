@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2025-2026 (original work) Open Assessment Technologies SA;
  */
 
 define([
@@ -143,7 +143,7 @@ define([
     function buildGlobalBranchOptions(testModel) {
         const targets = [
         ...(testModel.testParts || []).map(tp => ({ value: tp.identifier, label: tp.identifier })),
-        { value: 'EXIT_TEST', label: __('Test end') }
+        { value: 'EXIT_TEST', label: __('End of the test') }
         ];
 
         const variables = (testModel.outcomeDeclarations || [])
