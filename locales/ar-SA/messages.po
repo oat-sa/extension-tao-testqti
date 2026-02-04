@@ -916,10 +916,7 @@ msgstr "المدة الدنيا لهذا الجزء من الرائز ."
 msgid "minutes"
 msgstr "دقائق"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\'."
 msgstr "المعلمة المطلوبة مفقودة \\'id\\'"
 
 msgid "Missed test package file"

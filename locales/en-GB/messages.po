@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 2026.02 LTS\n"
-"PO-Revision-Date: 2026-02-03T14:43:42\n"
+"PO-Revision-Date: 2026-02-04T11:50:47\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: en-GB\n"
@@ -915,10 +915,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -1670,6 +1667,7 @@ msgid "The test cannot be saved because it currently contains invalid settings."
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
+""
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"

@@ -916,10 +916,7 @@ msgstr "A teszt ezen részének minimális időtartama."
 msgid "minutes"
 msgstr "jegyzőkönyv"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\'."
 msgstr "Kihagyott kötelező paraméter: \\'id\\'"
 
 msgid "Missed test package file"

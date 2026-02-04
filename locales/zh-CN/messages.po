@@ -915,10 +915,7 @@ msgstr "这个考试部分的最短时限。"
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \'id\'"
+msgid "Missed required parameter \'id\'."
 msgstr ""
 
 msgid "Missed test package file"

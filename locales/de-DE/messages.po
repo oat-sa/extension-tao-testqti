@@ -916,10 +916,7 @@ msgstr "Minimale Dauer für diesen Testteil."
 msgid "minutes"
 msgstr "Minuten"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \'id\'."
 msgstr "Benötigter Parameter \\'id\\' fehlt"
 
 msgid "Missed test package file"
