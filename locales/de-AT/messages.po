@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: TAO 2026.02 LTS\n"
-"PO-Revision-Date: 2026-01-19T13:39:24\n"
+"PO-Revision-Date: 2026-02-03T14:43:34\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: de-AT\n"
@@ -493,6 +493,9 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
+msgid "End of the test"
+msgstr ""
+
 msgid "End test"
 msgstr ""
 
@@ -885,8 +888,6 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
-msgstr ""
 
 msgid "Missed test package file"
 msgstr ""

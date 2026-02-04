@@ -1,27 +1,26 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:04\n"
+"PO-Revision-Date: 2026-02-04 10:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: hu\n"
+"Language: hu-HU\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: en-US\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"targetLanguage: hu-HU\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: tao-open-source\n"
-"X-Crowdin-Project-ID: 590867\n"
-"X-Crowdin-Language: hu\n"
-"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
-"X-Crowdin-File-ID: 817\n"
-"Language-Team: Hungarian\n"
+
+msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr "A „Legalacsonyabb elért osztályzat” a végső teszteredményt az összes tesztváltozó közül a legalacsonyabb pontszámként állítja be, ugyanazt a skálát használva."
 
 msgid "%s to answer %s"
 msgstr "%s válaszolni %s"
+
+msgid "%title% - Translation (%lang%)"
+msgstr "%title% - Fordítás (%lang%)"
 
 msgid "(Visual) Clear all active highlights"
 msgstr "(Vizuális) Az összes aktív kiemelés törlése"
@@ -31,6 +30,9 @@ msgstr "(Vizuális) Kiemelt szöveg"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr "Egyidejű kézbesítést észleltünk. Kérjük, használja az utoljára megnyitott munkamenetet. A jelenlegi ablak bezárható."
+
+msgid "A human interpretation of the variable's value."
+msgstr "A változó értékének emberi értelmezése."
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "A(z) '%s' QTI tesztben részt vevő QTI elem nem fordítható le."
@@ -46,6 +48,9 @@ msgstr "A QTI tesztben ('%s') hivatkozott távoli erőforrás nem kérhető le."
 
 msgid "A response to every question in this item is required."
 msgstr "Minden kérdésre kötelező válaszolni ebben a tételben."
+
+msgid "A response to this item is invalid."
+msgstr "Az elemre adott válasz érvénytelen."
 
 msgid "A response to this item is required."
 msgstr "Válasz küldése szükséges erre az elemre."
@@ -65,8 +70,17 @@ msgstr "Aktív"
 msgid "add a new weight"
 msgstr "új súly hozzáadása"
 
+msgid "Add a Path"
+msgstr "Útvonal hozzáadása"
+
+msgid "Add a Prerequisite"
+msgstr "Előfeltétel hozzáadása"
+
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Adjon hozzá egy QTI/APIP teszteket és tételeket tartalmazó zip fájlt"
+
+msgid "Add an outcome declaration"
+msgstr "Eredménynyilatkozat hozzáadása"
 
 msgid "Add selected item(s) here."
 msgstr "A kiválasztott elem(ek) hozzáadása ide."
@@ -82,6 +96,9 @@ msgstr "Miután befejezte a szakaszt, nem lehet visszatérni ehhez a szakaszhoz 
 
 msgid "All"
 msgstr "Minden"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr "Engedélyezze a vizsgázónak a tétel kinyomtatását."
 
 msgid "Allow Comment"
 msgstr "Hozzászólás engedélyezése"
@@ -149,6 +166,9 @@ msgstr "Hiba történt a teszt inicializálása során!"
 msgid "An error occurred during the test, please content your administrator."
 msgstr "Hiba történt a teszt során, kérjük, jelezze a rendszergazdának."
 
+msgid "An error occurred while loading the original test."
+msgstr "Hiba történt az eredeti teszt betöltése közben."
+
 msgid "An error occurred!"
 msgstr "Hiba történt!"
 
@@ -163,6 +183,9 @@ msgstr "A tesztben szereplő egyik tétel nem olvasható le, vagy nem felel meg 
 
 msgid "An item involved in the test cannot be written."
 msgstr "A tesztben szereplő tétel nem írható meg."
+
+msgid "An optional link to an extended interpretation of the outcome variable."
+msgstr "Opcionális hivatkozás az eredményváltozó kibővített értelmezéséhez."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr "Ismeretlen hiba történt a(z) '%s' QTI teszt fordítása közben."
@@ -221,6 +244,9 @@ msgstr "Partneri tervrajz"
 msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr "Legalább egy kötelező paraméter megadása kötelező, de hiányzik a kérésből"
 
+msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
+msgstr "Ehhez a módhoz legalább egy manuálisan osztályozott eredményváltozó szükséges osztályozási skálával."
+
 msgid "Author"
 msgstr "Szerző"
 
@@ -248,6 +274,9 @@ msgstr "Jelöld meg a jelenlegi kérdést későbbi áttekintés céljából"
 msgid "Bookmarked question %s"
 msgstr "Könyvjelzővel ellátott kérdés %s"
 
+msgid "Branch rule validation error: %s"
+msgstr "Elágazási szabály érvényesítési hiba: %s"
+
 msgid "Calculator"
 msgstr "Számológép"
 
@@ -257,11 +286,11 @@ msgstr "BODMAS kalkulátor"
 msgid "Can not playback media file!"
 msgstr "Nem lehet lejátszani a médiafájlt!"
 
-msgid "CANCEL"
-msgstr "MÉGSE"
-
 msgid "Cancel"
 msgstr "Mégsem"
+
+msgid "CANCEL"
+msgstr "MÉGSE"
 
 msgid "Candidate"
 msgstr "Jelölt"
@@ -272,11 +301,17 @@ msgstr "Számosság"
 msgid "Categories"
 msgstr "Kategóriák"
 
+msgid "Category name not allowed"
+msgstr "Kategórianév nem megengedett"
+
 msgid "Category score"
 msgstr "Kategória pontszám"
 
 msgid "Change the current color preset"
 msgstr "Az aktuális színbeállítás módosítása"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr "A jelölőnégyzet bejelölése megakadályozza, hogy a vizsgázó más elemekre navigáljon, amíg az aktuális elemre vonatkozó esetleges korlátozások nem teljesülnek. A jelölőnégyzet törlése esetén a válaszok akkor is szabadon navigálhatnak, ha nem felelnek meg a beállított elemkorlátozásoknak."
 
 msgid "Class"
 msgstr "Osztály"
@@ -353,6 +388,21 @@ msgstr "Cut pontszám"
 msgid "Cut score (pass ratio)"
 msgstr "Átlagpontszám (átlagos átmenési arány)"
 
+msgid "Define the status of the translation."
+msgstr "Határozza meg a fordítás állapotát."
+
+msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
+msgstr "Meghatározza a numerikus kimeneti változók maximális nagyságát, a maximumnak pozitív értéknek, a minimumnak pedig negatívnak kell lennie."
+
+msgid "Delete"
+msgstr "Töröl"
+
+msgid "Delete prerequisite"
+msgstr "Előfeltétel törlése"
+
+msgid "Delete rule"
+msgstr "Szabály törlése"
+
 msgid "Disable validation"
 msgstr "Érvényesítés letiltása"
 
@@ -401,6 +451,9 @@ msgstr "Ne nevezd át."
 msgid "Do not show alert on timeout"
 msgstr "Ne mutasson riasztást időtúllépéskor"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr "Alkalmazni szeretnéd a \"%s\" kategóriát az összes belefoglalt elemre?"
+
 msgid "Don\\'t save"
 msgstr "Ne mentse el"
 
@@ -409,6 +462,15 @@ msgstr "Letöltés"
 
 msgid "Download the pupil responses and submit manually."
 msgstr "Töltsd le a tanulók válaszait, és küldd be manuálisan."
+
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr "Az alábbi feltételek mindegyikét felülről kezdve kiértékeli a rendszer, a változó tartalmát egy adott értékkel összehasonlítva, az operátor segítségével. Amint egy feltétel teljesül, a tesztelő átirányítja a megfelelő célpontra. Ha egyetlen feltétel sem teljesül, a tesztelő a természetes sorrendben következő tesztrészt kapja."
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr "Az alábbi előfeltételek mindegyikét a változó tartalmának egy adott értékkel való összehasonlításával értékeljük ki a operátor használatával. Ha az összes előfeltétel teljesül, akkor ez a tesztrész kerül megjelenítésre. Ellenkező esetben a tesztrész kimarad."
+
+msgid "Edit"
+msgstr "Szerkesztés"
 
 msgid "Eliminate choices"
 msgstr "Választások kiküszöbölése"
@@ -437,11 +499,17 @@ msgstr "Engedélyezze a tétel-áttekintő képernyőt / navigátort."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Lehetővé teszi az ezen a szakaszon belüli elemekre való ugrást. A képernyő-áttekintés opció szükséges hozzá."
 
+msgid "End of the test"
+msgstr "A teszt vége"
+
 msgid "End test"
 msgstr "Teszt vége"
 
 msgid "End Test"
 msgstr "Teszt vége"
+
+msgid "Enforce Item Constraints"
+msgstr "Elemkorlátozások érvényesítése"
 
 msgid "Enter a blueprint"
 msgstr "Adjon meg egy tervrajzot"
@@ -486,6 +554,12 @@ msgstr "QTI 2.2 tesztcsomag exportálása"
 
 msgid "Export successful for the test \"%s"
 msgstr "Sikeres exportálás a teszthez \"%s"
+
+msgid "External Machine"
+msgstr "Külső gép"
+
+msgid "External Scored"
+msgstr "Külső pontozás"
 
 msgid "Feedback block"
 msgstr "Visszajelzési blokk"
@@ -577,6 +651,9 @@ msgstr "órák"
 msgid "Html title"
 msgstr "HTML-cím"
 
+msgid "Human"
+msgstr "Emberi"
+
 msgid "Identifier"
 msgstr "Azonosító"
 
@@ -600,6 +677,12 @@ msgstr "Ha a kategória opció be van állítva, a pontszám kategóriánként i
 
 msgid "If the connection cannot be restored, see option B."
 msgstr "Ha a kapcsolat nem állítható helyre, lásd a B lehetőséget."
+
+msgid "If you continue, those paths will be removed."
+msgstr "Ha folytatod, ezek az útvonalak eltávolításra kerülnek."
+
+msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
+msgstr "Ha már hozzáadott manuálisan osztályozott eredményváltozókat, kérjük, válassza ki azok osztályozási skáláját az Eredménydeklarációkban."
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr "Ha kilépsz a tesztből, a módosításaid nem lesznek mentve az érvénytelen tesztbeállítások miatt. Biztosan kilépsz?"
@@ -628,6 +711,9 @@ msgstr "Az IMS QTI tesztcsomag importálása sikeresen megtörtént."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Az IMS manifest fájlban \"%s\"-ként hivatkozott IMS QTI teszt importálása sikeresen megtörtént."
 
+msgid "In progress"
+msgstr "Folyamatban van"
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "A teszt ezen részében a navigáció nem engedélyezett."
 
@@ -646,6 +732,9 @@ msgstr "Információs elem használata"
 msgid "Internal server error!"
 msgstr "Belső szerverhiba!"
 
+msgid "Interpretation"
+msgstr "Értelmezés"
+
 msgid "is already used in the test."
 msgstr "már használatban van a tesztben."
 
@@ -654,6 +743,9 @@ msgstr "nem érvényes azonosító (alfa-szám, aláhúzásjel, kötőjel és po
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "nem érvényes azonosító (minden, kivéve a szóközöket)"
+
+msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
+msgstr "Létrehoz egy GRADE eredményt, és ha egy skála ki van választva, akkor egy MAX_GRADE eredményt is az adott skála legmagasabb értékével."
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "Offline munka közben nem lehet menteni a válaszokat."
@@ -679,11 +771,11 @@ msgstr "A tételválasz azonosítója nem egyezik az aktuális tétellel"
 msgid "Item Session Control"
 msgstr "Elem munkamenet-vezérlés"
 
-msgid "items"
-msgstr "tételek"
-
 msgid "Items"
 msgstr "Tételek"
+
+msgid "items"
+msgstr "tételek"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Az elemek opcionálisan egy vagy több kategóriába is besorolhatók."
@@ -730,6 +822,12 @@ msgstr "Az időtartamok összekapcsolása az irányított navigáció aktiválá
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr "Zárolt időtartam: irányított navigáció. A teszt a következő elemre vált, amint az időtartam eléri a 0-t."
 
+msgid "Long interpretation"
+msgstr "Hosszú értelmezés"
+
+msgid "Lowest Grade Achieved"
+msgstr "Legalacsonyabb elért osztályzat"
+
 msgid "Magnifier"
 msgstr "Nagyító"
 
@@ -751,11 +849,11 @@ msgstr "Rubrikablokkok kezelése"
 msgid "Manage test properties"
 msgstr "Teszttulajdonságok kezelése"
 
-msgid "Manage Tests"
-msgstr "Tesztek kezelése"
-
 #, tao-public
 msgid "Manage tests"
+msgstr "Tesztek kezelése"
+
+msgid "Manage Tests"
 msgstr "Tesztek kezelése"
 
 msgid "Mark for review"
@@ -788,6 +886,9 @@ msgstr "A szakasz maximális időtartama."
 msgid "Maximum duration for this test part."
 msgstr "A teszt ezen részének maximális időtartama."
 
+msgid "Maximum number of points achievable"
+msgstr "Elérhető maximális pontszám"
+
 msgid "Metadata export is not available for test \"%s."
 msgstr "A metaadatok exportálása nem érhető el a teszthez: \"%s."
 
@@ -812,11 +913,8 @@ msgstr "A teszt ezen részének minimális időtartama."
 msgid "minutes"
 msgstr "jegyzőkönyv"
 
-msgid "Missed required parameter \\'id\\'"
-msgstr "Kihagyott kötelező paraméter: \\'id\\'"
-
-msgid "Missed required parameter \\'id\\'"
-msgstr "Kihagyott kötelező paraméter: \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
+msgstr "Kihagyott egy kötelező „id” paramétert."
 
 msgid "Missed test package file"
 msgstr "Kihagyott tesztcsomag fájl"
@@ -827,11 +925,26 @@ msgstr "Hiányzó fájlnév a QTI teszt exportjához"
 msgid "Missing required configuration option %s"
 msgstr "Hiányzik a szükséges konfigurációs opció %s"
 
+msgid "MNOP is not available for this test configuration."
+msgstr "Az MNOP nem érhető el ehhez a tesztkonfigurációhoz."
+
+msgid "MNOP is not available when branch rules are present."
+msgstr "Az MNOP nem érhető el, ha elágazási szabályok vannak érvényben."
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr "Az MNOP-hoz az Eredményfeldolgozáshoz Összpontszám vagy Határpontszám beállítás szükséges."
+
 msgid "Move"
 msgstr "Mozog"
 
 msgid "Move Down"
 msgstr "Lejjebb mozgatás"
+
+msgid "Move rule down"
+msgstr "Szabály áthelyezése lejjebb"
+
+msgid "Move rule up"
+msgstr "Szabály mozgatása feljebb"
 
 msgid "Move Up"
 msgstr "Feljebb mozgatás"
@@ -869,11 +982,11 @@ msgstr "Következő"
 msgid "Next Section"
 msgstr "Következő szakasz"
 
-msgid "No"
-msgstr "Nem"
-
 msgid "NO"
 msgstr "NEM"
+
+msgid "No"
+msgstr "Nem"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Nincs CAT motor konfigurálva a(z) „%s” CAT végponthoz."
@@ -883,6 +996,9 @@ msgstr "Nem található fájl a(z) \"%s\" helyen."
 
 msgid "No instance in form to export"
 msgstr "Nincs exportálható példány az űrlapon"
+
+msgid "No items in this test yet."
+msgstr "Ebben a tesztben még nincsenek elemek."
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "A(z) „%s” elemhez további próbálkozások nem engedélyezettek."
@@ -895,6 +1011,9 @@ msgstr "Nincs eredményfeldolgozás. Törölje a meglévő szabályokat, ha vann
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Nem található hivatkozás egyetlen IMS QTI tételre sem."
+
+msgid "No translation"
+msgstr "Nincs fordítás"
 
 msgid "Non Linear"
 msgstr "Nemlineáris"
@@ -913,6 +1032,9 @@ msgstr "Nem látott"
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nincs elkeverve, a pozíció rögzített marad."
+
+msgid "Note: This mode does not use categories or weights."
+msgstr "Megjegyzés: Ez a mód nem használ kategóriákat vagy súlyokat."
 
 msgid "Offline"
 msgstr "Offline"
@@ -941,11 +1063,17 @@ msgstr "Csak az ellenőrzésre megjelölt elemek megjelenítése"
 msgid "Only display the unanswered items"
 msgstr "Csak a megválaszolatlan elemek megjelenítése"
 
+msgid "Op."
+msgstr "Op."
+
 msgid "Open Calculator"
 msgstr "Nyissa meg a Számológépet"
 
 msgid "Open Keyboard Shortcuts"
 msgstr "Nyissa meg a billentyűparancsokat"
+
+msgid "Operator"
+msgstr "Operátor"
 
 msgid "Option A"
 msgstr "A. lehetőség"
@@ -959,11 +1087,17 @@ msgstr "vagy"
 msgid "Ordering"
 msgstr "Rendelés"
 
+msgid "Original title"
+msgstr "Eredeti cím"
+
 msgid "Outcome"
 msgstr "Eredmény"
 
 msgid "Outcome declarations"
 msgstr "Eredménynyilatkozatok"
+
+msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
+msgstr "Az eredményazonosítónak egyedinek és nem üresnek kell lennie. Kérjük, válasszon érvényes azonosítót."
 
 msgid "Outcome processing"
 msgstr "Eredményfeldolgozás"
@@ -977,11 +1111,17 @@ msgstr "%drész"
 msgid "Passage"
 msgstr "Átjáró"
 
+msgid "Paths"
+msgstr "Útvonalak"
+
 msgid "Pause"
 msgstr "Szünet"
 
 msgid "Pause the test"
 msgstr "Szüneteltesse a tesztet"
+
+msgid "Pending"
+msgstr "Függőben levő"
 
 msgid "Play"
 msgstr "Játék"
@@ -989,11 +1129,20 @@ msgstr "Játék"
 msgid "Please confirm you want to leave the test."
 msgstr "Kérjük, erősítse meg, hogy ki szeretne lépni a tesztből."
 
+msgid "Please fix the invalid settings and try again."
+msgstr "Kérjük, javítsa ki az érvénytelen beállításokat, és próbálja újra."
+
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "Kérjük, próbálja meg újratölteni az oldalt, vagy szüneteltetni a tesztet. Ha szünetelteti, erről az oldalról folytathatja a tesztet."
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Kérjük, várjon, amíg megpróbáljuk helyreállítani a kapcsolatot."
+
+msgid "Points"
+msgstr "Pontok"
+
+msgid "Prerequisites"
+msgstr "Előfeltételek"
 
 msgid "Preview"
 msgstr "Előnézet"
@@ -1003,6 +1152,12 @@ msgstr "Tekintse meg a lefedett területet"
 
 msgid "Previous"
 msgstr "Előző"
+
+msgid "Print Out"
+msgstr "Nyomtatás"
+
+msgid "Proceed"
+msgstr "Folytatás"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "FOLYTATÁS ÉS ÉRTÉKELÉS VÉGE"
@@ -1019,11 +1174,17 @@ msgstr "QTI 2.1 tesztpilóta"
 msgid "QTI Item Runner"
 msgstr "QTI tételfutó"
 
+msgid "QTI metadata as properties"
+msgstr "QTI metaadatok tulajdonságokként"
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "A(z) „%s” QTI teszt közzététele sikertelen."
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "A(z) „%s” QTI teszt sikeresen közzétéve."
+
+msgid "QTI test import failed"
+msgstr "QTI teszt importálása sikertelen"
 
 msgid "QTI Test Metadata"
 msgstr "QTI teszt metaadatok"
@@ -1063,6 +1224,9 @@ msgstr "Töltsd újra az oldalt"
 
 msgid "remaining %s %s"
 msgstr "fennmaradó %s %s"
+
+msgid "Remove"
+msgstr "Eltávolítás"
 
 msgid "Remove Item Reference"
 msgstr "Elemhivatkozás eltávolítása"
@@ -1115,6 +1279,9 @@ msgstr "Megtakarítás"
 msgid "Saved"
 msgstr "Mentett"
 
+msgid "Scale name not allowed"
+msgstr "Skálanév nem engedélyezett"
+
 msgid "Scientific Calculator"
 msgstr "Tudományos számológép"
 
@@ -1124,10 +1291,10 @@ msgstr "Gólszerző"
 msgid "Scoring"
 msgstr "Pontozás"
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr "Jegyzettömb"
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr "Jegyzettömb"
 
 msgid "Scratchpad"
@@ -1154,8 +1321,14 @@ msgstr "Válasszon"
 msgid "Select a blueprint"
 msgstr "Válasszon egy tervrajzot"
 
+msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
+msgstr "Válassza ki, hogy az eredménynyilatkozatot külső rendszer vagy emberi pontozó dolgozza-e fel. Ez jellemzően azoknál a tételeknél fordul elő, amelyekben a jelölteknek esszét kell írniuk."
+
 msgid "Select Items"
 msgstr "Elemek kiválasztása"
+
+msgid "Select or enter a scale"
+msgstr "Válasszon ki vagy adjon meg egy skálát"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Válassza ki a teszt válaszainak feldolgozási módját"
@@ -1265,6 +1438,9 @@ msgstr "Sebesség"
 msgid "Start Test-part"
 msgstr "Teszt indítása - rész"
 
+msgid "Status"
+msgstr "Állapot"
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr "1. lépés: Töltse le a fájlt (lásd alább, ha elérhető)."
 
@@ -1297,6 +1473,9 @@ msgstr "TESZT BEKÜLDÉSE"
 
 msgid "SUBMIT THIS PART"
 msgstr "EZT A RÉSZT BEKÜLDJE"
+
+msgid "Target"
+msgstr "Cél"
 
 msgid "technical"
 msgstr "műszaki"
@@ -1337,6 +1516,9 @@ msgstr "Teszt állapota és felülvizsgálati struktúra"
 msgid "Test Status and Structure"
 msgstr "Teszt állapota és felépítése"
 
+msgid "Test translation status"
+msgstr "Fordítás állapotának tesztelése"
+
 msgid "Test-Taker Tools"
 msgstr "Tesztelői eszközök"
 
@@ -1347,10 +1529,10 @@ msgstr "Tesztek"
 msgid "Text content"
 msgstr "Szöveges tartalom"
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr "Szövegfelolvasás"
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr "Szövegfelolvasás"
 
 msgid "that was being taken."
@@ -1401,6 +1583,9 @@ msgstr "A letöltés <strong>%d</strong> másodperc múlva lesz elérhető"
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "A következő azonosítók nem egyediek a tesztben: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr "A megadott cél nem a core_kernel_classes_Resource példánya."
+
 msgid "The identifier of the item reference."
 msgstr "Az elemhivatkozás azonosítója."
 
@@ -1416,11 +1601,20 @@ msgstr "Az IMS QTI tesztcsomag importálása sikertelen."
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "Az IMS jegyzékfájlban \"%s\"-ként hivatkozott IMS QTI teszt importálása sikertelen volt."
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr "A tesztben elérhető maximális pontszám (MNOP). Ezt az értéket az összes szekció összes elemének MAXSCORE értékének összegzésével számítjuk ki."
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "A navigációs mód határozza meg az általános útvonalakat, amelyeket a jelölt követhet. A lineáris mód arra korlátozza a jelöltet, hogy az egyes elemeket egymás után próbálja meg. A nemlineáris mód megszünteti ezt a korlátozást."
 
 msgid "The number of child elements to be selected."
 msgstr "A kiválasztandó gyermekelemek száma."
+
+msgid "The original title of the section."
+msgstr "A szakasz eredeti címe."
+
+msgid "The original title of the test."
+msgstr "A teszt eredeti címe."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "A \"%s\" eredmény nem létezik, de egy visszacsatoló blokk hivatkozik rá!"
@@ -1467,6 +1661,9 @@ msgstr "A szakasz címe."
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "A beküldési mód határozza meg, hogy a jelölt válaszai mikor kerülnek beküldésre válaszfeldolgozásra. Egyéni módban a testPart megköveteli a jelölttől, hogy tételesen küldje be válaszait. Egyidejű módban a jelölt válaszai a testPart végén, együttesen kerülnek beküldésre."
 
+msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr "A teszt nem menthető, mert jelenleg érvénytelen beállításokat tartalmaz."
+
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr "A teszt nem menthető, mert jelenleg érvénytelen beállításokat tartalmaz.\n"
 
@@ -1502,6 +1699,12 @@ msgstr "A teszt címe."
 msgid "The time limit has been reached for this part of the test."
 msgstr "A teszt ezen részének időkorlátja lejárt."
 
+msgid "The translated section title."
+msgstr "A lefordított szakaszcím."
+
+msgid "The translated test title."
+msgstr "A lefordított tesztcím."
+
 msgid "There are %s unanswered questions"
 msgstr "%s megválaszolatlan kérdés van"
 
@@ -1532,6 +1735,9 @@ msgstr "Ez a teszt felfüggesztve"
 msgid "This test has been terminated"
 msgstr "Ez a teszt leállt"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr "Ez a tesztrész célpontként szolgál a %s elérési úton."
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Elérte az időkorlátot a(z) „%s” elemhez."
 
@@ -1550,6 +1756,9 @@ msgstr "Hátralévő idő"
 msgid "Title"
 msgstr "Cím"
 
+msgid "to"
+msgstr "hogy"
+
 msgid "Toggle playback"
 msgstr "Lejátszás be-/kikapcsolása"
 
@@ -1562,8 +1771,20 @@ msgstr "Eszköztár és jelölés felülvizsgálatra"
 msgid "Toolbox"
 msgstr "Szerszámosláda"
 
+msgid "Total"
+msgstr "Teljes"
+
 msgid "Total score"
 msgstr "Összpontszám"
+
+msgid "Translated title"
+msgstr "Lefordított cím"
+
+msgid "Translation"
+msgstr "Fordítás"
+
+msgid "Translation completed"
+msgstr "Fordítás kész"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "Próbáld meg kábellel csatlakoztatni a gépet az internethez, vagy menj egy olyan helyre, ahol jobb a wifi jel."
@@ -1603,6 +1824,9 @@ msgstr "Válaszok validálása"
 
 msgid "Value"
 msgstr "Érték"
+
+msgid "Variable"
+msgstr "Változó"
 
 msgid "Viewed"
 msgstr "Megtekintve"
@@ -1645,6 +1869,9 @@ msgstr "Nem tudunk csatlakozni a szerverhez a következő elem lekéréséhez."
 
 msgid "Weight"
 msgstr "Súly"
+
+msgid "Weighted"
+msgstr "Súlyozott"
 
 msgid "Weights"
 msgstr "Súlyok"
@@ -1692,11 +1919,11 @@ msgstr "XML hiba a %1$d sorban, a %2$d oszlopban: \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr "Sárga a kéken"
 
-msgid "Yes"
-msgstr "Igen"
-
 msgid "YES"
 msgstr "IGEN"
+
+msgid "Yes"
+msgstr "Igen"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "A teszt ezen részében %s kérdésre válaszoltál %s kérdésből"
@@ -1775,10 +2002,4 @@ msgstr "Nagyítás"
 
 msgid "Zoom out"
 msgstr "Kicsinyítés"
-
-msgid "Enforce Item Constraints"
-msgstr "Elemkorlátozások érvényesítése"
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr "A jelölőnégyzet bejelölése megakadályozza, hogy a vizsgázó más elemekre navigáljon, amíg az aktuális elemre vonatkozó esetleges korlátozások nem teljesülnek. A jelölőnégyzet törlése esetén a válaszok akkor is szabadon navigálhatnak, ha nem felelnek meg a beállított elemkorlátozásoknak."
 
