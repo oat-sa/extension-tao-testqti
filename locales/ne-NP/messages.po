@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-06 15:05\n"
+"PO-Revision-Date: 2026-02-04 10:59\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ne\n"
@@ -20,7 +20,13 @@ msgstr ""
 "X-Crowdin-File-ID: 817\n"
 "Language-Team: Nepali\n"
 
+msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr ""
+
 msgid "%s to answer %s"
+msgstr ""
+
+msgid "%title% - Translation (%lang%)"
 msgstr ""
 
 msgid "(Visual) Clear all active highlights"
@@ -30,6 +36,9 @@ msgid "(Visual) Highlight Text"
 msgstr ""
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
+msgstr ""
+
+msgid "A human interpretation of the variable's value."
 msgstr ""
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
@@ -45,6 +54,9 @@ msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
 msgstr ""
 
 msgid "A response to every question in this item is required."
+msgstr ""
+
+msgid "A response to this item is invalid."
 msgstr ""
 
 msgid "A response to this item is required."
@@ -65,7 +77,16 @@ msgstr ""
 msgid "add a new weight"
 msgstr ""
 
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
+msgstr ""
+
 msgid "Add a zip file containing QTI/APIP tests and items"
+msgstr ""
+
+msgid "Add an outcome declaration"
 msgstr ""
 
 msgid "Add selected item(s) here."
@@ -81,6 +102,9 @@ msgid "After you complete the section it would be impossible to return to this s
 msgstr ""
 
 msgid "All"
+msgstr ""
+
+msgid "Allow a Test Taker to print out the item."
 msgstr ""
 
 msgid "Allow Comment"
@@ -149,6 +173,9 @@ msgstr ""
 msgid "An error occurred during the test, please content your administrator."
 msgstr ""
 
+msgid "An error occurred while loading the original test."
+msgstr ""
+
 msgid "An error occurred!"
 msgstr ""
 
@@ -162,6 +189,9 @@ msgid "An item involved in the test cannot be read or is not QTI compliant."
 msgstr ""
 
 msgid "An item involved in the test cannot be written."
+msgstr ""
+
+msgid "An optional link to an extended interpretation of the outcome variable."
 msgstr ""
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
@@ -221,6 +251,9 @@ msgstr ""
 msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr ""
 
+msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
+msgstr ""
+
 msgid "Author"
 msgstr ""
 
@@ -248,6 +281,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr ""
 
@@ -257,10 +293,10 @@ msgstr ""
 msgid "Can not playback media file!"
 msgstr ""
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr ""
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr ""
 
 msgid "Candidate"
@@ -272,10 +308,16 @@ msgstr ""
 msgid "Categories"
 msgstr ""
 
+msgid "Category name not allowed"
+msgstr ""
+
 msgid "Category score"
 msgstr ""
 
 msgid "Change the current color preset"
+msgstr ""
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
 msgstr ""
 
 msgid "Class"
@@ -353,6 +395,21 @@ msgstr ""
 msgid "Cut score (pass ratio)"
 msgstr ""
 
+msgid "Define the status of the translation."
+msgstr ""
+
+msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
+msgstr ""
+
 msgid "Disable validation"
 msgstr ""
 
@@ -401,6 +458,9 @@ msgstr ""
 msgid "Do not show alert on timeout"
 msgstr ""
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr ""
+
 msgid "Don\\'t save"
 msgstr ""
 
@@ -408,6 +468,15 @@ msgid "Download"
 msgstr ""
 
 msgid "Download the pupil responses and submit manually."
+msgstr ""
+
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr ""
+
+msgid "Edit"
 msgstr ""
 
 msgid "Eliminate choices"
@@ -437,10 +506,16 @@ msgstr ""
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr ""
 
+msgid "End of the test"
+msgstr ""
+
 msgid "End test"
 msgstr ""
 
 msgid "End Test"
+msgstr ""
+
+msgid "Enforce Item Constraints"
 msgstr ""
 
 msgid "Enter a blueprint"
@@ -484,6 +559,12 @@ msgid "Export QTI 2.2 Test Package"
 msgstr ""
 
 msgid "Export successful for the test \"%s"
+msgstr ""
+
+msgid "External Machine"
+msgstr ""
+
+msgid "External Scored"
 msgstr ""
 
 msgid "Feedback block"
@@ -576,6 +657,9 @@ msgstr ""
 msgid "Html title"
 msgstr ""
 
+msgid "Human"
+msgstr ""
+
 msgid "Identifier"
 msgstr ""
 
@@ -598,6 +682,12 @@ msgid "If the category option is set, the score will also be processed per categ
 msgstr ""
 
 msgid "If the connection cannot be restored, see option B."
+msgstr ""
+
+msgid "If you continue, those paths will be removed."
+msgstr ""
+
+msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
 msgstr ""
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
@@ -627,6 +717,9 @@ msgstr ""
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr ""
 
+msgid "In progress"
+msgstr ""
+
 msgid "In this part of the test navigation is not allowed."
 msgstr ""
 
@@ -645,6 +738,9 @@ msgstr ""
 msgid "Internal server error!"
 msgstr ""
 
+msgid "Interpretation"
+msgstr ""
+
 msgid "is already used in the test."
 msgstr ""
 
@@ -652,6 +748,9 @@ msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
+msgstr ""
+
+msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
 msgstr ""
 
 msgid "It is not possible to save your responses while working offline."
@@ -678,10 +777,10 @@ msgstr ""
 msgid "Item Session Control"
 msgstr ""
 
-msgid "items"
+msgid "Items"
 msgstr ""
 
-msgid "Items"
+msgid "items"
 msgstr ""
 
 msgid "Items can optionally be assigned to one or more categories."
@@ -729,6 +828,12 @@ msgstr ""
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr ""
 
+msgid "Long interpretation"
+msgstr ""
+
+msgid "Lowest Grade Achieved"
+msgstr ""
+
 msgid "Magnifier"
 msgstr ""
 
@@ -750,11 +855,11 @@ msgstr ""
 msgid "Manage test properties"
 msgstr ""
 
-msgid "Manage Tests"
-msgstr ""
-
 #, tao-public
 msgid "Manage tests"
+msgstr ""
+
+msgid "Manage Tests"
 msgstr ""
 
 msgid "Mark for review"
@@ -787,6 +892,9 @@ msgstr ""
 msgid "Maximum duration for this test part."
 msgstr ""
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
@@ -811,10 +919,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \\'id\\'"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -826,10 +931,25 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr ""
 
 msgid "Move Down"
+msgstr ""
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
 msgstr ""
 
 msgid "Move Up"
@@ -868,10 +988,10 @@ msgstr ""
 msgid "Next Section"
 msgstr ""
 
-msgid "No"
+msgid "NO"
 msgstr ""
 
-msgid "NO"
+msgid "No"
 msgstr ""
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
@@ -881,6 +1001,9 @@ msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -893,6 +1016,9 @@ msgid "No outcome processing. Erase the existing rules, if any."
 msgstr ""
 
 msgid "No reference to any IMS QTI Item found."
+msgstr ""
+
+msgid "No translation"
 msgstr ""
 
 msgid "Non Linear"
@@ -911,6 +1037,9 @@ msgid "Not seen"
 msgstr ""
 
 msgid "Not shuffled, the position remains fixed."
+msgstr ""
+
+msgid "Note: This mode does not use categories or weights."
 msgstr ""
 
 msgid "Offline"
@@ -940,10 +1069,16 @@ msgstr ""
 msgid "Only display the unanswered items"
 msgstr ""
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr ""
 
 msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Operator"
 msgstr ""
 
 msgid "Option A"
@@ -958,10 +1093,16 @@ msgstr ""
 msgid "Ordering"
 msgstr ""
 
+msgid "Original title"
+msgstr ""
+
 msgid "Outcome"
 msgstr ""
 
 msgid "Outcome declarations"
+msgstr ""
+
+msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
 msgstr ""
 
 msgid "Outcome processing"
@@ -976,10 +1117,16 @@ msgstr ""
 msgid "Passage"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr ""
 
 msgid "Pause the test"
+msgstr ""
+
+msgid "Pending"
 msgstr ""
 
 msgid "Play"
@@ -988,10 +1135,19 @@ msgstr ""
 msgid "Please confirm you want to leave the test."
 msgstr ""
 
+msgid "Please fix the invalid settings and try again."
+msgstr ""
+
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr ""
 
 msgid "Please wait while we try to restore the connection."
+msgstr ""
+
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
 msgstr ""
 
 msgid "Preview"
@@ -1001,6 +1157,12 @@ msgid "Preview the covered area"
 msgstr ""
 
 msgid "Previous"
+msgstr ""
+
+msgid "Print Out"
+msgstr ""
+
+msgid "Proceed"
 msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
@@ -1018,10 +1180,16 @@ msgstr ""
 msgid "QTI Item Runner"
 msgstr ""
 
+msgid "QTI metadata as properties"
+msgstr ""
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr ""
 
 msgid "QTI Test \"%s\" successfully published."
+msgstr ""
+
+msgid "QTI test import failed"
 msgstr ""
 
 msgid "QTI Test Metadata"
@@ -1061,6 +1229,9 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "remaining %s %s"
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -1114,6 +1285,9 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
+msgid "Scale name not allowed"
+msgstr ""
+
 msgid "Scientific Calculator"
 msgstr ""
 
@@ -1123,10 +1297,10 @@ msgstr ""
 msgid "Scoring"
 msgstr ""
 
-msgid "Scratch Pad"
+msgid "Scratch pad"
 msgstr ""
 
-msgid "Scratch pad"
+msgid "Scratch Pad"
 msgstr ""
 
 msgid "Scratchpad"
@@ -1153,7 +1327,13 @@ msgstr ""
 msgid "Select a blueprint"
 msgstr ""
 
+msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
+msgstr ""
+
 msgid "Select Items"
+msgstr ""
+
+msgid "Select or enter a scale"
 msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
@@ -1264,6 +1444,9 @@ msgstr ""
 msgid "Start Test-part"
 msgstr ""
 
+msgid "Status"
+msgstr ""
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr ""
 
@@ -1295,6 +1478,9 @@ msgid "SUBMIT THE TEST"
 msgstr ""
 
 msgid "SUBMIT THIS PART"
+msgstr ""
+
+msgid "Target"
 msgstr ""
 
 msgid "technical"
@@ -1336,6 +1522,9 @@ msgstr ""
 msgid "Test Status and Structure"
 msgstr ""
 
+msgid "Test translation status"
+msgstr ""
+
 msgid "Test-Taker Tools"
 msgstr ""
 
@@ -1346,10 +1535,10 @@ msgstr ""
 msgid "Text content"
 msgstr ""
 
-msgid "Text to Speech"
+msgid "Text To Speech"
 msgstr ""
 
-msgid "Text To Speech"
+msgid "Text to Speech"
 msgstr ""
 
 msgid "that was being taken."
@@ -1400,6 +1589,9 @@ msgstr ""
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr ""
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr ""
+
 msgid "The identifier of the item reference."
 msgstr ""
 
@@ -1415,10 +1607,19 @@ msgstr ""
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr ""
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr ""
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr ""
 
 msgid "The number of child elements to be selected."
+msgstr ""
+
+msgid "The original title of the section."
+msgstr ""
+
+msgid "The original title of the test."
 msgstr ""
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
@@ -1466,6 +1667,9 @@ msgstr ""
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr ""
 
+msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr ""
+
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr ""
 
@@ -1500,6 +1704,12 @@ msgstr ""
 msgid "The time limit has been reached for this part of the test."
 msgstr ""
 
+msgid "The translated section title."
+msgstr ""
+
+msgid "The translated test title."
+msgstr ""
+
 msgid "There are %s unanswered questions"
 msgstr ""
 
@@ -1530,6 +1740,9 @@ msgstr ""
 msgid "This test has been terminated"
 msgstr ""
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
 
@@ -1548,6 +1761,9 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
+msgid "to"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1560,7 +1776,19 @@ msgstr ""
 msgid "Toolbox"
 msgstr ""
 
+msgid "Total"
+msgstr ""
+
 msgid "Total score"
+msgstr ""
+
+msgid "Translated title"
+msgstr ""
+
+msgid "Translation"
+msgstr ""
+
+msgid "Translation completed"
 msgstr ""
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
@@ -1600,6 +1828,9 @@ msgid "Validate Responses"
 msgstr ""
 
 msgid "Value"
+msgstr ""
+
+msgid "Variable"
 msgstr ""
 
 msgid "Viewed"
@@ -1642,6 +1873,9 @@ msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
 msgid "Weight"
+msgstr ""
+
+msgid "Weighted"
 msgstr ""
 
 msgid "Weights"
@@ -1690,10 +1924,10 @@ msgstr ""
 msgid "Yellow on Blue"
 msgstr ""
 
-msgid "Yes"
+msgid "YES"
 msgstr ""
 
-msgid "YES"
+msgid "Yes"
 msgstr ""
 
 msgid "You answered %s of %s question(s) for this section of the test"
@@ -1772,11 +2006,5 @@ msgid "Zoom in"
 msgstr ""
 
 msgid "Zoom out"
-msgstr ""
-
-msgid "Enforce Item Constraints"
-msgstr ""
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
 msgstr ""
 
