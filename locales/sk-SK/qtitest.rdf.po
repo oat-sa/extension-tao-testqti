@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:22\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:44:23\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk-SK\n"
@@ -12,83 +12,83 @@ msgstr ""
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.2 Test Driver"
-msgstr ""
+msgstr "Testovací ovládač QTI 2.2"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.2 tests"
-msgstr ""
+msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na riadenie testov kompatibilných s QTI 2.2"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Definition"
-msgstr "QTI Test Definition"
+msgstr "Definícia testu QTI"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition Uri"
-msgstr ""
+msgstr "URI definície testu QTI"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Compilation"
-msgstr "QTI Test Compilation"
+msgstr "Kompilácia testov QTI"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation Uri"
-msgstr ""
+msgstr "URI kompilácie testov QTI"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr "QTI test runner"
+msgstr "Bežec QTI testov"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.2 test"
-msgstr ""
+msgstr "spustí test QTI 2.2"
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "Test XML Editor"
-msgstr ""
+msgstr "Testovací editor XML"
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "The Test XML Editor Role"
-msgstr ""
+msgstr "Rola editora testovacieho XML"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr "QTI 2.1 Test Driver"
+msgstr "Testovací ovládač QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
-msgstr ""
+msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na riadenie testov kompatibilných s QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.1 test"
-msgstr ""
+msgstr "spustí test QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI 2.1 Test Driver"
-msgstr "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
+msgstr "Testovací ovládač QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Definition"
-msgstr "QTI Test Definition Uri"
+msgstr "Definícia testu QTI"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestCompilation
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Compilation"
-msgstr "QTI Test Compilation Uri"
+msgstr "Kompilácia testov QTI"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI test runner"
-msgstr "runs a QTI 2.1 test"
+msgstr "Bežec QTI testov"
 

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:19\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:44:21\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ro-RO\n"
@@ -10,19 +10,28 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr ""
+msgstr "ID-ul de Apel Serviciu Părinte QTI"
 
+# http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr ""
+msgstr "ID-ul de Apel Serviciu Părinte QTI"
 
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Item Runner"
-msgstr ""
+msgstr "Element de test QTI"
 
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr ""
+msgstr "Incorporează și rulează un element într-un Test QTI. Acest serviciu inițializează Apis și contexte TAO"
+
+# http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
+msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
+msgid "QTI Test Item Runner"
+msgstr "Element de test QTI"
 

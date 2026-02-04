@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:11\n"
+"Project-Id-Version: TAO 2026.02 LTS\n"
+"PO-Revision-Date: 2026-02-03T14:44:12\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl-NL\n"
@@ -13,25 +13,25 @@ msgstr ""
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI bovenliggende Toets Service Call ID"
+msgstr "QTI Test Ouder Service Call ID"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestParentServiceCallId
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Parent Service Call ID"
-msgstr "QTI bovenliggende Toets Service Call ID"
+msgstr "QTI Test Ouder Service Call ID"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI Test Item Runner"
-msgstr "QTI Toets item starter"
+msgstr "QTI test Item Runner"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Embed and run an item into a QTI Test. This service initialize the TAO Apis and contexts"
-msgstr "Voeg en start een item in een QTI toets pakket. Deze dienst initieert de TAO Apis en contexten"
+msgstr "Insluiten en uitvoeren van een item in een QTI Test. Deze service heeft de TAO Apis en contexten geïnitialiseerd"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestItemRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI Test Item Runner"
-msgstr ""
+msgstr "QTI test Item Runner"
 

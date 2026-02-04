@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:13\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2026-02-04 10:59\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nn-NO\n"
@@ -68,6 +68,12 @@ msgid "Activated"
 msgstr ""
 
 msgid "add a new weight"
+msgstr ""
+
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
 msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
@@ -268,6 +274,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr ""
 
@@ -388,6 +397,12 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
+msgstr ""
+
 msgid "Disable validation"
 msgstr ""
 
@@ -439,9 +454,6 @@ msgstr ""
 msgid "Do you want to apply the category \"%s\" to all included items?"
 msgstr ""
 
-msgid "Don\'t save"
-msgstr ""
-
 msgid "Don\\'t save"
 msgstr ""
 
@@ -449,6 +461,12 @@ msgid "Download"
 msgstr ""
 
 msgid "Download the pupil responses and submit manually."
+msgstr ""
+
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
 msgstr ""
 
 msgid "Edit"
@@ -479,6 +497,9 @@ msgid "Enable the item review screen / navigator."
 msgstr ""
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
+msgstr ""
+
+msgid "End of the test"
 msgstr ""
 
 msgid "End test"
@@ -656,6 +677,9 @@ msgstr ""
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you continue, those paths will be removed."
+msgstr ""
+
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
 msgstr ""
 
@@ -803,9 +827,6 @@ msgstr ""
 msgid "Lowest Grade Achieved"
 msgstr ""
 
-msgid "Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
-msgstr ""
-
 msgid "Magnifier"
 msgstr ""
 
@@ -864,6 +885,9 @@ msgstr ""
 msgid "Maximum duration for this test part."
 msgstr ""
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr ""
 
@@ -888,10 +912,7 @@ msgstr ""
 msgid "minutes"
 msgstr ""
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -903,10 +924,25 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr ""
 
 msgid "Move Down"
+msgstr ""
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
 msgstr ""
 
 msgid "Move Up"
@@ -919,7 +955,7 @@ msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
-msgstr ""
+msgstr "-"
 
 msgid "Navigation shortcuts"
 msgstr ""
@@ -958,6 +994,9 @@ msgid "No file found at location \"%s\"."
 msgstr ""
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -1023,10 +1062,16 @@ msgstr ""
 msgid "Only display the unanswered items"
 msgstr ""
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr ""
 
 msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Operator"
 msgstr ""
 
 msgid "Option A"
@@ -1065,6 +1110,9 @@ msgstr ""
 msgid "Passage"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr ""
 
@@ -1089,6 +1137,12 @@ msgstr ""
 msgid "Please wait while we try to restore the connection."
 msgstr ""
 
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
+msgstr ""
+
 msgid "Preview"
 msgstr ""
 
@@ -1099,6 +1153,9 @@ msgid "Previous"
 msgstr ""
 
 msgid "Print Out"
+msgstr ""
+
+msgid "Proceed"
 msgstr ""
 
 msgid "PROCEED & END ASSESSMENT"
@@ -1165,6 +1222,9 @@ msgid "Reload the page"
 msgstr ""
 
 msgid "remaining %s %s"
+msgstr ""
+
+msgid "Remove"
 msgstr ""
 
 msgid "Remove Item Reference"
@@ -1413,6 +1473,9 @@ msgstr ""
 msgid "SUBMIT THIS PART"
 msgstr ""
 
+msgid "Target"
+msgstr ""
+
 msgid "technical"
 msgstr ""
 
@@ -1537,6 +1600,9 @@ msgstr ""
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr ""
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr ""
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr ""
 
@@ -1595,6 +1661,13 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1660,6 +1733,9 @@ msgstr ""
 msgid "This test has been terminated"
 msgstr ""
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr ""
 
@@ -1691,6 +1767,9 @@ msgid "Tool box and flagging for review"
 msgstr ""
 
 msgid "Toolbox"
+msgstr ""
+
+msgid "Total"
 msgstr ""
 
 msgid "Total score"
@@ -1744,6 +1823,9 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
+msgid "Variable"
+msgstr ""
+
 msgid "Viewed"
 msgstr ""
 
@@ -1784,6 +1866,9 @@ msgid "We are unable to connect to the server to retrieve the next item."
 msgstr ""
 
 msgid "Weight"
+msgstr ""
+
+msgid "Weighted"
 msgstr ""
 
 msgid "Weights"

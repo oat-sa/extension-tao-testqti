@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2025.10\n"
-"PO-Revision-Date: 2025-09-18T18:00:06\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2026-02-04 10:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -32,7 +32,7 @@ msgid "A concurrent delivery has been detected. Please use the last open session
 msgstr ""
 
 msgid "A human interpretation of the variable's value."
-msgstr ""
+msgstr "Žmogiška kintamojo reikšmės interpretacija."
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTI Elementas dalyvaujantis QTI Teste '%s' negali būti surinktas."
@@ -69,6 +69,12 @@ msgstr "Aktyvuota"
 
 msgid "add a new weight"
 msgstr "pridėti naują svorį"
+
+msgid "Add a Path"
+msgstr ""
+
+msgid "Add a Prerequisite"
+msgstr ""
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Pridėti ZIP failą turintį QTI/APIP testus ir elementus"
@@ -268,6 +274,9 @@ msgstr ""
 msgid "Bookmarked question %s"
 msgstr ""
 
+msgid "Branch rule validation error: %s"
+msgstr ""
+
 msgid "Calculator"
 msgstr "Skaičiuotuvas"
 
@@ -386,6 +395,12 @@ msgid "Defines the maximum magnitude of numeric outcome variables, the maximum m
 msgstr ""
 
 msgid "Delete"
+msgstr "Ištrinti"
+
+msgid "Delete prerequisite"
+msgstr ""
+
+msgid "Delete rule"
 msgstr ""
 
 msgid "Disable validation"
@@ -439,9 +454,6 @@ msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 msgid "Do you want to apply the category \"%s\" to all included items?"
 msgstr ""
 
-msgid "Don\'t save"
-msgstr ""
-
 msgid "Don\\'t save"
 msgstr ""
 
@@ -451,8 +463,14 @@ msgstr ""
 msgid "Download the pupil responses and submit manually."
 msgstr ""
 
-msgid "Edit"
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
 msgstr ""
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr ""
+
+msgid "Edit"
+msgstr "Keisti"
 
 msgid "Eliminate choices"
 msgstr "Eliminuoti pasirinkimus"
@@ -480,6 +498,9 @@ msgstr "Įgalinti elemento apžvalgos ekraną / navigatorių."
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Suteikia galimybę praleisti elementus šiame skyriuje. Reikalingas apžvalgos ekrano pasirinkimas."
+
+msgid "End of the test"
+msgstr ""
 
 msgid "End test"
 msgstr "Baigti darbą"
@@ -657,6 +678,9 @@ msgstr ""
 msgid "If the connection cannot be restored, see option B."
 msgstr ""
 
+msgid "If you continue, those paths will be removed."
+msgstr ""
+
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
 msgstr ""
 
@@ -688,7 +712,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr "IMS QTI Testas nurodytas kaip \"%s\" IMS Manifesto faile sėkmingai importuotas."
 
 msgid "In progress"
-msgstr ""
+msgstr "Vykdoma"
 
 msgid "In this part of the test navigation is not allowed."
 msgstr "Šioje vieto testo naršymas nėra leidžiamas."
@@ -709,7 +733,7 @@ msgid "Internal server error!"
 msgstr "Vidinė serverio klaida!"
 
 msgid "Interpretation"
-msgstr ""
+msgstr "Interpretacija"
 
 msgid "is already used in the test."
 msgstr "jau naudojamas teste."
@@ -804,9 +828,6 @@ msgstr ""
 msgid "Lowest Grade Achieved"
 msgstr ""
 
-msgid "Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
-msgstr ""
-
 msgid "Magnifier"
 msgstr "Didintuvas"
 
@@ -865,6 +886,9 @@ msgstr "Maksimali trukmė šio testo daliai."
 msgid "Maximum duration for this test part."
 msgstr "Maksimali trukmė šio testo daliai."
 
+msgid "Maximum number of points achievable"
+msgstr ""
+
 msgid "Metadata export is not available for test \"%s."
 msgstr "Negalimas meta duomenų eksportavimas \"%s testui."
 
@@ -889,10 +913,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr "minutės"
 
-msgid "Missed required parameter \'id\"
-msgstr ""
-
-msgid "Missed required parameter \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -904,11 +925,26 @@ msgstr ""
 msgid "Missing required configuration option %s"
 msgstr ""
 
+msgid "MNOP is not available for this test configuration."
+msgstr ""
+
+msgid "MNOP is not available when branch rules are present."
+msgstr ""
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr ""
+
 msgid "Move"
 msgstr "Perkelti"
 
 msgid "Move Down"
 msgstr "Perkelti Žemiau"
+
+msgid "Move rule down"
+msgstr ""
+
+msgid "Move rule up"
+msgstr ""
 
 msgid "Move Up"
 msgstr "Perkelti Aukščiau"
@@ -959,6 +995,9 @@ msgid "No file found at location \"%s\"."
 msgstr "Joks failas nerastas \"%s\" vietoje."
 
 msgid "No instance in form to export"
+msgstr ""
+
+msgid "No items in this test yet."
 msgstr ""
 
 msgid "No more attempts allowed for item \"%s\"."
@@ -1024,10 +1063,16 @@ msgstr "Rodyti tik pažymėtus apžvalgai elementus"
 msgid "Only display the unanswered items"
 msgstr "Rodyti tik neatsakytus elementus"
 
+msgid "Op."
+msgstr ""
+
 msgid "Open Calculator"
 msgstr "Atidaryti Skaičiuotuvą"
 
 msgid "Open Keyboard Shortcuts"
+msgstr ""
+
+msgid "Operator"
 msgstr ""
 
 msgid "Option A"
@@ -1066,6 +1111,9 @@ msgstr "Dalis %d"
 msgid "Passage"
 msgstr ""
 
+msgid "Paths"
+msgstr ""
+
 msgid "Pause"
 msgstr "Pristabdyti"
 
@@ -1090,6 +1138,12 @@ msgstr ""
 msgid "Please wait while we try to restore the connection."
 msgstr "Prašome palaukti, kol mes bandome atstatyti ryšį."
 
+msgid "Points"
+msgstr ""
+
+msgid "Prerequisites"
+msgstr ""
+
 msgid "Preview"
 msgstr "Peržiūra"
 
@@ -1101,6 +1155,9 @@ msgstr "Grįžti"
 
 msgid "Print Out"
 msgstr ""
+
+msgid "Proceed"
+msgstr "Tęsti"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
@@ -1167,6 +1224,9 @@ msgstr ""
 
 msgid "remaining %s %s"
 msgstr ""
+
+msgid "Remove"
+msgstr "Ištrinti"
 
 msgid "Remove Item Reference"
 msgstr "Šalinti Elemento Šaltinį"
@@ -1414,6 +1474,9 @@ msgstr "PATEIKTI SAVO TESTĄ"
 msgid "SUBMIT THIS PART"
 msgstr ""
 
+msgid "Target"
+msgstr ""
+
 msgid "technical"
 msgstr "techninis"
 
@@ -1538,6 +1601,9 @@ msgstr "IMS QTI Testo Paketas negali būti importuotas."
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "IMS QTI Elementas nurodytas kaip \"%s\" IMS Manifesto faile nepavyko importuoti."
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr ""
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr ""
 
@@ -1596,6 +1662,13 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1661,6 +1734,9 @@ msgstr "Šis testas buvo sustabdytas"
 msgid "This test has been terminated"
 msgstr "Šis testas buvo nutrauktas"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr ""
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "Laiko limitas pasiektas \"%s\" elementui."
 
@@ -1680,7 +1756,7 @@ msgid "Title"
 msgstr "Pavadinimas"
 
 msgid "to"
-msgstr ""
+msgstr "į"
 
 msgid "Toggle playback"
 msgstr ""
@@ -1693,6 +1769,9 @@ msgstr ""
 
 msgid "Toolbox"
 msgstr ""
+
+msgid "Total"
+msgstr "Iš viso"
 
 msgid "Total score"
 msgstr "Galutinis rezultatas"
@@ -1745,6 +1824,9 @@ msgstr "Tikrinti Atsakymus"
 msgid "Value"
 msgstr "Reikšmė"
 
+msgid "Variable"
+msgstr "Kintamasis"
+
 msgid "Viewed"
 msgstr "Peržiūrėta"
 
@@ -1786,6 +1868,9 @@ msgstr "Neįmanoma susisiekti su serveriu ir atsiųsti kitą klausimą."
 
 msgid "Weight"
 msgstr "Svoris"
+
+msgid "Weighted"
+msgstr ""
 
 msgid "Weights"
 msgstr "Svoriai"
