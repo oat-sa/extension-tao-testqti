@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2026.02 LTS\n"
-"PO-Revision-Date: 2026-02-03T14:44:05\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2026-02-04 11:00\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja-JP\n"
@@ -14,13 +14,13 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
-msgstr ""
+msgstr "「最も低い成績」では、最終的なテスト成績を、同じ尺度を使用してすべてのテスト変数の中で最も低い得点として設定します。"
 
 msgid "%s to answer %s"
 msgstr "%s から %s の回答"
 
 msgid "%title% - Translation (%lang%)"
-msgstr ""
+msgstr "%title% - 翻訳 (%lang%)"
 
 msgid "(Visual) Clear all active highlights"
 msgstr "（ビジュアル）アクティブなハイライトをクリア"
@@ -32,7 +32,7 @@ msgid "A concurrent delivery has been detected. Please use the last open session
 msgstr "同時配信が検出されました。最後の開いているセッションを使用してください。現在のウィンドウを閉じることができます。"
 
 msgid "A human interpretation of the variable's value."
-msgstr ""
+msgstr "変数値の翻訳"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTIテスト '%s' 内のQTIアイテムがコンパイルできませんでした。"
@@ -50,7 +50,7 @@ msgid "A response to every question in this item is required."
 msgstr "すべての問いに答えてください。"
 
 msgid "A response to this item is invalid."
-msgstr ""
+msgstr "この項目への応答は無効です。"
 
 msgid "A response to this item is required."
 msgstr "この問いに回答してください"
@@ -71,16 +71,16 @@ msgid "add a new weight"
 msgstr "新規「重み」追加"
 
 msgid "Add a Path"
-msgstr ""
+msgstr "パスを追加"
 
 msgid "Add a Prerequisite"
-msgstr ""
+msgstr "前提条件を追加"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "QTI/APIPテストとアイテムを含むzipファイルを追加"
 
 msgid "Add an outcome declaration"
-msgstr ""
+msgstr "結果宣言を追加"
 
 msgid "Add selected item(s) here."
 msgstr "選択したアイテムを追加"
@@ -98,7 +98,7 @@ msgid "All"
 msgstr "すべて"
 
 msgid "Allow a Test Taker to print out the item."
-msgstr ""
+msgstr "テストテイカーに項目を印刷することを許可します。"
 
 msgid "Allow Comment"
 msgstr "コメントを許可"
@@ -167,7 +167,7 @@ msgid "An error occurred during the test, please content your administrator."
 msgstr "エラーが発生しました。管理者に連絡してください。"
 
 msgid "An error occurred while loading the original test."
-msgstr ""
+msgstr "元のテストの読み込み中にエラーが発生しました。"
 
 msgid "An error occurred!"
 msgstr "エラーが発生しました!"
@@ -185,7 +185,7 @@ msgid "An item involved in the test cannot be written."
 msgstr "テストのアイテムを書き込めません"
 
 msgid "An optional link to an extended interpretation of the outcome variable."
-msgstr ""
+msgstr "結果変数の拡張解釈へのオプションリンクです。"
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr "QTIテスト'%s'のコンパイル中に不明なエラーが発生しました。"
@@ -245,7 +245,7 @@ msgid "At least one mandatory parameter was required but found missing in your r
 msgstr "少なくとも1つの必須パラメータが必要ですが、不足しています"
 
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
-msgstr ""
+msgstr "このモードでは、手動で採点スケールを持つ結果変数を少なくとも1つ採点する必要があります。"
 
 msgid "Author"
 msgstr "作成者"
@@ -275,7 +275,7 @@ msgid "Bookmarked question %s"
 msgstr "マークした問題：%s"
 
 msgid "Branch rule validation error: %s"
-msgstr ""
+msgstr "ブランチルール検証エラー: %s"
 
 msgid "Calculator"
 msgstr "電卓"
@@ -302,7 +302,7 @@ msgid "Categories"
 msgstr "カテゴリ"
 
 msgid "Category name not allowed"
-msgstr ""
+msgstr "カテゴリ名は許可されていません"
 
 msgid "Category score"
 msgstr "カテゴリスコア"
@@ -389,19 +389,19 @@ msgid "Cut score (pass ratio)"
 msgstr "カットスコア（合格得点率）"
 
 msgid "Define the status of the translation."
-msgstr ""
+msgstr "翻訳のステータスを定義します。"
 
 msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
-msgstr ""
+msgstr "数値型の結果変数の最大値を設定します。最大値は正の値、最小は負の値にすることができます。"
 
 msgid "Delete"
-msgstr ""
+msgstr "削除"
 
 msgid "Delete prerequisite"
-msgstr ""
+msgstr "前提条件を削除する"
 
 msgid "Delete rule"
-msgstr ""
+msgstr "ルールを削除"
 
 msgid "Disable validation"
 msgstr "検証を無効にする"
@@ -452,10 +452,7 @@ msgid "Do not show alert on timeout"
 msgstr "タイムアウト警告を非表示"
 
 msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr ""
-
-msgid "Don\'t save"
-msgstr ""
+msgstr "含まれているすべてのアイテムにカテゴリ \"%s\" を適用しますか？"
 
 msgid "Don\\'t save"
 msgstr "保存しないでください"
@@ -467,13 +464,13 @@ msgid "Download the pupil responses and submit manually."
 msgstr "生徒の回答をダウンロードし、手動で提出する。"
 
 msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
-msgstr ""
+msgstr "以下の各条件は、演算子を使用して、変数の内容と特定の値を比較することによって、上から始まる評価されます。 条件が満たされるとすぐに、テスト テイカーは対応するターゲットにリダイレクトされます。 条件が満たされない場合、受験者は自然順序で次の試験部品を提示されます。"
 
 msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
-msgstr ""
+msgstr "以下の各前提条件は、オペレータを使用して、変数の内容と特定の値を比較することによって評価されます。 すべての前提条件が満たされた場合、このテストパートが表示されます。そうでなければ、このテストパートはスキップされます。"
 
 msgid "Edit"
-msgstr ""
+msgstr "編集"
 
 msgid "Eliminate choices"
 msgstr "選択肢の消去"
@@ -503,7 +500,7 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
 msgid "End of the test"
-msgstr ""
+msgstr "テストの終了"
 
 msgid "End test"
 msgstr "テスト終了"
@@ -559,10 +556,10 @@ msgid "Export successful for the test \"%s"
 msgstr "テスト \"%s のエクスポートが完了しました"
 
 msgid "External Machine"
-msgstr ""
+msgstr "外部システム"
 
 msgid "External Scored"
-msgstr ""
+msgstr "外部スコアリング"
 
 msgid "Feedback block"
 msgstr "フィードバックブロック"
@@ -655,7 +652,7 @@ msgid "Html title"
 msgstr "HTMLタイトル"
 
 msgid "Human"
-msgstr ""
+msgstr "手動採点"
 
 msgid "Identifier"
 msgstr "識別子"
@@ -682,10 +679,10 @@ msgid "If the connection cannot be restored, see option B."
 msgstr "接続を回復できない場合は、オプションBを参照してください。"
 
 msgid "If you continue, those paths will be removed."
-msgstr ""
+msgstr "続けると、それらのパスは削除されます。"
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
-msgstr ""
+msgstr "すでに手動で採点された結果変数を追加している場合は、成績評価の尺度をOutcome Declarationsで選択してください。"
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr "テストから抜けると、テストの設定が無効なため、変更内容が保存されません。本当に退出しますか？"
@@ -715,7 +712,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr "IMS QTIテストがIMSマニフェストファイル \"%s\"から正常にインポートされました"
 
 msgid "In progress"
-msgstr ""
+msgstr "実施中"
 
 msgid "In this part of the test navigation is not allowed."
 msgstr "このパートでは問題一覧は利用できません"
@@ -736,7 +733,7 @@ msgid "Internal server error!"
 msgstr "内部サーバエラー"
 
 msgid "Interpretation"
-msgstr ""
+msgstr "翻訳"
 
 msgid "is already used in the test."
 msgstr "既にテストで使用されています"
@@ -748,7 +745,7 @@ msgid "is not a valid identifier (everything except spaces)"
 msgstr "有効な識別子（空白スペース以外）にしてください"
 
 msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
-msgstr ""
+msgstr "これは、GRADE結果を生成し、スケールが選択されている場合は、そのスケールの最高値を持つMAX_GRADEも作成します。"
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "オフラインの間は、回答を保存することはできません。"
@@ -826,10 +823,10 @@ msgid "Locked duration  : guided navigation. The test transition to the next ite
 msgstr "ロックされた持続時間 : ガイド付きナビゲーション。時間が0になると次の問題に移動します。"
 
 msgid "Long interpretation"
-msgstr ""
+msgstr "詳細解釈"
 
 msgid "Lowest Grade Achieved"
-msgstr ""
+msgstr "最も低い成績を達成しました"
 
 msgid "Magnifier"
 msgstr "拡大レンズ"
@@ -890,7 +887,7 @@ msgid "Maximum duration for this test part."
 msgstr "このテストパートの最大時間"
 
 msgid "Maximum number of points achievable"
-msgstr ""
+msgstr "達成可能なポイントの最大数"
 
 msgid "Metadata export is not available for test \"%s."
 msgstr "メタデータのエクスポートはテスト \"%s では使用できません。"
@@ -916,8 +913,8 @@ msgstr "このテストパートの最小時間"
 msgid "minutes"
 msgstr "分"
 
-msgid "Missed required parameter \'id\'."
-msgstr "不在の必須パラメータ \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
+msgstr "必須パラメータ\\'id\\' をミスしました。"
 
 msgid "Missed test package file"
 msgstr "見つからないテストパッケージファイル"
@@ -929,13 +926,13 @@ msgid "Missing required configuration option %s"
 msgstr "必要な設定が見つかりません： %s "
 
 msgid "MNOP is not available for this test configuration."
-msgstr ""
+msgstr "このテスト設定ではMNOPは使用できません。"
 
 msgid "MNOP is not available when branch rules are present."
-msgstr ""
+msgstr "ブランチルールが存在する場合、MNOP は使用できません。"
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr ""
+msgstr "MNOPでは、合計スコアまたはカットスコアにアウトカム処理を設定する必要があります。"
 
 msgid "Move"
 msgstr "移動"
@@ -944,10 +941,10 @@ msgid "Move Down"
 msgstr "下へ"
 
 msgid "Move rule down"
-msgstr ""
+msgstr "ルールを下に移動"
 
 msgid "Move rule up"
-msgstr ""
+msgstr "ルールを上に移動"
 
 msgid "Move Up"
 msgstr "上へ"
@@ -1001,7 +998,7 @@ msgid "No instance in form to export"
 msgstr "エクスポートするインスタンスがありません"
 
 msgid "No items in this test yet."
-msgstr ""
+msgstr "このテストにはまだアイテムがありません。"
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "これ以上，問題\"%s\"の解答はできません。"
@@ -1016,7 +1013,7 @@ msgid "No reference to any IMS QTI Item found."
 msgstr "QTIアイテムのリファレンスが見つかりませんでした。"
 
 msgid "No translation"
-msgstr ""
+msgstr "翻訳なし"
 
 msgid "Non Linear"
 msgstr "非順次式"
@@ -1037,7 +1034,7 @@ msgid "Not shuffled, the position remains fixed."
 msgstr "チェックを入れるとシャッフルされずに，提示順はこの位置で維持されます。"
 
 msgid "Note: This mode does not use categories or weights."
-msgstr ""
+msgstr "注意: このモードはカテゴリや重みを使用しません。"
 
 msgid "Offline"
 msgstr "オフライン"
@@ -1067,7 +1064,7 @@ msgid "Only display the unanswered items"
 msgstr "未解答の問題のみ表示"
 
 msgid "Op."
-msgstr ""
+msgstr "Op."
 
 msgid "Open Calculator"
 msgstr "電卓を開く"
@@ -1076,7 +1073,7 @@ msgid "Open Keyboard Shortcuts"
 msgstr "キーボードショートカットを開く"
 
 msgid "Operator"
-msgstr ""
+msgstr "演算子"
 
 msgid "Option A"
 msgstr "オプションA"
@@ -1091,7 +1088,7 @@ msgid "Ordering"
 msgstr "出題順"
 
 msgid "Original title"
-msgstr ""
+msgstr "元のタイトル"
 
 msgid "Outcome"
 msgstr "結果"
@@ -1100,7 +1097,7 @@ msgid "Outcome declarations"
 msgstr "結果変数の宣言"
 
 msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
-msgstr ""
+msgstr "結果の識別子は一意で空でなければなりません。有効な識別子を選択してください。"
 
 msgid "Outcome processing"
 msgstr "結果処理方法"
@@ -1115,7 +1112,7 @@ msgid "Passage"
 msgstr "パッセージ"
 
 msgid "Paths"
-msgstr ""
+msgstr "パス"
 
 msgid "Pause"
 msgstr "一時停止"
@@ -1124,7 +1121,7 @@ msgid "Pause the test"
 msgstr "テストを一時停止"
 
 msgid "Pending"
-msgstr ""
+msgstr "保留中"
 
 msgid "Play"
 msgstr "再生"
@@ -1133,7 +1130,7 @@ msgid "Please confirm you want to leave the test."
 msgstr "テストを終了してよろしいですか？"
 
 msgid "Please fix the invalid settings and try again."
-msgstr ""
+msgstr "無効な設定を修正して再度お試しください。"
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "ページを再読み込みするか、テストを一時停止してみてください。一時停止した場合、このページからテストを再開することができます。"
@@ -1142,10 +1139,10 @@ msgid "Please wait while we try to restore the connection."
 msgstr "接続を回復中です。しばらくお待ちください。"
 
 msgid "Points"
-msgstr ""
+msgstr "制御点"
 
 msgid "Prerequisites"
-msgstr ""
+msgstr "前提条件"
 
 msgid "Preview"
 msgstr "プレビュー"
@@ -1157,10 +1154,10 @@ msgid "Previous"
 msgstr "前へ"
 
 msgid "Print Out"
-msgstr ""
+msgstr "プリントアウト"
 
 msgid "Proceed"
-msgstr ""
+msgstr "続行"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "進行と最終評価"
@@ -1178,7 +1175,7 @@ msgid "QTI Item Runner"
 msgstr "QTIアイテムランナー"
 
 msgid "QTI metadata as properties"
-msgstr ""
+msgstr "QTIメタデータ"
 
 msgid "QTI Test \"%s\" publishing failed."
 msgstr "QTIテスト \"%s\" の公開ができませんでした"
@@ -1187,7 +1184,7 @@ msgid "QTI Test \"%s\" successfully published."
 msgstr "QTIテスト\"%s\" の公開が完了しました"
 
 msgid "QTI test import failed"
-msgstr ""
+msgstr "QTI テストのインポートに失敗しました"
 
 msgid "QTI Test Metadata"
 msgstr "QTIテストメタデータ"
@@ -1229,7 +1226,7 @@ msgid "remaining %s %s"
 msgstr "残り %s %s"
 
 msgid "Remove"
-msgstr ""
+msgstr "削除"
 
 msgid "Remove Item Reference"
 msgstr "アイテム参照削除"
@@ -1283,7 +1280,7 @@ msgid "Saved"
 msgstr "保存済み"
 
 msgid "Scale name not allowed"
-msgstr ""
+msgstr "スケール名は許可されません"
 
 msgid "Scientific Calculator"
 msgstr "関数電卓"
@@ -1325,13 +1322,13 @@ msgid "Select a blueprint"
 msgstr "ブループリント選択"
 
 msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
-msgstr ""
+msgstr "結果変数の拡張解釈へのオプションリンクです。"
 
 msgid "Select Items"
 msgstr "アイテム選択"
 
 msgid "Select or enter a scale"
-msgstr ""
+msgstr "スケールを選択または入力"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "テストの採点結果の処理方法を選択します"
@@ -1442,7 +1439,7 @@ msgid "Start Test-part"
 msgstr "テストパート開始"
 
 msgid "Status"
-msgstr ""
+msgstr "ステータス"
 
 msgid "Step 1: Download the file (see below when available)."
 msgstr "ステップ1：ファイルをダウンロードする（利用可能な場合は下記を参照）。"
@@ -1478,7 +1475,7 @@ msgid "SUBMIT THIS PART"
 msgstr "このパートを提出する"
 
 msgid "Target"
-msgstr ""
+msgstr "Target"
 
 msgid "technical"
 msgstr "テクニカル"
@@ -1520,7 +1517,7 @@ msgid "Test Status and Structure"
 msgstr "テスト状況と構成"
 
 msgid "Test translation status"
-msgstr ""
+msgstr "翻訳の状態をテスト"
 
 msgid "Test-Taker Tools"
 msgstr "サポートツール"
@@ -1587,7 +1584,7 @@ msgid "The following identifiers are not unique accross the test : %s"
 msgstr "この識別子はテスト全体でユニークではありません : %s"
 
 msgid "The given target is not an instance of core_kernel_classes_Resource"
-msgstr ""
+msgstr "指定されたターゲットはcore_kernel_classes_Resourceのインスタンスではありません"
 
 msgid "The identifier of the item reference."
 msgstr "アイテム参照用識別子"
@@ -1605,7 +1602,7 @@ msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not 
 msgstr "IMSマニフェストファイルで、\"%s\" として参照されたIMS QTIアイテムはインポートされませんでした。"
 
 msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
-msgstr ""
+msgstr "このテストで達成できる最大点数(MNOP)です。 この値は、すべてのセクションにわたるすべての項目のMAXSCOREを合計することによって計算されます。"
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "受験者が解答する順序をコントロールします。「順次式」の場合、受験者は提示された順序で解答してゆきます。「非順次式」の場合は、受験者は問題を任意の順序で自由に解答できます。"
@@ -1614,10 +1611,10 @@ msgid "The number of child elements to be selected."
 msgstr "選択出題される数"
 
 msgid "The original title of the section."
-msgstr ""
+msgstr "セクションの元のタイトル。"
 
 msgid "The original title of the test."
-msgstr ""
+msgstr "テストの元のタイトル。"
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "結果 \"%s\" は存在しませんが、フィードバックブロックによって参照されます。"
@@ -1665,7 +1662,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "受験者の解答がどのようなタイミングで送信されるかを設定します。「個別」送信モードのテストパートでは、受験者はアイテムごとに解答を提出する必要があります。「同時」送信モードでは、受験者の解答はテストパートの最後にまとめて送信されます。"
 
 msgid "The test cannot be saved because it currently contains invalid settings."
-msgstr ""
+msgstr "無効な設定が含まれているため、テストを保存できません。"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr "無効な設定が含まれているため、テストを保存できません。\n"
@@ -1703,10 +1700,10 @@ msgid "The time limit has been reached for this part of the test."
 msgstr "テストパートは制限時間に達しました。"
 
 msgid "The translated section title."
-msgstr ""
+msgstr "翻訳されたセクションのタイトル"
 
 msgid "The translated test title."
-msgstr ""
+msgstr "翻訳されたテストタイトル"
 
 msgid "There are %s unanswered questions"
 msgstr "未回答のものが%s問あります。"
@@ -1739,7 +1736,7 @@ msgid "This test has been terminated"
 msgstr "テストは強制終了されました"
 
 msgid "This test part is used as a target in %s path(s)."
-msgstr ""
+msgstr "このテスト部品は、 %s パス内のターゲットとして使用されます。"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "問題\"%s\"の制限時間に達しました"
@@ -1760,7 +1757,7 @@ msgid "Title"
 msgstr "タイトル"
 
 msgid "to"
-msgstr ""
+msgstr "ー"
 
 msgid "Toggle playback"
 msgstr "再生を切り替える"
@@ -1775,19 +1772,19 @@ msgid "Toolbox"
 msgstr "ツールボックス"
 
 msgid "Total"
-msgstr ""
+msgstr "合計"
 
 msgid "Total score"
 msgstr "合計スコア"
 
 msgid "Translated title"
-msgstr ""
+msgstr "翻訳されたタイトル"
 
 msgid "Translation"
-msgstr ""
+msgstr "翻訳"
 
 msgid "Translation completed"
-msgstr ""
+msgstr "翻訳が完了しました"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "本機をケーブルでインターネットに接続するか、無線LANの電波が届きやすい場所に移動してみてください。"
@@ -1829,7 +1826,7 @@ msgid "Value"
 msgstr "値"
 
 msgid "Variable"
-msgstr ""
+msgstr "変数"
 
 msgid "Viewed"
 msgstr "表示済み"
@@ -1874,7 +1871,7 @@ msgid "Weight"
 msgstr "重み付け"
 
 msgid "Weighted"
-msgstr ""
+msgstr "Weighted"
 
 msgid "Weights"
 msgstr "重み付け"

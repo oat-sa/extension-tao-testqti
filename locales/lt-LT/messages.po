@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2026.02 LTS\n"
-"PO-Revision-Date: 2026-02-03T14:44:07\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2026-02-04 10:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt-LT\n"
@@ -32,7 +32,7 @@ msgid "A concurrent delivery has been detected. Please use the last open session
 msgstr ""
 
 msgid "A human interpretation of the variable's value."
-msgstr ""
+msgstr "Žmogiška kintamojo reikšmės interpretacija."
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "QTI Elementas dalyvaujantis QTI Teste '%s' negali būti surinktas."
@@ -395,7 +395,7 @@ msgid "Defines the maximum magnitude of numeric outcome variables, the maximum m
 msgstr ""
 
 msgid "Delete"
-msgstr ""
+msgstr "Ištrinti"
 
 msgid "Delete prerequisite"
 msgstr ""
@@ -454,9 +454,6 @@ msgstr "Nėrodyti įspėjimo pasibaigus laikui"
 msgid "Do you want to apply the category \"%s\" to all included items?"
 msgstr ""
 
-msgid "Don\'t save"
-msgstr ""
-
 msgid "Don\\'t save"
 msgstr ""
 
@@ -473,7 +470,7 @@ msgid "Each prerequisite below is evaluated by comparing the variable content wi
 msgstr ""
 
 msgid "Edit"
-msgstr ""
+msgstr "Keisti"
 
 msgid "Eliminate choices"
 msgstr "Eliminuoti pasirinkimus"
@@ -715,7 +712,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr "IMS QTI Testas nurodytas kaip \"%s\" IMS Manifesto faile sėkmingai importuotas."
 
 msgid "In progress"
-msgstr ""
+msgstr "Vykdoma"
 
 msgid "In this part of the test navigation is not allowed."
 msgstr "Šioje vieto testo naršymas nėra leidžiamas."
@@ -736,7 +733,7 @@ msgid "Internal server error!"
 msgstr "Vidinė serverio klaida!"
 
 msgid "Interpretation"
-msgstr ""
+msgstr "Interpretacija"
 
 msgid "is already used in the test."
 msgstr "jau naudojamas teste."
@@ -916,7 +913,7 @@ msgstr "Minimali trukmė šio testo daliai."
 msgid "minutes"
 msgstr "minutės"
 
-msgid "Missed required parameter \'id\'."
+msgid "Missed required parameter \\'id\\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -1160,7 +1157,7 @@ msgid "Print Out"
 msgstr ""
 
 msgid "Proceed"
-msgstr ""
+msgstr "Tęsti"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr ""
@@ -1229,7 +1226,7 @@ msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
+msgstr "Ištrinti"
 
 msgid "Remove Item Reference"
 msgstr "Šalinti Elemento Šaltinį"
@@ -1759,7 +1756,7 @@ msgid "Title"
 msgstr "Pavadinimas"
 
 msgid "to"
-msgstr ""
+msgstr "į"
 
 msgid "Toggle playback"
 msgstr ""
@@ -1774,7 +1771,7 @@ msgid "Toolbox"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "Iš viso"
 
 msgid "Total score"
 msgstr "Galutinis rezultatas"
@@ -1828,7 +1825,7 @@ msgid "Value"
 msgstr "Reikšmė"
 
 msgid "Variable"
-msgstr ""
+msgstr "Kintamasis"
 
 msgid "Viewed"
 msgstr "Peržiūrėta"
