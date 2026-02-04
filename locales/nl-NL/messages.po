@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 10:58\n"
+"PO-Revision-Date: 2026-02-04 11:00\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -78,16 +78,16 @@ msgid "add a new weight"
 msgstr "voeg nieuw gewicht toe"
 
 msgid "Add a Path"
-msgstr ""
+msgstr "Voeg een pad toe"
 
 msgid "Add a Prerequisite"
-msgstr ""
+msgstr "Voeg een vereiste toe"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Voeg een zip-bestand toe met QTI/APIP toetsen en items"
 
 msgid "Add an outcome declaration"
-msgstr ""
+msgstr "Voeg een resultaatverklaring toe"
 
 msgid "Add selected item(s) here."
 msgstr "Voeg geselecteerde item(s) hier toe."
@@ -105,7 +105,7 @@ msgid "All"
 msgstr "Alle"
 
 msgid "Allow a Test Taker to print out the item."
-msgstr ""
+msgstr "Sta een testmedewerker toe om het item af te drukken."
 
 msgid "Allow Comment"
 msgstr "Sta commentaar toe"
@@ -174,7 +174,7 @@ msgid "An error occurred during the test, please content your administrator."
 msgstr "Er is een fout opgetreden tijdens de test, neem contact op met uw beheerder."
 
 msgid "An error occurred while loading the original test."
-msgstr ""
+msgstr "Er is een fout opgetreden tijdens het laden van de oorspronkelijke test."
 
 msgid "An error occurred!"
 msgstr "Er is een fout opgetreden!"
@@ -252,7 +252,7 @@ msgid "At least one mandatory parameter was required but found missing in your r
 msgstr "Er mist op zijn minst één verplichte parameter in uw verzoek"
 
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
-msgstr ""
+msgstr "Tenminste één handmatig beoordeelde resultaatvariabele met een beoordelingsschaal is vereist voor deze modus."
 
 msgid "Author"
 msgstr "Constructeur"
@@ -282,7 +282,7 @@ msgid "Bookmarked question %s"
 msgstr "Favoriete vraag %s"
 
 msgid "Branch rule validation error: %s"
-msgstr ""
+msgstr "Filiaal-regel validatiefout: %s"
 
 msgid "Calculator"
 msgstr "Rekenmachine"
@@ -309,7 +309,7 @@ msgid "Categories"
 msgstr "Categorieën"
 
 msgid "Category name not allowed"
-msgstr ""
+msgstr "Categorienaam is niet toegestaan"
 
 msgid "Category score"
 msgstr "Categorie score"
@@ -405,10 +405,10 @@ msgid "Delete"
 msgstr "Verwijderen"
 
 msgid "Delete prerequisite"
-msgstr ""
+msgstr "Voorwaarde verwijderen"
 
 msgid "Delete rule"
-msgstr ""
+msgstr "Regel verwijderen"
 
 msgid "Disable validation"
 msgstr "Schakel validatie uit"
@@ -459,7 +459,7 @@ msgid "Do not show alert on timeout"
 msgstr "Toon geen waarschuwing op time-out"
 
 msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr ""
+msgstr "Wilt u de categorie \"%s\" toepassen op alle opgenomen items?"
 
 msgid "Don\\'t save"
 msgstr "Niet opslaan"
@@ -471,10 +471,10 @@ msgid "Download the pupil responses and submit manually."
 msgstr "Download de antwoorden van de leerling en dien handmatig in."
 
 msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
-msgstr ""
+msgstr "Elke onderstaande voorwaarde wordt geëvalueerd, vanuit de bovenkant, door de variabele inhoud te vergelijken met een specifieke waarde, met behulp van de operator. Zodra aan een voorwaarde is voldaan, wordt de testtaker doorverwezen naar het bijbehorende doel. Als aan geen enkele voorwaarde is voldaan, wordt de testtaker het volgende testdeel in de natuurlijke volgorde gepresenteerd."
 
 msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
-msgstr ""
+msgstr "Elke voorwaarde hieronder wordt geëvalueerd door de variabele inhoud te vergelijken met een specifieke waarde, met behulp van de operator. Als aan alle voorwaarden is voldaan, wordt dit testgedeelte gepresenteerd. Anders wordt dit testgedeelte overgeslagen."
 
 msgid "Edit"
 msgstr "Aanpassen"
@@ -507,7 +507,7 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "Maakt het mogelijk om naar items binnen deze sectie over te gaan. Vereist de optie voor het beoordelingsscherm."
 
 msgid "End of the test"
-msgstr ""
+msgstr "Einde van de test"
 
 msgid "End test"
 msgstr "Test beëindigen"
@@ -686,10 +686,10 @@ msgid "If the connection cannot be restored, see option B."
 msgstr "Als de verbinding niet hersteld kan worden, zie optie B."
 
 msgid "If you continue, those paths will be removed."
-msgstr ""
+msgstr "Als u doorgaat, worden deze paden verwijderd."
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
-msgstr ""
+msgstr "Als je al handmatig resultaatvariabelen hebt toegevoegd, selecteer dan hun beoordelingsschaal in de Resultaten."
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr "Als u de test verlaat, zullen uw wijzigingen niet worden opgeslagen vanwege ongeldige testinstellingen. Weet u zeker dat u wilt vertrekken?"
@@ -752,7 +752,7 @@ msgid "is not a valid identifier (everything except spaces)"
 msgstr "is geen geldige naam (alles behalve spaties)"
 
 msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
-msgstr ""
+msgstr "Het leidt tot een GRADE resultaat en als er een schaal wordt geselecteerd, dan ook een MAX_GRADE met de hoogste waarde van die schaal."
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "Het is niet mogelijk om uw antwoorden op te slaan terwijl u offline werkt."
@@ -833,7 +833,7 @@ msgid "Long interpretation"
 msgstr "Lange interpretatie"
 
 msgid "Lowest Grade Achieved"
-msgstr ""
+msgstr "Laagste rang behaald"
 
 msgid "Magnifier"
 msgstr "Vergrootglas"
@@ -894,7 +894,7 @@ msgid "Maximum duration for this test part."
 msgstr "Maximale duur voor dit toets deel. "
 
 msgid "Maximum number of points achievable"
-msgstr ""
+msgstr "Maximum aantal bereikbare punten"
 
 msgid "Metadata export is not available for test \"%s."
 msgstr "Metagegevens export is niet beschikbaar voor test \"%s."
@@ -921,7 +921,7 @@ msgid "minutes"
 msgstr "minuten"
 
 msgid "Missed required parameter \\'id\\'."
-msgstr ""
+msgstr "Vereiste parameter \\'id\\' gemist"
 
 msgid "Missed test package file"
 msgstr "Miste een examen pakket bestand"
@@ -933,13 +933,13 @@ msgid "Missing required configuration option %s"
 msgstr "Ontbrekende verplichte configuratie-optie %s"
 
 msgid "MNOP is not available for this test configuration."
-msgstr ""
+msgstr "MNOP is niet beschikbaar voor deze testconfiguratie."
 
 msgid "MNOP is not available when branch rules are present."
-msgstr ""
+msgstr "MNOP is niet beschikbaar wanneer er brancheregels aanwezig zijn."
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr ""
+msgstr "MNOP vereist resultaatverwerkingsset naar Totale score of Cut score."
 
 msgid "Move"
 msgstr "Verplaats"
@@ -948,10 +948,10 @@ msgid "Move Down"
 msgstr "Naar beneden"
 
 msgid "Move rule down"
-msgstr ""
+msgstr "Regel omlaag verplaatsen"
 
 msgid "Move rule up"
-msgstr ""
+msgstr "Regel omhoog verplaatsen"
 
 msgid "Move Up"
 msgstr "Naar boven"
@@ -1005,7 +1005,7 @@ msgid "No instance in form to export"
 msgstr "Geen exemplaar in formulier om te exporteren"
 
 msgid "No items in this test yet."
-msgstr ""
+msgstr "Nog geen items in deze test."
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Geen pogingen meer toegestaan voor item \"%s\"."
@@ -1020,7 +1020,7 @@ msgid "No reference to any IMS QTI Item found."
 msgstr "Geen referentie gevonden naar enig IMS QTI item."
 
 msgid "No translation"
-msgstr ""
+msgstr "Geen vertaling"
 
 msgid "Non Linear"
 msgstr "Niet lineair"
@@ -1041,7 +1041,7 @@ msgid "Not shuffled, the position remains fixed."
 msgstr "Niet door elkaar gehaald, de posities blijven vast"
 
 msgid "Note: This mode does not use categories or weights."
-msgstr ""
+msgstr "Opmerking: Deze modus gebruikt geen categorieën of gewichten."
 
 msgid "Offline"
 msgstr "Offline"
@@ -1071,7 +1071,7 @@ msgid "Only display the unanswered items"
 msgstr "Toon enkel de onbeantwoorde vragen"
 
 msgid "Op."
-msgstr ""
+msgstr "Op."
 
 msgid "Open Calculator"
 msgstr "Open rekenmachine"
@@ -1080,7 +1080,7 @@ msgid "Open Keyboard Shortcuts"
 msgstr "Sneltoetsen openen"
 
 msgid "Operator"
-msgstr ""
+msgstr "Operator"
 
 msgid "Option A"
 msgstr "Optie A"
@@ -1095,7 +1095,7 @@ msgid "Ordering"
 msgstr "Sorteervolgorde"
 
 msgid "Original title"
-msgstr ""
+msgstr "Oorspronkelijke titel"
 
 msgid "Outcome"
 msgstr "Uitkomst"
@@ -1104,7 +1104,7 @@ msgid "Outcome declarations"
 msgstr "Uitkomsten declaraties"
 
 msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
-msgstr ""
+msgstr "Resultaat ID moet uniek en niet-leeg zijn. Kies een geldige identificatie."
 
 msgid "Outcome processing"
 msgstr "Uitkomst verwerking"
@@ -1119,7 +1119,7 @@ msgid "Passage"
 msgstr "Passage"
 
 msgid "Paths"
-msgstr ""
+msgstr "Paden"
 
 msgid "Pause"
 msgstr "Pauzeer"
@@ -1137,7 +1137,7 @@ msgid "Please confirm you want to leave the test."
 msgstr "Bevestig dat u de test wilt verlaten."
 
 msgid "Please fix the invalid settings and try again."
-msgstr ""
+msgstr "Herstel de ongeldige instellingen en probeer het opnieuw."
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "Probeer de pagina te herladen of pauzeren de test. Als u pauzeert, kunt u de test van deze pagina hervatten."
@@ -1146,10 +1146,10 @@ msgid "Please wait while we try to restore the connection."
 msgstr "Wacht even terwijl we proberen de verbinding te herstellen."
 
 msgid "Points"
-msgstr ""
+msgstr "punten"
 
 msgid "Prerequisites"
-msgstr ""
+msgstr "Vereisten"
 
 msgid "Preview"
 msgstr "Voorbeeld"
@@ -1161,7 +1161,7 @@ msgid "Previous"
 msgstr "Vorige"
 
 msgid "Print Out"
-msgstr ""
+msgstr "Afdrukken"
 
 msgid "Proceed"
 msgstr "Doorgaan"
@@ -1191,7 +1191,7 @@ msgid "QTI Test \"%s\" successfully published."
 msgstr "QTI toets \"%s\" succesvol gepubliceerd"
 
 msgid "QTI test import failed"
-msgstr ""
+msgstr "QTI test import mislukt"
 
 msgid "QTI Test Metadata"
 msgstr "QTI Test Metadata"
@@ -1287,7 +1287,7 @@ msgid "Saved"
 msgstr "Opgeslagen"
 
 msgid "Scale name not allowed"
-msgstr ""
+msgstr "Schaal naam niet toegestaan"
 
 msgid "Scientific Calculator"
 msgstr "Wetenschappelijke rekenmachine"
@@ -1335,7 +1335,7 @@ msgid "Select Items"
 msgstr "Selecteer items"
 
 msgid "Select or enter a scale"
-msgstr ""
+msgstr "Selecteer of voer een schaal in"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Selecteer de wijze waarop de antwoorden op uw examen verwerkt moeten worden"
@@ -1482,7 +1482,7 @@ msgid "SUBMIT THIS PART"
 msgstr "DIT PART INSCHAKELEN"
 
 msgid "Target"
-msgstr ""
+msgstr "Target"
 
 msgid "technical"
 msgstr "technisch"
@@ -1524,7 +1524,7 @@ msgid "Test Status and Structure"
 msgstr "Status test en structuur"
 
 msgid "Test translation status"
-msgstr ""
+msgstr "Status van test vertaling"
 
 msgid "Test-Taker Tools"
 msgstr "Kandidaten hulpmiddelen"
@@ -1609,7 +1609,7 @@ msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not 
 msgstr "Het IMS QTI item, met referentie \"%s\" in het IMS Manifest bestand, kon niet worden geïmporteerd."
 
 msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
-msgstr ""
+msgstr "Het maximale aantal punten (MNOP) dat bij deze test kan worden bereikt. Deze waarde wordt berekend door de MAXSCORE van alle items over alle secties samen te vatten."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "De navigatie modus bepaalt de algemene pad die een kandidaat kan nemen. Een lineaire modus zorgt ervoor dat een kandidaat elk item achter moet maken. Niet lineair heft deze restrictie op."
@@ -1618,10 +1618,10 @@ msgid "The number of child elements to be selected."
 msgstr "Het aantal te selecteren onderliggende elementen"
 
 msgid "The original title of the section."
-msgstr ""
+msgstr "De oorspronkelijke titel van de sectie."
 
 msgid "The original title of the test."
-msgstr ""
+msgstr "De oorspronkelijke titel van de toets."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "De uitkomst \"%s\" bestaat niet, maar er wordt wel naar verwezen in een feedback blok!"
@@ -1669,7 +1669,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "De verzending modus bepaalt wanneer de antwoorden van een kandidaat worden verwerkt. Een testdeel in individuele modus vereist dat de kandidaat zijn antwoord op een item-voor-item basis verwerkt. In simultaan modus zullen de antwoorden van de kandidaat in een keer aan het eind van het testdeel worden verwerkt."
 
 msgid "The test cannot be saved because it currently contains invalid settings."
-msgstr ""
+msgstr "De test kan niet worden opgeslagen omdat het momenteel ongeldige instellingen bevat."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr "De test kan niet worden opgeslagen omdat het momenteel ongeldige instellingen bevat.\n"
@@ -1707,10 +1707,10 @@ msgid "The time limit has been reached for this part of the test."
 msgstr "De termijn voor dit deel van de test is bereikt."
 
 msgid "The translated section title."
-msgstr ""
+msgstr "De titel van de vertaalde sectie."
 
 msgid "The translated test title."
-msgstr ""
+msgstr "De vertaalde test titel."
 
 msgid "There are %s unanswered questions"
 msgstr "Er zijn %s onbeantwoorde vragen"
@@ -1743,7 +1743,7 @@ msgid "This test has been terminated"
 msgstr "Deze test is beëindigd "
 
 msgid "This test part is used as a target in %s path(s)."
-msgstr ""
+msgstr "Dit testonderdeel wordt gebruikt als doelwit in %s pad(en)."
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "Tijdlimiet bereikt voor item \"%s\"."
@@ -1785,7 +1785,7 @@ msgid "Total score"
 msgstr "Totaal score"
 
 msgid "Translated title"
-msgstr ""
+msgstr "Vertaalde titel"
 
 msgid "Translation"
 msgstr "Vertaling"
@@ -1878,7 +1878,7 @@ msgid "Weight"
 msgstr "Gewicht"
 
 msgid "Weighted"
-msgstr ""
+msgstr "Gewogen"
 
 msgid "Weights"
 msgstr "Gewichten"
