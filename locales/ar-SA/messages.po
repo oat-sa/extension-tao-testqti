@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 10:58\n"
+"PO-Revision-Date: 2026-02-04 11:00\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar\n"
@@ -78,16 +78,16 @@ msgid "add a new weight"
 msgstr "إضافة وزن جديد"
 
 msgid "Add a Path"
-msgstr ""
+msgstr "إضافة مسار"
 
 msgid "Add a Prerequisite"
-msgstr ""
+msgstr "إضافة شرط مسبق"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "أضف ملفًا مضغوطًا يحتوي على روائز وبنود QTI / APIP"
 
 msgid "Add an outcome declaration"
-msgstr ""
+msgstr "إضافة إعلان ختامي"
 
 msgid "Add selected item(s) here."
 msgstr "أضف البنود المحددة هنا."
@@ -105,7 +105,7 @@ msgid "All"
 msgstr "الكل"
 
 msgid "Allow a Test Taker to print out the item."
-msgstr ""
+msgstr "السماح لصانع الاختبار بطباعة هذا العنصر."
 
 msgid "Allow Comment"
 msgstr "السماح بالتعليق"
@@ -174,7 +174,7 @@ msgid "An error occurred during the test, please content your administrator."
 msgstr "حدث خطأ أثناء الرائز، يرجى مراجعة المسؤول الخاص بك."
 
 msgid "An error occurred while loading the original test."
-msgstr ""
+msgstr "حدث خطأ أثناء تحميل الاختبار الأصلي."
 
 msgid "An error occurred!"
 msgstr "حدث خطأ!"
@@ -252,7 +252,7 @@ msgid "At least one mandatory parameter was required but found missing in your r
 msgstr "مطلوب معلمة إلزامية واحدة على الأقل ولكن تم العثور عليها مفقودة في طلبك"
 
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
-msgstr ""
+msgstr "مطلوب على الأقل متغير واحد يدوياً للنتيجة مع مقياس لتحديد الدرجات لهذا الوضع."
 
 msgid "Author"
 msgstr "كاتب"
@@ -282,7 +282,7 @@ msgid "Bookmarked question %s"
 msgstr "السؤال الذي تم وضع علامة عليه %s"
 
 msgid "Branch rule validation error: %s"
-msgstr ""
+msgstr "خطأ في التحقق من قاعدة الفرع: %s"
 
 msgid "Calculator"
 msgstr "آلة حاسبة"
@@ -309,7 +309,7 @@ msgid "Categories"
 msgstr "فئات"
 
 msgid "Category name not allowed"
-msgstr ""
+msgstr "اسم الفئة غير مسموح به"
 
 msgid "Category score"
 msgstr "نتيجة فئة"
@@ -405,10 +405,10 @@ msgid "Delete"
 msgstr "حذف"
 
 msgid "Delete prerequisite"
-msgstr ""
+msgstr "حذف الشرط الأساسي"
 
 msgid "Delete rule"
-msgstr ""
+msgstr "حذف القاعدة"
 
 msgid "Disable validation"
 msgstr "تعطيل التحقق من الصحة"
@@ -459,7 +459,7 @@ msgid "Do not show alert on timeout"
 msgstr "لا تظهر تنبيه عند انتهاء المهلة"
 
 msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr ""
+msgstr "هل تريد تطبيق الفئة \"%s\" على جميع العناصر المضمنة؟"
 
 msgid "Don\\'t save"
 msgstr "لا تحفظ"
@@ -471,10 +471,10 @@ msgid "Download the pupil responses and submit manually."
 msgstr "قم بتنزيلأجوبة التلميذ وإرسالها يدويًا."
 
 msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
-msgstr ""
+msgstr "ويقيَّم كل شرط يرد أدناه، بدءاً من القمة، بمقارنة المحتوى المتغير مع قيمة محددة، باستخدام المشغل. وبمجرد استيفاء الشرط، يعاد توجيه المأخوذ إلى الهدف المقابل. وإذا لم يستوف أي شرط، يُعرض على الجهة التي تجري الاختبار الجزء التالي من الاختبار بالترتيب الطبيعي."
 
 msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
-msgstr ""
+msgstr "ويقيَّم كل شرط مسبق يرد أدناه بمقارنة المحتوى المتغير مع قيمة محددة، باستخدام المشغل. إذا تم استيفاء جميع الشروط المسبقة، يتم عرض هذا الجزء من الاختبار. وإلا يتم تخطي هذا الجزء من الاختبار."
 
 msgid "Edit"
 msgstr "الإصدار"
@@ -507,7 +507,7 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "تمكن من التخطي إلى البنود داخل هذا الجزء. يتطلب خيار شاشة المراجعة."
 
 msgid "End of the test"
-msgstr ""
+msgstr "نهاية الاختبار"
 
 msgid "End test"
 msgstr "نهاية الرائز"
@@ -686,10 +686,10 @@ msgid "If the connection cannot be restored, see option B."
 msgstr "إذا تعذر استعادة الاتصال ، فراجع الخيار ب."
 
 msgid "If you continue, those paths will be removed."
-msgstr ""
+msgstr "إذا قمت بالمتابعة، سيتم إزالة تلك المسارات."
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
-msgstr ""
+msgstr "إذا كنت قد أضافت مسبقاً متغيرات نتائج مرتبة يدويًا، فيرجى تحديد مقياس ترتيبها في إعلانات النتائج."
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr "إذا تركت الرائز، فلن يتم حفظ تغييراتك بسبب إعدادات الرائز غير الصالحة. هل أنت متأكد من رغبتك في المغادرة؟"
@@ -752,7 +752,7 @@ msgid "is not a valid identifier (everything except spaces)"
 msgstr "ليس معرّفًا صالحًا (كل شيء ما عدا المسافات)"
 
 msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
-msgstr ""
+msgstr "إنه ينشئ نتيجة GRADE ، وإذا تم اختيار مقياس، أيضًا ماكس_GRADE مع القيمة العليا لذلك المقياس."
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "لا يمكن حفظ ردودك أثناء العمل دون اتصال."
@@ -833,7 +833,7 @@ msgid "Long interpretation"
 msgstr "تفسير طويل"
 
 msgid "Lowest Grade Achieved"
-msgstr ""
+msgstr "أدنى درجة تم تحقيقها"
 
 msgid "Magnifier"
 msgstr "المكبر"
@@ -894,7 +894,7 @@ msgid "Maximum duration for this test part."
 msgstr "المدة القصوى لهذا الجزء من الرائز."
 
 msgid "Maximum number of points achievable"
-msgstr ""
+msgstr "الحد الأقصى لعدد النقاط التي يمكن تحقيقها"
 
 msgid "Metadata export is not available for test \"%s."
 msgstr "تصدير بيانات التعريف غير متاح للرائز \"%s."
@@ -921,7 +921,7 @@ msgid "minutes"
 msgstr "دقائق"
 
 msgid "Missed required parameter \\'id\\'."
-msgstr ""
+msgstr "المعلمة المطلوبة مفقودة \\'id\\'."
 
 msgid "Missed test package file"
 msgstr "ملف حزمة الرائز مفقود"
@@ -933,13 +933,13 @@ msgid "Missing required configuration option %s"
 msgstr "خيار التكوين المطلوب مفقود %s"
 
 msgid "MNOP is not available for this test configuration."
-msgstr ""
+msgstr "MNOP غير متوفر لتكوين الاختبار هذا."
 
 msgid "MNOP is not available when branch rules are present."
-msgstr ""
+msgstr "MNOP غير متوفر عندما تكون قواعد الفرع موجودة."
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr ""
+msgstr "يتطلب MNOP معالجة النتيجة إلى مجموع النقاط أو نقاط القسم."
 
 msgid "Move"
 msgstr "حرك"
@@ -948,10 +948,10 @@ msgid "Move Down"
 msgstr "تحرك لأسفل"
 
 msgid "Move rule down"
-msgstr ""
+msgstr "نقل القاعدة للأسفل"
 
 msgid "Move rule up"
-msgstr ""
+msgstr "نقل القاعدة لأعلى"
 
 msgid "Move Up"
 msgstr "تحرك صعودا"
@@ -1005,7 +1005,7 @@ msgid "No instance in form to export"
 msgstr "لا يوجد مثيل في النموذج للتصدير"
 
 msgid "No items in this test yet."
-msgstr ""
+msgstr "لا توجد عناصر في هذا الاختبار حتى الآن."
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "لا مزيد من المحاولات المسموح بها للبند \"%s\"."
@@ -1020,7 +1020,7 @@ msgid "No reference to any IMS QTI Item found."
 msgstr "لم يتم العثور على أي إشارة إلى أي بند IMS QTI."
 
 msgid "No translation"
-msgstr ""
+msgstr "لا توجد ترجمة"
 
 msgid "Non Linear"
 msgstr "غير خطي"
@@ -1041,7 +1041,7 @@ msgid "Not shuffled, the position remains fixed."
 msgstr "لا يتم خلطه ، يظل الموضع ثابتًا."
 
 msgid "Note: This mode does not use categories or weights."
-msgstr ""
+msgstr "ملاحظة: هذا الوضع لا يستخدم الفئات أو الوزن."
 
 msgid "Offline"
 msgstr "غير متصل على الانترنت"
@@ -1071,7 +1071,7 @@ msgid "Only display the unanswered items"
 msgstr "اعرض فقط البنود التي لم يتم الرد عليها"
 
 msgid "Op."
-msgstr ""
+msgstr "Op."
 
 msgid "Open Calculator"
 msgstr "افتح الحاسبة"
@@ -1080,7 +1080,7 @@ msgid "Open Keyboard Shortcuts"
 msgstr "افتح اختصارات لوحة المفاتيح"
 
 msgid "Operator"
-msgstr ""
+msgstr "المشغل"
 
 msgid "Option A"
 msgstr "الخيار أ"
@@ -1095,7 +1095,7 @@ msgid "Ordering"
 msgstr "يأمر"
 
 msgid "Original title"
-msgstr ""
+msgstr "العنوان الأصلي"
 
 msgid "Outcome"
 msgstr "نتيجة"
@@ -1104,7 +1104,7 @@ msgid "Outcome declarations"
 msgstr "حصيلة التصريحات"
 
 msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
-msgstr ""
+msgstr "يجب أن يكون معرف النتيجة فريد وغير فارغ. الرجاء اختيار معرف صالح."
 
 msgid "Outcome processing"
 msgstr "حصيلة معالجة النتائج"
@@ -1119,7 +1119,7 @@ msgid "Passage"
 msgstr "مقطع"
 
 msgid "Paths"
-msgstr ""
+msgstr "المسارات"
 
 msgid "Pause"
 msgstr "وقفة"
@@ -1137,7 +1137,7 @@ msgid "Please confirm you want to leave the test."
 msgstr "يرجى تأكيد رغبتك في ترك الرائز."
 
 msgid "Please fix the invalid settings and try again."
-msgstr ""
+msgstr "الرجاء إصلاح الإعدادات غير الصحيحة وحاول مرة أخرى."
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "يرجى محاولة إعادة تحميل الصفحة أو إيقاف الرائز مؤقتًا. إذا توقفت مؤقتًا ، فستتمكن من استئناف الرائز من هذه الصفحة."
@@ -1146,10 +1146,10 @@ msgid "Please wait while we try to restore the connection."
 msgstr "الرجاء الانتظار بينما نحاول استعادة الاتصال."
 
 msgid "Points"
-msgstr ""
+msgstr "النقاط"
 
 msgid "Prerequisites"
-msgstr ""
+msgstr "الشروط المسبقة"
 
 msgid "Preview"
 msgstr "معاينة"
@@ -1161,7 +1161,7 @@ msgid "Previous"
 msgstr "سابق"
 
 msgid "Print Out"
-msgstr ""
+msgstr "طباعة خارج"
 
 msgid "Proceed"
 msgstr "تقدم"
@@ -1191,7 +1191,7 @@ msgid "QTI Test \"%s\" successfully published."
 msgstr "تم نشر الرائز  \"%s\" بنجاح."
 
 msgid "QTI test import failed"
-msgstr ""
+msgstr "فشل استيراد اختبار QTI"
 
 msgid "QTI Test Metadata"
 msgstr "بيانات تعريف QTI"
@@ -1287,7 +1287,7 @@ msgid "Saved"
 msgstr "تم الحفظ"
 
 msgid "Scale name not allowed"
-msgstr ""
+msgstr "اسم المقياس غير مسموح به"
 
 msgid "Scientific Calculator"
 msgstr "الحاسبة العلمية"
@@ -1335,7 +1335,7 @@ msgid "Select Items"
 msgstr "اختر البنود"
 
 msgid "Select or enter a scale"
-msgstr ""
+msgstr "حدد أو أدخل مقياس"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "حدد الطريقة التي يجب أن تتم بها معالجة أجوبة الرائز"
@@ -1482,7 +1482,7 @@ msgid "SUBMIT THIS PART"
 msgstr "قم بإرسال هذا  الجزء من الرائز"
 
 msgid "Target"
-msgstr ""
+msgstr "Target"
 
 msgid "technical"
 msgstr "تقني"
@@ -1524,7 +1524,7 @@ msgid "Test Status and Structure"
 msgstr "حالة الرائز وبنية المراجعة"
 
 msgid "Test translation status"
-msgstr ""
+msgstr "اختبار حالة الترجمة"
 
 msgid "Test-Taker Tools"
 msgstr "أدوات الرائز"
@@ -1609,7 +1609,7 @@ msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not 
 msgstr "تعذر استيراد الرائز IMS QTI المشار إليه كـ \"%s\" في ملف IMS Manifest."
 
 msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
-msgstr ""
+msgstr "الحد الأقصى لعدد النقاط التي يمكن تحقيقها في هذا الاختبار. يتم حساب هذه القيمة من خلال تلخيص ماكسكوري لجميع العناصر عبر جميع الأقسام."
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "يحدد وضع التنقل المسارات العامة التي قد يسلكها المرشح. يقيد النموذج الخطي المرشح لمحاولة كل عنصر بدوره. غير الخطية إزالة هذا القيد."
@@ -1618,10 +1618,10 @@ msgid "The number of child elements to be selected."
 msgstr "عدد العناصر الفرعية المطلوب تحديدها."
 
 msgid "The original title of the section."
-msgstr ""
+msgstr "العنوان الأصلي لهذا الباب."
 
 msgid "The original title of the test."
-msgstr ""
+msgstr "العنوان الأصلي للاختبار."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "النتيجة \"%s\" غير موجودة ، ولكن تمت الإشارة إليها بواسطة كتلة ملاحظات!"
@@ -1669,7 +1669,7 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr "يحدد وضع الإرسال وقت إرسال أجوبة المرشح لمعالجتها. يتطلب قسم من الرائز في الوضع الفردي من المرشح إرسال أجوبته على أساس كل بند على حدة. في الوضع المتزامن ، يتم تقديم جميع أجوبة المرشح معًا في نهايةقسم من الرائز.."
 
 msgid "The test cannot be saved because it currently contains invalid settings."
-msgstr ""
+msgstr "لا يمكن حفظ الاختبار لأنه يحتوي حاليا على إعدادات غير صالحة."
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr "لا يمكن حفظ الرائز لأنه يحتوي حاليا على إعدادات غير صالحة.\n"
@@ -1707,10 +1707,10 @@ msgid "The time limit has been reached for this part of the test."
 msgstr "تم الوصول إلى الحد الزمني لهذا الجزء من الرائز."
 
 msgid "The translated section title."
-msgstr ""
+msgstr "عنوان القسم المترجم."
 
 msgid "The translated test title."
-msgstr ""
+msgstr "عنوان الاختبار المترجم."
 
 msgid "There are %s unanswered questions"
 msgstr "هناك %s من الأسئلة التي لم يتم الرد عليها"
@@ -1743,7 +1743,7 @@ msgid "This test has been terminated"
 msgstr "تم إنهاء هذا الرائز"
 
 msgid "This test part is used as a target in %s path(s)."
-msgstr ""
+msgstr "يستخدم هذا الجزء من الاختبار كهدف في مسارات %s."
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "تم بلوغ الحد الزمني للبند \"%s\"."
@@ -1785,7 +1785,7 @@ msgid "Total score"
 msgstr "مجموع النقاط"
 
 msgid "Translated title"
-msgstr ""
+msgstr "العنوان المترجم"
 
 msgid "Translation"
 msgstr "التَّرْجَمَةً"
@@ -1878,7 +1878,7 @@ msgid "Weight"
 msgstr "وزن"
 
 msgid "Weighted"
-msgstr ""
+msgstr "مرجح"
 
 msgid "Weights"
 msgstr "أوزان"
