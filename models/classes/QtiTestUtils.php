@@ -134,7 +134,10 @@ class QtiTestUtils extends ConfigurableService
             }
 
             $success = $fs->writeStream($finalPath, $fh);
-            fclose($fh);
+
+            if (is_resource($fh)) {
+                fclose($fh);
+            }
 
             if (!$success) {
                 throw new \common_Exception(
