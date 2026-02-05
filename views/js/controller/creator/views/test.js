@@ -303,9 +303,9 @@ define([
                     outcome.identifier === identifier && outcome.serial
                 );
                 const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
+                $input.siblings('.validate-error').remove();
                 if (!isUnique || !identifierIsValid) {
                     $input.addClass("error");
-                    $input.siblings('.validate-error').remove();
                     $input.focus();
                     if (identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
