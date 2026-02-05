@@ -302,11 +302,21 @@ define([
                 const isUnique = !testModel.outcomeDeclarations.some(outcome =>
                     outcome.identifier === identifier && outcome.serial
                 );
-                if (!isUnique || !identifier.trim() || !outcomeValidator.validateIdentifier(identifier)) {
-                    feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
+                if (!isUnique || !identifierIsValid) {
+                    $input.addClass("error");
+                    $input.siblings('.validate-error').remove();
                     $input.focus();
+                    if (identifierIsValid) {
+                        feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                        $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
+                    } else {
+                        const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
+                        $input.after('<span class="validate-error">' + message + '</span>');
+                    }
                     $saveButton.addClass('disabled').attr('disabled', true);
                 } else {
+                    $input.removeClass("error");
                     $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
             });
