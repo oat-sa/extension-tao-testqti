@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-02-05 02:40\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -894,7 +894,7 @@ msgid "Maximum duration for this test part."
 msgstr "このテストパートの最大時間"
 
 msgid "Maximum number of points achievable"
-msgstr "達成可能なポイントの最大数"
+msgstr "得点可能な最大スコア"
 
 msgid "Metadata export is not available for test \"%s."
 msgstr "メタデータのエクスポートはテスト \"%s では使用できません。"
@@ -939,7 +939,7 @@ msgid "MNOP is not available when branch rules are present."
 msgstr "ブランチルールが存在する場合、MNOP は使用できません。"
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr "MNOPでは、合計スコアまたはカットスコアにアウトカム処理を設定する必要があります。"
+msgstr "MNOP（得点可能な最大スコア）を表示するには、結果処理方法を「合計スコア」または「カットスコア」に設定する必要があります。"
 
 msgid "Move"
 msgstr "移動"
@@ -1119,7 +1119,7 @@ msgid "Passage"
 msgstr "パッセージ"
 
 msgid "Paths"
-msgstr "パス"
+msgstr "パス（分岐設定）"
 
 msgid "Pause"
 msgstr "一時停止"
@@ -1146,7 +1146,7 @@ msgid "Please wait while we try to restore the connection."
 msgstr "接続を回復中です。しばらくお待ちください。"
 
 msgid "Points"
-msgstr "制御点"
+msgstr "ポイント（配点）"
 
 msgid "Prerequisites"
 msgstr "前提条件"
@@ -1609,7 +1609,7 @@ msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not 
 msgstr "IMSマニフェストファイルで、\"%s\" として参照されたIMS QTIアイテムはインポートされませんでした。"
 
 msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
-msgstr "このテストで達成できる最大点数(MNOP)です。 この値は、すべてのセクションにわたるすべての項目のMAXSCOREを合計することによって計算されます。"
+msgstr "このテストで得点可能な最大点数（MNOP）です。 この値は、全セクションの全アイテムの配点（MAXSCORE）を合算して算出されます。"
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "受験者が解答する順序をコントロールします。「順次式」の場合、受験者は提示された順序で解答してゆきます。「非順次式」の場合は、受験者は問題を任意の順序で自由に解答できます。"
