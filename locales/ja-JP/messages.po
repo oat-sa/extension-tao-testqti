@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-05 02:40\n"
+"PO-Revision-Date: 2026-02-05 06:05\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -105,7 +105,7 @@ msgid "All"
 msgstr "すべて"
 
 msgid "Allow a Test Taker to print out the item."
-msgstr "テストテイカーに項目を印刷することを許可します。"
+msgstr "受験者に問題を印刷することを許可します。"
 
 msgid "Allow Comment"
 msgstr "コメントを許可"
@@ -318,7 +318,7 @@ msgid "Change the current color preset"
 msgstr "現在の色設定を変更"
 
 msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr "このチェックボックスをオンにすると、テストテイカーが現在の項目制約が満たされるまで他の項目に移動するのを防ぎます。 このボックスのチェックを外すと、応答が項目制約に準拠していなくても、自由なナビゲーションが可能になります。"
+msgstr "このチェックボックスをオンにすると、受験者の解答が解答条件が満たすまで他のアイテムに移動することができません。 チェックを外すと、解答条件を満たしていなくても、次のアイテムに進むことができます。"
 
 msgid "Class"
 msgstr "クラス"
@@ -471,10 +471,10 @@ msgid "Download the pupil responses and submit manually."
 msgstr "生徒の回答をダウンロードし、手動で提出する。"
 
 msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
-msgstr "以下の各条件は、演算子を使用して、変数の内容と特定の値を比較することによって、上から始まる評価されます。 条件が満たされるとすぐに、テスト テイカーは対応するターゲットにリダイレクトされます。 条件が満たされない場合、受験者は自然順序で次の試験部品を提示されます。"
+msgstr "以下の各条件は、上から順に、変数と特定の値を演算子を用いて比較することで評価されます。　条件が満たされると、受験者は対応するターゲット（遷移先）へリダイレクトされます。　どの条件も満たされない場合、受験者には通常の順序に従って次のテストパートが表示されます。"
 
 msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
-msgstr "以下の各前提条件は、オペレータを使用して、変数の内容と特定の値を比較することによって評価されます。 すべての前提条件が満たされた場合、このテストパートが表示されます。そうでなければ、このテストパートはスキップされます。"
+msgstr "以下の各前提条件は、変数と特定の値を演算子を用いて比較することで評価されます。 すべての前提条件が満たされている場合、このテストパートが表示されます。それ以外の場合、このパートはスキップされます。"
 
 msgid "Edit"
 msgstr "編集"
@@ -686,7 +686,7 @@ msgid "If the connection cannot be restored, see option B."
 msgstr "接続を回復できない場合は、オプションBを参照してください。"
 
 msgid "If you continue, those paths will be removed."
-msgstr "続けると、それらのパスは削除されます。"
+msgstr "続行すると、これらのパスは削除されます。"
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
 msgstr "すでに手動で採点された結果変数を追加している場合は、成績評価の尺度をOutcome Declarationsで選択してください。"
@@ -812,7 +812,7 @@ msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-
 msgstr "アクセシビリティツールのキーボードショートカットは、受験者が利用することができます。"
 
 msgid "Late submission allowed"
-msgstr "タイムアウト後の提出許可"
+msgstr "タイムアウトまでのデータを送信"
 
 msgid "Leave a comment"
 msgstr "コメントを残す"
@@ -1161,7 +1161,7 @@ msgid "Previous"
 msgstr "前へ"
 
 msgid "Print Out"
-msgstr "プリントアウト"
+msgstr "印刷"
 
 msgid "Proceed"
 msgstr "続行"
@@ -1482,7 +1482,7 @@ msgid "SUBMIT THIS PART"
 msgstr "このパートを提出する"
 
 msgid "Target"
-msgstr "Target"
+msgstr "ターゲット"
 
 msgid "technical"
 msgstr "テクニカル"
@@ -1742,7 +1742,7 @@ msgid "This test has been terminated"
 msgstr "テストは強制終了されました"
 
 msgid "This test part is used as a target in %s path(s)."
-msgstr "このテスト部品は、 %s パス内のターゲットとして使用されます。"
+msgstr "このテストパートは、%s 個のパスで遷移先として使用されています。"
 
 msgid "Time limit reached for item \"%s\"."
 msgstr "問題\"%s\"の制限時間に達しました"
@@ -1895,7 +1895,7 @@ msgid "Whether a candidate's response that is beyond the maximum duration of the
 msgstr "チェックを入れると，テストパートで設定された制限時間に達した後であっても，解答し送信することができます。"
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr "チェックを入れると，制限時間に達した後であっても，解答し送信することができます。"
+msgstr "解答中のアイテムについて、チェックを入れることで、制限時間までに解答したデータは全て送信されます。チェックを入れないとその解答中のアイテムのデータは全て送信されません。"
 
 msgid "White on Black"
 msgstr "白地に黒"
