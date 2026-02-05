@@ -13,9 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA;
  */
 
 use oat\generis\model\data\event\ResourceCreated;
@@ -50,6 +50,7 @@ use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
 use oat\taoQtiTest\models\Qti\Converter\TestConverter;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
@@ -609,7 +610,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
 
-        // Setting qtiIdentifier property
         $qtiIdentifierProperty = $this->getProperty(self::PROPERTY_QTI_TEST_IDENTIFIER);
         $testResource->editPropertyValues($qtiIdentifierProperty, $qtiTestResourceIdentifier);
 
@@ -793,9 +793,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         } else {
                                             if (!$itemReport->getMessage()) {
                                                 $itemReport->setMessage(
-                                                    // phpcs:disable Generic.Files.LineLength
+                                                // phpcs:disable Generic.Files.LineLength
                                                     __('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $resourceIdentifier)
-                                                    // phpcs:enable Generic.Files.LineLength
+                                                // phpcs:enable Generic.Files.LineLength
                                                 );
                                             }
 
@@ -817,7 +817,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             common_report_Report::TYPE_SUCCESS,
                                             // phpcs:disable Generic.Files.LineLength
                                             __('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier)
-                                            // phpcs:enable Generic.Files.LineLength
+                                        // phpcs:enable Generic.Files.LineLength
                                         )
                                     );
                                 }
@@ -847,9 +847,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $report
                         );
 
+                        $scaleAuxiliaryFiles = $this->extractScaleAuxiliaryFiles($qtiTestResource);
+
                         if ($testContent !== false) {
                             // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
+                            $this->storeTestScaleFiles($testContent, $scaleAuxiliaryFiles, $folder, $report);
 
                             // 3. Give meaningful names to resources.
                             $testResource->setLabel($packageLabel ?? $testLabel);
@@ -938,7 +941,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         common_report_Report::TYPE_ERROR,
                         // phpcs:disable Generic.Files.LineLength
                         __("Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint.", implode(', ', $e->getInvalidItemIdentifiers()))
-                        // phpcs:enable Generic.Files.LineLength
+                    // phpcs:enable Generic.Files.LineLength
                     )
                 );
             }
@@ -1200,7 +1203,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
->>>>>>> theirs
      * Get the File object corresponding to the location
      * of the test content (a directory!) on the file system.
      *
@@ -1245,8 +1247,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the path of the QTI XML test definition of a given $test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      * @return string The absolute path to the QTI XML Test definition related to $test.
+     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      */
     public function getDocPath(core_kernel_classes_Resource $test)
     {
@@ -1382,8 +1384,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * If it doesn't exist, it will be created
      *
      * @param core_kernel_classes_Resource $test
-     * @throws \Exception If file is not found.
      * @return File
+     * @throws \Exception If file is not found.
      */
     public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
@@ -1436,8 +1438,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     /**
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception
      * @return string
+     * @throws Exception
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
@@ -1600,11 +1602,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      *
+     * @return string|boolean The QTI Test template file content or false if it could not be read.
      * @deprecated
      *
      * Get the content of the QTI Test template file as an XML string.
      *
-     * @return string|boolean The QTI Test template file content or false if it could not be read.
      */
     public function getQtiTestTemplateFileAsString()
     {
@@ -1810,7 +1812,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return;
         }
 
-        $uniqueId = (string) $test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
+        $uniqueId = (string)$test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
         $decodedJson = json_decode($json, true);
 
         if (!empty($uniqueId) && $uniqueId !== $decodedJson['identifier']) {
