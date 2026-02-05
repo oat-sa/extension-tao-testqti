@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2025-12-12 11:55\n"
+"PO-Revision-Date: 2026-02-04 15:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ro\n"
@@ -20,8 +20,14 @@ msgstr ""
 "X-Crowdin-File-ID: 817\n"
 "Language-Team: Romanian\n"
 
+msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
+msgstr "\"Cea mai mică clasă atinsă\" stabileşte clasa de testare finală ca fiind cel mai mic scor dintre toate variabilele de testare folosind aceeaşi scară."
+
 msgid "%s to answer %s"
 msgstr "%s pentru a răspunde %s"
+
+msgid "%title% - Translation (%lang%)"
+msgstr "%title% - Traducere (%lang%)"
 
 msgid "(Visual) Clear all active highlights"
 msgstr "(flacon) Șterge toate punctele de atracție active"
@@ -31,6 +37,9 @@ msgstr "(flacon) Evidențiere text"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
 msgstr "A fost detectată o livrare simultană. Vă rugăm să utilizaţi ultima sesiune deschisă. Fereastra actuală poate fi închisă."
+
+msgid "A human interpretation of the variable's value."
+msgstr "O interpretare umană a valorii variabilei."
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
 msgstr "Un QTI Element implicat în testul QTI '%snu a putut fi compilat."
@@ -46,6 +55,9 @@ msgstr "O resursă la distanță referențiată în testul QTI '%s' nu a putut f
 
 msgid "A response to every question in this item is required."
 msgstr "Este necesar un răspuns la fiecare întrebare din acest element."
+
+msgid "A response to this item is invalid."
+msgstr "Un răspuns la acest element nu este valid."
 
 msgid "A response to this item is required."
 msgstr "Este necesar un răspuns la acest element."
@@ -65,8 +77,17 @@ msgstr "Activat"
 msgid "add a new weight"
 msgstr "adaugă o greutate nouă"
 
+msgid "Add a Path"
+msgstr "Adaugă o cale"
+
+msgid "Add a Prerequisite"
+msgstr "Adaugă o condiție prealabilă"
+
 msgid "Add a zip file containing QTI/APIP tests and items"
 msgstr "Adăugați un fișier zip care conține teste QTI/APIP și articole"
+
+msgid "Add an outcome declaration"
+msgstr "Adăugaţi o declaraţie de rezultat"
 
 msgid "Add selected item(s) here."
 msgstr "Adauga obiect(e) selectat(e) aici."
@@ -82,6 +103,9 @@ msgstr "După ce completați secțiunea ar fi imposibil să reveniți la aceast�
 
 msgid "All"
 msgstr "Toate"
+
+msgid "Allow a Test Taker to print out the item."
+msgstr "Permite unui dozator de test să imprime elementul."
 
 msgid "Allow Comment"
 msgstr "Permite Comentariu"
@@ -149,6 +173,9 @@ msgstr "A apărut o eroare în timpul inițializării testului!"
 msgid "An error occurred during the test, please content your administrator."
 msgstr "A aparut o eroare in timpul testului, te rugam sa iti continui administratorul."
 
+msgid "An error occurred while loading the original test."
+msgstr "A apărut o eroare la încărcarea testului original."
+
 msgid "An error occurred!"
 msgstr "A apărut o eroare!"
 
@@ -163,6 +190,9 @@ msgstr "Un element implicat în test nu poate fi citit sau nu este conform QTI."
 
 msgid "An item involved in the test cannot be written."
 msgstr "Un element implicat în test nu poate fi scris."
+
+msgid "An optional link to an extended interpretation of the outcome variable."
+msgstr "O legătură opțională către o interpretare extinsă a variabilei rezultate."
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
 msgstr "A apărut o eroare necunoscută în timpul compilării testului QTI '%s'."
@@ -221,6 +251,9 @@ msgstr "Asociază schița"
 msgid "At least one mandatory parameter was required but found missing in your request"
 msgstr "A fost necesar cel puțin un parametru obligatoriu, dar a fost găsit lipsă în solicitarea dvs."
 
+msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
+msgstr "Cel puțin o variabilă a rezultatului clasificată manual cu o scară de clasificare este necesară pentru acest mod."
+
 msgid "Author"
 msgstr "Autor"
 
@@ -248,6 +281,9 @@ msgstr "Marchează întrebarea curentă pentru revizuire ulterioară"
 msgid "Bookmarked question %s"
 msgstr "Întrebarea marcată %s"
 
+msgid "Branch rule validation error: %s"
+msgstr "Eroare validare reguli sucursală: %s"
+
 msgid "Calculator"
 msgstr "Calculator"
 
@@ -257,10 +293,10 @@ msgstr "Calculator BODMAS"
 msgid "Can not playback media file!"
 msgstr "Nu se poate reda fişierul media!"
 
-msgid "CANCEL"
+msgid "Cancel"
 msgstr "Anulează"
 
-msgid "Cancel"
+msgid "CANCEL"
 msgstr "Anulează"
 
 msgid "Candidate"
@@ -272,11 +308,17 @@ msgstr "Cardinalitate"
 msgid "Categories"
 msgstr "Categorii"
 
+msgid "Category name not allowed"
+msgstr "Numele categoriei nu este permis"
+
 msgid "Category score"
 msgstr "Scor categorie"
 
 msgid "Change the current color preset"
 msgstr "Schimbă presetarea culorii curente"
+
+msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
+msgstr "Verificarea acestei căsuțe previne atacatorul de încercare să navigheze la alte elemente până când constrângerile articolului curent, dacă există, sunt îndeplinite. Debifarea acestei casete va permite navigarea gratuită, chiar dacă răspunsurile nu respectă constrângerile de articol setate."
 
 msgid "Class"
 msgstr "Clasa"
@@ -353,6 +395,21 @@ msgstr "Punctaj tăiere"
 msgid "Cut score (pass ratio)"
 msgstr "Punctaj tăiere (raport de eliminare)"
 
+msgid "Define the status of the translation."
+msgstr "Defineste statusul traducerii."
+
+msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
+msgstr "Definește magnitudinea maximă a variabilelor numerice ale rezultatului, maximul trebuie să fie o valoare pozitivă, iar minimul poate fi negativ."
+
+msgid "Delete"
+msgstr "Ștergere"
+
+msgid "Delete prerequisite"
+msgstr "Ștergere condiție preliminară"
+
+msgid "Delete rule"
+msgstr "Șterge regula"
+
 msgid "Disable validation"
 msgstr "Dezactivează validarea"
 
@@ -401,6 +458,9 @@ msgstr "Nu o redenumiţi."
 msgid "Do not show alert on timeout"
 msgstr "Nu afișa alerta la expirarea timpului"
 
+msgid "Do you want to apply the category \"%s\" to all included items?"
+msgstr "Doriți să aplicați categoria \"%s\" la toate articolele incluse?"
+
 msgid "Don\\'t save"
 msgstr "Nu salva"
 
@@ -409,6 +469,15 @@ msgstr "Descărcare"
 
 msgid "Download the pupil responses and submit manually."
 msgstr "Descărcați răspunsurile pupilei și trimiteți manual."
+
+msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
+msgstr "Fiecare condiție de mai jos este evaluată, începând de la vârf, prin compararea conținutului variabil cu o valoare specifică, folosind operatorul. Imediat ce o condiţie este îndeplinită, persoana care efectuează testul este redirecţionată către ţinta corespunzătoare. În cazul în care nu este îndeplinită nicio condiție, purtătorul de test este prezentat în ordinea naturală a următorului element de test."
+
+msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
+msgstr "Fiecare condiție prealabilă de mai jos este evaluată prin compararea conținutului variabil cu o valoare specifică, utilizând operatorul. Dacă toate condițiile prealabile sunt îndeplinite, această parte de test este prezentată. Altfel, această parte de test este omisă."
+
+msgid "Edit"
+msgstr "Editare"
 
 msgid "Eliminate choices"
 msgstr "Eliminați opțiunile"
@@ -437,11 +506,17 @@ msgstr "Activează ecranul de recenzie al elementului / navigatorul."
 msgid "Enables skipping to items within this section. Requires the review screen option."
 msgstr "Activează omiterea la elementele din această secțiune. Necesită opțiunea de recenzie a ecranului."
 
+msgid "End of the test"
+msgstr "Sfârșitul încercării"
+
 msgid "End test"
 msgstr "Sfârșit test"
 
 msgid "End Test"
 msgstr "Sfârșit test"
+
+msgid "Enforce Item Constraints"
+msgstr "Impune constrângerile elementului"
 
 msgid "Enter a blueprint"
 msgstr "Introduceți un plan"
@@ -486,6 +561,12 @@ msgstr "Export QTI 2.2 Pachet de încercare"
 
 msgid "Export successful for the test \"%s"
 msgstr "Export cu succes pentru testul \"%s"
+
+msgid "External Machine"
+msgstr "Mașină externă"
+
+msgid "External Scored"
+msgstr "Scor extern"
 
 msgid "Feedback block"
 msgstr "Bloc de feedback"
@@ -577,6 +658,9 @@ msgstr "ore"
 msgid "Html title"
 msgstr "Titlu Html"
 
+msgid "Human"
+msgstr "Om"
+
 msgid "Identifier"
 msgstr "Identifier"
 
@@ -600,6 +684,12 @@ msgstr "Dacă opțiunea categoriei este stabilită, scorul va fi de asemenea pro
 
 msgid "If the connection cannot be restored, see option B."
 msgstr "Dacă conexiunea nu poate fi restabilită, vedeți opțiunea B."
+
+msgid "If you continue, those paths will be removed."
+msgstr "Dacă continui, aceste căi vor fi îndepărtate."
+
+msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
+msgstr "Dacă aţi adăugat deja manual variabile finale, vă rugăm să selectaţi scala de clasificare din declaraţiile finale."
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
 msgstr "Dacă părăsiți testul, modificările nu vor fi salvate din cauza unor setări de test invalide. Sigur doriți să ieșiți?"
@@ -628,6 +718,9 @@ msgstr "Pachetul de test IMS QTI a fost importat."
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
 msgstr "Testul IMS QTI s-a referit la \"%s\" în fişierul IMS Manifest importat cu succes."
 
+msgid "In progress"
+msgstr "În curs"
+
 msgid "In this part of the test navigation is not allowed."
 msgstr "În această parte a încercării navigarea nu este permisă."
 
@@ -646,6 +739,9 @@ msgstr "Utilizarea elementelor informative"
 msgid "Internal server error!"
 msgstr "Eroare internă de server!"
 
+msgid "Interpretation"
+msgstr "Interpretare"
+
 msgid "is already used in the test."
 msgstr "este deja utilizat în test."
 
@@ -654,6 +750,9 @@ msgstr "nu este un identificator valid (alfanum, subliniere, liniuță și punct
 
 msgid "is not a valid identifier (everything except spaces)"
 msgstr "nu este un identificator valid (totul cu excepţia spaţiilor)"
+
+msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
+msgstr "Creează un rezultat GRAD, iar dacă este selectată o scară, de asemenea un MAX_GRADE cu valoarea maximă a scalei respective."
 
 msgid "It is not possible to save your responses while working offline."
 msgstr "Nu este posibil să salvați răspunsurile în timp ce lucrați offline."
@@ -679,11 +778,11 @@ msgstr "Identificatorul de răspuns al articolului nu se potrivește articolului
 msgid "Item Session Control"
 msgstr "Control articol sesiune"
 
-msgid "items"
-msgstr "articole"
-
 msgid "Items"
 msgstr "Articole"
+
+msgid "items"
+msgstr "articole"
 
 msgid "Items can optionally be assigned to one or more categories."
 msgstr "Elementele pot fi atribuite uneia sau mai multor categorii."
@@ -730,6 +829,12 @@ msgstr "Linkuri durate pentru a activa navigarea ghidată"
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
 msgstr "Durată blocată: navigare ghidată. Trecerea la următorul element odată ce durata ajunge la 0."
 
+msgid "Long interpretation"
+msgstr "Interpretare lungă"
+
+msgid "Lowest Grade Achieved"
+msgstr "Cel mai mic grad atins"
+
 msgid "Magnifier"
 msgstr "Magnifier"
 
@@ -751,12 +856,12 @@ msgstr "Gestionează blocurile de Rubrici"
 msgid "Manage test properties"
 msgstr "Gestionați proprietățile testului"
 
-msgid "Manage Tests"
-msgstr "Gestionare teste"
-
 #, tao-public
 msgid "Manage tests"
 msgstr "Gestionează testele"
+
+msgid "Manage Tests"
+msgstr "Gestionare teste"
 
 msgid "Mark for review"
 msgstr "Marchează pentru recenzie"
@@ -788,6 +893,9 @@ msgstr "Durata maximă pentru această secţiune."
 msgid "Maximum duration for this test part."
 msgstr "Durata maximă pentru această parte a testului."
 
+msgid "Maximum number of points achievable"
+msgstr "Numărul maxim de puncte realizabile"
+
 msgid "Metadata export is not available for test \"%s."
 msgstr "Exportul de metadate nu este disponibil pentru test \"%s."
 
@@ -812,11 +920,8 @@ msgstr "Durata minimă pentru această parte a testului."
 msgid "minutes"
 msgstr "minute"
 
-msgid "Missed required parameter \\'id\\'"
-msgstr "Parametru obligatoriu ratat \\'id\\'"
-
-msgid "Missed required parameter \\'id\\'"
-msgstr "Parametru obligatoriu ratat \\'id\\'"
+msgid "Missed required parameter \\'id\\'."
+msgstr "Parametru necesar ratat \\'id\\'."
 
 msgid "Missed test package file"
 msgstr "Fişier de pachet de test ratat"
@@ -827,11 +932,26 @@ msgstr "Lipsește numele fișierului pentru exportul de test QTI"
 msgid "Missing required configuration option %s"
 msgstr "Lipsește opțiunea de configurare necesară %s"
 
+msgid "MNOP is not available for this test configuration."
+msgstr "MNOP nu este disponibil pentru această configurație de test."
+
+msgid "MNOP is not available when branch rules are present."
+msgstr "MNOP nu este disponibil atunci când sunt prezente normele privind sucursalele."
+
+msgid "MNOP requires Outcome processing set to Total score or Cut score."
+msgstr "MNOP necesită procesare Outcome setată la scorul total sau Cut scor."
+
 msgid "Move"
 msgstr "Mutare"
 
 msgid "Move Down"
 msgstr "Mută jos"
+
+msgid "Move rule down"
+msgstr "Mutați regula în jos"
+
+msgid "Move rule up"
+msgstr "Mutați regula în sus"
 
 msgid "Move Up"
 msgstr "Mută în sus"
@@ -869,11 +989,11 @@ msgstr "Următoarea"
 msgid "Next Section"
 msgstr "Următoarea secțiune"
 
-msgid "No"
-msgstr "Nr"
-
 msgid "NO"
 msgstr "NU"
+
+msgid "No"
+msgstr "Nr"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
 msgstr "Nici un motor CAT configurat pentru punctul final al CAT \"%s\"."
@@ -883,6 +1003,9 @@ msgstr "Nici un fişier găsit la locaţia \"%s\"."
 
 msgid "No instance in form to export"
 msgstr "Nicio instanță în formă pentru export"
+
+msgid "No items in this test yet."
+msgstr "Nici un element în acest test încă."
 
 msgid "No more attempts allowed for item \"%s\"."
 msgstr "Nu mai sunt permise încercări pentru elementul \"%s\"."
@@ -895,6 +1018,9 @@ msgstr "Nicio procesare a rezultatelor. Ștergeți regulile existente, dacă exi
 
 msgid "No reference to any IMS QTI Item found."
 msgstr "Nu s-a găsit nici o referinţă la elementul IMS QTI."
+
+msgid "No translation"
+msgstr "Nici o traducere"
 
 msgid "Non Linear"
 msgstr "Non Linear"
@@ -913,6 +1039,9 @@ msgstr "Nu a fost văzut"
 
 msgid "Not shuffled, the position remains fixed."
 msgstr "Nu se amestecă, poziţia rămâne fixă."
+
+msgid "Note: This mode does not use categories or weights."
+msgstr "Notă: Acest mod nu utilizează categorii sau greutăți."
 
 msgid "Offline"
 msgstr "Offline"
@@ -941,11 +1070,17 @@ msgstr "Afişează doar elementele marcate pentru revizuire"
 msgid "Only display the unanswered items"
 msgstr "Afişează doar elementele fără răspuns"
 
+msgid "Op."
+msgstr "Op."
+
 msgid "Open Calculator"
 msgstr "Deschide Calculator"
 
 msgid "Open Keyboard Shortcuts"
 msgstr "Deschide Scurtături tastatură"
+
+msgid "Operator"
+msgstr "Operator"
 
 msgid "Option A"
 msgstr "Opțiunea A"
@@ -959,11 +1094,17 @@ msgstr "sau"
 msgid "Ordering"
 msgstr "Ordonare"
 
+msgid "Original title"
+msgstr "Titlul original"
+
 msgid "Outcome"
 msgstr "Rezultat"
 
 msgid "Outcome declarations"
 msgstr "Declaraţii de rezultat"
+
+msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
+msgstr "Identificatorul de rezultat trebuie să fie unic și negol. Vă rugăm să alegeți un identificator valid."
 
 msgid "Outcome processing"
 msgstr "Procesare rezultată"
@@ -977,11 +1118,17 @@ msgstr "Partea %d"
 msgid "Passage"
 msgstr "Pasaj"
 
+msgid "Paths"
+msgstr "Cale"
+
 msgid "Pause"
 msgstr "Întrerupeți"
 
 msgid "Pause the test"
 msgstr "Întrerupeți testul"
+
+msgid "Pending"
+msgstr "In asteptare"
 
 msgid "Play"
 msgstr "Redare"
@@ -989,11 +1136,20 @@ msgstr "Redare"
 msgid "Please confirm you want to leave the test."
 msgstr "Te rugăm să confirmi că vrei să părăsești testul."
 
+msgid "Please fix the invalid settings and try again."
+msgstr "Vă rugăm să remediați setările incorecte și să încercați din nou."
+
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
 msgstr "Încercați să reîncărcați pagina sau să întrerupeți testul. Dacă întrerupeți, veți putea relua testul de pe această pagină."
 
 msgid "Please wait while we try to restore the connection."
 msgstr "Te rugăm să aștepți până încercăm să restabilim conexiunea."
+
+msgid "Points"
+msgstr "Puncte"
+
+msgid "Prerequisites"
+msgstr "Cerințe prealabile"
 
 msgid "Preview"
 msgstr "Previzualizare"
@@ -1003,6 +1159,12 @@ msgstr "Previzualizează zona acoperită"
 
 msgid "Previous"
 msgstr "Anterior"
+
+msgid "Print Out"
+msgstr "Printare ieşire"
+
+msgid "Proceed"
+msgstr "Continuă"
 
 msgid "PROCEED & END ASSESSMENT"
 msgstr "PROCEED ȘI EVALUARE FINALĂ"
@@ -1019,11 +1181,17 @@ msgstr "Driver test QTI 2.1"
 msgid "QTI Item Runner"
 msgstr "Intrare QTI element"
 
+msgid "QTI metadata as properties"
+msgstr "Metadate QTI ca proprietăți"
+
 msgid "QTI Test \"%s\" publishing failed."
 msgstr ""
 
 msgid "QTI Test \"%s\" successfully published."
 msgstr "Testul QTI \"%s\" a fost publicat cu succes."
+
+msgid "QTI test import failed"
+msgstr "Importul testului QTI a eșuat"
 
 msgid "QTI Test Metadata"
 msgstr "Metadate de testare QTI"
@@ -1063,6 +1231,9 @@ msgstr "Reîncarcă pagina"
 
 msgid "remaining %s %s"
 msgstr "ramas %s %s"
+
+msgid "Remove"
+msgstr "Elimină"
 
 msgid "Remove Item Reference"
 msgstr "Eliminați referința elementului"
@@ -1115,6 +1286,9 @@ msgstr "Salvează"
 msgid "Saved"
 msgstr "Salvat"
 
+msgid "Scale name not allowed"
+msgstr "Numele scanării nu este permis"
+
 msgid "Scientific Calculator"
 msgstr "Calculator științific"
 
@@ -1124,11 +1298,11 @@ msgstr "Marcator"
 msgid "Scoring"
 msgstr "Punctaj"
 
-msgid "Scratch Pad"
-msgstr "Tastatura Scratch"
-
 msgid "Scratch pad"
 msgstr "Tastatură Scratch"
+
+msgid "Scratch Pad"
+msgstr "Tastatura Scratch"
 
 msgid "Scratchpad"
 msgstr "Tapet"
@@ -1154,8 +1328,14 @@ msgstr "Selectare"
 msgid "Select a blueprint"
 msgstr "Selectează un plan"
 
+msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
+msgstr "Selectați dacă doriți ca declarația rezultatului să fie procesată de un sistem extern sau un scor uman. Acesta este de obicei cazul elementelor care solicită candidaților să scrie un eseu."
+
 msgid "Select Items"
 msgstr "Selectează elemente"
+
+msgid "Select or enter a scale"
+msgstr "Selectați sau introduceți o scară"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Selectează modul în care răspunsurile testului tău ar trebui să fie procesate"
@@ -1265,6 +1445,9 @@ msgstr "Viteză"
 msgid "Start Test-part"
 msgstr "Începe Test-parte"
 
+msgid "Status"
+msgstr "Status"
+
 msgid "Step 1: Download the file (see below when available)."
 msgstr "Pasul 1: Descarcă fişierul (vezi mai jos când este disponibil)."
 
@@ -1297,6 +1480,9 @@ msgstr "TRIMITE TEST"
 
 msgid "SUBMIT THIS PART"
 msgstr "TRIMITE PREZENTA PARTE"
+
+msgid "Target"
+msgstr "Target"
 
 msgid "technical"
 msgstr "tehnică"
@@ -1337,6 +1523,9 @@ msgstr "Starea încercărilor și structura de revizuire"
 msgid "Test Status and Structure"
 msgstr "Stare de încercare și structură"
 
+msgid "Test translation status"
+msgstr "Testează starea traducerii"
+
 msgid "Test-Taker Tools"
 msgstr "Unelte Test-Taker"
 
@@ -1347,11 +1536,11 @@ msgstr "Teste"
 msgid "Text content"
 msgstr "Conținut text"
 
-msgid "Text to Speech"
-msgstr "Text la vorbire"
-
 msgid "Text To Speech"
 msgstr "Text în vorbire"
+
+msgid "Text to Speech"
+msgstr "Text la vorbire"
 
 msgid "that was being taken."
 msgstr "Asta a fost luat."
@@ -1401,6 +1590,9 @@ msgstr "Descărcarea va fi disponibilă în <strong>%d</strong> secunde"
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Următorii identificatori nu sunt excepţionali de-a lungul testului: %s"
 
+msgid "The given target is not an instance of core_kernel_classes_Resource"
+msgstr "Ținta dată nu este o instanță de core_kernel_classes_Resource"
+
 msgid "The identifier of the item reference."
 msgstr "Identificatorul pentru referinta elementului."
 
@@ -1416,11 +1608,20 @@ msgstr "Pachetul de test IMS QTI nu a putut fi importat."
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
 msgstr "Testul IMS QTI referit ca \"%s\" în fişierul IMS Manifest nu a putut fi importat."
 
+msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
+msgstr "Numărul maxim de puncte (MNOP) care pot fi obținute în cadrul acestui test. Această valoare este calculată prin însumarea MAXSCORE pentru toate elementele din toate secțiunile."
+
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
 msgstr "Modul de navigație determină căile generale pe care candidatul le poate urma. Un mod liniar restricționează candidatul să încerce fiecare element pe rând. Non Linear elimină această restricție."
 
 msgid "The number of child elements to be selected."
 msgstr "Numărul de elemente copil de selectat."
+
+msgid "The original title of the section."
+msgstr "Titlul original al secţiunii."
+
+msgid "The original title of the test."
+msgstr "Titlul original al testului."
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
 msgstr "Rezultatul \"%s\" nu există, dar este referit de un bloc de feedback!"
@@ -1467,6 +1668,9 @@ msgstr "Titlul secţiunii."
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
 msgstr "Modul de depunere determină momentul în care răspunsurile candidatului sunt prezentate pentru procesarea răspunsului. O piesă de încercare în mod individual necesită ca candidatul să își prezinte răspunsurile în funcție de fiecare element. În modul simultan, răspunsurile candidatului sunt prezentate împreună la sfârșitul testPart."
 
+msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr "Testul nu poate fi salvat deoarece acesta conţine în prezent setări invalide."
+
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 msgstr "Testul nu poate fi salvat deoarece acesta conţine în prezent setări invalide.\n"
 
@@ -1502,6 +1706,12 @@ msgstr "Titlul testului."
 msgid "The time limit has been reached for this part of the test."
 msgstr "Termenul a fost atins pentru această parte a testului."
 
+msgid "The translated section title."
+msgstr "Titlul secțiunii traduse."
+
+msgid "The translated test title."
+msgstr "Titlul testului tradus"
+
 msgid "There are %s unanswered questions"
 msgstr "Există întrebări fără răspuns %s"
 
@@ -1532,6 +1742,9 @@ msgstr "Acest test a fost suspendat"
 msgid "This test has been terminated"
 msgstr "Acest test a fost terminat"
 
+msgid "This test part is used as a target in %s path(s)."
+msgstr "Această parte de test este folosită ca o țintă în calea (căile) %s."
+
 msgid "Time limit reached for item \"%s\"."
 msgstr "S-a atins limita de timp pentru elementul \"%s\"."
 
@@ -1550,6 +1763,9 @@ msgstr "Timp rămas"
 msgid "Title"
 msgstr "Titlu"
 
+msgid "to"
+msgstr "către"
+
 msgid "Toggle playback"
 msgstr "Comută redarea"
 
@@ -1562,8 +1778,20 @@ msgstr "Caseta de instrumente și marcarea pentru revizuire"
 msgid "Toolbox"
 msgstr "Utilitare"
 
+msgid "Total"
+msgstr "Total"
+
 msgid "Total score"
 msgstr "Scor total"
+
+msgid "Translated title"
+msgstr "Titlu tradus"
+
+msgid "Translation"
+msgstr "Traducere"
+
+msgid "Translation completed"
+msgstr "Traducere completă"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
 msgstr "Încercați să conectați mașina la internet prin cablu, sau mutați-vă într-o zonă cu un semnal wifi mai bun."
@@ -1603,6 +1831,9 @@ msgstr "Validare răspunsuri"
 
 msgid "Value"
 msgstr "Valoare"
+
+msgid "Variable"
+msgstr "Variabilă"
 
 msgid "Viewed"
 msgstr "Văzut"
@@ -1645,6 +1876,9 @@ msgstr "Nu ne putem conecta la server pentru a prelua următorul element."
 
 msgid "Weight"
 msgstr "Greutate"
+
+msgid "Weighted"
+msgstr "Ponderat"
 
 msgid "Weights"
 msgstr "Greutate"
@@ -1692,11 +1926,11 @@ msgstr "Eroare XML la linia %1$d coloana %2$d \"%3$s\"."
 msgid "Yellow on Blue"
 msgstr "Galben pe albastru"
 
-msgid "Yes"
-msgstr "Da"
-
 msgid "YES"
 msgstr "DA"
+
+msgid "Yes"
+msgstr "Da"
 
 msgid "You answered %s of %s question(s) for this section of the test"
 msgstr "Ați răspuns la %s din %s întrebări pentru această secțiune a testului"
@@ -1775,10 +2009,4 @@ msgstr "Zoom in"
 
 msgid "Zoom out"
 msgstr "Zoom out"
-
-msgid "Enforce Item Constraints"
-msgstr "Impune constrângerile elementului"
-
-msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr "Verificarea acestei căsuțe previne atacatorul de încercare să navigheze la alte elemente până când constrângerile articolului curent, dacă există, sunt îndeplinite. Debifarea acestei casete va permite navigarea gratuită, chiar dacă răspunsurile nu respectă constrângerile de articol setate."
 
