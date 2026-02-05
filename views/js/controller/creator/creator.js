@@ -158,11 +158,11 @@ define([
                 // configured labels will need to to be registered elsewhere for the translations
                 const translate = text => text && __(text);
 
-                const btnIdx = previewId ? `-${previewId}` : '';
+                const btnIdx = previewId ? ` - ${previewId}` : '';
                 const $button = $(
                     templates.menuButton({
                         id: `previewer${btnIdx}`,
-                        testId: `preview-test${btnIdx}`,
+                        testId: `preview - test${btnIdx}`,
                         icon: 'preview',
                         label: translate(label) || __('Preview')
                     })
@@ -172,9 +172,9 @@ define([
                         creatorContext.trigger('preview', id, uri);
                     }
                 });
-                if (!Object.keys(options.labels).length) {
-                    $button.attr('disabled', true).addClass('disabled');
-                }
+            if (!Object.keys(options.labels).length) {
+                $button.attr('disabled', true).addClass('disabled');
+            }
                 $menu.append($button);
                 previewId++;
                 return $button;
@@ -264,7 +264,8 @@ define([
                                             .getTranslationConfig(options.testUri, options.originResourceUri)
                                             .then(translationConfig => Object.assign(options, translationConfig))
                                     ])
-                                        .then(() =>
+                                        .then(
+                                            () =>
                                             translationHelper.getItemsTranslationStatus(
                                                 options.originModel,
                                                 options.translationLanguageUri
@@ -317,9 +318,9 @@ define([
 
                                 //once model is loaded, we set up the test view
                                 testView(creatorContext);
-                                if (options.translation) {
-                                    translationView(creatorContext);
-                                }
+                        if (options.translation) {
+                            translationView(creatorContext);
+                        }
 
                                 //listen for changes to update available actions
                                 testPartView.listenActionState();
@@ -407,7 +408,7 @@ define([
                 if (creatorContext.isTestHasErrors()) {
                     event.preventDefault();
                     feedback().warning(
-                        __('The test cannot be saved because it currently contains invalid settings.') 
+                        __('The test cannot be saved because it currently contains invalid settings.')
                         + '\n' +
                         __('Please fix the invalid settings and try again.')
                     );

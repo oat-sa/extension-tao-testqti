@@ -14,7 +14,8 @@ define([
     outcomeHelper,
     outcomeListingTpl,
     formElement,
-    scaleSelectorFactory) {
+    scaleSelectorFactory
+) {
     'use strict';
     const _ns = '.outcome-container';
 
@@ -25,7 +26,8 @@ define([
      * Generate unique selector ID (not tied to outcome properties that might change)
      * @returns {string} Unique selector ID
      */
-    function generateSelectorId() {
+    function generateSelectorId()
+    {
         return `selector_${++selectorIdCounter}_${Date.now()}`;
     }
 
@@ -34,7 +36,8 @@ define([
      * @param {Object} outcome - Outcome declaration
      * @returns {string} Stable identifier
      */
-    function getStableOutcomeId(outcome) {
+    function getStableOutcomeId(outcome)
+    {
         if (outcome.serial) {
             return outcome.serial;
         }
@@ -60,7 +63,8 @@ define([
      * @param {jQuery} $outcomeContainer - Container element
      * @param {boolean} disabled - Whether to disable the controls
      */
-    function setMinMaxDisabled($outcomeContainer, disabled) {
+    function setMinMaxDisabled($outcomeContainer, disabled)
+    {
         const $minMaxContainer = $outcomeContainer.find('.minimum-maximum');
         const $inputs = $minMaxContainer.find('input[name="normalMinimum"], input[name="normalMaximum"]');
         const $incrementerWrappers = $minMaxContainer.find('.incrementer-ctrl-wrapper');
@@ -123,7 +127,8 @@ define([
      * @param {jQuery} $outcomeContainer - Container element
      * @param {boolean} hasInterpretation - Whether interpretation is set
      */
-    function updateExternalScored($outcomeContainer, hasInterpretation) {
+    function updateExternalScored($outcomeContainer, hasInterpretation)
+    {
         const $externalScoredSelect = $outcomeContainer.find('select[name="externalScored"]');
 
         if (hasInterpretation) {
@@ -150,7 +155,8 @@ define([
      * @param {Object} outcome - Outcome declaration
      * @returns {Object|null} Existing selector info or null
      */
-    function findExistingSelectorForOutcome(outcome) {
+    function findExistingSelectorForOutcome(outcome)
+    {
         const stableId = getStableOutcomeId(outcome);
 
         for (const [selectorId, selectorInfo] of scaleSelectors.entries()) {
@@ -167,7 +173,8 @@ define([
      * @param {jQuery} $outcomeContainer
      * @returns {string|null} string value or null when not present/empty
      */
-    function getLongInterpretationValue($outcomeContainer) {
+    function getLongInterpretationValue($outcomeContainer)
+    {
         if (!$outcomeContainer || !$outcomeContainer.length) {
             return null;
         }
@@ -191,7 +198,8 @@ define([
      * @param {string} lookupValue - key or URI to resolve
      * @returns {{key: (string|null), scale: (Object|null)}} resolved scale data
      */
-    function resolveScaleData(scales, lookupValue) {
+    function resolveScaleData(scales, lookupValue)
+    {
         if (!lookupValue || !scales || typeof scales !== 'object') {
             return {key: null, scale: null};
         }
@@ -227,7 +235,8 @@ define([
      * @param {Object} scales - Map/object of available scales keyed by filename or id
      * @param {Array.<Object>=} scalePresets - Optional array of predefined scale presets (objects with {uri, label}) to populate the selector
      */
-    function setupScaleSelector($outcomeContainer, outcome, scales, scalePresets) {
+    function setupScaleSelector($outcomeContainer, outcome, scales, scalePresets)
+    {
         const stableOutcomeId = getStableOutcomeId(outcome);
 
         // Hide the Long Interpretation field
@@ -326,7 +335,7 @@ define([
 
         // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
         const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
-        let scaleFilename = longInterpVal || `scales/${filenameBase}_scale.json`;
+        let scaleFilename = longInterpVal || `scales / ${filenameBase}_scale.json`;
         // if longInterpretation not set, store generated filename into hidden input so model persists
         if (!longInterpVal) {
             const $longInput = $outcomeContainer.find('.longinterpretation').find('input');
@@ -337,7 +346,8 @@ define([
         }
 
         // helper to emit scale JSON content based on matchedScale and rubric input
-        function emitScaleJsonUpdate() {
+        function emitScaleJsonUpdate()
+        {
             const rubricVal = $rubricInput.val() || '';
 
             let content;
@@ -520,7 +530,8 @@ define([
      * Clean up selector by ID
      * @param {string} selectorId - Selector ID to clean up
      */
-    function cleanupSelector(selectorId) {
+    function cleanupSelector(selectorId)
+    {
         const selectorInfo = scaleSelectors.get(selectorId);
         if (selectorInfo) {
             const {selector, outcome} = selectorInfo;
@@ -552,7 +563,8 @@ define([
      * Clean up selector for a specific outcome
      * @param {Object} outcome - Outcome declaration
      */
-    function cleanupSelectorsForOutcome(outcome) {
+    function cleanupSelectorsForOutcome(outcome)
+    {
         const stableId = getStableOutcomeId(outcome);
         const selectorsToCleanup = [];
 
@@ -572,7 +584,8 @@ define([
      * @param {Object} testModel
      * @param {jQuery} $editorPanel
      */
-    function renderOutcomeDeclarationList(testModel, $editorPanel) {
+    function renderOutcomeDeclarationList(testModel, $editorPanel)
+    {
 
         // Check if remote scale feature is enabled: either presets are provided or testScales has entries
         // Accept both 'scalePresets' and an alternate 'scalesPresets' coming from backend (typo/legacy)
@@ -870,7 +883,8 @@ define([
     /**
      * Cleanup all scale selectors
      */
-    function cleanup() {
+    function cleanup()
+    {
         scaleSelectors.forEach((selectorInfo, selectorId) => {
             cleanupSelector(selectorId);
         });
