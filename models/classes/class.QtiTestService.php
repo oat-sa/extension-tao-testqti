@@ -113,6 +113,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
 
     private const IN_PROGRESS_LABEL = 'in progress';
+    private const SCALE_DIRECTORY_PATH = 'scales';
+    private const DIR_TAO_QTI_TEST = 'dir://taoQtiTest/';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -383,13 +385,14 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     public function importMultipleTests(
         core_kernel_classes_Class $targetClass,
-        $file,
-        bool $overwriteTest = false,
-        ?string $itemClassUri = null,
-        array $form = [],
-        ?string $overwriteTestUri = null,
-        ?string $packageLabel = null
-    ) {
+                                  $file,
+        bool                      $overwriteTest = false,
+        ?string                   $itemClassUri = null,
+        array                     $form = [],
+        ?string                   $overwriteTestUri = null,
+        ?string                   $packageLabel = null
+    )
+    {
         $testClass = $targetClass;
         $report = new Report(Report::TYPE_INFO);
         $validPackage = false;
@@ -579,17 +582,18 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @return common_report_Report A report about how the importation behaved.
      */
     protected function importTest(
-        core_kernel_classes_Class $testClass,
-        Resource $qtiTestResource,
+        core_kernel_classes_Class                $testClass,
+        Resource                                 $qtiTestResource,
         taoQtiTest_models_classes_ManifestParser $manifestParser,
-        $folder,
-        array $ignoreQtiResources = [],
-        bool $overwriteTest = false,
-        ?string $itemClassUri = null,
-        bool $importMetadata = false,
-        ?string $overwriteTestUri = null,
-        ?string $packageLabel = null
-    ) {
+                                                 $folder,
+        array                                    $ignoreQtiResources = [],
+        bool                                     $overwriteTest = false,
+        ?string                                  $itemClassUri = null,
+        bool                                     $importMetadata = false,
+        ?string                                  $overwriteTestUri = null,
+        ?string                                  $packageLabel = null
+    )
+    {
         /** @var ImportService $itemImportService */
         $itemImportService = $this->getServiceLocator()->get(ImportService::SERVICE_ID);
         $qtiTestResourceIdentifier = $qtiTestResource->getIdentifier();
@@ -1003,12 +1007,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      */
     protected function importTestDefinition(
         core_kernel_classes_Resource $testResource,
-        XmlDocument $testDefinition,
-        Resource $qtiResource,
-        array $itemMapping,
-        $extractionFolder,
-        common_report_Report $report
-    ) {
+        XmlDocument                  $testDefinition,
+        Resource                     $qtiResource,
+        array                        $itemMapping,
+                                     $extractionFolder,
+        common_report_Report         $report
+    )
+    {
 
         foreach ($itemMapping as $itemRefId => $itemResource) {
             $itemRef = $testDefinition->getDocumentComponent()->getComponentByIdentifier($itemRefId);
@@ -1066,11 +1071,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @param common_report_Report A report about how the importation behaved.
      */
     protected function importTestAuxiliaryFiles(
-        Directory $testContent,
-        Resource $qtiResource,
-        $extractionFolder,
+        Directory            $testContent,
+        Resource             $qtiResource,
+                             $extractionFolder,
         common_report_Report $report
-    ) {
+    )
+    {
 
         foreach ($qtiResource->getAuxiliaryFiles() as $aux) {
             try {
@@ -1087,6 +1093,114 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Copy scale files referenced by the test into the destination test content directory.
+     *
+     * @param Directory $testContent Target directory for the imported test content
+     * @param string[] $scaleFiles Relative paths of scale files inside the extraction folder
+     * @param string $extractionFolder Folder where the package was extracted
+     * @param common_report_Report $report Report instance used to log warnings
+     * @return void
+     */
+    protected function storeTestScaleFiles(
+        Directory            $testContent,
+        array                $scaleFiles,
+        string               $extractionFolder,
+        common_report_Report $report
+    ): void
+    {
+        if (empty($scaleFiles)) {
+            return;
+        }
+
+        try {
+            $this->getScaleStorageService()->storeScaleFiles($testContent, $scaleFiles, $extractionFolder);
+        } catch (Throwable $exception) {
+            $report->add(
+                new common_report_Report(
+                    common_report_Report::TYPE_WARNING,
+                    __('Scale files could not be stored: %s', $exception->getMessage())
+                )
+            );
+        }
+    }
+
+    /**
+     * Extract scale related auxiliary files from the manifest resource while keeping other entries intact.
+     * Modifies the provided resource by removing scale-related entries from its auxiliary file list.
+     *
+     * @param Resource $qtiResource The manifest resource to inspect and update
+     * @return string[]
+     */
+    private function extractScaleAuxiliaryFiles(Resource $qtiResource): array
+    {
+        $auxiliaryFiles = $qtiResource->getAuxiliaryFiles();
+
+        if (!is_array($auxiliaryFiles) || $auxiliaryFiles === []) {
+            return [];
+        }
+
+        $scaleFiles = [];
+        $regularFiles = [];
+
+        foreach ($auxiliaryFiles as $filePath) {
+            if (!is_string($filePath) || $filePath === '') {
+                continue;
+            }
+
+            $normalized = $this->normalizeAuxiliaryPath($filePath);
+
+            if ($this->isScaleAuxiliaryPath($normalized)) {
+                $scaleFiles[] = $filePath;
+                continue;
+            }
+
+            $regularFiles[] = $filePath;
+        }
+
+        if ($regularFiles !== $auxiliaryFiles) {
+            $qtiResource->setAuxiliaryFiles($regularFiles);
+        }
+
+        return $scaleFiles;
+    }
+
+    private function normalizeAuxiliaryPath(string $path): string
+    {
+        $normalized = str_replace('\\', '/', $path);
+        $normalized = preg_replace('#/+#', '/', $normalized);
+
+        return $normalized === null ? $path : $normalized;
+    }
+
+    /**
+     * Determine whether a normalized path references the test-level scales directory.
+     *
+     * @param string $path Normalized auxiliary file path
+     * @return bool
+     */
+    private function isScaleAuxiliaryPath(string $path): bool
+    {
+        $trimmed = ltrim($path, '/');
+
+        if ($trimmed === 'scales') {
+            return true;
+        }
+
+        return strpos($trimmed, 'scales/') === 0;
+    }
+
+    /**
+     * Retrieve the scale storage service from the locator.
+     *
+     * @return ScaleStorageService
+     */
+    private function getScaleStorageService(): ScaleStorageService
+    {
+        return $this->getServiceLocator()->get(ScaleStorageService::class);
+    }
+
+    /**
+>>>>>>> theirs
      * Get the File object corresponding to the location
      * of the test content (a directory!) on the file system.
      *
@@ -1282,6 +1396,41 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return $dir->getFile($file);
         }
         return $this->searchInTestDirectory($dir);
+    }
+
+    /**
+     * Get outcome declaration scales for a test
+     *
+     * Reads and parses scale JSON files from the test scales directory.
+     *
+     * @param core_kernel_classes_Resource $test The test resource
+     * @return array Associative array of scale data keyed by file path (scales/filename.json)
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If directory traversal fails
+     */
+    public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test): array
+    {
+        $testFile = $this->getQtiTestFile($test);
+        $dir = $this->getFileReferenceSerializer()->unserialize(
+            self::DIR_TAO_QTI_TEST
+            . str_replace($testFile->getBasename(), '', $testFile->getPrefix())
+        );
+        $scales = [];
+        $scaleDir = $dir->getDirectory(self::SCALE_DIRECTORY_PATH);
+        // Imported tests may have different structure
+        if (!$scaleDir->exists()) {
+            return $scales;
+        }
+
+        foreach ($scaleDir->getIterator() as $file) {
+            if ($file->getMimeType() === 'application/json') {
+                $content = $file->read();
+                $scale = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $scales[sprintf('%s/%s', self::SCALE_DIRECTORY_PATH, $file->getBasename())] = $scale;
+                }
+            }
+        }
+        return $scales;
     }
 
     /**
@@ -1572,12 +1721,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * @throws \oat\tao\model\metadata\exception\MetadataImportException
      */
     private function getMappedProperties(
-        bool $importMetadata,
-        DOMDocument $domManifest,
-        stdClass $reportCtx,
+        bool                      $importMetadata,
+        DOMDocument               $domManifest,
+        stdClass                  $reportCtx,
         core_kernel_classes_Class $testClass,
         core_kernel_classes_Class $targetItemClass
-    ): array {
+    ): array
+    {
         if ($importMetadata === true) {
             $metaMetadataValues = $this->getMetaMetadataExtractor()->extract($domManifest);
             $reportCtx->metaMetadata = $metaMetadataValues;
