@@ -738,8 +738,9 @@ define([
                 }
             }
 
-            // Always initialize the scale selector so it is visible for new tests; setupScaleSelector is defensive
-            setupScaleSelector($outcomeContainer, outcome, testModel.testScales, suppliedPresets);
+            if (hasPresets || hasTestScales) {
+                setupScaleSelector($outcomeContainer, outcome, testModel.testScales, suppliedPresets);
+            }
 
             if (outcome.interpretation) {
                 setMinMaxDisabled($outcomeContainer, true);
@@ -761,7 +762,7 @@ define([
                 $outcomeContainer.addClass('editing');
                 $outcomeContainer.removeClass('editable');
 
-                if (editedOutcomeDeclaration) {
+                if (editedOutcomeDeclaration && (hasPresets || hasTestScales)) {
                     setupScaleSelector($outcomeContainer, editedOutcomeDeclaration, testModel.testScales, suppliedPresets);
                 }
 
