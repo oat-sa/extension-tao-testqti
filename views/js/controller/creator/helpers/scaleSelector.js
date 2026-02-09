@@ -30,8 +30,9 @@ define([
     const scaleMap = new Map();
     let currentTestId = null;
 
-    function scaleSelectorFactory($container, outcomeId) {
-        const $scaleSelect = $container.find('[name="interpretation"]');
+    function scaleSelectorFactory($container, outcomeId)
+    {
+        const $scaleSelect = $container.find('[name="scale"]');
         let lastKnownValue = null;
 
         const scaleSelector = {
@@ -78,7 +79,7 @@ define([
                         return;
                     }
 
-                    const currentOptions = $scaleSelect.find('option').map(function() {
+                    const currentOptions = $scaleSelect.find('option').map(function () {
                         return $(this).val();
                     }).get();
 
@@ -101,7 +102,6 @@ define([
                             console.warn('Error in delayed Select2 update:', error);
                         }
                     }, 10);
-
                 } catch (error) {
                     console.warn('Error updating scale selector:', error);
                 } finally {
@@ -130,16 +130,12 @@ define([
                     if (currentValue) {
                         this._setCurrentValue(currentValue, true);
                     }
-
                 } catch (error) {
                     console.warn('Error in _safeUpdateSelect2:', error);
                 }
             },
 
-            /**
-             * Read the form state and trigger an event with the result
-             * @fires scaleSelector#interpretation-change
-             */
+            // Read the form state and trigger an event with the result (emits 'scale-change')
             updateScale() {
                 if (this._isInternalUpdate || this._destroyed) {
                     return;
@@ -155,7 +151,7 @@ define([
                         syncManager.onScaleChange(outcomeId, normalizedValue);
                     }
 
-                    this.trigger('interpretation-change', normalizedValue);
+                    this.trigger('scale-change', normalizedValue);
                 }
             },
 
@@ -170,7 +166,6 @@ define([
 
                 const lockedScale = syncManager.getActivePredefinedScale();
                 const selectData = this._buildSelectData(lockedScale, currentInterpretation);
-
                 this._initializeSelect2(selectData);
 
                 if (currentInterpretation) {
@@ -240,7 +235,7 @@ define([
                         if (outcomeId) {
                             syncManager.onScaleChange(outcomeId, null);
                         }
-                        this.trigger('interpretation-change', null);
+                        this.trigger('scale-change', null);
                     }
                 } catch (error) {
                     console.warn('Error clearing selection:', error);
@@ -352,12 +347,11 @@ define([
                         .select2({
                             width: '100%',
                             tags: true,
-                            multiple: false,
                             tokenSeparators: null,
                             createSearchChoice: (scale) => {
                                 // Always allow custom scales to be entered
                                 return scale.match(/^[a-zA-Z0-9_-]+$/)
-                                    ? { id: scale, text: scale }
+                                    ? { id : scale, text : scale }
                                     : null;
                             },
                             formatNoMatches: () => __('Scale name not allowed'),
@@ -366,7 +360,7 @@ define([
                             data: selectData,
                             placeholder: __('Select or enter a scale'),
                             openOnEnter: false,
-                            initSelection: function(element, callback) {
+                            initSelection: function (element, callback) {
                                 const val = element.val();
                                 if (val) {
                                     const data = selectData.find(item => item.id === val);
@@ -378,12 +372,12 @@ define([
                                 }
                             }
                         })
-                        .off('change.scaleSync')
-                        .on('change.scaleSync', () => {
-                            if (!this._isInternalUpdate && !this._destroyed) {
-                                this.updateScale();
-                            }
-                        });
+                         .off('change.scaleSync')
+                         .on('change.scaleSync', () => {
+                                if (!this._isInternalUpdate && !this._destroyed) {
+                                    this.updateScale();
+                                }
+                            });
 
                     $scaleSelect.select2('close');
                 } catch (error) {
@@ -403,7 +397,7 @@ define([
                 }
 
                 try {
-                    let $option = $scaleSelect.find(`option[value="${value}"]`);
+                    let $option = $scaleSelect.find(`option[value = "${value}"]`);
 
                     if (!$option.length) {
                         const label = scaleMap.has(value) ? scaleMap.get(value).label : value;
@@ -464,7 +458,6 @@ define([
                     } catch (cleanupError) {
                         console.warn('Error in Select2 cleanup:', cleanupError);
                     }
-
                 } catch (error) {
                     console.warn('Error in _safeDestroySelect2:', error);
                 }
@@ -477,7 +470,9 @@ define([
              * @private
              */
             _normalizeScaleValue(value) {
-                if (!value) return null;
+                if (!value) {
+                    return null;
+                }
 
                 if (scaleMap.has(value)) {
                     return value;
@@ -501,7 +496,8 @@ define([
      * Set the current test ID - must be called before creating selectors
      * @param {string} testId - Test identifier
      */
-    scaleSelectorFactory.setTestId = function setTestId(testId) {
+    scaleSelectorFactory.setTestId = function setTestId(testId)
+    {
         if (!testId) {
             throw new Error('testId is required');
         }
@@ -517,7 +513,8 @@ define([
      * Get the current test ID
      * @returns {string|null} Current test ID
      */
-    scaleSelectorFactory.getTestId = function getTestId() {
+    scaleSelectorFactory.getTestId = function getTestId()
+    {
         return currentTestId;
     };
 
@@ -525,7 +522,8 @@ define([
      * Set predefined scales presets
      * @param {Object[]} presets - Array of {uri, label} objects
      */
-    scaleSelectorFactory.setPresets = function setPresets(presets) {
+    scaleSelectorFactory.setPresets = function setPresets(presets)
+    {
         if (Array.isArray(presets)) {
             allScalesPresets = Array.from(presets);
 
@@ -547,7 +545,8 @@ define([
      * @param {Object[]} presets - Array of {uri, label} objects
      * @param {string} testId - Test identifier
      */
-    scaleSelectorFactory.initialize = function initialize(presets, testId) {
+    scaleSelectorFactory.initialize = function initialize(presets, testId)
+    {
         if (!testId) {
             throw new Error('testId is required');
         }
@@ -560,7 +559,8 @@ define([
      * Reset the factory state - useful when switching between tests
      * @param {string} [testId] - Specific test to reset, or null for all tests
      */
-    scaleSelectorFactory.reset = function reset(testId = null) {
+    scaleSelectorFactory.reset = function reset(testId = null)
+    {
         if (testId) {
             syncManager.reset(testId);
             if (currentTestId === testId) {
@@ -579,7 +579,8 @@ define([
      * @returns {Object} Sync manager instance
      * @private
      */
-    scaleSelectorFactory.__getSyncManager = function getSyncManager() {
+    scaleSelectorFactory.__getSyncManager = function getSyncManager()
+    {
         return syncManager;
     };
 
