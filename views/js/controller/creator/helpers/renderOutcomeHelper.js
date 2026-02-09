@@ -720,7 +720,7 @@ define([
 
             // If still not found, create a lightweight temporary outcome object so the selector can initialize
             if (!outcome) {
-                const serialFallback = $outcomeContainer.data('serial') || `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+                const serialFallback = $outcomeContainer.data('serial') || `temp_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
                 outcome = {
                     serial: serialFallback,
                     identifier: identifierValue || undefined,

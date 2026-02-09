@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes;
 
 use common_Exception;
-use DOMDocument;
 use InvalidArgumentException;
 use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
