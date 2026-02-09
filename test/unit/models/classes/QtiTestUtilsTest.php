@@ -226,8 +226,6 @@ class QtiTestUtilsTest extends TestCase
         try {
             $origin = dirname($tempFile);
             $filePath = basename($tempFile);
-            $sourcePath = $origin . DIRECTORY_SEPARATOR . $filePath;
-            $finalPath = self::TEST_CONTENT_PATH . DIRECTORY_SEPARATOR . $filePath;
 
             // Mock writeStream to fail
             $this->configureFileSystemMock(false);
