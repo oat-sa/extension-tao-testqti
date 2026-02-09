@@ -335,7 +335,7 @@ define([
 
         // Determine filename to use for this scale JSON: prefer longInterpretation value, otherwise build one
         const filenameBase = outcome.identifier || outcome.serial || `outcome_${Date.now()}`;
-        let scaleFilename = longInterpVal || `scales / ${filenameBase}_scale.json`;
+        let scaleFilename = longInterpVal || `scales/${filenameBase}_scale.json`;
         // if longInterpretation not set, store generated filename into hidden input so model persists
         if (!longInterpVal) {
             const $longInput = $outcomeContainer.find('.longinterpretation').find('input');
