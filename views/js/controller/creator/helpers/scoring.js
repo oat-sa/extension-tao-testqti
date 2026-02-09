@@ -111,14 +111,14 @@ define([
                     weighted: 'SCORE_TOTAL_WEIGHTED',
                     categoryIdentifier: 'SCORE_CATEGORY_%s',
                     categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_%s'
-                },
+            },
                 {
                     writer: 'max',
                     identifier: 'SCORE_TOTAL_MAX',
                     weighted: 'SCORE_TOTAL_MAX_WEIGHTED',
                     categoryIdentifier: 'SCORE_CATEGORY_MAX_%s',
                     categoryWeighted: 'SCORE_CATEGORY_WEIGHTED_MAX_%s'
-                },
+            },
                 {
                     writer: 'ratio',
                     identifier: 'SCORE_RATIO',
@@ -131,7 +131,7 @@ define([
                         total: 'SCORE_TOTAL_WEIGHTED',
                         max: 'SCORE_TOTAL_MAX_WEIGHTED'
                     }
-                }
+            }
             ],
             clean: true
         },
@@ -148,7 +148,7 @@ define([
                     feedbackFailed: 'not_passed',
                     categoryIdentifier: 'PASS_CATEGORY_%s',
                     categoryFeedback: 'PASS_CATEGORY_%s_RENDERING'
-                }
+            }
             ],
             clean: true
         },
@@ -159,15 +159,15 @@ define([
                 {
                     writer: 'grade_score',
                     identifier: defaultScoreIdentifier,
-                },
+            },
                 {
                     writer: 'grade',
                     identifier: 'GRADE',
-                },
+            },
                 {
                     writer: 'grade_max',
                     identifier: 'GRADE_MAX',
-                }
+            }
             ],
             clean: true
         }
@@ -184,7 +184,8 @@ define([
          * @param {Object} scoring
          * @param {Object} outcomes
          */
-        ratio: function writerRatio(descriptor, scoring, outcomes) {
+        ratio: function writerRatio(descriptor, scoring, outcomes)
+        {
             addRatioOutcomes(
                 outcomes,
                 descriptor.identifier,
@@ -209,7 +210,8 @@ define([
          * @param {Object} outcomes
          * @param {Array} [categories]
          */
-        total: function writerTotal(descriptor, scoring, outcomes, categories) {
+        total: function writerTotal(descriptor, scoring, outcomes, categories)
+        {
             // create the outcome and the rule that process the overall score
             addTotalScoreOutcomes(outcomes, scoring, descriptor.identifier, false);
             if (descriptor.weighted && scoring.weightIdentifier) {
@@ -246,7 +248,8 @@ define([
          * @param {Object} outcomes
          * @param {Array} [categories]
          */
-        max: function writerMax(descriptor, scoring, outcomes, categories) {
+        max: function writerMax(descriptor, scoring, outcomes, categories)
+        {
             // create the outcome and the rule that process the maximum overall score
             addMaxScoreOutcomes(outcomes, scoring, descriptor.identifier, false);
             if (descriptor.weighted && scoring.weightIdentifier) {
@@ -284,7 +287,8 @@ define([
          * @param {Array} [categories]
          * @returns {Object} outcomes
          */
-        cut: function writerCut(descriptor, scoring, outcomes, categories) {
+        cut: function writerCut(descriptor, scoring, outcomes, categories)
+        {
             var cutScore = scoring.cutScore;
             var totalModeOutcomes = outcomesRecipes.total.outcomes;
             var total = _.find(totalModeOutcomes, { writer: 'total' });
@@ -338,16 +342,19 @@ define([
             return outcomes;
         },
 
-        grade: function writerGrade(descriptor, scoring, outcomes) {
-            addGradeOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
+        grade: function writerGrade(descriptor, scoring, outcomes)
+        {
+            addGradeOutcome(outcomes, descriptor.identifier);
             addGradeOutcomeMapping(outcomes, descriptor.identifier, defaultScoreIdentifier, scoring.scalePresets);
         },
 
-        grade_max: function writerGradeMax(descriptor, scoring, outcomes) {
+        grade_max: function writerGradeMax(descriptor, scoring, outcomes)
+        {
             addGradeMaxOutcome(outcomes, descriptor.identifier, scoring.scalePresets);
         },
 
-        grade_score: function writerGradeScore(descriptor, scoring, outcomes) {
+        grade_score: function writerGradeScore(descriptor, scoring, outcomes)
+        {
             addScoreOutcome(outcomes, descriptor.identifier || defaultScoreIdentifier);
             addGradeScoreProcessing(outcomes, descriptor.identifier || defaultScoreIdentifier, scoring.scalePresets);
         }
@@ -364,7 +371,8 @@ define([
          * @fires modelOverseer#scoring-generate
          * @fires modelOverseer#scoring-write
          */
-        init: function init(modelOverseer) {
+        init: function init(modelOverseer)
+        {
             var model;
 
             if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
@@ -412,7 +420,8 @@ define([
          * @returns {Object}
          * @throws {TypeError} if the modelOverseer is invalid or the processing mode is unknown
          */
-        generate: function generate(modelOverseer) {
+        generate: function generate(modelOverseer)
+        {
             var model, scoring, outcomes, outcomeRecipe, recipes, categories, config;
 
             if (!modelOverseer || !_.isFunction(modelOverseer.getModel)) {
@@ -467,7 +476,8 @@ define([
      * @param {Boolean} [weight]
      * @param {String} [category]
      */
-    function addTotalScoreOutcomes(model, scoring, identifier, weight, category) {
+    function addTotalScoreOutcomes(model, scoring, identifier, weight, category)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var processingRule = processingRuleHelper.setOutcomeValue(
             identifier,
@@ -493,7 +503,8 @@ define([
      * @param {Boolean} [weight]
      * @param {String} [category]
      */
-    function addMaxScoreOutcomes(model, scoring, identifier, weight, category) {
+    function addMaxScoreOutcomes(model, scoring, identifier, weight, category)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var processingRule = processingRuleHelper.setOutcomeValue(
             identifier,
@@ -512,7 +523,8 @@ define([
      * @param {String} identifierTotal
      * @param {String} identifierMax
      */
-    function addRatioOutcomes(model, identifier, identifierTotal, identifierMax) {
+    function addRatioOutcomes(model, identifier, identifierTotal, identifierMax)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.FLOAT);
         var outcomeCondition = processingRuleHelper.outcomeCondition(
             processingRuleHelper.outcomeIf(
@@ -546,7 +558,8 @@ define([
      * @param {String} countIdentifier
      * @param {String|Number} cutScore
      */
-    function addCutScoreOutcomes(model, identifier, scoreIdentifier, countIdentifier, cutScore) {
+    function addCutScoreOutcomes(model, identifier, scoreIdentifier, countIdentifier, cutScore)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
         var processingRule = processingRuleHelper.setOutcomeValue(
             identifier,
@@ -570,7 +583,8 @@ define([
      * @param {String} ratioIdentifier
      * @param {String|Number} cutScore
      */
-    function addGlobalCutScoreOutcomes(model, identifier, ratioIdentifier, cutScore) {
+    function addGlobalCutScoreOutcomes(model, identifier, ratioIdentifier, cutScore)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.BOOLEAN);
         var processingRule = processingRuleHelper.setOutcomeValue(
             identifier,
@@ -592,7 +606,8 @@ define([
      * @param {String} passed
      * @param {String} notPassed
      */
-    function addFeedbackScoreOutcomes(model, identifier, variable, passed, notPassed) {
+    function addFeedbackScoreOutcomes(model, identifier, variable, passed, notPassed)
+    {
         var type = baseTypeHelper.IDENTIFIER;
         var outcome = outcomeHelper.createOutcome(identifier, type);
         var processingRule = processingRuleHelper.outcomeCondition(
@@ -612,8 +627,9 @@ define([
         outcomeHelper.addOutcomeProcessing(model, processingRule);
     }
 
-    function addScoreOutcome(outcomes, identifier) {
-        var hasScoreOutcome = _.some(outcomes.outcomeDeclarations, function(outcomeDeclaration) {
+    function addScoreOutcome(outcomes, identifier)
+    {
+        var hasScoreOutcome = _.some(outcomes.outcomeDeclarations, function (outcomeDeclaration) {
             return outcomeHelper.getOutcomeIdentifier(outcomeDeclaration) === identifier;
         });
 
@@ -626,14 +642,15 @@ define([
         outcomeHelper.addOutcome(outcomes, outcome);
     }
 
-    function removeExistingScoreProcessing(outcomes, scoreIdentifier) {
+    function removeExistingScoreProcessing(outcomes, scoreIdentifier)
+    {
         var outcomeProcessing = outcomes.outcomeProcessing;
 
         if (!outcomeProcessing || !_.isArray(outcomeProcessing.outcomeRules)) {
             return;
         }
 
-        outcomeProcessing.outcomeRules = _.filter(outcomeProcessing.outcomeRules, function(rule) {
+        outcomeProcessing.outcomeRules = _.filter(outcomeProcessing.outcomeRules, function (rule) {
             return !(
                 rule['qti-type'] === 'setOutcomeValue' &&
                 rule.identifier === scoreIdentifier &&
@@ -643,14 +660,15 @@ define([
         });
     }
 
-    function addGradeOutcome(outcomes, identifier, scalePresets) {
+    function addGradeOutcome(outcomes, identifier)
+    {
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.interpretation = getCommonScaleUri(outcomes, scalePresets);
 
         outcomeHelper.addOutcome(outcomes, outcome);
     }
 
-    function addGradeMaxOutcome(outcomes, identifier, scalePresets) {
+    function addGradeMaxOutcome(outcomes, identifier, scalePresets)
+    {
         var commonScaleUri = getCommonScaleUri(outcomes, scalePresets);
         const errorMessage = $('.test-outcome-processing-error[data-key="grade"]');
         if (commonScaleUri === null) {
@@ -660,7 +678,6 @@ define([
 
         errorMessage.addClass('hidden');
         var outcome = outcomeHelper.createOutcome(identifier, baseTypeHelper.STRING);
-        outcome.interpretation = commonScaleUri;
 
         var maxScaleValue = getMaxScaleValue(outcomes, scalePresets);
 
@@ -676,25 +693,27 @@ define([
         outcomeHelper.addOutcome(outcomes, outcome);
     }
 
-    function getCommonScaleUri(outcomes, scalePresets) {
+    function getCommonScaleUri(outcomes, scalePresets)
+    {
         var scaleUris = _.map(scalePresets, 'uri');
 
-        var urlInterpretations = _.chain(outcomes.outcomeDeclarations)
-            .map('interpretation')
-            .filter(function(i) {
-                return typeof i === 'string' && _.includes(scaleUris, i);
+        var scales = _.chain(outcomes.outcomeDeclarations)
+            .map('scale')
+            .filter(function (scale) {
+                return typeof scale === 'string' && _.includes(scaleUris, scale);
             })
             .uniq()
             .value();
 
-        if (urlInterpretations.length !== 1) {
+        if (scales.length !== 1) {
             return null;
         }
 
-        return urlInterpretations[0];
+        return scales[0];
     }
 
-    function getMaxScaleValue(outcomes, scalePresets) {
+    function getMaxScaleValue(outcomes, scalePresets)
+    {
         var scale = _.find(scalePresets, { uri: getCommonScaleUri(outcomes, scalePresets) });
         if (!scale || !scale.values) {
             return null;
@@ -702,8 +721,10 @@ define([
 
         var numericKeys = _.chain(scale.values)
             .keys()
-            .map(function(key) { return Number(key); })
-            .filter(function(value) { return !_.isNaN(value); })
+            .map(function (key) {
+                return Number(key); })
+            .filter(function (value) {
+                return !_.isNaN(value); })
             .value();
 
         if (!numericKeys.length) {
@@ -719,7 +740,8 @@ define([
         return getScaleValueLabel(scale, String(maxKey));
     }
 
-    function getSelectedScale(outcomes, scalePresets) {
+    function getSelectedScale(outcomes, scalePresets)
+    {
         var scaleUri = getCommonScaleUri(outcomes, scalePresets);
         if (!scaleUri) {
             return null;
@@ -728,7 +750,8 @@ define([
         return _.find(scalePresets, { uri: scaleUri }) || null;
     }
 
-    function getScaleValueLabel(scale, key) {
+    function getScaleValueLabel(scale, key)
+    {
         if (!scale || !scale.values) {
             return null;
         }
@@ -742,19 +765,20 @@ define([
         return value;
     }
 
-    function addGradeScoreProcessing(outcomes, scoreIdentifier, scalePresets) {
+    function addGradeScoreProcessing(outcomes, scoreIdentifier, scalePresets)
+    {
         var commonScaleUri = getCommonScaleUri(outcomes, scalePresets)
 
         if (commonScaleUri === null) {
             return;
         }
-        var scaleOrientedOutcomeDeclarations = _.filter(outcomes.outcomeDeclarations, function(outcome) {
-            return outcome.interpretation === commonScaleUri;
+        var scaleOrientedOutcomeDeclarations = _.filter(outcomes.outcomeDeclarations, function (outcome) {
+            return outcome.scale === commonScaleUri;
         });
 
 
         // Create an array of variable expressions for each identifier
-        var scaleVariableExpressions = scaleOrientedOutcomeDeclarations.map(function(outcome) {
+        var scaleVariableExpressions = scaleOrientedOutcomeDeclarations.map(function (outcome) {
             return processingRuleHelper.variable(outcome.identifier);
         });
 
@@ -776,7 +800,8 @@ define([
     }
 
 
-    function addGradeOutcomeMapping(outcomes, gradeIdentifier, scoreIdentifier, scalePresets) {
+    function addGradeOutcomeMapping(outcomes, gradeIdentifier, scoreIdentifier, scalePresets)
+    {
         var scale = getSelectedScale(outcomes, scalePresets);
 
         if (!scale || !scale.values) {
@@ -785,7 +810,7 @@ define([
 
         var entries = _.chain(scale.values)
             .keys()
-            .map(function(key) {
+            .map(function (key) {
                 var numericValue = Number(key);
                 var label = getScaleValueLabel(scale, key);
 
@@ -795,10 +820,10 @@ define([
                     label: label
                 };
             })
-            .filter(function(entry) {
+            .filter(function (entry) {
                 return !_.isNaN(entry.numericValue) && !_.isNil(entry.label) && entry.label !== '';
             })
-            .sortBy(function(entry) {
+            .sortBy(function (entry) {
                 return entry.numericValue;
             })
             .value();
@@ -809,7 +834,7 @@ define([
 
         var nestedCondition = null;
 
-        _.forEachRight(entries, function(entry) {
+        _.forEachRight(entries, function (entry) {
             var baseType = Number.isInteger(entry.numericValue) ? baseTypeHelper.INTEGER : baseTypeHelper.FLOAT;
 
             var outcomeIf = processingRuleHelper.outcomeIf(
@@ -838,7 +863,8 @@ define([
      * @param {String} template
      * @returns {String}
      */
-    function formatCategoryOutcome(category, template) {
+    function formatCategoryOutcome(category, template)
+    {
         return format(template, category.toUpperCase());
     }
 
@@ -849,7 +875,8 @@ define([
      * @param {Boolean} [onlyCategories]
      * @returns {Boolean}
      */
-    function belongToRecipe(identifier, recipe, onlyCategories) {
+    function belongToRecipe(identifier, recipe, onlyCategories)
+    {
         var match = false;
         if (recipe.signature && recipe.signature.test(identifier)) {
             match = true;
@@ -876,12 +903,14 @@ define([
      * @param {Array} categories
      * @returns {Boolean}
      */
-    function matchRecipe(outcomeRecipe, outcomes, categories) {
+    function matchRecipe(outcomeRecipe, outcomes, categories)
+    {
         var signatures = getSignatures(outcomeRecipe);
         var match = true;
 
         // check the outcomes definitions against the provided identifier
-        function matchRecipeOutcome(recipe, identifier) {
+        function matchRecipeOutcome(recipe, identifier)
+        {
             var outcomeMatch = false;
 
             // first level, the signature must match
@@ -963,7 +992,8 @@ define([
      * @param {Object} recipe
      * @returns {Array}
      */
-    function getSignatures(recipe) {
+    function getSignatures(recipe)
+    {
         var signatures = [];
 
         // list the signatures for each processing mode, taking care of includes
@@ -982,7 +1012,8 @@ define([
      * @param {Object} recipe
      * @returns {Array}
      */
-    function getRecipes(recipe) {
+    function getRecipes(recipe)
+    {
         var descriptors = [];
 
         // get the recipes that define the outcomes, include sub-recipes if any
@@ -1002,7 +1033,8 @@ define([
      * @param {Object|String} outcome
      * @returns {Object}
      */
-    function getOutcomesRecipe(outcome) {
+    function getOutcomesRecipe(outcome)
+    {
         var identifier = outcomeHelper.getOutcomeIdentifier(outcome);
         var mode = null;
         _.forEach(outcomesRecipes, function (processingRecipe) {
@@ -1019,7 +1051,8 @@ define([
      * @param {Array} outcomes
      * @returns {Array}
      */
-    function listScoringModes(outcomes) {
+    function listScoringModes(outcomes)
+    {
         var modes = {};
         _.forEach(outcomes, function (outcome) {
             var recipe = getOutcomesRecipe(outcome);
@@ -1031,11 +1064,114 @@ define([
     }
 
     /**
+     * Detects if outcome processing rules structurally match the "grade" mode pattern
+     * Checks for outcomeConditions that set GRADE based on SCORE equality comparisons
+     * Pattern: outcomeCondition > outcomeIf > [equal(variable(SCORE), baseValue)] + [setOutcomeValue(GRADE)]
+     * @param {Array} outcomeRules
+     * @returns {Boolean}
+     */
+    function detectGradeOutcomeRules(outcomeRules)
+    {
+        if (!_.isArray(outcomeRules) || outcomeRules.length === 0) {
+            return false;
+        }
+
+        var hasGradePattern = false;
+
+        function browseRules(rules)
+        {
+            if (!_.isArray(rules)) {
+                return;
+            }
+
+            _.forEach(rules, function (rule) {
+                // Check for the grade pattern: outcomeCondition with SCORE comparison and GRADE setter
+                if (rule['qti-type'] === 'outcomeCondition' && rule.outcomeIf) {
+                    var outcomeIf = rule.outcomeIf;
+                    var hasScoreVariable = false;
+                    var hasGradeSetter = false;
+
+                    // Check if expression contains SCORE variable
+                    if (outcomeIf.expression) {
+                        var expressions = outcomeIf.expression.expressions;
+                        if (_.isArray(expressions)) {
+                            _.forEach(expressions, function (expr) {
+                                if (expr['qti-type'] === 'variable' && expr.identifier === 'SCORE') {
+                                    hasScoreVariable = true;
+                                }
+                            });
+                        }
+                    }
+
+                    // Check if outcomeIf contains setOutcomeValue for GRADE
+                    if (outcomeIf['qti-type'] === 'outcomeIf') {
+                        // Collect all rules from outcomeIf
+                        var outcomeIfRules = [];
+                        if (outcomeIf.outcomeRules && _.isArray(outcomeIf.outcomeRules)) {
+                            outcomeIfRules = outcomeIfRules.concat(outcomeIf.outcomeRules);
+                        }
+
+                        _.forEach(outcomeIfRules, function (ifRule) {
+                            if (ifRule['qti-type'] === 'setOutcomeValue' && ifRule.identifier === 'GRADE') {
+                                hasGradeSetter = true;
+                            }
+                        });
+                    }
+
+                    // If this condition has both patterns, we found a match
+                    if (hasScoreVariable && hasGradeSetter) {
+                        hasGradePattern = true;
+                    }
+
+                    // Recursively check nested conditions in outcomeElse
+                    if (rule.outcomeElse && rule.outcomeElse.outcomeRules) {
+                        browseRules(rule.outcomeElse.outcomeRules);
+                    }
+                    if (rule.outcomeElseIfs && _.isArray(rule.outcomeElseIfs)) {
+                        _.forEach(rule.outcomeElseIfs, function (elseIf) {
+                            if (elseIf.outcomeRules) {
+                                browseRules(elseIf.outcomeRules);
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        browseRules(outcomeRules);
+
+        // Grade pattern is detected when we find at least one matching condition
+        return hasGradePattern;
+    }
+
+    /**
+     * Detects scoring modes from outcome processing rules
+     * Uses pattern detection to identify grade mode from nested outcomeConditions
+     * @param {Array} outcomeRules
+     * @returns {Array}
+     */
+    function detectProcessingModes(outcomeRules)
+    {
+        var modes = [];
+
+        // Check if outcome rules contain grade pattern
+        if (_.isArray(outcomeRules) && outcomeRules.length > 0) {
+            var firstItem = outcomeRules[0];
+            if (firstItem['qti-type'] === 'outcomeCondition' && detectGradeOutcomeRules(outcomeRules)) {
+                modes.push('grade');
+            }
+        }
+
+        return modes;
+    }
+
+    /**
      * Checks whether the categories have to be taken into account
      * @param {modelOverseer} modelOverseer
      * @returns {Boolean}
      */
-    function handleCategories(modelOverseer) {
+    function handleCategories(modelOverseer)
+    {
         var model = modelOverseer.getModel();
         return !!(model.scoring && model.scoring.categoryScore);
     }
@@ -1045,7 +1181,8 @@ define([
      * @param {Object} model
      * @returns {Boolean}
      */
-    function hasCategoryOutcome(model) {
+    function hasCategoryOutcome(model)
+    {
         var categoryOutcomes = false;
         _.forEach(outcomeHelper.getOutcomeDeclarations(model), function (outcomeDeclaration) {
             var identifier = outcomeHelper.getOutcomeIdentifier(outcomeDeclaration);
@@ -1064,7 +1201,8 @@ define([
      * @param {Object} model
      * @returns {Number}
      */
-    function getCutScore(model) {
+    function getCutScore(model)
+    {
         var values = _(outcomeHelper.getOutcomeProcessingRules(model))
             .map(function (outcome) {
                 return outcomeHelper.getProcessingRuleProperty(outcome, 'setOutcomeValue.gte.baseValue.value');
@@ -1083,7 +1221,8 @@ define([
      * @param {Object} model
      * @returns {String}
      */
-    function getWeightIdentifier(model) {
+    function getWeightIdentifier(model)
+    {
         var values = [];
         outcomeHelper.eachOutcomeProcessingRuleExpressions(model, function (processingRule) {
             if (processingRule['qti-type'] === 'testVariables' && processingRule.weightIdentifier) {
@@ -1100,14 +1239,20 @@ define([
      * @param {modelOverseer} modelOverseer
      * @returns {String}
      */
-    function getOutcomeProcessing(modelOverseer) {
+    function getOutcomeProcessing(modelOverseer)
+    {
         var model = modelOverseer.getModel();
         var outcomeDeclarations = outcomeHelper.getOutcomeDeclarations(model);
         var outcomeRules = outcomeHelper.getOutcomeProcessingRules(model);
 
         // walk through each outcome declaration, and tries to identify the score processing mode
         var declarations = listScoringModes(outcomeDeclarations);
-        var processing = listScoringModes(outcomeRules);
+        // Detect recipe using listScoringModes and map outcomeRules to recipes
+        var processing = _.union(
+            listScoringModes(outcomeRules),
+            detectProcessingModes(outcomeRules)
+        );
+
         var diff = _.difference(declarations, processing);
         var count = _.size(declarations);
         var included;
@@ -1159,11 +1304,12 @@ define([
      * @param {modelOverseer} modelOverseer
      * @returns {Object}
      */
-    function detectScoring(modelOverseer) {
+    function detectScoring(modelOverseer)
+    {
         var model = modelOverseer.getModel();
         var config = modelOverseer.getConfig();
         let modes = processingModes;
-        if(!features.isVisible('taoQtiTest/creator/test/property/scoring/custom')) {
+        if (!features.isVisible('taoQtiTest/creator/test/property/scoring/custom')) {
             delete modes.custom;
         }
         if (!config.scalePresets || !Array.isArray(config.scalePresets) || config.scalePresets.length === 0) {
@@ -1183,7 +1329,8 @@ define([
      * Removes all scoring outcomes
      * @param {Object} model
      */
-    function removeScoring(model) {
+    function removeScoring(model)
+    {
         var scoringOutcomes = _.keyBy(outcomeHelper.listOutcomes(model, getOutcomesRecipe), function (outcome) {
             return outcome;
         });
@@ -1191,7 +1338,8 @@ define([
         outcomeHelper.removeOutcomes(model, function (outcome) {
             var match = false;
 
-            function browseExpressions(processingRule) {
+            function browseExpressions(processingRule)
+            {
                 if (_.isArray(processingRule)) {
                     _.forEach(processingRule, browseExpressions);
                 } else if (processingRule) {
@@ -1231,7 +1379,8 @@ define([
      * @param {Object} model
      * @returns {Object}
      */
-    function getOutcomes(model) {
+    function getOutcomes(model)
+    {
         return {
             outcomeDeclarations: [].concat(outcomeHelper.getOutcomeDeclarations(model)),
             outcomeProcessing: {

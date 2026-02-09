@@ -13,9 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA;
  */
 
 use oat\generis\model\data\event\ResourceCreated;
@@ -50,6 +50,7 @@ use oat\taoQtiTest\models\classes\event\TestImportedEvent;
 use oat\taoQtiTest\models\metadata\MetadataTestContextAware;
 use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
 use oat\taoQtiTest\models\Qti\Converter\TestConverter;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
 use oat\taoTests\models\event\TestUpdatedEvent;
@@ -113,6 +114,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     public const XML_ASSESSMENT_ITEM_REF = 'assessmentItemRef';
 
     private const IN_PROGRESS_LABEL = 'in progress';
+    private const SCALE_DIRECTORY_PATH = 'scales';
+    private const DIR_TAO_QTI_TEST = 'dir://taoQtiTest/';
 
     /**
      * @var MetadataImporter Service to manage Lom metadata during package import
@@ -605,7 +608,6 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         $modelProperty = $this->getProperty(TestService::PROPERTY_TEST_TESTMODEL);
         $testResource->editPropertyValues($modelProperty, $qtiTestModelResource);
 
-        // Setting qtiIdentifier property
         $qtiIdentifierProperty = $this->getProperty(self::PROPERTY_QTI_TEST_IDENTIFIER);
         $testResource->editPropertyValues($qtiIdentifierProperty, $qtiTestResourceIdentifier);
 
@@ -789,9 +791,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                         } else {
                                             if (!$itemReport->getMessage()) {
                                                 $itemReport->setMessage(
-                                                    // phpcs:disable Generic.Files.LineLength
+                                                // phpcs:disable Generic.Files.LineLength
                                                     __('IMS QTI Item referenced as "%s" in the IMS Manifest file could not be imported.', $resourceIdentifier)
-                                                    // phpcs:enable Generic.Files.LineLength
+                                                // phpcs:enable Generic.Files.LineLength
                                                 );
                                             }
 
@@ -813,7 +815,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                             common_report_Report::TYPE_SUCCESS,
                                             // phpcs:disable Generic.Files.LineLength
                                             __('IMS QTI Item referenced as "%s" in the IMS Manifest file successfully imported.', $resourceIdentifier)
-                                            // phpcs:enable Generic.Files.LineLength
+                                        // phpcs:enable Generic.Files.LineLength
                                         )
                                     );
                                 }
@@ -843,9 +845,12 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                             $report
                         );
 
+                        $scaleAuxiliaryFiles = $this->extractScaleAuxiliaryFiles($qtiTestResource);
+
                         if ($testContent !== false) {
                             // 2. Import test auxilliary files (e.g. stylesheets, images, ...).
                             $this->importTestAuxiliaryFiles($testContent, $qtiTestResource, $folder, $report);
+                            $this->storeTestScaleFiles($testContent, $scaleAuxiliaryFiles, $folder, $report);
 
                             // 3. Give meaningful names to resources.
                             $testResource->setLabel($packageLabel ?? $testLabel);
@@ -934,7 +939,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                         common_report_Report::TYPE_ERROR,
                         // phpcs:disable Generic.Files.LineLength
                         __("Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint.", implode(', ', $e->getInvalidItemIdentifiers()))
-                        // phpcs:enable Generic.Files.LineLength
+                    // phpcs:enable Generic.Files.LineLength
                     )
                 );
             }
@@ -1087,6 +1092,112 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Copy scale files referenced by the test into the destination test content directory.
+     *
+     * @param Directory $testContent Target directory for the imported test content
+     * @param string[] $scaleFiles Relative paths of scale files inside the extraction folder
+     * @param string $extractionFolder Folder where the package was extracted
+     * @param common_report_Report $report Report instance used to log warnings
+     * @return void
+     */
+    protected function storeTestScaleFiles(
+        Directory $testContent,
+        array $scaleFiles,
+        string $extractionFolder,
+        common_report_Report $report
+    ): void {
+        if (empty($scaleFiles)) {
+            return;
+        }
+
+        try {
+            $this->getScaleStorageService()->storeScaleFiles($testContent, $scaleFiles, $extractionFolder);
+        } catch (Throwable $exception) {
+            $report->add(
+                new common_report_Report(
+                    common_report_Report::TYPE_WARNING,
+                    __('Scale files could not be stored: %s', $exception->getMessage())
+                )
+            );
+        }
+    }
+
+    /**
+     * Extract scale related auxiliary files from the manifest resource while keeping other entries intact.
+     * Modifies the provided resource by removing scale-related entries from its auxiliary file list.
+     *
+     * @param Resource $qtiResource The manifest resource to inspect and update
+     * @return string[]
+     */
+    private function extractScaleAuxiliaryFiles(Resource $qtiResource): array
+    {
+        $auxiliaryFiles = $qtiResource->getAuxiliaryFiles();
+
+        if (!is_array($auxiliaryFiles) || $auxiliaryFiles === []) {
+            return [];
+        }
+
+        $scaleFiles = [];
+        $regularFiles = [];
+
+        foreach ($auxiliaryFiles as $filePath) {
+            if (!is_string($filePath) || $filePath === '') {
+                continue;
+            }
+
+            $normalized = $this->normalizeAuxiliaryPath($filePath);
+
+            if ($this->isScaleAuxiliaryPath($normalized)) {
+                $scaleFiles[] = $filePath;
+                continue;
+            }
+
+            $regularFiles[] = $filePath;
+        }
+
+        if ($regularFiles !== $auxiliaryFiles) {
+            $qtiResource->setAuxiliaryFiles($regularFiles);
+        }
+
+        return $scaleFiles;
+    }
+
+    private function normalizeAuxiliaryPath(string $path): string
+    {
+        $normalized = str_replace('\\', '/', $path);
+        $normalized = preg_replace('#/+#', '/', $normalized);
+
+        return $normalized === null ? $path : $normalized;
+    }
+
+    /**
+     * Determine whether a normalized path references the test-level scales directory.
+     *
+     * @param string $path Normalized auxiliary file path
+     * @return bool
+     */
+    private function isScaleAuxiliaryPath(string $path): bool
+    {
+        $trimmed = ltrim($path, '/');
+
+        if ($trimmed === 'scales') {
+            return true;
+        }
+
+        return strpos($trimmed, 'scales/') === 0;
+    }
+
+    /**
+     * Retrieve the scale storage service from the locator.
+     *
+     * @return ScaleStorageService
+     */
+    private function getScaleStorageService(): ScaleStorageService
+    {
+        return $this->getServiceLocator()->get(ScaleStorageService::class);
+    }
+
+    /**
      * Get the File object corresponding to the location
      * of the test content (a directory!) on the file system.
      *
@@ -1131,8 +1242,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * Get the path of the QTI XML test definition of a given $test resource.
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      * @return string The absolute path to the QTI XML Test definition related to $test.
+     * @throws Exception If no QTI-XML or multiple QTI-XML test definition were found.
      */
     public function getDocPath(core_kernel_classes_Resource $test)
     {
@@ -1268,8 +1379,8 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
      * If it doesn't exist, it will be created
      *
      * @param core_kernel_classes_Resource $test
-     * @throws \Exception If file is not found.
      * @return File
+     * @throws \Exception If file is not found.
      */
     public function getQtiTestFile(core_kernel_classes_Resource $test)
     {
@@ -1285,10 +1396,45 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     }
 
     /**
+     * Get outcome declaration scales for a test
+     *
+     * Reads and parses scale JSON files from the test scales directory.
+     *
+     * @param core_kernel_classes_Resource $test The test resource
+     * @return array Associative array of scale data keyed by file path (scales/filename.json)
+     * @throws taoQtiTest_models_classes_QtiTestServiceException If directory traversal fails
+     */
+    public function getTestOutcomeDeclarationScales(core_kernel_classes_Resource $test): array
+    {
+        $testFile = $this->getQtiTestFile($test);
+        $dir = $this->getFileReferenceSerializer()->unserialize(
+            self::DIR_TAO_QTI_TEST
+            . str_replace($testFile->getBasename(), '', $testFile->getPrefix())
+        );
+        $scales = [];
+        $scaleDir = $dir->getDirectory(self::SCALE_DIRECTORY_PATH);
+        // Imported tests may have different structure
+        if (!$scaleDir->exists()) {
+            return $scales;
+        }
+
+        foreach ($scaleDir->getIterator() as $file) {
+            if ($file->getMimeType() === 'application/json') {
+                $content = $file->read();
+                $scale = json_decode($content, true);
+                if (json_last_error() === JSON_ERROR_NONE) {
+                    $scales[sprintf('%s/%s', self::SCALE_DIRECTORY_PATH, $file->getBasename())] = $scale;
+                }
+            }
+        }
+        return $scales;
+    }
+
+    /**
      *
      * @param core_kernel_classes_Resource $test
-     * @throws Exception
      * @return string
+     * @throws Exception
      */
     public function getRelTestPath(core_kernel_classes_Resource $test)
     {
@@ -1451,11 +1597,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
 
     /**
      *
+     * @return string|boolean The QTI Test template file content or false if it could not be read.
      * @deprecated
      *
      * Get the content of the QTI Test template file as an XML string.
      *
-     * @return string|boolean The QTI Test template file content or false if it could not be read.
      */
     public function getQtiTestTemplateFileAsString()
     {
@@ -1660,7 +1806,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             return;
         }
 
-        $uniqueId = (string) $test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
+        $uniqueId = (string)$test->getOnePropertyValue($this->getProperty(TaoOntology::PROPERTY_UNIQUE_IDENTIFIER));
         $decodedJson = json_decode($json, true);
 
         if (!empty($uniqueId) && $uniqueId !== $decodedJson['identifier']) {

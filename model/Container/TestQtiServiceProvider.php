@@ -13,9 +13,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2021-2024 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2021-2025 (original work) Open Assessment Technologies SA;
  */
 
 declare(strict_types=1);
@@ -30,6 +30,8 @@ use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
+use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
+use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\model\Domain\Model\ItemResponseRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\QtiTestRepositoryInterface;
 use oat\taoQtiTest\model\Domain\Model\ToolsStateRepositoryInterface;
@@ -48,12 +50,15 @@ use oat\taoQtiTest\model\Service\PluginManagerService;
 use oat\taoQtiTest\model\Service\SkipService;
 use oat\taoQtiTest\model\Service\StoreTraceVariablesService;
 use oat\taoQtiTest\model\Service\TimeoutService;
+use oat\taoQtiTest\models\classes\scale\ScaleHandler;
+use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\runner\QtiRunnerService;
 use oat\taoQtiTest\models\runner\time\TimerAdjustmentServiceInterface;
 use oat\taoQtiTest\models\TestModelService;
 use oat\taoQtiTest\models\TestSessionService;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use common_ext_ExtensionsManager as ExtensionsManager;
+use taoQtiTest_models_classes_QtiTestService as QtiTestService;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
@@ -208,5 +213,19 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
                     service(ChoiceResponseValidationStrategy::class)
                 ]
             );
+
+        $services->set(ScaleHandler::class)
+            ->args(
+                [
+                    service(QtiTestService::class),
+                    service(ScalePreprocessor::class),
+                    service(RemoteScaleListService::class)
+                ]
+            )
+            ->public();
+
+        $services
+            ->set(ScaleStorageService::class, ScaleStorageService::class)
+            ->public();
     }
 }

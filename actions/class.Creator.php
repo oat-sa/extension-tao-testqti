@@ -13,15 +13,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2013-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 use oat\generis\model\OntologyAwareTrait;
 use oat\taoBackOffice\model\lists\ListService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
+use oat\taoQtiTest\models\classes\scale\ScaleHandler;
 use oat\taoQtiTest\models\TestCategoryPresetProvider;
 use oat\taoQtiTest\models\TestModelService;
 use oat\generis\model\data\event\ResourceUpdated;
@@ -98,6 +99,16 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
                 'scalesPresets',
                 $this->getScalePresets()
             );
+            $this->setData(
+                'testScales',
+                json_encode(
+                    $testModel->getScales(
+                        new core_kernel_classes_Resource(
+                            tao_helpers_Uri::decode($testUri)
+                        )
+                    )
+                )
+            );
         } else {
             $this->setData('scalesPresets', json_encode([]));
             $this->setData('testScales', json_encode([]));
@@ -136,11 +147,11 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         if ($this->isRequestPost() && $this->getRequest()->accept('application/json')) {
             if ($this->hasRequestParameter('model')) {
                 $parameters = $this->getRequest()->getRawParameters();
-
                 $test = $this->getCurrentTest();
+                $parameters['model'] = $this->getScaleHandler()->handle($parameters['model'], $test);
                 $qtiTestService = taoQtiTest_models_classes_QtiTestService::singleton();
 
-                $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
+                 $saved = $qtiTestService->saveJsonTest($test, $parameters['model']);
 
                 $eventManager = $this->getServiceManager()->get(EventManager::SERVICE_ID);
                 $eventManager->trigger(new ResourceUpdated($test));
@@ -274,5 +285,10 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     private function getScaleProcessor(): ScalePreprocessor
     {
         return $this->getServiceManager()->getContainer()->get(ScalePreprocessor::class);
+    }
+
+    private function getScaleHandler(): ScaleHandler
+    {
+        return $this->getServiceManager()->getContainer()->get(ScaleHandler::class);
     }
 }

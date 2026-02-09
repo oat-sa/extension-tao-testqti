@@ -25,7 +25,6 @@ use DOMDocument;
 use InvalidArgumentException;
 use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
-use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport as MetadataTestPackageExport;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\Directory;
@@ -115,9 +114,29 @@ class QtiTestUtils extends ConfigurableService
                 );
             }
 
-            $fh = fopen($sourcePath, 'r');
+            $fh = @fopen($sourcePath, 'r');
+            if ($fh === false) {
+                $scheme = (string) (parse_url($sourcePath, PHP_URL_SCHEME) ?: 'file');
+                $wrappers = implode(',', stream_get_wrappers());
+                $lastError = error_get_last();
+                $errorMessage = $lastError['message'] ?? 'unknown error';
+
+                throw new \common_Exception(
+                    sprintf(
+                        "Unable to open QTI resource '%s' for reading (scheme: %s, wrappers: %s, error: %s).",
+                        $sourcePath,
+                        $scheme,
+                        $wrappers,
+                        $errorMessage
+                    )
+                );
+            }
+
             $success = $fs->writeStream($finalPath, $fh);
-            fclose($fh);
+
+            if (is_resource($fh)) {
+                fclose($fh);
+            }
 
             if (!$success) {
                 throw new \common_Exception(
