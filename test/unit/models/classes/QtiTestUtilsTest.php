@@ -108,7 +108,11 @@ class QtiTestUtilsTest extends TestCase
 
         try {
             $filePath = 'subdir/test-file.txt';
-            $expectedPath = self::TEST_CONTENT_PATH . DIRECTORY_SEPARATOR . 'subdir' . DIRECTORY_SEPARATOR . 'test-file.txt';
+            $expectedPath = self::TEST_CONTENT_PATH
+                . DIRECTORY_SEPARATOR
+                . 'subdir'
+                . DIRECTORY_SEPARATOR
+                . 'test-file.txt';
 
             $this->configureFileSystemMock(true);
             $testContent = $this->createDirectoryMock();
@@ -168,7 +172,9 @@ class QtiTestUtilsTest extends TestCase
         $origin = sys_get_temp_dir();
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object.");
+        $this->expectExceptionMessage(
+            "The 'qtiResource' argument must be a string or a taoQTI_models_classes_QTI_Resource object."
+        );
 
         $this->sut->storeQtiResource($testContent, 123, $origin);
     }
