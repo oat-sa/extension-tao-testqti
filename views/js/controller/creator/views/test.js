@@ -242,6 +242,12 @@ define([
             });
 
             $addOutcomeDeclaration.on(`click${_ns}`, () => {
+                if (testModel.outcomeDeclarations.some(outcome =>
+                    !outcomeValidator.validateIdentifier(outcome.identifier)
+                )) {
+                    return; // block adding a new if any existing is invalid
+                }
+
                 // Generate a unique identifier for the new outcome
                 let outcomeCount = testModel.outcomeDeclarations ? testModel.outcomeDeclarations.length : 0;
                 let newOutcomeIdentifier;
