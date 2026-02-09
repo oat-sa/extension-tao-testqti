@@ -45,6 +45,9 @@ class QtiTestUtilsTest extends TestCase
     private QtiTestUtils $sut;
     private FileSystemService|MockObject $fileSystemServiceMock;
 
+    /**
+     * @return void
+     */
     public function setUp(): void
     {
         $this->fileSystemServiceMock = $this->createMock(FileSystemService::class);
@@ -56,6 +59,9 @@ class QtiTestUtilsTest extends TestCase
     // Tests for storeQtiResource()
     // ========================================
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceWithStringPath(): void
     {
         $tempFile = $this->createTempFile('test-content');
@@ -75,6 +81,9 @@ class QtiTestUtilsTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceWithResourceObject(): void
     {
         $tempFile = $this->createTempFile('test-content');
@@ -97,6 +106,9 @@ class QtiTestUtilsTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceWithSubdirectory(): void
     {
         $tempDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'qti-test-' . uniqid();
@@ -127,6 +139,9 @@ class QtiTestUtilsTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceWithRename(): void
     {
         $tempFile = $this->createTempFile('test-content');
@@ -147,6 +162,9 @@ class QtiTestUtilsTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceWithoutCopying(): void
     {
         $tempFile = $this->createTempFile('test-content');
@@ -166,6 +184,9 @@ class QtiTestUtilsTest extends TestCase
         }
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceThrowsOnInvalidResourceType(): void
     {
         $testContent = $this->createDirectoryMock();
@@ -179,6 +200,9 @@ class QtiTestUtilsTest extends TestCase
         $this->sut->storeQtiResource($testContent, 123, $origin);
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceThrowsOnUnreadableFile(): void
     {
         $origin = sys_get_temp_dir();
@@ -193,6 +217,9 @@ class QtiTestUtilsTest extends TestCase
         $this->sut->storeQtiResource($testContent, $filePath, $origin);
     }
 
+    /**
+     * @return void
+     */
     public function testStoreQtiResourceThrowsWhenWriteStreamFails(): void
     {
         $tempFile = $this->createTempFile('test-content');
