@@ -25,7 +25,6 @@ use DOMDocument;
 use InvalidArgumentException;
 use oat\generis\Helper\SystemHelper;
 use oat\taoQtiItem\model\qti\Resource;
-use oat\taoQtiTest\models\export\Formats\Metadata\TestPackageExport as MetadataTestPackageExport;
 use qtism\data\storage\xml\XmlDocument;
 use oat\oatbox\filesystem\FileSystemService;
 use oat\oatbox\filesystem\Directory;
