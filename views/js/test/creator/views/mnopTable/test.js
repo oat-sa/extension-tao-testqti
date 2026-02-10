@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2025-2026 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
  */
 
 /**
@@ -768,8 +768,8 @@ define([
         assert.ok(bindEventsCalled, 'bindEvents() should be called during init');
     });
 
-    QUnit.test('bindEvents() subscribes to setmodel, scoring-write and branch-rules-change events', function(assert) {
-        assert.expect(3);
+    QUnit.test('bindEvents() subscribes to setmodel and scoring-write events', function(assert) {
+        assert.expect(2);
 
         var eventsSubscribed = [];
 
@@ -782,7 +782,6 @@ define([
 
         assert.ok(eventsSubscribed.indexOf('setmodel') !== -1, 'Should subscribe to setmodel event');
         assert.ok(eventsSubscribed.indexOf('scoring-write') !== -1, 'Should subscribe to scoring-write event');
-        assert.ok(eventsSubscribed.indexOf('branch-rules-change') !== -1, 'Should subscribe to branch-rules-change event');
     });
 
     QUnit.test('bindEvents() creates debounced update handler', function(assert) {

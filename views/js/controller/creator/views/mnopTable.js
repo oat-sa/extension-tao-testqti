@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2025-2026 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
  */
 
 /**
@@ -69,7 +69,7 @@ define([
                     });
                 };
 
-                this._reinitEvents = ['scoring-write', 'setmodel', 'change', 'branch-rules-change'];
+                this._reinitEvents = ['scoring-write', 'setmodel', 'change'];
 
                 this._updateHandler = _.debounce(updateWithInit, 300);
 
@@ -146,9 +146,10 @@ define([
              */
             _shouldShow: function() {
                 var testModel = modelOverseer.getModel();
+                var testMeta = testModel.testMeta || {};
                 var scoring = testModel.scoring || {};
 
-                return mnopVisibility.shouldShowMNOP(scoring, testModel);
+                return mnopVisibility.shouldShowMNOP(scoring, testMeta);
             },
 
             /**
@@ -157,8 +158,9 @@ define([
              */
             _renderHiddenMessage: function() {
                 var testModel = modelOverseer.getModel();
+                var testMeta = testModel.testMeta || {};
                 var scoring = testModel.scoring || {};
-                var reason = mnopVisibility.getHiddenReason(scoring, testModel);
+                var reason = mnopVisibility.getHiddenReason(scoring, testMeta);
 
                 if (reason) {
                     $container.html(

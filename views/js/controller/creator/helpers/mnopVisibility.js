@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
- * Copyright (c) 2025-2026 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
  */
 
 /**
@@ -25,22 +25,9 @@
  * @author Open Assessment Technologies SA
  */
 define([
-    'lodash',
     'i18n'
-], function(_, __) {
+], function(__) {
     'use strict';
-
-    /**
-     * Check if any test part in the model currently has branch rules.
-     *
-     * @param {Object} testModel - The full test model
-     * @returns {Boolean}
-     */
-    function hasBranchRulesInModel(testModel) {
-        return _.some(testModel && testModel.testParts, function(tp) {
-            return tp && Array.isArray(tp.branchRules) && tp.branchRules.length > 0;
-        });
-    }
 
     /**
      * MNOP visibility gating helper
@@ -69,11 +56,11 @@ define([
          *    - Unlike branch rules, preconditions don't create conditional item visibility
          *
          * @param {Object} scoring - Scoring configuration {outcomeProcessing: 'total'|'cut'|'none'|'custom'|'grade', ...}
-         * @param {Object} testModel - The full test model (used to check live branch rules state)
+         * @param {Object} testMeta - Test metadata {branchRules: boolean, preConditions: boolean, ...}
          * @returns {Boolean} - true if MNOP should be shown, false otherwise
          */
-        shouldShowMNOP: function(scoring, testModel) {
-            if (!scoring) {
+        shouldShowMNOP: function(scoring, testMeta) {
+            if (!scoring || !testMeta) {
                 return false;
             }
 
@@ -88,22 +75,22 @@ define([
                 return false;
             }
 
-            return !hasBranchRulesInModel(testModel);
+            return testMeta.branchRules !== true;
         },
 
         /**
          * Get visibility reason (for debugging/tooltips)
          *
          * @param {Object} scoring
-         * @param {Object} testModel - The full test model
+         * @param {Object} testMeta
          * @returns {String} - Reason why MNOP is hidden, or empty if visible
          */
-        getHiddenReason: function(scoring, testModel) {
-            if (this.shouldShowMNOP(scoring, testModel)) {
+        getHiddenReason: function(scoring, testMeta) {
+            if (this.shouldShowMNOP(scoring, testMeta)) {
                 return '';
             }
 
-            if (!scoring) {
+            if (!scoring || !testMeta) {
                 return __('MNOP is not available for this test configuration.');
             }
 
@@ -113,7 +100,7 @@ define([
                 return __('MNOP requires Outcome processing set to Total score or Cut score.');
             }
 
-            if (hasBranchRulesInModel(testModel)) {
+            if (testMeta.branchRules === true) {
                 return __('MNOP is not available when branch rules are present.');
             }
 
