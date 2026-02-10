@@ -158,6 +158,7 @@ define([
                 });
 
                 renderBranchRules(view);
+                modelOverseer.trigger('branch-rules-change');
             });
 
             // delete rule
@@ -166,6 +167,7 @@ define([
                 if (!Number.isNaN(i)) {
                     partModel.branchRules.splice(i, 1);
                     renderBranchRules(view);
+                    modelOverseer.trigger('branch-rules-change');
                 }
             });
 
