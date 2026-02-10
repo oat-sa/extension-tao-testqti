@@ -28,6 +28,18 @@
                    type="text"
                    data-validate="$isValidUrl;">
         </div>
+        <div class="panel scale-selector hidden">
+            <label for="scale" class="has-icon">{{__ "Scale"}}</label>
+            <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">{{__ "Select or enter a scale for this outcome."}}</div>
+            <input name="scale" value="" type="text">
+        </div>
+        <div class="panel rubric hidden">
+            <label for="rubric" class="has-icon">{{__ "Scoring Rubric"}}</label>
+            <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>
+            <div class="tooltip-content">{{__ "Enter rubric content for this outcome scale."}}</div>
+            <input name="rubric" value="" type="text">
+        </div>
         <div class="panel externalscored">
             <label for="externalScored" class="has-icon">{{__ "External Scored"}}</label>
             <span class="icon-help" data-tooltip="~ .tooltip-content:first" data-tooltip-theme="info"></span>

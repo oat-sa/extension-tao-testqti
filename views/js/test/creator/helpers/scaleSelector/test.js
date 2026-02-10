@@ -20,22 +20,24 @@ define([
     'lodash',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/helpers/scaleSynchronizationManager'
-], function($, _, scaleSelectorFactory, syncManager) {
+], function ($, _, scaleSelectorFactory, syncManager) {
     'use strict';
 
     QUnit.module('helpers/scaleSelector', {
-        beforeEach: function() {
+        beforeEach: function () {
             syncManager.reset();
         }
     });
 
-    function createMockContainer() {
-        const $input = $('<input name="interpretation" />');
+    function createMockContainer()
+    {
+        const $input = $('<input name="scale" />');
         const $container = $('<div></div>').append($input);
 
         let testValue = '';
+        let changeHandlers = [];
 
-        $input.val = function(value) {
+        $input.val = function (value) {
             if (arguments.length > 0) {
                 testValue = value === '' ? '' : value;
                 return this;
@@ -43,28 +45,54 @@ define([
             return testValue;
         };
 
-        $input.trigger = function() { return this; };
-        $input.find = function() { return $(); };
-        $input.append = function() { return this; };
-        $input.select2 = function() { return this; };
-        $input.hasClass = function() { return false; };
-        $input.removeClass = function() { return this; };
-        $input.next = function() { return $(); };
-        $input.off = function() { return this; };
-        $input.on = function() { return this; };
-        $input.empty = function() { return this; };
-        $input.data = function() { return null; };
+        $input.trigger = function (eventName) {
+            if (eventName === 'change' || eventName === 'change.scaleSync') {
+                changeHandlers.forEach(function (handler) {
+                    handler.call($input[0]);
+                });
+            }
+            return this;
+        };
+
+        $input.find = function () {
+            return $(); };
+        $input.append = function () {
+            return this; };
+        $input.select2 = function () {
+            return this; };
+        $input.hasClass = function () {
+            return false; };
+        $input.removeClass = function () {
+            return this; };
+        $input.next = function () {
+            return $(); };
+        $input.off = function (eventName) {
+            if (eventName === 'change.scaleSync') {
+                changeHandlers = [];
+            }
+            return this;
+        };
+        $input.on = function (eventName, handler) {
+            if (eventName === 'change.scaleSync') {
+                changeHandlers.push(handler);
+            }
+            return this;
+        };
+        $input.empty = function () {
+            return this; };
+        $input.data = function () {
+            return null; };
         $input.length = 1;
 
         return $container;
     }
 
-    QUnit.test('module', function(assert) {
+    QUnit.test('module', function (assert) {
         assert.expect(1);
         assert.equal(typeof scaleSelectorFactory, 'function', 'The scaleSelector helper module exposes a function');
     });
 
-    QUnit.test('API methods exist', function(assert) {
+    QUnit.test('API methods exist', function (assert) {
         const $container = createMockContainer();
         const scaleSelector = scaleSelectorFactory($container, 'test-outcome-1');
 
@@ -76,13 +104,16 @@ define([
 
         assert.expect(expectedMethods.length);
 
-        expectedMethods.forEach(function(method) {
-            assert.equal(typeof scaleSelector[method], 'function',
-                'The scaleSelector instance exposes a "' + method + '" function');
+        expectedMethods.forEach(function (method) {
+            assert.equal(
+                typeof scaleSelector[method],
+                'function',
+                'The scaleSelector instance exposes a "' + method + '" function'
+            );
         });
     });
 
-    QUnit.test('setTestId() - sets test ID', function(assert) {
+    QUnit.test('setTestId() - sets test ID', function (assert) {
         assert.expect(2);
 
         assert.equal(typeof scaleSelectorFactory.setTestId, 'function', 'setTestId method exists');
@@ -91,19 +122,19 @@ define([
         assert.equal(scaleSelectorFactory.getTestId(), 'test-123', 'Test ID set correctly');
     });
 
-    QUnit.test('setTestId() - requires testId parameter', function(assert) {
+    QUnit.test('setTestId() - requires testId parameter', function (assert) {
         assert.expect(2);
 
-        assert.throws(function() {
+        assert.throws(function () {
             scaleSelectorFactory.setTestId();
         }, 'Throws error when testId is missing');
 
-        assert.throws(function() {
+        assert.throws(function () {
             scaleSelectorFactory.setTestId(null);
         }, 'Throws error when testId is null');
     });
 
-    QUnit.test('initialize() - sets both presets and testId', function(assert) {
+    QUnit.test('initialize() - sets both presets and testId', function (assert) {
         assert.expect(3);
 
         const testPresets = [
@@ -118,7 +149,7 @@ define([
         assert.ok(syncManager.isPredefinedScale("https://test.com/2"), 'Sync manager recognizes second preset');
     });
 
-    QUnit.test('setPresets() - works with existing testId', function(assert) {
+    QUnit.test('setPresets() - works with existing testId', function (assert) {
         assert.expect(2);
 
         scaleSelectorFactory.setTestId('test-123');
@@ -133,7 +164,7 @@ define([
         assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager has correct test ID');
     });
 
-    QUnit.test('getCurrentValue() - returns current selection', function(assert) {
+    QUnit.test('getCurrentValue() - returns current selection', function (assert) {
         assert.expect(2);
 
         const $container = createMockContainer();
@@ -141,11 +172,11 @@ define([
 
         assert.equal(scaleSelector.getCurrentValue(), null, 'Returns null when no value set');
 
-        $container.find('input').val('test-value');
+        $container.find('[name="scale"]').val('test-value');
         assert.equal(scaleSelector.getCurrentValue(), 'test-value', 'Returns current value');
     });
 
-    QUnit.test('createForm() - registers with sync manager when testId set', function(assert) {
+    QUnit.test('createForm() - registers with sync manager when testId set', function (assert) {
         assert.expect(3);
 
         scaleSelectorFactory.setTestId('test-123');
@@ -167,7 +198,7 @@ define([
         assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager has correct test ID');
     });
 
-    QUnit.test('updateScale() - notifies sync manager of changes', function(assert) {
+    QUnit.test('updateScale() - notifies sync manager of changes', function (assert) {
         const done = assert.async();
         assert.expect(2);
 
@@ -184,7 +215,7 @@ define([
         const originalOnScaleChange = syncManager.onScaleChange;
         let changeCallCount = 0;
 
-        syncManager.onScaleChange = function(outcomeId, newScale) {
+        syncManager.onScaleChange = function (outcomeId, newScale) {
             changeCallCount++;
             if (changeCallCount === 1) {
                 assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed');
@@ -196,11 +227,18 @@ define([
         };
 
         scaleSelector.createForm();
-        $container.find('input').val('https://test.com/1');
-        scaleSelector.updateScale();
+
+        // Use setTimeout to ensure form is initialized
+        setTimeout(function () {
+            const $scaleInput = $container.find('[name="scale"]');
+            $scaleInput.val('https://test.com/1');
+
+            // Trigger change event to simulate user interaction
+            $scaleInput.trigger('change.scaleSync');
+        }, 50);
     });
 
-    QUnit.test('destroy() - unregisters from sync manager', function(assert) {
+    QUnit.test('destroy() - unregisters from sync manager', function (assert) {
         assert.expect(2);
 
         scaleSelectorFactory.setTestId('test-123');
@@ -216,8 +254,8 @@ define([
         assert.equal(syncManager._testStates.get('test-123').outcomeSelectors.size, 0, 'Selector unregistered after destroy');
     });
 
-    QUnit.test('clearSelection() - clears value and updates sync manager', function(assert) {
-        assert.expect(2);
+    QUnit.test('clearSelection() - clears value and updates sync manager', function (assert) {
+        assert.expect(3);
 
         scaleSelectorFactory.setTestId('test-123');
 
@@ -231,22 +269,34 @@ define([
 
         scaleSelector.createForm();
 
-        $container.find('input').val('https://test.com/1');
-        scaleSelector.updateScale(); // This will set lastKnownValue
+        // Set initial value
+        const $scaleInput = $container.find('[name="scale"]');
+        $scaleInput.val('https://test.com/1');
+
+        // Trigger change to set lastKnownValue
+        $scaleInput.trigger('change.scaleSync');
 
         const originalOnScaleChange = syncManager.onScaleChange;
+        let clearCalled = false;
 
-        syncManager.onScaleChange = function(outcomeId, newScale) {
-            assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed');
-            assert.strictEqual(newScale, null, 'Scale cleared to null');
+        syncManager.onScaleChange = function (outcomeId, newScale) {
+            if (!clearCalled) {
+                clearCalled = true;
+                assert.equal(outcomeId, 'test-outcome-1', 'Correct outcome ID passed on clear');
+                assert.strictEqual(newScale, null, 'Scale value is null after clear');
+            }
         };
 
+        // Clear selection
         scaleSelector.clearSelection();
+
+        // Verify value is cleared
+        assert.equal($scaleInput.val(), '', 'Input value is cleared');
 
         syncManager.onScaleChange = originalOnScaleChange;
     });
 
-    QUnit.test('reset() - clears factory state', function(assert) {
+    QUnit.test('reset() - clears factory state', function (assert) {
         assert.expect(2);
 
         scaleSelectorFactory.setTestId('test-123');
@@ -258,7 +308,7 @@ define([
         assert.strictEqual(syncManager._currentTestId, null, 'Sync manager also reset');
     });
 
-    QUnit.test('reset() - can reset specific test', function(assert) {
+    QUnit.test('reset() - can reset specific test', function (assert) {
         assert.expect(2);
 
         scaleSelectorFactory.setTestId('test-123');
@@ -271,7 +321,7 @@ define([
         assert.equal(syncManager._currentTestId, 'test-123', 'Sync manager still has our test');
     });
 
-    QUnit.test('error handling - getCurrentValue with invalid DOM', function(assert) {
+    QUnit.test('error handling - getCurrentValue with invalid DOM', function (assert) {
         assert.expect(1);
 
         const $container = $('<div></div>');
@@ -281,7 +331,7 @@ define([
         assert.strictEqual(result, null, 'Returns null when DOM is invalid');
     });
 
-    QUnit.test('internal update flag prevents circular calls', function(assert) {
+    QUnit.test('internal update flag prevents circular calls', function (assert) {
         assert.expect(1);
 
         const $container = createMockContainer();
@@ -292,7 +342,7 @@ define([
         const originalOnScaleChange = syncManager.onScaleChange;
         let callCount = 0;
 
-        syncManager.onScaleChange = function() {
+        syncManager.onScaleChange = function () {
             callCount++;
         };
 
@@ -303,7 +353,7 @@ define([
         syncManager.onScaleChange = originalOnScaleChange;
     });
 
-    QUnit.test('test isolation - different tests maintain separate state', function(assert) {
+    QUnit.test('test isolation - different tests maintain separate state', function (assert) {
         assert.expect(3);
 
         // Setup test 1
