@@ -55,8 +55,11 @@ class DeleteTests extends ScriptAction
     /** @var taoTests_models_classes_TestsService */
     private taoTests_models_classes_TestsService $testsService;
 
-    /** @var int Number of tests processed */
+    /** @var int Number of tests successfully processed (or would be in dry run) */
     private int $testsProcessed = 0;
+
+    /** @var int Number of tests that failed to delete (wet run only) */
+    private int $testsFailed = 0;
 
     protected function provideOptions(): array
     {
@@ -115,9 +118,13 @@ class DeleteTests extends ScriptAction
         ];
     }
 
+    /**
+     * @return Report
+     */
     public function run(): Report
     {
-        // Default to dry run unless --wet-run is explicitly passed (option parser may not apply defaults for missing flags)
+        // Default to dry run unless --wet-run is explicitly passed (option parser may not
+        // apply defaults for missing flags)
         $isDryRun = !$this->getOption('wet-run');
         $runType = $isDryRun ? 'DRY RUN' : 'WET RUN';
 
@@ -132,10 +139,26 @@ class DeleteTests extends ScriptAction
         );
         common_session_SessionManager::startSession($session);
 
-        if ($this->getOption('uri')) {
-            $this->deleteSingleTest($this->getOption('uri'), $isDryRun);
-        } elseif ($this->getOption('class')) {
-            $this->deleteClassTests($this->getOption('class'), $isDryRun);
+        $uriOption = $this->getOption('uri') !== null ? trim((string) $this->getOption('uri')) : '';
+        $classOption = $this->getOption('class') !== null ? trim((string) $this->getOption('class')) : '';
+
+        if ($uriOption !== '' && $classOption !== '') {
+            echo "Error: --uri and --class are mutually exclusive. Provide only one of them.\n";
+            return $this->report;
+        }
+
+        if ($uriOption !== '') {
+            if (!\common_Utils::isUri($uriOption)) {
+                echo "Error: --uri must be a non-empty valid URI (e.g. http(s)://... or #fragment).\n";
+                return $this->report;
+            }
+            $this->deleteSingleTest($uriOption, $isDryRun);
+        } elseif ($classOption !== '') {
+            if (!\common_Utils::isUri($classOption)) {
+                echo "Error: --class must be a non-empty valid class URI (e.g. http(s)://... or #fragment).\n";
+                return $this->report;
+            }
+            $this->deleteClassTests($classOption, $isDryRun);
         } else {
             echo "Error: Either --uri or --class parameter must be provided.\n";
             return $this->report;
@@ -149,6 +172,12 @@ class DeleteTests extends ScriptAction
         }
 
         $this->displaySummaryReport($isDryRun);
+
+        if ($this->testsFailed > 0) {
+            $this->report->add(Report::createError(
+                sprintf('Deletion completed with %d failure(s). See error details above.', $this->testsFailed)
+            ));
+        }
 
         return $this->report;
     }
@@ -175,14 +204,18 @@ class DeleteTests extends ScriptAction
 
         $this->updateProgressBar(1, 1, $testLabel, $isDryRun);
 
-        $this->processTest($instance, $isDryRun);
+        $success = $this->processTest($instance, $isDryRun);
 
         $this->updateProgressBar(1, 1, "COMPLETED", $isDryRun);
         echo "\n";
 
-        echo "✓ " . ($isDryRun ? "[DRY RUN] Would delete this test" : "Test deleted successfully") . "\n";
-
-        $this->testsProcessed++;
+        if ($success) {
+            echo "✓ " . ($isDryRun ? "[DRY RUN] Would delete this test" : "Test deleted successfully") . "\n";
+            $this->testsProcessed++;
+        } else {
+            echo "✗ Test deletion failed (see error above).\n";
+            $this->testsFailed++;
+        }
     }
 
     /**
@@ -221,9 +254,11 @@ class DeleteTests extends ScriptAction
 
             $this->updateProgressBar($currentTest, $totalTests, $testLabel, $isDryRun);
 
-            $this->processTest($instance, $isDryRun);
-
-            $this->testsProcessed++;
+            if ($this->processTest($instance, $isDryRun)) {
+                $this->testsProcessed++;
+            } else {
+                $this->testsFailed++;
+            }
         }
 
         $this->updateProgressBar($totalTests, $totalTests, "COMPLETED", $isDryRun);
@@ -241,19 +276,32 @@ class DeleteTests extends ScriptAction
     }
 
     /**
-     * Process a single test (deletion logic with optional verbose output)
+     * Process a single test (deletion logic with optional verbose output).
+     * On wet run, catches exceptions from deleteTest(), records them in the report and returns false.
      *
      * @param core_kernel_classes_Resource $instance Test instance
      * @param bool $isDryRun Whether this is a dry run
+     * @return bool True if processed successfully (or dry run), false if deletion failed
      */
-    private function processTest(core_kernel_classes_Resource $instance, bool $isDryRun): void
+    private function processTest(core_kernel_classes_Resource $instance, bool $isDryRun): bool
     {
         try {
             if (!$isDryRun) {
                 $this->testsService->deleteTest($instance);
             }
+            return true;
         } catch (Throwable $e) {
+            $label = $instance->getLabel();
+            $uri = $instance->getUri();
+            $message = sprintf(
+                'Failed to delete test "%s" (%s): %s',
+                $label,
+                $uri,
+                $e->getMessage()
+            );
+            $this->report->add(Report::createError($message));
             echo "Error: {$e->getMessage()}\n";
+            return false;
         }
     }
 
@@ -293,7 +341,7 @@ class DeleteTests extends ScriptAction
     }
 
     /**
-     * Display summary report of processed tests
+     * Display summary report of processed tests (successes, failures, and any recorded error details)
      *
      * @param bool $isDryRun Whether this was a dry run
      */
@@ -303,9 +351,20 @@ class DeleteTests extends ScriptAction
         $prefix = $isDryRun ? "[DRY RUN] " : "";
 
         echo "\n📊 === SUMMARY REPORT ===\n";
-        echo "{$prefix}{$this->testsProcessed} test(s) {$action} deleted\n";
-
+        echo "{$prefix}{$this->testsProcessed} test(s) {$action} deleted successfully\n";
+        if ($this->testsFailed > 0) {
+            echo "{$this->testsFailed} test(s) failed to delete\n";
+        }
         echo "========================\n";
+
+        if ($this->testsFailed > 0 && $this->report->containsError()) {
+            $errors = $this->report->getErrors(true);
+            echo "\n--- Error details ---\n";
+            foreach ($errors as $errorReport) {
+                echo "  • " . $errorReport->getMessage() . "\n";
+            }
+            echo "---------------------\n";
+        }
     }
 
     /**
