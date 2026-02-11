@@ -36,6 +36,7 @@ define([
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
+    'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -59,6 +60,7 @@ define([
     featureVisibility,
     baseTypeHelper,
     outcome,
+    outcomeValidator,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -306,11 +308,21 @@ define([
                 const isUnique = !testModel.outcomeDeclarations.some(outcome =>
                     outcome.identifier === identifier && outcome.serial
                 );
-                if (!isUnique || !identifier.trim()) {
-                    feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
+                $input.siblings('.validate-error').remove();
+                if (!isUnique || !identifierIsValid) {
+                    $input.addClass("error");
                     $input.focus();
+                    if (identifierIsValid) {
+                        feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
+                        $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
+                    } else {
+                        const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
+                        $input.after('<span class="validate-error">' + message + '</span>');
+                    }
                     $saveButton.addClass('disabled').attr('disabled', true);
                 } else {
+                    $input.removeClass("error");
                     $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
             });
