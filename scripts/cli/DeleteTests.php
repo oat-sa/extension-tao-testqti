@@ -40,6 +40,7 @@ use Throwable;
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --wet-run
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --verbose
+ * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --ignore-class "https://example.com/class1,https://example.com/class2"
  *
  * By default, runs in dry-run mode (shows what would be deleted)
  * Use --wet-run to actually perform the deletion
@@ -60,6 +61,15 @@ class DeleteTests extends ScriptAction
 
     /** @var int Number of tests that failed to delete (wet run only) */
     private int $testsFailed = 0;
+
+    /** @var array<string, true> Set of class URIs to ignore (including subclasses); test belongs to one => skip */
+    private array $ignoredClassUris = [];
+
+    /** @var array<int, array{uri: string, label: string, reason: string}> Tests skipped (e.g. class in ignore list) */
+    private array $skippedTestsLog = [];
+
+    /** @var bool Whether to output detailed messages (--verbose) */
+    private bool $isVerbose = false;
 
     protected function provideOptions(): array
     {
@@ -84,7 +94,7 @@ class DeleteTests extends ScriptAction
                 'prefix' => 'v',
                 'flag' => true,
                 'longPrefix' => 'verbose',
-                'description' => 'Show detailed output including directory paths',
+                'description' => 'Show detailed output; without it only progress bar and summary counts are shown',
                 'required' => false,
                 'default' => false
             ],
@@ -99,8 +109,13 @@ class DeleteTests extends ScriptAction
                 'longPrefix' => 'uri',
                 'description' => 'Uri of the test to delete',
                 'required' => false
+            ],
+            'ignore-class' => [
+                'prefix' => 'i',
+                'longPrefix' => 'ignore-class',
+                'description' => 'Comma-separated class URIs to ignore: tests and subclasses inside these are not deleted',
+                'required' => false
             ]
-
         ];
     }
 
@@ -129,7 +144,8 @@ class DeleteTests extends ScriptAction
         $runType = $isDryRun ? 'DRY RUN' : 'WET RUN';
 
         $this->report = Report::createInfo("Starting {$runType} deletion of tests");
-        echo "=== {$runType} MODE ===\n";
+        $this->isVerbose = (bool) $this->getOption('verbose');
+        $this->echoIfVerbose("=== {$runType} MODE ===\n");
 
         $user = new \core_kernel_users_GenerisUser(
             $this->getResource('https://backoffice.ngs.test/ontologies/tao.rdf#superUser')
@@ -138,6 +154,8 @@ class DeleteTests extends ScriptAction
             $user
         );
         common_session_SessionManager::startSession($session);
+
+        $this->buildIgnoredClassUris();
 
         $uriOption = $this->getOption('uri') !== null ? trim((string) $this->getOption('uri')) : '';
         $classOption = $this->getOption('class') !== null ? trim((string) $this->getOption('class')) : '';
@@ -164,14 +182,13 @@ class DeleteTests extends ScriptAction
             return $this->report;
         }
 
-        if ($isDryRun) {
-            echo "\n🎯 === DRY RUN COMPLETE ===\n";
-            echo "💡 To actually perform the deletion, run with --wet-run flag\n";
-        } else {
-            echo "\n✅ === DELETION COMPLETE ===\n";
-        }
+        $this->echoIfVerbose($isDryRun
+            ? "\n🎯 === DRY RUN COMPLETE ===\n💡 To actually perform the deletion, run with --wet-run flag\n"
+            : "\n✅ === DELETION COMPLETE ===\n");
 
         $this->displaySummaryReport($isDryRun);
+
+        $this->displaySkippedTestsLog();
 
         if ($this->testsFailed > 0) {
             $this->report->add(Report::createError(
@@ -200,20 +217,20 @@ class DeleteTests extends ScriptAction
         }
 
         $testLabel = $instance->getLabel();
-        echo "Deleting single test: {$testLabel} ({$testUri})\n";
+        $this->echoIfVerbose("Deleting single test: {$testLabel} ({$testUri})\n");
 
         $this->updateProgressBar(1, 1, $testLabel, $isDryRun);
 
-        $success = $this->processTest($instance, $isDryRun);
+        $result = $this->processTest($instance, $isDryRun);
 
         $this->updateProgressBar(1, 1, "COMPLETED", $isDryRun);
         echo "\n";
 
-        if ($success) {
-            echo "✓ " . ($isDryRun ? "[DRY RUN] Would delete this test" : "Test deleted successfully") . "\n";
+        if ($result === true) {
+            $this->echoIfVerbose("✓ " . ($isDryRun ? "[DRY RUN] Would delete this test" : "Test deleted successfully") . "\n");
             $this->testsProcessed++;
-        } else {
-            echo "✗ Test deletion failed (see error above).\n";
+        } elseif ($result === false) {
+            $this->echoIfVerbose("✗ Test deletion failed (see error above).\n");
             $this->testsFailed++;
         }
     }
@@ -237,10 +254,10 @@ class DeleteTests extends ScriptAction
         $totalTests = count($instances);
         $currentTest = 0;
 
-        echo "Found {$totalTests} tests in class: {$classUri}\n";
+        $this->echoIfVerbose("Found {$totalTests} tests in class: {$classUri}\n");
 
         if ($totalTests === 0) {
-            echo "No tests found to delete.\n";
+            $this->echoIfVerbose("No tests found to delete.\n");
             return;
         }
 
@@ -254,9 +271,10 @@ class DeleteTests extends ScriptAction
 
             $this->updateProgressBar($currentTest, $totalTests, $testLabel, $isDryRun);
 
-            if ($this->processTest($instance, $isDryRun)) {
+            $result = $this->processTest($instance, $isDryRun);
+            if ($result === true) {
                 $this->testsProcessed++;
-            } else {
+            } elseif ($result === false) {
                 $this->testsFailed++;
             }
         }
@@ -276,15 +294,78 @@ class DeleteTests extends ScriptAction
     }
 
     /**
+     * Build the set of class URIs to ignore (each given class + all its subclasses).
+     * Option --ignore-class accepts comma-separated class URIs.
+     */
+    private function buildIgnoredClassUris(): void
+    {
+        $value = $this->getOption('ignore-class');
+        if ($value === null || $value === '') {
+            return;
+        }
+        $uris = array_map('trim', explode(',', (string) $value));
+        foreach ($uris as $classUri) {
+            if ($classUri === '') {
+                continue;
+            }
+            $classUri = str_replace('\\#', '#', $classUri);
+            $class = $this->getClass($classUri);
+            if (!$class->exists()) {
+                $this->echoIfVerbose("Warning: Ignore-class URI does not exist, skipping: {$classUri}\n");
+                continue;
+            }
+            $this->ignoredClassUris[$class->getUri()] = true;
+            foreach ($class->getSubClasses(true) as $subClass) {
+                $this->ignoredClassUris[$subClass->getUri()] = true;
+            }
+        }
+        if (!empty($this->ignoredClassUris)) {
+            $this->echoIfVerbose("Ignoring " . count($this->ignoredClassUris) . " class(es) (including subclasses).\n");
+        }
+    }
+
+    private function echoIfVerbose(string $msg): void
+    {
+        if ($this->isVerbose) {
+            echo $msg;
+        }
+    }
+
+    /**
+     * Check whether the test belongs to any ignored class (or subclass of an ignored class).
+     */
+    private function isTestInIgnoredClass(core_kernel_classes_Resource $instance): bool
+    {
+        if (empty($this->ignoredClassUris)) {
+            return false;
+        }
+        foreach ($instance->getTypes() as $type) {
+            if (isset($this->ignoredClassUris[$type->getUri()])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Process a single test (deletion logic with optional verbose output).
-     * On wet run, catches exceptions from deleteTest(), records them in the report and returns false.
+     * Skips if test is in an ignored class. On wet run, catches exceptions from deleteTest().
      *
      * @param core_kernel_classes_Resource $instance Test instance
      * @param bool $isDryRun Whether this is a dry run
-     * @return bool True if processed successfully (or dry run), false if deletion failed
+     * @return bool|string True if processed successfully, false if deletion failed, 'skipped' if ignored
      */
-    private function processTest(core_kernel_classes_Resource $instance, bool $isDryRun): bool
+    private function processTest(core_kernel_classes_Resource $instance, bool $isDryRun): bool|string
     {
+        if ($this->isTestInIgnoredClass($instance)) {
+            $uri = $instance->getUri();
+            $label = $instance->getLabel();
+            $reason = 'Class is in ignored list';
+            $this->skippedTestsLog[] = ['uri' => $uri, 'label' => $label, 'reason' => $reason];
+            $this->echoIfVerbose("⚠ Skipped: Test \"{$label}\" ({$uri}) – {$reason}\n");
+            return 'skipped';
+        }
+
         try {
             if (!$isDryRun) {
                 $this->testsService->deleteTest($instance);
@@ -300,7 +381,7 @@ class DeleteTests extends ScriptAction
                 $e->getMessage()
             );
             $this->report->add(Report::createError($message));
-            echo "Error: {$e->getMessage()}\n";
+            $this->echoIfVerbose("Error: {$e->getMessage()}\n");
             return false;
         }
     }
@@ -349,21 +430,64 @@ class DeleteTests extends ScriptAction
     {
         $action = $isDryRun ? "would be" : "were";
         $prefix = $isDryRun ? "[DRY RUN] " : "";
+        $skipped = count($this->skippedTestsLog);
 
         echo "\n📊 === SUMMARY REPORT ===\n";
         echo "{$prefix}{$this->testsProcessed} test(s) {$action} deleted successfully\n";
+        if ($skipped > 0) {
+            echo "{$prefix}{$skipped} test(s) skipped (class in ignore list)\n";
+        }
         if ($this->testsFailed > 0) {
             echo "{$this->testsFailed} test(s) failed to delete\n";
         }
         echo "========================\n";
 
-        if ($this->testsFailed > 0 && $this->report->containsError()) {
+        if ($this->isVerbose && $this->testsFailed > 0 && $this->report->containsError()) {
             $errors = $this->report->getErrors(true);
             echo "\n--- Error details ---\n";
             foreach ($errors as $errorReport) {
                 echo "  • " . $errorReport->getMessage() . "\n";
             }
             echo "---------------------\n";
+        }
+    }
+
+    /**
+     * Output skipped tests to console and write them to a log file.
+     */
+    private function displaySkippedTestsLog(): void
+    {
+        if (empty($this->skippedTestsLog)) {
+            return;
+        }
+
+        $lines = [
+            '',
+            '📋 === SKIPPED TESTS LOG (class in ignore list) ===',
+            sprintf('Total: %d test(s)', count($this->skippedTestsLog)),
+            '',
+        ];
+        foreach ($this->skippedTestsLog as $entry) {
+            $lines[] = sprintf(
+                "  - %s | %s | %s",
+                $entry['uri'],
+                $entry['label'],
+                $entry['reason']
+            );
+        }
+        $lines[] = '============================================';
+        $logContent = implode("\n", $lines);
+
+        $logFile = getcwd() . DIRECTORY_SEPARATOR . 'delete_tests_skipped_' . date('Y-m-d_His') . '.log';
+        $written = @file_put_contents($logFile, $logContent) !== false;
+
+        if ($this->isVerbose) {
+            echo $logContent . "\n";
+            if ($written) {
+                echo "\nSkipped tests log written to: {$logFile}\n";
+            }
+        } elseif ($written) {
+            echo "Skipped tests log written to: {$logFile}\n";
         }
     }
 
