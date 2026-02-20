@@ -34,7 +34,7 @@ use common_ext_Extension;
 use qtism\data\storage\php\PhpDocument;
 use qtism\runtime\tests\AssessmentTestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
-use Symfony\Component\Lock\Factory;
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\LockInterface;
 use tao_models_classes_service_StateStorage;
 use oat\taoQtiTest\models\files\QtiFlysystemFileManager;
@@ -137,7 +137,7 @@ class TestSessionServiceTest extends TestCase
         $lock->method('acquire')->willReturn(true);
         $lock->method('release')->willReturn(true);
 
-        $lockFactory = $this->getMockBuilder(Factory::class)->disableOriginalConstructor()->getMock();
+        $lockFactory = $this->getMockBuilder(LockFactory::class)->disableOriginalConstructor()->getMock();
         $lockFactory->method('createLock')->willReturn($lock);
 
         $lockService = $this->getMockBuilder(LockService::class)->disableOriginalConstructor()->getMock();
@@ -182,7 +182,7 @@ class TestSessionServiceTest extends TestCase
             ],
         ]);
 
-        $config = new \common_persistence_KeyValuePersistence([], new \common_persistence_InMemoryKvDriver());
+        $config = new \common_persistence_KeyValuePersistence(new \common_persistence_InMemoryKvDriver(), []);
         $config->set(\common_cache_NoCache::SERVICE_ID, $cacheMock);
         $config->set(\common_ext_ExtensionsManager::SERVICE_ID, $extensionsManagerMock);
         ServiceManager::setServiceManager(new ServiceManager($config));
