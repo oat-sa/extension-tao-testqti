@@ -40,7 +40,8 @@ use Throwable;
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --wet-run
  * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --verbose
- * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class --ignore-class "https://example.com/class1,https://example.com/class2"
+ * php index.php '\oat\taoQtiTest\scripts\cli\DeleteTests' -class uri_of_the_class
+ * --ignore-class "https://example.com/class1,https://example.com/class2"
  *
  * By default, runs in dry-run mode (shows what would be deleted)
  * Use --wet-run to actually perform the deletion
@@ -113,7 +114,8 @@ class DeleteTests extends ScriptAction
             'ignore-class' => [
                 'prefix' => 'i',
                 'longPrefix' => 'ignore-class',
-                'description' => 'Comma-separated class URIs to ignore: tests and subclasses inside these are not deleted',
+                'description' => 'Comma-separated class URIs to ignore: tests and' . "\n" .
+                    'subclasses inside these classes are not deleted',
                 'required' => false
             ]
         ];
@@ -227,7 +229,9 @@ class DeleteTests extends ScriptAction
         echo "\n";
 
         if ($result === true) {
-            $this->echoIfVerbose("✓ " . ($isDryRun ? "[DRY RUN] Would delete this test" : "Test deleted successfully") . "\n");
+            $this->echoIfVerbose("✓ " . (
+                $isDryRun ? "[DRY RUN] Would delete this test"
+                 : "Test deleted successfully") . "\n");
             $this->testsProcessed++;
         } elseif ($result === false) {
             $this->echoIfVerbose("✗ Test deletion failed (see error above).\n");
