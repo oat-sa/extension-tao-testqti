@@ -64,11 +64,11 @@
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.30.0",
     "oat-sa/generis": ">=17.0.0",
-    "oat-sa/tao-core": "dev-fix/update-dependency as 99.99.99",
+    "oat-sa/tao-core": ">=56.0.0",
     "oat-sa/extension-tao-item": ">=12.4.0",
     "oat-sa/extension-tao-itemqti": ">=31.1.1",
     "oat-sa/extension-tao-test": ">=16.4.3",
-    "oat-sa/extension-tao-delivery": "dev-fix/update-dependency as 99.99.99",
+    "oat-sa/extension-tao-delivery": ">=16.0.0",
     "oat-sa/extension-tao-outcome": ">=13.0.0",
     "league/flysystem": "^3.0",
     "slim/slim": "^4.0"
