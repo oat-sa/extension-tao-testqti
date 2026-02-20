@@ -279,7 +279,10 @@ class taoQtiTest_models_classes_QtiTestConverter
 
             if (count($parameters) === 1) {
                 $param = $parameters[0];
-                return $param->getClass();
+                $type = $param->getType();
+                if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                    return new ReflectionClass($type->getName());
+                }
             }
         } catch (ReflectionException $re) {
         }
