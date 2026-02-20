@@ -279,7 +279,10 @@ class taoQtiTest_models_classes_QtiTestConverter
 
             if (count($parameters) === 1) {
                 $param = $parameters[0];
-                return $param->getClass();
+                $type = $param->getType();
+                if ($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
+                    return new ReflectionClass($type->getName());
+                }
             }
         } catch (ReflectionException $re) {
         }
@@ -429,7 +432,10 @@ class taoQtiTest_models_classes_QtiTestConverter
         foreach ($class->getConstructor()->getParameters() as $parameter) {
             if (! $parameter->isOptional()) {
                 $name = $parameter->getName();
-                $paramClass = $parameter->getClass();
+                $type = $parameter->getType();
+                $paramClass = ($type instanceof \ReflectionNamedType && !$type->isBuiltin())
+                    ? new ReflectionClass($type->getName())
+                    : null;
                 if ($paramClass !== null) {
                     if (is_array($properties[$name])) {
                         $component = $this->arrayToComponent($properties[$name]);
