@@ -13,18 +13,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2025 (original work) Open Assessment Technologies SA;
+ * Copyright (c) 2025-2026 (original work) Open Assessment Technologies SA;
  */
 
 define([
-    'lodash',
     'taoQtiTest/controller/creator/helpers/baseType',
-    'taoQtiTest/controller/creator/helpers/operatorMap'
-], function (_, baseTypeHelper, operatorMap) {
+    'taoQtiTest/controller/creator/helpers/operatorMap',
+    'taoQtiTest/controller/creator/helpers/ruleExpressionHelper'
+], function (baseTypeHelper, operatorMap, ruleExpressionHelper) {
     'use strict';
 
     const { opToQti, qtiToOp } = operatorMap;
-    
+    const { isUiCompatibleExpression } = ruleExpressionHelper;
+
     /**
      * Check whether a given node is a QTI preCondition element.
      * @param {*} node - Any node to inspect.
@@ -58,7 +59,7 @@ define([
             expression: {
                 'qti-type': op,
                 expressions: [
-                    { 'qti-type': 'variable', identifier: row.variable || '', weightIdentifier: '' },
+                    { 'qti-type': 'variable', identifier: row.variable, weightIdentifier: '' },
                     { 'qti-type': 'baseValue', baseType: baseType, value: n }
                 ]
             }
@@ -112,8 +113,16 @@ define([
                 return;
             }
 
-            if (tp.preConditions.length && isQtiPreCondition(tp.preConditions[0])) {
-                tp.preConditions = tp.preConditions.map(parseQtiPreCondition);
+            if (tp.preConditions.length) {
+                tp.preConditions = tp.preConditions.map(cond => {
+                    if (isQtiPreCondition(cond) && isUiCompatibleExpression(cond.expression)) {
+                        return parseQtiPreCondition(cond);
+                    }
+                    return {
+                        __unsupported: true,
+                        __qti: cond
+                    };
+                });
             }
         });
     }
@@ -133,17 +142,20 @@ define([
             if (!tp || !Array.isArray(tp.preConditions)) {
                 return;
             }
-            // already in QTI form
             if (tp.preConditions.length && isQtiPreCondition(tp.preConditions[0])) {
                 return;
             }
-            tp.preConditions = tp.preConditions.map(buildQtiPreCondition);
+            tp.preConditions = tp.preConditions.map(cond => {
+                if (cond.__unsupported && cond.__qti) {
+                    return cond.__qti;
+                }
+                return buildQtiPreCondition(cond);
+            });
         });
     }
 
     /**
      * Remove any preconditions whose variable no longer exists in outcomeDeclarations.
-     * Useful right after "regenerate outcomes".
      * @param {Object} testModel
      */
     function purgeConditionsWithMissingVariables(testModel) {
@@ -163,13 +175,13 @@ define([
     // ---------- public API ----------
     return {
         /** Convert all QTI preConditions in the model to flat rows. */
-        normalizeModel: normalizeModel,
+        normalizeModel,
         /** Convert all flat preConditions in the model to QTI objects. */
-        serializeModel: serializeModel,
+        serializeModel,
         /** Build a single QTI preCondition from a flat row. */
-        buildQtiPreCondition: buildQtiPreCondition,
+        buildQtiPreCondition,
         /** Parse a single QTI preCondition into a flat row. */
-        parseQtiPreCondition: parseQtiPreCondition,
+        parseQtiPreCondition,
         /** Remove preconditions with variables missing from outcomeDeclarations. */
         purgeConditionsWithMissingVariables
     };

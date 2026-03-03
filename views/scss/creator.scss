@@ -22,8 +22,6 @@
     @include respond-to(wide) { #{$key} : $wide;  }
 }
 
-$infoBorderColor: #176998;
-$infoBgColor: #D4DFE8;
 $bgWhite: #fff;
 $brActionColor: #222;
 $brActionBorderColor: #ddd;
@@ -993,27 +991,34 @@ $brActionBorderColor: #ddd;
     }
 }
 
-.info-card {
-    border: 1px solid $infoBorderColor;
+.banner {
+    border: 1px solid transparent;
     border-radius: 0.5rem;
-    background-color: $infoBgColor;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    padding: 1.2rem;
+    margin: .6rem .6rem 1rem .6rem;
     font-size: 1.2rem;
-
-    span.icon-info {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    &.banner-info {
+      border-color: $infoBorderColor;
+      background-color: $infoBgColor;
+      .banner-icon {
         color: $info;
-        font-size: 2.6rem;
+      }
     }
-
-    & :first-child {
-        text-align: center;
+    &.banner-danger {
+      border-color: $warningBorderColor;
+      background-color: $warningBgColor;
+      .banner-icon {
+        color: $warning;
+      }
     }
-
-    & :nth-child(2) {
-        margin-bottom: 0;
-    }
-}
+    .banner-icon {
+        font-size: 2.4rem;
+        flex-shrink: 0;
+      }
+  }
 
 .branch-rules-table, .preconditions-table {
     font-size: 1.2rem;
