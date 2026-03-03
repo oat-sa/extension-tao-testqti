@@ -33,7 +33,7 @@ define([], function () {
         const supported = ['lt', 'lte', 'equal', 'gt', 'gte'];
         if (!supported.includes(expr['qti-type'])) return false;
 
-        const parts = expr.expressions || [];
+        const parts = Array.isArray(expr.expressions) ? expr.expressions : [];
         if (parts.length !== 2) return false;
 
         const hasVariable = parts.some(p =>
