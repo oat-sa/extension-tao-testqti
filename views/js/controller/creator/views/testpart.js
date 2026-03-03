@@ -490,8 +490,8 @@ define([
     }
 
     function renderUnsupportedMessage($container) {
-        const bannerHtml = `<div class="banner banner-danger unsupported-qti-message">
-                <span class="banner-icon icon-danger"></span>
+        const bannerHtml = `<div class="banner banner-danger unsupported-qti-message" role="alert" aria-live="assertive" aria-atomic="true">
+                <span class="banner-icon icon-danger" aria-hidden="true"></span>
                 <div>
                     ${__('The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience.')}
                 </div>
