@@ -1,9 +1,7 @@
-<div class="grid-row">
-    <div class="info-card grid-row">
-        <div class="col-2"><span class="icon-info"></span></div>
-        <div class="col-10">
-            {{__ "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."}}
-        </div>
+<div class="banner banner-info">
+    <span class="banner-icon icon-info"></span>
+    <div>
+        {{__ "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."}}
     </div>
 </div>
 <div class="branch-rules-table">
