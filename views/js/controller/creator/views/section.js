@@ -280,6 +280,11 @@ define([
                                     defaultItemData
                                 );
 
+                                if (defaultItemData.itemSessionControl) {
+                                    // ensure each new itemref gets its own copy
+                                    itemData.itemSessionControl = _.cloneDeep(defaultItemData.itemSessionControl);
+                                }
+
                                 if (_.isArray(item.categories)) {
                                     itemData.categories = item.categories.concat(itemData.categories);
                                 }
