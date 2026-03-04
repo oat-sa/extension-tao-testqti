@@ -115,20 +115,13 @@ define([
 
             if (tp.branchRules.length) {
                 tp.branchRules = tp.branchRules.map(rule => {
-                    if (!rule) {
-                        return rule;
+                    if (isQtiBranchRule(rule) && isUiCompatibleExpression(rule.expression)) {
+                        return parseQtiBranchRule(rule);
                     }
-                    if (rule.__unsupported && rule.__qti) {
-                        return rule;
-                    }
-                    if (isQtiBranchRule(rule)) {
-                        return isUiCompatibleExpression(rule.expression)
-                            ? parseQtiBranchRule(rule)
-                            : {
-                                __unsupported: true,
-                                __qti: rule
-                            };
-                    }
+                    return {
+                        __unsupported: true,
+                        __qti: rule
+                    };
                     // already normalized UI row
                     return rule;
                 });
