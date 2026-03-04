@@ -115,20 +115,13 @@ define([
 
             if (tp.preConditions.length) {
                 tp.preConditions = tp.preConditions.map(cond => {
-                    if (!cond) {
-                        return cond;
+                    if (isQtiPreCondition(cond) && isUiCompatibleExpression(cond.expression)) {
+                        return parseQtiPreCondition(cond);
                     }
-                    if (cond.__unsupported && cond.__qti) {
-                        return cond;
-                    }
-                    if (isQtiPreCondition(cond)) {
-                        return isUiCompatibleExpression(cond.expression)
-                            ? parseQtiPreCondition(cond)
-                            : {
-                                __unsupported: true,
-                                __qti: cond
-                            };
-                    }
+                    return {
+                        __unsupported: true,
+                        __qti: cond
+                    };
                     // already normalized UI row
                     return cond;
                 });
