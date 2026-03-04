@@ -21,12 +21,14 @@ define([
     'lodash',
     'i18n',
     'taoQtiTest/controller/creator/helpers/baseType',
-    'taoQtiTest/controller/creator/helpers/operatorMap'
-], function ($, _, __, baseTypeHelper, operatorMap) {
+    'taoQtiTest/controller/creator/helpers/operatorMap',
+    'taoQtiTest/controller/creator/helpers/ruleExpressionHelper'
+], function ($, _, __, baseTypeHelper, operatorMap, ruleExpressionHelper) {
     'use strict';
 
     const { opToQti, qtiToOp } = operatorMap;
-    
+    const { isUiCompatibleExpression } = ruleExpressionHelper;
+
     /**
      * Check whether a given node is a QTI BranchRule element.
      * @param {*} node - Any node to inspect.
@@ -55,15 +57,15 @@ define([
         const baseType = baseTypeHelper.getValid(type, baseTypeHelper.FLOAT);
 
         return {
-        'qti-type': 'branchRule',
-        target: row.target || '',
-        expression: {
-            'qti-type': op,
-            expressions: [
-            { 'qti-type': 'variable', identifier: row.variable || '', weightIdentifier: '' },
-            { 'qti-type': 'baseValue', baseType, value: n }
-            ]
-        }
+            'qti-type': 'branchRule',
+            target: row.target || '',
+            expression: {
+                'qti-type': op,
+                expressions: [
+                    { 'qti-type': 'variable', identifier: row.variable, weightIdentifier: '' },
+                    { 'qti-type': 'baseValue', baseType, value: n }
+                ]
+            }
         };
     }
 
@@ -86,11 +88,11 @@ define([
         const value = Number.isFinite(num) ? num : 0;
 
         return {
-        target: qtiRule.target || '',
-        variable: varExpr.identifier || '',
-        operator: op,
-        value,
-        __qti: qtiRule
+            target: qtiRule.target || '',
+            variable: varExpr.identifier || '',
+            operator: op,
+            value,
+            __qti: qtiRule
         };
     }
 
@@ -104,16 +106,26 @@ define([
         if (!testModel || !Array.isArray(testModel.testParts)) return;
 
         testModel.testParts.forEach(tp => {
-        if (!tp) return;
+            if (!tp) return;
 
-        if (!Array.isArray(tp.branchRules)) {
-            tp.branchRules = [];
-            return;
-        }
+            if (!Array.isArray(tp.branchRules)) {
+                tp.branchRules = [];
+                return;
+            }
 
-        if (tp.branchRules.length && isQtiBranchRule(tp.branchRules[0])) {
-            tp.branchRules = tp.branchRules.map(parseQtiBranchRule);
-        }
+            if (tp.branchRules.length) {
+                tp.branchRules = tp.branchRules.map(rule => {
+                    if (isQtiBranchRule(rule) && isUiCompatibleExpression(rule.expression)) {
+                        return parseQtiBranchRule(rule);
+                    }
+                    return {
+                        __unsupported: true,
+                        __qti: rule
+                    };
+                    // already normalized UI row
+                    return rule;
+                });
+            }
         });
     }
 
@@ -127,9 +139,14 @@ define([
         if (!testModel || !Array.isArray(testModel.testParts)) return;
 
         testModel.testParts.forEach(tp => {
-        if (!tp || !Array.isArray(tp.branchRules)) return;
-        if (tp.branchRules.length && isQtiBranchRule(tp.branchRules[0])) return;
-        tp.branchRules = tp.branchRules.map(buildQtiBranchRule);
+            if (!tp || !Array.isArray(tp.branchRules)) return;
+            if (tp.branchRules.length && isQtiBranchRule(tp.branchRules[0])) return;
+            tp.branchRules = tp.branchRules.map(rule => {
+                if (rule.__unsupported && rule.__qti) {
+                    return rule.__qti;
+                }
+                return buildQtiBranchRule(rule);
+            });
         });
     }
 
@@ -142,19 +159,19 @@ define([
      */
     function buildGlobalBranchOptions(testModel) {
         const targets = [
-        ...(testModel.testParts || []).map(tp => ({ value: tp.identifier, label: tp.identifier })),
-        { value: 'EXIT_TEST', label: __('End of the test') }
+            ...(testModel.testParts || []).map(tp => ({ value: tp.identifier, label: tp.identifier })),
+            { value: 'EXIT_TEST', label: __('End of the test') }
         ];
 
         const variables = (testModel.outcomeDeclarations || [])
-        .map(o => ({ value: o.identifier, label: o.identifier }));
+            .map(o => ({ value: o.identifier, label: o.identifier }));
 
         const operators = [
-        { value: 'lt',  label: '<'  },
-        { value: 'lte', label: '≤'  },
-        { value: 'eq',  label: '='  },
-        { value: 'gt',  label: '>'  },
-        { value: 'gte', label: '≥'  }
+            { value: 'lt',  label: '<'  },
+            { value: 'lte', label: '≤'  },
+            { value: 'eq',  label: '='  },
+            { value: 'gt',  label: '>'  },
+            { value: 'gte', label: '≥'  }
         ];
 
         return { targets, variables, operators };
@@ -175,12 +192,12 @@ define([
         const prev = cfg.branchOptions;
 
         const changed =
-        !prev ||
-        prev.targets.length   !== next.targets.length   ||
-        prev.variables.length !== next.variables.length ||
-        prev.operators.length !== next.operators.length ||
-        prev.targets.some((t, i)   => !next.targets[i]   || next.targets[i].value   !== t.value) ||
-        prev.variables.some((v, i) => !next.variables[i] || next.variables[i].value !== v.value);
+            !prev ||
+            prev.targets.length   !== next.targets.length   ||
+            prev.variables.length !== next.variables.length ||
+            prev.operators.length !== next.operators.length ||
+            prev.targets.some((t, i)   => !next.targets[i]   || next.targets[i].value   !== t.value) ||
+            prev.variables.some((v, i) => !next.variables[i] || next.variables[i].value !== v.value);
 
         if (changed) {
             cfg.branchOptions = next;
@@ -202,48 +219,48 @@ define([
 
         // testPart add (adder fires add.binder on .testparts)
         $(document)
-        .off(`add.binder${ns}`, '.testparts')
+            .off(`add.binder${ns}`, '.testparts')
         .on(`add.binder${ns}`, '.testparts', function (e, $node /* , added */) {
-            if (e.namespace !== 'binder') return;
-            if ($node && $node.hasClass('testpart')) {
-            setTimeout(debounced, 0);
-            }
-        });
+                if (e.namespace !== 'binder') return;
+                if ($node && $node.hasClass('testpart')) {
+                    setTimeout(debounced, 0);
+                }
+            });
 
         // testPart delete / undo
         $('.testparts')
-        .off(`deleted.deleter${ns} undo.deleter${ns}`)
-        .on(`deleted.deleter${ns} undo.deleter${ns}`, debounced);
+            .off(`deleted.deleter${ns} undo.deleter${ns}`)
+            .on(`deleted.deleter${ns} undo.deleter${ns}`, debounced);
 
         // testPart rename (identifier change)
         $(document)
-        .off(`change.binder${ns}`)
-        .on(`change.binder${ns}`, (e, model) => {
-            if (e.namespace !== 'binder') return;
-            if (model && model['qti-type'] === 'testPart') debounced();
-        });
+            .off(`change.binder${ns}`)
+            .on(`change.binder${ns}`, (e, model) => {
+                if (e.namespace !== 'binder') return;
+                if (model && model['qti-type'] === 'testPart') debounced();
+            });
 
         // outcome add / rename
         $(document)
-        .off(`change.binder.branchOutcomes${ns}`)
-        .on(`change.binder.branchOutcomes${ns}`, (e, model) => {
-            if (e.namespace !== 'binder') return;
-            if (model && model['qti-type'] === 'outcomeDeclaration') debounced();
-        });
+            .off(`change.binder.branchOutcomes${ns}`)
+            .on(`change.binder.branchOutcomes${ns}`, (e, model) => {
+                if (e.namespace !== 'binder') return;
+                if (model && model['qti-type'] === 'outcomeDeclaration') debounced();
+            });
 
         // outcome delete / undo
         $(document)
-        .off(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual')
-        .on(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual', () => {
-            setTimeout(debounced, 0);
-        });
+            .off(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual')
+            .on(`deleted.deleter.branchOutcomes${ns} undo.deleter.branchOutcomes${ns}`, '.outcome-declarations-manual', () => {
+                setTimeout(debounced, 0);
+            });
     }
 
     /**
      * Find all branch rules that target a given testPart id.
      * @param {Object} testModel
      * @param {string} targetId
-     * @returns {{count:number, samples:Array<{part:string,index:number}>}} 
+     * @returns {{count:number, samples:Array<{part:string,index:number}>}}
      *   count: total matches; samples: up to 5 refs (part identifier and rule index within that part).
      */
     function collectBranchRuleRefsByTarget(testModel, targetId) {
@@ -311,26 +328,26 @@ define([
     }
 
   // ---------- public API ----------
-  return {
-    /** Convert all QTI branch rules in the model to flat rows. */
-    normalizeModel,
-    /** Convert all flat branch rules in the model to QTI objects. */
-    serializeModel,
-    /** Build a single QTI branchRule from a flat row. */
-    buildQtiBranchRule,
-    /** Parse a single QTI branchRule into a flat row. */
-    parseQtiBranchRule,
-    /** Refresh global branch options from the model. */
-    refreshOptions,
-    /** Bind event listeners to auto-refresh branch options. */
-    bindSync,
-    /** Find all branch rules that target a given testPart id */
-    collectBranchRuleRefsByTarget,
-    /** Find all branch rules that reference a given outcome variable id. */
-    collectBranchRuleRefsByVariable,
-    /** Remove all rules across the test that target a given testPart id. */
-    purgeRulesWithMissingTargets,
-    /** Remove all rules whose variable no longer exists in outcomeDeclarations. */
-    purgeRulesWithMissingVariables
-  };
+    return {
+        /** Convert all QTI branch rules in the model to flat rows. */
+        normalizeModel,
+        /** Convert all flat branch rules in the model to QTI objects. */
+        serializeModel,
+        /** Build a single QTI branchRule from a flat row. */
+        buildQtiBranchRule,
+         /** Parse a single QTI branchRule into a flat row. */
+        parseQtiBranchRule,
+        /** Refresh global branch options from the model. */
+        refreshOptions,
+        /** Bind event listeners to auto-refresh branch options. */
+        bindSync,
+        /** Find all branch rules that target a given testPart id */
+        collectBranchRuleRefsByTarget,
+        /** Find all branch rules that reference a given outcome variable id. */
+        collectBranchRuleRefsByVariable,
+        /** Remove all rules across the test that target a given testPart id. */
+        purgeRulesWithMissingTargets,
+        /** Remove all rules whose variable no longer exists in outcomeDeclarations. */
+        purgeRulesWithMissingVariables
+    };
 });
