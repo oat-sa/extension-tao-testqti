@@ -96,16 +96,14 @@ define([
             const ns = `.branchOptions-${partModel.identifier}`;
 
             // 1) initial paint
-            renderBranchRules($view);
-            renderPreConditions($view);
             categoriesProperty($view);
-            addBranchRulesEditorEvents($view);
-            addPreConditionsEditorEvents($view);
+            showBranchRulesUI($view);
+            showPreConditionsUI($view);
 
             // 2) re-render when test-level options change
             mo.off(`branch-options-update${ns}`).on(`branch-options-update${ns}`, () => {
-                renderBranchRules($view);
-                renderPreConditions($view);
+                showBranchRulesUI($view);
+                showPreConditionsUI($view);
             });
 
             //listen for databinder change to update the test part title
@@ -346,6 +344,30 @@ define([
             initializeSelect2Dropdowns($tbody.find('select.select2'), 'preconditions-dropdown');
         }
 
+        function showBranchRulesUI(view) {
+            const $container = $('.testpart-branch-rules', view);
+            $container.find('.unsupported-qti-message').remove();
+
+            if (hasUnsupportedBranchRules(partModel)) {
+                renderUnsupportedMessage($container);
+            } else {
+                renderBranchRules(view);
+                addBranchRulesEditorEvents(view);
+            }
+        }
+
+        function showPreConditionsUI(view) {
+            const $container = $('.testpart-preconditions', view);
+            $container.find('.unsupported-qti-message').remove();
+
+            if (hasUnsupportedPreConditions(partModel)) {
+                renderUnsupportedMessage($container);
+            } else {
+                renderPreConditions(view);
+                addPreConditionsEditorEvents(view);
+            }
+        }
+
         /**
          * Set up sections that already belongs to the test part
          * @private
@@ -455,6 +477,24 @@ define([
             const categoriesSummary = testPartCategory.getCategories(partModel);
             categorySelector.updateFormState(categoriesSummary.propagated, categoriesSummary.partial);
         }
+    }
+
+    function hasUnsupportedBranchRules(partModel) {
+        return (partModel.branchRules || []).some(r => r && r.__unsupported);
+    }
+
+    function hasUnsupportedPreConditions(partModel) {
+        return (partModel.preConditions || []).some(r => r && r.__unsupported);
+    }
+
+    function renderUnsupportedMessage($container) {
+        const bannerHtml = `<div class="banner banner-danger unsupported-qti-message" role="alert" aria-live="assertive" aria-atomic="true">
+                <span class="banner-icon icon-danger" aria-hidden="true"></span>
+                <div>
+                    ${__('The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience.')}
+                </div>
+            </div>`;
+        $container.html(bannerHtml);
     }
 
     /**
