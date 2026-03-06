@@ -60,6 +60,7 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\AssessmentSectionRef;
 use qtism\data\QtiComponentCollection;
 use qtism\data\SectionPartCollection;
+use qtism\data\SubmissionMode;
 use qtism\data\storage\StorageException;
 use qtism\data\storage\xml\marshalling\UnmarshallingException;
 use qtism\data\storage\xml\XmlDocument;
@@ -240,6 +241,7 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
         if (!empty($json)) {
             $this->verifyItemPermissions($test, $json);
             $this->syncUniqueId($test, $json);
+            $this->syncSubmissionMode($json);
 
             $doc = $this->getDoc($test);
 
@@ -1813,6 +1815,27 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $decodedJson['identifier'] = $uniqueId;
             $json = json_encode($decodedJson);
         }
+    }
+
+    private function syncSubmissionMode(string &$json): void
+    {
+        if (!$this->getFeatureFlagChecker()->isEnabled('FEATURE_FLAG_TAO_ADVANCE_ONLY')) {
+            return;
+        }
+
+        $decodedJson = json_decode($json, true);
+
+        if (!is_array($decodedJson) || !isset($decodedJson['testParts']) || !is_array($decodedJson['testParts'])) {
+            return;
+        }
+
+        foreach ($decodedJson['testParts'] as &$testPart) {
+            if (is_array($testPart)) {
+                $testPart['submissionMode'] = SubmissionMode::INDIVIDUAL;
+            }
+        }
+
+        $json = json_encode($decodedJson);
     }
 
     private function getManifestConverter(): ManifestConverter
