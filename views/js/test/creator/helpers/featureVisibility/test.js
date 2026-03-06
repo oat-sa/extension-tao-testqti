@@ -160,6 +160,30 @@ define([
         );
     });
 
+    QUnit.test('forces individual submission mode when submission selector is hidden', function (assert) {
+        assert.expect(2);
+
+        const testPartModelSample = {
+            'qti-type': 'testPart',
+            identifier: 'testPart-1',
+            submissionMode: 1
+        };
+
+        mockIsVisible(false, 'taoQtiTest/creator/testPart/property/submissionMode');
+        featureVisibility.addTestPartVisibilityProps(testPartModelSample);
+
+        assert.notEqual(
+            testPartModelSample.submissionModeVisible,
+            true,
+            'submission mode selector is hidden'
+        );
+        assert.equal(
+            testPartModelSample.submissionMode,
+            0,
+            'submission mode is forced to individual'
+        );
+    });
+
     QUnit.test('adds visibility props to section model', function (assert) {
         assert.expect(8);
 
