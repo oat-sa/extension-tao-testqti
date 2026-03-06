@@ -1,9 +1,7 @@
-<div class="grid-row">
-    <div class="info-card grid-row">
-        <div class="col-2"><span class="icon-info"></span></div>
-        <div class="col-10">
-            {{__ "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."}}
-        </div>
+<div class="banner banner-info">
+    <span class="banner-icon icon-info"></span>
+    <div>
+        {{__ "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."}}
     </div>
 </div>
 <div class="preconditions-table">
