@@ -74,7 +74,6 @@ define([
         };
         const loadedClassChildren = Object.create(null);
         const pendingClassChildren = Object.create(null);
-        loadedClassChildren[ITEM_URI] = true;
 
         //set up the resource selector with one root class Item in classSelector
         const resourceSelector = resourceSelectorFactory($container, selectorConfig)
@@ -142,33 +141,17 @@ define([
             return pendingClassChildren[classUri];
         }
 
-        //load the classes hierarchy
+        // initialize filters and first level classes lazily from the root class
         testItemProvider
-            .getItemClasses()
-            .then(function (classes) {
-                selectorConfig.classes = classes;
-                selectorConfig.classUri = classes[0] && classes[0].uri;
-                if (selectorConfig.classUri) {
-                    loadedClassChildren[selectorConfig.classUri] = true;
-                }
-            })
-            .then(function () {
-                //load the class properties
-                if (!selectorConfig.classUri) {
-                    throw new Error('No item class available');
-                }
-                return testItemProvider.getItemClassProperties(selectorConfig.classUri);
-            })
+            .getItemClassProperties(selectorConfig.classUri)
             .then(function (filters) {
                 //set the filters from the properties
                 selectorConfig.filters = filters;
             })
             .then(function () {
-                // add classes in classSelector
-                const rootClass = selectorConfig.classes[0] || {};
-                (rootClass.children || []).forEach(node => {
-                    resourceSelector.addClassNode(node, selectorConfig.classUri);
-                });
+                return loadClassChildren(selectorConfig.classUri);
+            })
+            .then(function () {
                 resourceSelector.updateFilters(selectorConfig.filters);
             })
             .catch(onError);
