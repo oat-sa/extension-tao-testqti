@@ -72,9 +72,23 @@ define([
             ],
             filters
         };
+        const loadedClassChildren = Object.create(null);
+        const pendingClassChildren = Object.create(null);
+        loadedClassChildren[ITEM_URI] = true;
 
         //set up the resource selector with one root class Item in classSelector
         const resourceSelector = resourceSelectorFactory($container, selectorConfig)
+            .on('classchange', function (classUri) {
+                //by changing the class we need to change the
+                //properties filters
+                testItemProvider
+                    .getItemClassProperties(classUri)
+                    .then(filters => {
+                        this.updateFilters(filters);
+                        return loadClassChildren(classUri);
+                    })
+                    .catch(onError);
+            })
             .on('render', function () {
                 $container.on('itemselected.creator', () => {
                     this.clearSelection();
@@ -90,16 +104,6 @@ define([
                     })
                     .catch(onError);
             })
-            .on('classchange', function (classUri) {
-                //by changing the class we need to change the
-                //properties filters
-                testItemProvider
-                    .getItemClassProperties(classUri)
-                    .then(filters => {
-                        this.updateFilters(filters);
-                    })
-                    .catch(onError);
-            })
             .on('change', function (values) {
                 /**
                  * We've got a selection, triggered on the view container
@@ -112,15 +116,47 @@ define([
                 $container.trigger('itemselect.creator', [values]);
             });
 
+        function loadClassChildren(classUri) {
+            if (!classUri || loadedClassChildren[classUri]) {
+                return true;
+            }
+
+            if (pendingClassChildren[classUri]) {
+                return pendingClassChildren[classUri];
+            }
+
+            pendingClassChildren[classUri] = testItemProvider
+                .getItemClassChildren(classUri)
+                .then(function (children) {
+                    (children || []).forEach(node => {
+                        resourceSelector.addClassNode(node, classUri);
+                    });
+                    loadedClassChildren[classUri] = true;
+                    delete pendingClassChildren[classUri];
+                })
+                .catch(function (err) {
+                    delete pendingClassChildren[classUri];
+                    throw err;
+                });
+
+            return pendingClassChildren[classUri];
+        }
+
         //load the classes hierarchy
         testItemProvider
             .getItemClasses()
             .then(function (classes) {
                 selectorConfig.classes = classes;
-                selectorConfig.classUri = classes[0].uri;
+                selectorConfig.classUri = classes[0] && classes[0].uri;
+                if (selectorConfig.classUri) {
+                    loadedClassChildren[selectorConfig.classUri] = true;
+                }
             })
             .then(function () {
                 //load the class properties
+                if (!selectorConfig.classUri) {
+                    throw new Error('No item class available');
+                }
                 return testItemProvider.getItemClassProperties(selectorConfig.classUri);
             })
             .then(function (filters) {
@@ -129,7 +165,8 @@ define([
             })
             .then(function () {
                 // add classes in classSelector
-                selectorConfig.classes[0].children.forEach(node => {
+                const rootClass = selectorConfig.classes[0] || {};
+                (rootClass.children || []).forEach(node => {
                     resourceSelector.addClassNode(node, selectorConfig.classUri);
                 });
                 resourceSelector.updateFilters(selectorConfig.filters);

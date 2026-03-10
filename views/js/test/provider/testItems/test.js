@@ -28,6 +28,9 @@ define([
         getItemClasses : {
             url : '//getItemClasses'
         },
+        getItemClassChildren : {
+            url : '//getItemClassChildren'
+        },
         getItems : {
             url : '//getItems'
         },
@@ -51,6 +54,7 @@ define([
 
     api = [
         {name: 'getItemClasses'},
+        {name: 'getItemClassChildren'},
         {name: 'getItems'},
         {name: 'getItemClassProperties'},
     ];
@@ -116,6 +120,33 @@ define([
         assert.ok(returnVal instanceof Promise, 'the getItems method returns a Promise');
         returnVal.then(function(items) {
             assert.deepEqual(items, itemList, 'The return value is correct');
+            ready();
+        });
+    });
+
+    QUnit.test('getItemClassChildren', function(assert) {
+        var ready = assert.async();
+        var classUri = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
+        var theData = [{ uri : 'http://example.com/class-1', label : 'Class 1' }];
+        var returnVal;
+
+        assert.expect(5);
+
+        $.mockjax({
+            url: mockConfig.getItemClassChildren.url,
+            response: function(settings) {
+                assert.equal(settings.url, mockConfig.getItemClassChildren.url, 'The provider has called the right service');
+                assert.deepEqual(settings.data, { classUri: classUri }, 'The correct params are in the request data');
+                assert.notOk(settings.headers.hasOwnProperty('X-CSRF-Token'), 'No CSRF token is set in the request header');
+                this.responseText = JSON.stringify({ success: true, data: theData });
+            }
+        });
+
+        returnVal = testItemProvider.getItemClassChildren(classUri);
+
+        assert.ok(returnVal instanceof Promise, 'the getItemClassChildren method returns a Promise');
+        returnVal.then(function(classes) {
+            assert.deepEqual(classes, theData, 'The return value is correct');
             ready();
         });
     });

@@ -92,6 +92,25 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     }
 
     /**
+     * Get children classes for a given item class
+     */
+    public function getItemClassChildren()
+    {
+        try {
+            if (!$this->hasRequestParameter('classUri')) {
+                throw new \InvalidArgumentException('Missing parameter classUri');
+            }
+
+            $itemClass = new core_kernel_classes_Class($this->getRequestParameter('classUri'));
+            $data = $this->getCreatorItemsService()->getItemClassChildren($itemClass);
+        } catch (Exception $e) {
+            return $this->returnFailure($e);
+        }
+
+        return $this->returnSuccess($data);
+    }
+
+    /**
      * Retrieve non empty QTI Items, using different parameters :
      *  - format (list or tree)
      *  - classUri (top class)

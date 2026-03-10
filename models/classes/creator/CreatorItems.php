@@ -60,7 +60,15 @@ class CreatorItems extends ConfigurableService
     public function getItemClasses()
     {
         $itemClass = $this->getClass(self::ITEM_ROOT_CLASS_URI);
-        return $this->getResourceService()->getAllClasses($itemClass);
+        return $this->buildClassTree($itemClass, 1);
+    }
+
+    /**
+     * Get direct children for a class.
+     */
+    public function getItemClassChildren(\core_kernel_classes_Class $itemClass): array
+    {
+        return $this->buildClassNodes($itemClass->getSubClasses(false), 1);
     }
 
     /**
@@ -131,6 +139,43 @@ class CreatorItems extends ConfigurableService
     protected function getResourceService()
     {
         return $this->getServiceLocator()->get(ResourceService::SERVICE_ID);
+    }
+
+    /**
+     * @param \core_kernel_classes_Class $rootClass
+     * @param int $levels Number of levels to include under the root class.
+     */
+    private function buildClassTree(\core_kernel_classes_Class $rootClass, int $levels): array
+    {
+        return [
+            'uri' => $rootClass->getUri(),
+            'label' => $rootClass->getLabel(),
+            'children' => $this->buildClassNodes($rootClass->getSubClasses(false), $levels),
+        ];
+    }
+
+    /**
+     * @param \core_kernel_classes_Class[] $classes
+     * @param int $levels Number of levels to include under each class.
+     */
+    private function buildClassNodes(array $classes, int $levels): array
+    {
+        $result = [];
+
+        foreach ($classes as $class) {
+            $entry = [
+                'uri' => $class->getUri(),
+                'label' => $class->getLabel(),
+            ];
+
+            if ($levels > 1) {
+                $entry['children'] = $this->buildClassNodes($class->getSubClasses(false), $levels - 1);
+            }
+
+            $result[] = $entry;
+        }
+
+        return $result;
     }
 
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface

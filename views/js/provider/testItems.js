@@ -36,6 +36,9 @@ define([
         getItemClasses : {
             url : urlUtil.route('getItemClasses', 'Items', 'taoQtiTest')
         },
+        getItemClassChildren : {
+            url : urlUtil.route('getItemClassChildren', 'Items', 'taoQtiTest')
+        },
         getItems : {
             url : urlUtil.route('getItems', 'Items', 'taoQtiTest')
         },
@@ -65,6 +68,15 @@ define([
              */
             getItemClasses: function getItemClasses(){
                 return request(config.getItemClasses.url);
+            },
+
+            /**
+             * Get direct child classes for a class.
+             * @param {String} classUri - the class uri
+             * @returns {Promise} that resolves with class nodes
+             */
+            getItemClassChildren: function getItemClassChildren(classUri){
+                return request(config.getItemClassChildren.url, { classUri : classUri });
             },
 
             /**
