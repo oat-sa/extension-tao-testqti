@@ -74,7 +74,12 @@ define([
         };
         const loadedClassChildren = Object.create(null);
         const pendingClassChildren = Object.create(null);
+        const classHasSubclasses = Object.create(null);
+        const classNodeExpansion = Object.create(null);
         let currentClassUri = selectorConfig.classUri;
+        const classSelectorOptionsSelector = '.class-selector .options';
+        const classSelectorTogglerClass = 'class-selector-toggler';
+        classHasSubclasses[ITEM_URI] = true;
 
         //set up the resource selector with one root class Item in classSelector
         const resourceSelector = resourceSelectorFactory($container, selectorConfig)
@@ -86,6 +91,7 @@ define([
                 currentClassUri = classUri;
 
                 Promise.resolve(loadClassChildren(classUri)).catch(onError);
+                scheduleClassSelectorSync();
 
                 //by changing the class we need to change the
                 //properties filters
@@ -98,6 +104,9 @@ define([
                 $container.on('itemselected.creator', () => {
                     this.clearSelection();
                 });
+
+                bindClassSelectorNavigation();
+                scheduleClassSelectorSync();
             })
             .on('query', function (params) {
                 //ask the server the item from the component query
@@ -109,6 +118,7 @@ define([
                     })
                     .catch(onError);
             })
+            .on('update', scheduleClassSelectorSync)
             .on('change', function (values) {
                 /**
                  * We've got a selection, triggered on the view container
@@ -133,10 +143,17 @@ define([
             pendingClassChildren[classUri] = testItemProvider
                 .getItemClassChildren(classUri)
                 .then(function (children) {
+                    const classChildren = children || [];
+
                     (children || []).forEach(node => {
+                        if (node && node.uri && typeof node.hasChildren === 'boolean') {
+                            classHasSubclasses[node.uri] = node.hasChildren;
+                        }
                         resourceSelector.addClassNode(node, classUri);
                     });
+                    classHasSubclasses[classUri] = classChildren.length > 0;
                     loadedClassChildren[classUri] = true;
+                    scheduleClassSelectorSync();
                     delete pendingClassChildren[classUri];
                 })
                 .catch(function (err) {
@@ -145,6 +162,152 @@ define([
                 });
 
             return pendingClassChildren[classUri];
+        }
+
+        function getClassUri($classNode) {
+            return $classNode.children('a[data-uri]').data('uri');
+        }
+
+        function isClassNodeExpanded(classUri) {
+            if (!classUri) {
+                return false;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(classNodeExpansion, classUri)) {
+                return classNodeExpansion[classUri];
+            }
+
+            return classUri === ITEM_URI;
+        }
+
+        function setClassNodeExpanded($classNode, expanded) {
+            const classUri = getClassUri($classNode);
+            const $children = $classNode.children('ul');
+            const hasChildren = $children.children('li').length > 0;
+            const $toggler = $classNode.children(`.${classSelectorTogglerClass}`);
+            const canExpand = classHasSubclasses[classUri] === true;
+
+            if (!classUri || !$toggler.length) {
+                return;
+            }
+
+            if (!canExpand || (loadedClassChildren[classUri] && !hasChildren)) {
+                delete classNodeExpansion[classUri];
+                $children.hide();
+                $classNode.addClass('closed');
+                $toggler
+                    .text('')
+                    .attr('aria-hidden', 'true')
+                    .removeAttr('tabindex')
+                    .removeAttr('aria-label')
+                    .removeAttr('aria-busy')
+                    .removeClass('clickable')
+                    .css('cursor', 'default');
+                return;
+            }
+
+            classNodeExpansion[classUri] = Boolean(expanded);
+            $children.toggle(Boolean(expanded));
+            $classNode.toggleClass('closed', !expanded);
+            $toggler
+                .text('')
+                .attr('aria-hidden', 'false')
+                .attr('tabindex', '0')
+                .attr('aria-label', expanded ? __('Collapse class') : __('Expand class'))
+                .removeAttr('aria-busy')
+                .addClass('clickable');
+        }
+
+        function syncClassSelectorTree() {
+            $(`${classSelectorOptionsSelector} li`, $container).each(function () {
+                const $classNode = $(this);
+                const $classLink = $classNode.children('a[data-uri]');
+                const classUri = $classLink.data('uri');
+                let $toggler = $classNode.children(`.${classSelectorTogglerClass}`);
+
+                if (!$classLink.length || !classUri) {
+                    return;
+                }
+
+                if (!$toggler.length) {
+                    $toggler = $('<span>', {
+                        class: `${classSelectorTogglerClass} class-toggler clickable`,
+                        role: 'button',
+                        tabindex: '0',
+                        'aria-label': __('Toggle class children')
+                    });
+                    $classLink.before($toggler);
+                }
+
+                if (classHasSubclasses[classUri] !== true) {
+                    setClassNodeExpanded($classNode, false);
+                    return;
+                }
+
+                setClassNodeExpanded($classNode, isClassNodeExpanded(classUri));
+            });
+        }
+
+        function scheduleClassSelectorSync() {
+            setTimeout(syncClassSelectorTree, 0);
+        }
+
+        function bindClassSelectorNavigation() {
+            $container.off('.creatorClassSelector');
+
+            function handleExpandRequest($classNode, $trigger) {
+                if (!$trigger || !$trigger.length || $trigger.attr('aria-hidden') === 'true') {
+                    return;
+                }
+
+                const classUri = getClassUri($classNode);
+                const hasChildren = $classNode.children('ul').children('li').length > 0;
+
+                if (!classUri) {
+                    return;
+                }
+
+                if (hasChildren && isClassNodeExpanded(classUri)) {
+                    setClassNodeExpanded($classNode, false);
+                    return;
+                }
+
+                $trigger.attr('aria-busy', 'true');
+
+                Promise.resolve(loadClassChildren(classUri))
+                    .then(() => {
+                        setClassNodeExpanded($classNode, true);
+                        scheduleClassSelectorSync();
+                    })
+                    .catch(err => {
+                        onError(err);
+                        scheduleClassSelectorSync();
+                    });
+            }
+
+            $container.on('click.creatorClassSelector', `${classSelectorOptionsSelector} .${classSelectorTogglerClass}`, function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                handleExpandRequest($(this).closest('li'), $(this));
+            });
+
+            // Clicking the folder pseudo-icon area targets the LI itself; treat it as expand/collapse.
+            $container.on('click.creatorClassSelector', `${classSelectorOptionsSelector} li`, function (event) {
+                if (event.target !== this) {
+                    return;
+                }
+
+                event.preventDefault();
+                event.stopPropagation();
+                handleExpandRequest($(this), $(this).children(`.${classSelectorTogglerClass}`));
+            });
+
+            $container.on('keydown.creatorClassSelector', `${classSelectorOptionsSelector} .${classSelectorTogglerClass}`, function (event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    $(this).trigger('click');
+                }
+            });
         }
 
         function requestAndApplyClassFilters(classUri, applyFilters) {
@@ -165,7 +328,9 @@ define([
         }
 
         // initialize filters and first level classes lazily from the root class
-        Promise.resolve(loadClassChildren(selectorConfig.classUri)).catch(onError);
+        Promise.resolve(loadClassChildren(selectorConfig.classUri))
+            .then(scheduleClassSelectorSync)
+            .catch(onError);
         requestAndApplyClassFilters(selectorConfig.classUri, function (filters) {
             selectorConfig.filters = filters;
             resourceSelector.updateFilters(filters);

@@ -149,9 +149,11 @@ class CreatorItems extends ConfigurableService
         $result = [];
 
         foreach ($classes as $class) {
+            $hasChildren = count($class->getSubClasses(false)) > 0;
             $entry = [
                 'uri' => $class->getUri(),
                 'label' => $class->getLabel(),
+                'hasChildren' => $hasChildren,
             ];
 
             $result[] = $entry;

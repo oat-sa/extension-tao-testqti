@@ -149,6 +149,52 @@ $brActionBorderColor: #ddd;
         .item-selection {
             position: relative;
             overflow: hidden;
+
+            .class-selector {
+                .options ul li {
+                    position: relative;
+
+                    &:before {
+                        content: none;
+                    }
+
+                    &.closed > ul {
+                        display: none;
+                    }
+
+                    > .class-selector-toggler.class-toggler {
+                        display: inline-block;
+                        position: relative;
+                        width: 16px;
+                        text-align: center;
+                        margin-right: 4px;
+                        cursor: pointer;
+
+                        &:after {
+                            @include tao-icon-setup;
+                            @include icon-down;
+                            @include font-size(15);
+                            position: relative;
+                            color: $textColor;
+                        }
+                    }
+
+                    &.closed > .class-selector-toggler.class-toggler:after {
+                        @include icon-right;
+                    }
+
+                    > a:before {
+                        @include tao-icon-setup;
+                        @include icon-folder;
+                        color: $warning;
+                        margin-right: 4px;
+                    }
+
+                    &:not(.closed) > a:before {
+                        @include icon-folder-open;
+                    }
+                }
+            }
         }
     }
 
