@@ -98,10 +98,24 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
     {
         try {
             if (!$this->hasRequestParameter('classUri')) {
-                throw new \InvalidArgumentException('Missing parameter classUri');
+                return $this->returnClientError('Missing parameter classUri');
             }
 
-            $itemClass = new core_kernel_classes_Class($this->getRequestParameter('classUri'));
+            $classUri = $this->getRequestParameter('classUri');
+            if (!is_string($classUri)) {
+                return $this->returnClientError('Invalid parameter classUri');
+            }
+
+            $classUri = trim($classUri);
+            if ($classUri === '') {
+                return $this->returnClientError('Invalid parameter classUri');
+            }
+
+            $itemClass = new core_kernel_classes_Class($classUri);
+            if (!$this->isValidItemClass($itemClass)) {
+                return $this->returnClientError('Invalid parameter classUri');
+            }
+
             $data = $this->getCreatorItemsService()->getItemClassChildren($itemClass);
         } catch (Exception $e) {
             return $this->returnFailure($e);
@@ -309,5 +323,31 @@ class taoQtiTest_actions_Items extends tao_actions_CommonModule
         ];
 
         return $this->returnJson($returnArray, 500);
+    }
+
+    /**
+     * Helps you to format 400 responses.
+     */
+    protected function returnClientError(string $message)
+    {
+        return $this->returnJson(
+            [
+                'success' => false,
+                'errorCode' => 400,
+                'errorMsg' => $message,
+            ],
+            400
+        );
+    }
+
+    private function isValidItemClass(core_kernel_classes_Class $itemClass): bool
+    {
+        if (!$itemClass->exists()) {
+            return false;
+        }
+
+        $itemRootClass = new core_kernel_classes_Class(CreatorItems::ITEM_ROOT_CLASS_URI);
+
+        return $itemClass->getUri() === $itemRootClass->getUri() || $itemClass->isSubClassOf($itemRootClass);
     }
 }

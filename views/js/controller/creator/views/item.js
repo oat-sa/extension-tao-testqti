@@ -74,18 +74,24 @@ define([
         };
         const loadedClassChildren = Object.create(null);
         const pendingClassChildren = Object.create(null);
+        let currentClassUri = selectorConfig.classUri;
 
         //set up the resource selector with one root class Item in classSelector
         const resourceSelector = resourceSelectorFactory($container, selectorConfig)
             .on('classchange', function (classUri) {
+                if (!classUri) {
+                    return;
+                }
+
+                currentClassUri = classUri;
+
+                Promise.resolve(loadClassChildren(classUri)).catch(onError);
+
                 //by changing the class we need to change the
                 //properties filters
-                testItemProvider
-                    .getItemClassProperties(classUri)
-                    .then(filters => {
-                        this.updateFilters(filters);
-                        return loadClassChildren(classUri);
-                    })
+                requestAndApplyClassFilters(classUri, filters => {
+                    this.updateFilters(filters);
+                })
                     .catch(onError);
             })
             .on('render', function () {
@@ -141,19 +147,29 @@ define([
             return pendingClassChildren[classUri];
         }
 
+        function requestAndApplyClassFilters(classUri, applyFilters) {
+            if (!classUri) {
+                return Promise.resolve();
+            }
+
+            const requestedClassUri = classUri;
+
+            return testItemProvider.getItemClassProperties(classUri).then(filters => {
+                // Ignore stale responses from previously selected classes.
+                if (requestedClassUri !== currentClassUri) {
+                    return;
+                }
+
+                applyFilters(filters);
+            });
+        }
+
         // initialize filters and first level classes lazily from the root class
-        testItemProvider
-            .getItemClassProperties(selectorConfig.classUri)
-            .then(function (filters) {
-                //set the filters from the properties
-                selectorConfig.filters = filters;
-            })
-            .then(function () {
-                return loadClassChildren(selectorConfig.classUri);
-            })
-            .then(function () {
-                resourceSelector.updateFilters(selectorConfig.filters);
-            })
+        Promise.resolve(loadClassChildren(selectorConfig.classUri)).catch(onError);
+        requestAndApplyClassFilters(selectorConfig.classUri, function (filters) {
+            selectorConfig.filters = filters;
+            resourceSelector.updateFilters(filters);
+        })
             .catch(onError);
     };
 });

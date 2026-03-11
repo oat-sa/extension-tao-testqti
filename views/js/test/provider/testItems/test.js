@@ -131,6 +131,7 @@ define([
         var returnVal;
 
         assert.expect(5);
+        $.mockjax.clear(mockConfig.getItemClassChildren.url);
 
         $.mockjax({
             url: mockConfig.getItemClassChildren.url,
@@ -147,6 +148,36 @@ define([
         assert.ok(returnVal instanceof Promise, 'the getItemClassChildren method returns a Promise');
         returnVal.then(function(classes) {
             assert.deepEqual(classes, theData, 'The return value is correct');
+            ready();
+        });
+    });
+
+    QUnit.test('getItemClassChildren rejects on unsuccessful payload', function(assert) {
+        var ready = assert.async();
+        var classUri = 'http://www.tao.lu/Ontologies/TAOItem.rdf#Item';
+        var returnVal;
+
+        assert.expect(5);
+        $.mockjax.clear(mockConfig.getItemClassChildren.url);
+
+        $.mockjax({
+            url: mockConfig.getItemClassChildren.url,
+            response: function(settings) {
+                assert.equal(settings.url, mockConfig.getItemClassChildren.url, 'The provider has called the right service');
+                assert.deepEqual(settings.data, { classUri: classUri }, 'The correct params are in the request data');
+                this.responseText = JSON.stringify({ success: false, errorMsg: 'boom' });
+            }
+        });
+
+        returnVal = testItemProvider.getItemClassChildren(classUri);
+        assert.ok(returnVal instanceof Promise, 'the getItemClassChildren method returns a Promise');
+
+        returnVal.then(function() {
+            assert.ok(false, 'The promise must not resolve');
+            ready();
+        }).catch(function(error) {
+            assert.strictEqual(error.success, false, 'The promise rejects with unsuccessful payload');
+            assert.equal(error.errorMsg, 'boom', 'The rejected payload contains the server error message');
             ready();
         });
     });
