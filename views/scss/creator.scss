@@ -177,10 +177,16 @@ $brActionBorderColor: #ddd;
                             position: relative;
                             color: $textColor;
                         }
+
                     }
 
                     &.closed > .class-selector-toggler.class-toggler:after {
                         @include icon-right;
+                    }
+
+                    > .class-selector-toggler.class-toggler[aria-hidden='true']:after,
+                    &.closed > .class-selector-toggler.class-toggler[aria-hidden='true']:after {
+                        content: none;
                     }
 
                     > a:before {
