@@ -1835,7 +1835,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             }
         }
 
-        $json = json_encode($decodedJson);
+        $encodedJson = json_encode($decodedJson);
+        if ($encodedJson !== false) {
+            $json = $encodedJson;
+        }
     }
 
     private function getManifestConverter(): ManifestConverter
