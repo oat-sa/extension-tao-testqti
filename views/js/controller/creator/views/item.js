@@ -98,7 +98,7 @@ define([
                 requestAndApplyClassFilters(classUri, filters => {
                     this.updateFilters(filters);
                 })
-                    .catch(onError);
+                .catch(onError);
             })
             .on('render', function () {
                 $container.on('itemselected.creator', () => {
