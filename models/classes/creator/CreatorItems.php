@@ -64,6 +64,14 @@ class CreatorItems extends ConfigurableService
     }
 
     /**
+     * Get direct children for a class.
+     */
+    public function getItemClassChildren(\core_kernel_classes_Class $itemClass): array
+    {
+        return $this->buildClassNodes($itemClass->getSubClasses(false));
+    }
+
+    /**
      * Retrieve QTI Items for the given parameters
      * @param \core_kernel_classes_Class $itemClass the item class
      * @param string $format the lookup format
@@ -131,6 +139,27 @@ class CreatorItems extends ConfigurableService
     protected function getResourceService()
     {
         return $this->getServiceLocator()->get(ResourceService::SERVICE_ID);
+    }
+
+    /**
+     * @param \core_kernel_classes_Class[] $classes
+     */
+    private function buildClassNodes(array $classes): array
+    {
+        $result = [];
+
+        foreach ($classes as $class) {
+            $hasChildren = count($class->getSubClasses(false)) > 0;
+            $entry = [
+                'uri' => $class->getUri(),
+                'label' => $class->getLabel(),
+                'hasChildren' => $hasChildren,
+            ];
+
+            $result[] = $entry;
+        }
+
+        return $result;
     }
 
     private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
