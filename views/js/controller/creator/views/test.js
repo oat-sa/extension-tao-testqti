@@ -37,6 +37,7 @@ define([
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/outcomeValidator',
+    'taoQtiTest/controller/creator/helpers/outcomeIdentifierValidation',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -61,6 +62,7 @@ define([
     baseTypeHelper,
     outcome,
     outcomeValidator,
+    validateOutcomeIdentifier,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -313,21 +315,18 @@ define([
                 $input.removeClass('error');
                 $input.siblings('.validate-error').remove();
 
-                // Check if the identifier is unique among other outcome declarations
-                const isUnique = !testModel.outcomeDeclarations.some(
-                    (outcomeDeclaration) => {
-                        const isCurrentOutcome = currentOutcomeSerial
-                            ? outcomeDeclaration.serial === currentOutcomeSerial
-                            : outcomeDeclaration.identifier === originalIdentifier;
+                const validation = validateOutcomeIdentifier({
+                    identifier: identifier,
+                    originalIdentifier: originalIdentifier,
+                    currentOutcomeSerial: currentOutcomeSerial,
+                    outcomeDeclarations: testModel.outcomeDeclarations,
+                    validateIdentifier: outcomeValidator.validateIdentifier
+                });
 
-                        return !isCurrentOutcome && outcomeDeclaration.identifier === identifier;
-                    }
-                );
-                const identifierIsValid = !!identifier.trim() && outcomeValidator.validateIdentifier(identifier);
-                if (!isUnique || !identifierIsValid) {
+                if (validation.hasError) {
                     $input.addClass('error');
                     $input.focus();
-                    if (identifierIsValid) {
+                    if (validation.identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                         $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
                     } else {
