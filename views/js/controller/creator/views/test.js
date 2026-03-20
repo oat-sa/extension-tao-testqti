@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
