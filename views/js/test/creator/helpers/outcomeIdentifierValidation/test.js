@@ -90,4 +90,16 @@ define([
         assert.ok(state.isUnique, 'Current edited outcome is excluded via original identifier fallback');
         assert.notOk(state.hasError, 'No validation error for unchanged valid identifier');
     });
+
+    QUnit.test('missing validateIdentifier fails closed', function(assert) {
+        var state = validateOutcomeIdentifier({
+            identifier: 'OUTCOME_1',
+            originalIdentifier: 'OUTCOME_1',
+            outcomeDeclarations: [{ identifier: 'OUTCOME_1', serial: 'serial_1' }]
+        });
+
+        assert.expect(2);
+        assert.notOk(state.identifierIsValid, 'Identifier is treated as invalid when validateIdentifier is missing');
+        assert.ok(state.hasError, 'Validation fails closed when validateIdentifier is missing');
+    });
 });

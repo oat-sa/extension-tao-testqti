@@ -34,7 +34,9 @@ define([], function() {
         var currentOutcomeSerial = options && options.currentOutcomeSerial;
         var outcomeDeclarations = options && options.outcomeDeclarations ? options.outcomeDeclarations : [];
         var validateIdentifier = options && options.validateIdentifier;
-        var identifierIsValid = !!(identifier && identifier.trim()) && validateIdentifier(identifier);
+        var identifierIsValid = !!(identifier && identifier.trim())
+            && typeof validateIdentifier === 'function'
+            && validateIdentifier(identifier);
         var isUnique = !outcomeDeclarations.some(function(outcomeDeclaration) {
             var isCurrentOutcome = currentOutcomeSerial
                 ? outcomeDeclaration.serial === currentOutcomeSerial
