@@ -306,23 +306,26 @@ define([
                 const $input = $(this);
                 const identifier = $input.val();
                 const originalIdentifier = $input.data('originalValue');
+                const currentOutcomeSerial = $input.closest('.outcome-container').data('serial');
                 const $saveButton = $('#saver');
 
-                // Skip validation if the identifier has not changed
-                if (identifier === originalIdentifier) {
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
-                    return;
-                }
+                // Always revalidate on blur to avoid stale validation state.
+                $input.removeClass('error');
+                $input.siblings('.validate-error').remove();
 
                 // Check if the identifier is unique among other outcome declarations
                 const isUnique = !testModel.outcomeDeclarations.some(
-                    outcome =>
-                    outcome.identifier === identifier && outcome.serial
+                    (outcomeDeclaration) => {
+                        const isCurrentOutcome = currentOutcomeSerial
+                            ? outcomeDeclaration.serial === currentOutcomeSerial
+                            : outcomeDeclaration.identifier === originalIdentifier;
+
+                        return !isCurrentOutcome && outcomeDeclaration.identifier === identifier;
+                    }
                 );
-                const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
-                $input.siblings('.validate-error').remove();
+                const identifierIsValid = !!identifier.trim() && outcomeValidator.validateIdentifier(identifier);
                 if (!isUnique || !identifierIsValid) {
-                    $input.addClass("error");
+                    $input.addClass('error');
                     $input.focus();
                     if (identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
@@ -333,7 +336,6 @@ define([
                     }
                     $saveButton.addClass('disabled').attr('disabled', true);
                 } else {
-                    $input.removeClass("error");
                     $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
             });
