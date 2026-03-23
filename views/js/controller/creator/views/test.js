@@ -331,7 +331,7 @@ define([
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                         $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
                     } else {
-                        const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
+                        const message = __('is not a valid identifier (alphanum, underscore and dash)');
                         $input.after('<span class="validate-error">' + message + '</span>');
                     }
                 }
