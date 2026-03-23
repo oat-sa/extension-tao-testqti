@@ -38,6 +38,7 @@ define([
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/outcomeValidator',
     'taoQtiTest/controller/creator/helpers/outcomeIdentifierValidation',
+    'taoQtiTest/controller/creator/helpers/outcomeSaveButtonState',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -63,6 +64,7 @@ define([
     outcome,
     outcomeValidator,
     validateOutcomeIdentifier,
+    updateOutcomeSaveButtonState,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -332,10 +334,9 @@ define([
                         const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
                         $input.after('<span class="validate-error">' + message + '</span>');
                     }
-                    $saveButton.addClass('disabled').attr('disabled', true);
-                } else {
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
+
+                updateOutcomeSaveButtonState($saveButton);
             });
 
             // Update the test parts and render the outcome declarations
