@@ -325,7 +325,6 @@ define([
 
                 if (validation.hasError) {
                     $input.addClass('error');
-                    $input.focus();
                     if (validation.identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                         $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
