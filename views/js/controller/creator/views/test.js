@@ -11,9 +11,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -37,6 +37,8 @@ define([
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/outcomeValidator',
+    'taoQtiTest/controller/creator/helpers/outcomeIdentifierValidation',
+    'taoQtiTest/controller/creator/helpers/outcomeSaveButtonState',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -61,6 +63,8 @@ define([
     baseTypeHelper,
     outcome,
     outcomeValidator,
+    validateOutcomeIdentifier,
+    updateOutcomeSaveButtonState,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -306,36 +310,33 @@ define([
                 const $input = $(this);
                 const identifier = $input.val();
                 const originalIdentifier = $input.data('originalValue');
+                const currentOutcomeSerial = $input.closest('.outcome-container').data('serial');
                 const $saveButton = $('#saver');
 
-                // Skip validation if the identifier has not changed
-                if (identifier === originalIdentifier) {
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
-                    return;
-                }
-
-                // Check if the identifier is unique among other outcome declarations
-                const isUnique = !testModel.outcomeDeclarations.some(
-                    outcome =>
-                    outcome.identifier === identifier && outcome.serial
-                );
-                const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
+                // Always revalidate on blur to avoid stale validation state.
+                $input.removeClass('error');
                 $input.siblings('.validate-error').remove();
-                if (!isUnique || !identifierIsValid) {
-                    $input.addClass("error");
-                    $input.focus();
-                    if (identifierIsValid) {
+
+                const validation = validateOutcomeIdentifier({
+                    identifier: identifier,
+                    originalIdentifier: originalIdentifier,
+                    currentOutcomeSerial: currentOutcomeSerial,
+                    outcomeDeclarations: testModel.outcomeDeclarations,
+                    validateIdentifier: outcomeValidator.validateIdentifier
+                });
+
+                if (validation.hasError) {
+                    $input.addClass('error');
+                    if (validation.identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                         $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
                     } else {
-                        const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
+                        const message = __('is not a valid identifier (alphanum, underscore and dash)');
                         $input.after('<span class="validate-error">' + message + '</span>');
                     }
-                    $saveButton.addClass('disabled').attr('disabled', true);
-                } else {
-                    $input.removeClass("error");
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
+
+                updateOutcomeSaveButtonState($saveButton);
             });
 
             // Update the test parts and render the outcome declarations
