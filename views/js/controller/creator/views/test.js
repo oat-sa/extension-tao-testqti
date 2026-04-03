@@ -11,9 +11,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -37,6 +37,8 @@ define([
     'taoQtiTest/controller/creator/helpers/baseType',
     'taoQtiTest/controller/creator/helpers/outcome',
     'taoQtiTest/controller/creator/helpers/outcomeValidator',
+    'taoQtiTest/controller/creator/helpers/outcomeIdentifierValidation',
+    'taoQtiTest/controller/creator/helpers/outcomeSaveButtonState',
     'taoQtiTest/controller/creator/helpers/renderOutcomeHelper',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/views/mnopTable',
@@ -61,6 +63,8 @@ define([
     baseTypeHelper,
     outcome,
     outcomeValidator,
+    validateOutcomeIdentifier,
+    updateOutcomeSaveButtonState,
     { renderOutcomeDeclarationList },
     scaleSelectorFactory,
     mnopTableView,
@@ -76,7 +80,8 @@ define([
      * @exports taoQtiTest/controller/creator/views/test
      * @param {Object} creatorContext
      */
-    function testView(creatorContext) {
+    function testView(creatorContext)
+    {
         const defaultsConfigs = defaults();
         const modelOverseer = creatorContext.getModelOverseer();
         const testModel = modelOverseer.getModel();
@@ -107,7 +112,8 @@ define([
         /**
          * Show the title of the test.
          */
-        function showTitle(model) {
+        function showTitle(model)
+        {
             $title.text(titleFormat.replace('%title%', model.title).replace('%lang%', config.translationLanguageCode));
         }
 
@@ -117,7 +123,8 @@ define([
          * set up the existing test part views
          * @private
          */
-        function testParts() {
+        function testParts()
+        {
             if (!testModel.testParts) {
                 testModel.testParts = [];
             }
@@ -138,7 +145,8 @@ define([
          * @param {propView} propView - the view object
          * @fires modelOverseer#scoring-change
          */
-        function propHandler(propView) {
+        function propHandler(propView)
+        {
             const $view = propView.getView();
             const $categoryScoreLine = $('.test-category-score', $view);
             const $cutScoreLine = $('.test-cut-score', $view);
@@ -150,7 +158,8 @@ define([
             let scoringState = JSON.stringify(testModel.scoring);
             const weightVisible = features.isVisible('taoQtiTest/creator/test/property/scoring/weight');
 
-            function changeScoring(scoring) {
+            function changeScoring(scoring)
+            {
                 const noOptions = !!scoring && ['none', 'custom', 'grade'].indexOf(scoring.outcomeProcessing) === -1;
                 const newScoringState = JSON.stringify(scoring);
 
@@ -161,6 +170,7 @@ define([
                 hider.hide($scoringError);
                 hider.show($descriptions.filter('[data-key="' + scoring.outcomeProcessing + '"]'));
                 testModel.scalePresets = config.scalePresets;
+                testModel.testScales = config.testScales;
 
                 if (scoringState !== newScoringState) {
                     /**
@@ -173,7 +183,8 @@ define([
             }
 
 
-            function updateOutcomes() {
+            function updateOutcomes()
+            {
                 const $panel = $('.outcome-declarations', $view);
 
                 $panel.html(templates.outcomes({ outcomes: modelOverseer.getOutcomeDeclarationsReservedList() }));
@@ -188,11 +199,13 @@ define([
                 const modelOverseer = creatorContext.getModelOverseer();
                 const testModel = modelOverseer.getModel();
 
-                const hasRules = (testModel.testParts || []).some(tp =>
+                const hasRules = (testModel.testParts || []).some(
+                    tp =>
                     (tp.branchRules || []).length
                 );
 
-                const hasPreconditions = (testModel.testParts || []).some(tp =>
+                const hasPreconditions = (testModel.testParts || []).some(
+                    tp =>
                     (tp.preConditions || []).length
                 );
 
@@ -203,21 +216,22 @@ define([
                         message: __(
                             'Regenerating outcomes may remove some variables used in paths or prerequisites. Any paths or prerequisites that use removed variables will be cleared. Continue?'
                         ),
-                        buttons: [
+                    buttons: [
                             { id: 'cancel', type: 'regular', label: __('Cancel'),  close: true },
                             { id: 'proceed', type: 'info',    label: __('Proceed'), close: true }
                         ],
-                        autoRender: true,
-                        autoDestroy: true,
-                        onProceedBtn: function () {
-                            runRegenerate();
-                        }
+                    autoRender: true,
+                    autoDestroy: true,
+                    onProceedBtn: function () {
+                        runRegenerate();
+                    }
                     });
                 } else {
                     runRegenerate();
                 }
 
-                function runRegenerate() {
+                function runRegenerate()
+                {
                     $generate.addClass('disabled').attr('disabled', true);
                     modelOverseer
                         .on('scoring-write.regenerate', function () {
@@ -275,7 +289,7 @@ define([
                 const scaleSelector = scaleSelectorFactory($scaleContainer);
                 scaleSelector.createForm('');
 
-                scaleSelector.on('scale-change', function(selected) {
+                scaleSelector.on('scale-change', function (selected) {
                     newOutcome.scale = selected || '';
 
                     const $minMaxInputs = $newOutcomeContainer.find('.minimum-maximum input');
@@ -296,35 +310,33 @@ define([
                 const $input = $(this);
                 const identifier = $input.val();
                 const originalIdentifier = $input.data('originalValue');
+                const currentOutcomeSerial = $input.closest('.outcome-container').data('serial');
                 const $saveButton = $('#saver');
 
-                // Skip validation if the identifier has not changed
-                if (identifier === originalIdentifier) {
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
-                    return;
-                }
-
-                // Check if the identifier is unique among other outcome declarations
-                const isUnique = !testModel.outcomeDeclarations.some(outcome =>
-                    outcome.identifier === identifier && outcome.serial
-                );
-                const identifierIsValid = identifier.trim() && outcomeValidator.validateIdentifier(identifier);
+                // Always revalidate on blur to avoid stale validation state.
+                $input.removeClass('error');
                 $input.siblings('.validate-error').remove();
-                if (!isUnique || !identifierIsValid) {
-                    $input.addClass("error");
-                    $input.focus();
-                    if (identifierIsValid) {
+
+                const validation = validateOutcomeIdentifier({
+                    identifier: identifier,
+                    originalIdentifier: originalIdentifier,
+                    currentOutcomeSerial: currentOutcomeSerial,
+                    outcomeDeclarations: testModel.outcomeDeclarations,
+                    validateIdentifier: outcomeValidator.validateIdentifier
+                });
+
+                if (validation.hasError) {
+                    $input.addClass('error');
+                    if (validation.identifierIsValid) {
                         feedback().error(__('Outcome identifier must be unique and non-empty. Please choose a valid identifier.'));
                         $input.after('<span class="validate-error"></span>'); // makes creatorContext.isTestHasErrors == true
                     } else {
-                        const message = __('is not a valid identifier (alphanum, underscore, dash and dots)');
+                        const message = __('is not a valid identifier (alphanum, underscore and dash)');
                         $input.after('<span class="validate-error">' + message + '</span>');
                     }
-                    $saveButton.addClass('disabled').attr('disabled', true);
-                } else {
-                    $input.removeClass("error");
-                    $saveButton.removeClass('disabled').removeAttr('disabled');
                 }
+
+                updateOutcomeSaveButtonState($saveButton);
             });
 
             // Update the test parts and render the outcome declarations
@@ -360,12 +372,12 @@ define([
                         getItemsMaxScores: {
                             url: mnopConfig.getItemsMaxScoresUrl
                         }
-                    }).then(function() {
+                    }).then(function () {
                         const mnopView = mnopTableView($mnopContainer, testModel, modelOverseer, mnopConfig);
                         mnopView.init();
 
                         propView.mnopView = mnopView;
-                    }).catch(function(err) {
+                    }).catch(function (err) {
                         console.error('Failed to initialize MNOP helper:', err);
                     });
                 }
@@ -376,7 +388,8 @@ define([
          * @private
          * @fires modelOverseer#part-add
          */
-        function addTestPart() {
+        function addTestPart()
+        {
             $('.testpart-adder').adder({
                 target: $('.testparts'),
                 content: templates.testpart,
@@ -390,10 +403,10 @@ define([
                             'testPart',
                             defaultsConfigs.partIdPrefix
                         ),
-                        index: testPartIndex,
-                        navigationMode: defaultsConfigs.navigationMode,
-                        submissionMode: defaultsConfigs.submissionMode,
-                        assessmentSections: [
+                    index: testPartIndex,
+                    navigationMode: defaultsConfigs.navigationMode,
+                    submissionMode: defaultsConfigs.submissionMode,
+                    assessmentSections: [
                             {
                                 'qti-type': 'assessmentSection',
                                 identifier: qtiTestHelper.getAvailableIdentifier(
@@ -401,14 +414,14 @@ define([
                                     'assessmentSection',
                                     defaultsConfigs.sectionIdPrefix
                                 ),
-                                title: defaultsConfigs.sectionTitlePrefix,
-                                index: 0,
-                                sectionParts: [],
-                                visible: true,
-                                itemSessionControl: {
-                                    maxAttempts: defaultsConfigs.maxAttempts
+                            title: defaultsConfigs.sectionTitlePrefix,
+                            index: 0,
+                            sectionParts: [],
+                            visible: true,
+                            itemSessionControl: {
+                                maxAttempts: defaultsConfigs.maxAttempts
                                 }
-                            }
+                        }
                         ]
                     });
                 }
