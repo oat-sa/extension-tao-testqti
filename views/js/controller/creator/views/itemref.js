@@ -23,7 +23,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
-    'context',
+    'util/url',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
@@ -35,7 +35,7 @@ define([
     $,
     _,
     __,
-    context,
+    urlUtil,
     actions,
     categorySelectorFactory,
     sectionCategory,
@@ -91,12 +91,16 @@ define([
          * @returns {String} the full URL to navigate to
          */
         function buildItemManagerUrl(itemUri, autoAction) {
-            const baseUrl = context.root_url || '';
-            const url = baseUrl + 'tao/Main/index?structure=items&ext=taoItems&section=manage_items&uri=' + encodeURIComponent(itemUri);
+            var params = {
+                structure: 'items',
+                ext: 'taoItems',
+                section: 'manage_items',
+                uri: itemUri
+            };
             if (autoAction) {
-                url += '&autoAction=' + encodeURIComponent(autoAction);
+                params.autoAction = autoAction;
             }
-            return url;
+            return urlUtil.route('index', 'Main', 'tao', params);
         }
 
         /**
