@@ -133,7 +133,7 @@ define([
          */
         $actionContainer.find('.edit-item').on('click', function (e) {
             e.preventDefault();
-            var itemUri = $itemRef.data('uri');
+            const itemUri = $itemRef.data('uri');
             if (itemUri) {
                 window.open(buildItemManagerUrl(itemUri, 'item-authoring'), '_blank');
             }
