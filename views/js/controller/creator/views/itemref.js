@@ -23,22 +23,26 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'util/url',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
-    'taoQtiTest/controller/creator/templates/index'
+    'taoQtiTest/controller/creator/templates/index',
+    'taoItems/previewer/factory'
 ], function (
     $,
     _,
     __,
+    urlUtil,
     actions,
     categorySelectorFactory,
     sectionCategory,
     qtiTestHelper,
     featureVisibility,
-    templates
+    templates,
+    previewerFactory
 ) {
     ('use strict');
 
@@ -79,6 +83,61 @@ define([
 
         actions.properties($actionContainer, 'itemref', refModel, propHandler);
         actions.move($actionContainer, 'itemrefs', 'itemref');
+
+        /**
+         * Build the URL for navigating to an item in the items manager
+         * @param {String} itemUri - the URI of the item
+         * @param {String} [autoAction] - optional action to auto-trigger on load
+         * @returns {String} the full URL to navigate to
+         */
+        function buildItemManagerUrl(itemUri, autoAction) {
+            var params = {
+                structure: 'items',
+                ext: 'taoItems',
+                section: 'manage_items',
+                uri: itemUri
+            };
+            if (autoAction) {
+                params.autoAction = autoAction;
+            }
+            return urlUtil.route('index', 'Main', 'tao', params);
+        }
+
+        /**
+         * Preview button click handler - opens item preview
+         */
+        $actionContainer.find('.preview-item').on('click', function (e) {
+            e.preventDefault();
+            const itemUri = $itemRef.data('uri');
+            if (itemUri) {
+                previewerFactory('qtiItem', itemUri, {}, {
+                    readOnly: true,
+                    fullPage: true
+                });
+            }
+        });
+
+        /**
+         * Go to button click handler - opens item in items manager (new tab)
+         */
+        $actionContainer.find('.goto-item').on('click', function (e) {
+            e.preventDefault();
+            const itemUri = $itemRef.data('uri');
+            if (itemUri) {
+                window.open(buildItemManagerUrl(itemUri), '_blank');
+            }
+        });
+
+        /**
+         * Edit button click handler - opens item for authoring (new tab)
+         */
+        $actionContainer.find('.edit-item').on('click', function (e) {
+            e.preventDefault();
+            const itemUri = $itemRef.data('uri');
+            if (itemUri) {
+                window.open(buildItemManagerUrl(itemUri, 'item-authoring'), '_blank');
+            }
+        });
 
         /**
          * We need to resize the itemref in case of long labels
