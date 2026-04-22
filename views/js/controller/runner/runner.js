@@ -85,8 +85,6 @@ define([
          * @param {Object[]} config.providers - the collection of providers to load
          */
         start(config) {
-            MathJax && logger.debug('MathJax loaded'); // if loaded mathML would be rendered using it
-
             let exitReason;
             const $container = $('.runner');
 
@@ -94,6 +92,8 @@ define([
                 serviceCallId : config.serviceCallId,
                 plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
+
+            MathJax && logger.debug('MathJax loaded'); // if loaded mathML would be rendered using it
 
             let preventFeedback = false;
             let errorFeedback = null;
