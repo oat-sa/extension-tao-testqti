@@ -166,9 +166,41 @@ class SessionStateService extends ConfigurableService
                 'itemPosition' => $itemPosition,
                 'itemCount' => $itemCount
             ];
-            return json_encode($map);
+
+            return $this->encodeSessionDescription($map);
         }
-        return json_encode(['title' => 'finished']);
+
+        return $this->encodeSessionDescription(['title' => 'finished']);
+    }
+
+    /**
+     * JSON-encodes the session description while guaranteeing the resulting string
+     * fits into the delivery_monitoring.current_assessment_item column (VARCHAR(255)).
+     *
+     * Unicode characters are kept as UTF-8 (instead of being escaped as \uXXXX), and
+     * the title is truncated if the full payload would still exceed the column size.
+     */
+    private function encodeSessionDescription(array $map): string
+    {
+        // Matches the length of delivery_monitoring.current_assessment_item.
+        $maxLength = 255;
+
+        $encoded = json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        if (!isset($map['title']) || strlen($encoded) <= $maxLength) {
+            return $encoded;
+        }
+
+        // Budget the title in bytes: total length minus everything else in the payload.
+        $overhead = strlen($encoded) - strlen($map['title']);
+        $titleBudget = max(0, $maxLength - $overhead);
+
+        // mb_strcut cuts on byte boundaries without splitting multibyte characters.
+        $map['title'] = function_exists('mb_strcut')
+            ? mb_strcut($map['title'], 0, $titleBudget, 'UTF-8')
+            : substr($map['title'], 0, $titleBudget);
+
+        return json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     /**
