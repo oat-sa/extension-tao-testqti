@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-04-24 15:30\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -1585,7 +1585,7 @@ msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifes
 msgstr "Závislosť od IMS QTI AssessmentItemRef „%s“ v súbore manifestu IMS sa nepodarilo vyriešiť."
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr "Stiahnutie bude k dispozícii o <strong>%d</strong> sekúnd"
+msgstr "Súbor bude k dispozícii na stiahnutie o <strong>%d</strong> sekúnd"
 
 msgid "The following identifiers are not unique accross the test : %s"
 msgstr "Nasledujúce identifikátory nie sú v rámci testu jedinečné: %s"
