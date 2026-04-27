@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-04-24 18:33\n"
+"PO-Revision-Date: 2026-04-27 10:58\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -417,7 +417,7 @@ msgid "Disconnected from server"
 msgstr "Odpojené od servera"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr "Zobraziť upozornenie predtým, ako účastník testu ukončí časť testu a stále zostanú nezodpovedané alebo označené položky na kontrolu."
+msgstr "Zobraziť varovanie predtým, ako účastník ukončí časť testu, v ktorej zostanú ešte nezodpovedané otázky alebo otázky označené na kontrolu."
 
 msgid "Display a warning before the test-taker ends the test part."
 msgstr "Zobraziť upozornenie predtým, ako účastník testu ukončí časť testu."
@@ -554,7 +554,7 @@ msgid "Export QTI %s Test Package"
 msgstr "Exportovať testový balík QTI %s"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr "Exportovať testovací balík QTI 2.1"
+msgstr "Exportovať balík testov QTI 2.1"
 
 msgid "Export QTI 2.2 Test Package"
 msgstr "Exportovať balík testov QTI 2.2"
@@ -602,7 +602,7 @@ msgid "Flagged for review"
 msgstr "Označené na kontrolu"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr "Vynútiť, aby sa položka považovala za informačnú a nebola braná do úvahy v počítadlách (ne)zodpovedaných / označených príznakov."
+msgstr "Nastaviť položku tak, aby bola považovaná za informačnú a nezohľadňovala sa v bodovom hodnotení (ne)zodpovedaných / nahlásených položiek."
 
 msgid "Go to next item"
 msgstr "Prejsť na ďalšiu položku"
@@ -933,13 +933,13 @@ msgid "Missing required configuration option %s"
 msgstr "Chýba požadovaná možnosť konfigurácie %s"
 
 msgid "MNOP is not available for this test configuration."
-msgstr "MNOP nie je k dispozícii pre túto testovaciu konfiguráciu."
+msgstr "Funkcia MNOP nie je k dispozícii pre túto konfiguráciu testu."
 
 msgid "MNOP is not available when branch rules are present."
 msgstr "Funkcia MNOP nie je k dispozícii, ak sú nastavené pravidlá vetvenia."
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr "MNOP vyžaduje, aby bolo spracovanie výsledku nastavené na Celkové skóre alebo Prerušované skóre."
+msgstr "Funkcia MNOP vyžaduje, aby bola vo funkcii Spracovanie výsledkov nastavená možnosť Celkové skóre alebo Hraničná hodnota."
 
 msgid "Move"
 msgstr "Presunúť"
@@ -1527,7 +1527,7 @@ msgid "Test translation status"
 msgstr "Stav prekladu testu"
 
 msgid "Test-Taker Tools"
-msgstr "Nástroje pre absolventov testov"
+msgstr "Nástroje pre účastníkov testu"
 
 #, tao-public
 msgid "Tests"
@@ -1887,7 +1887,7 @@ msgid "When selecting child elements each element is normally eligible for selec
 msgstr "Pri výbere podradených prvkov je každý prvok spravidla možné vybrať len raz."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr "Či by sa mala akceptovať odpoveď kandidáta, ktorá presahuje maximálnu dĺžku trvania položky."
+msgstr "Či by sa mala akceptovať odpoveď účastníka testu, ktorá presahuje maximálny časový limit položky."
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
 msgstr "Či by sa mala akceptovať odpoveď účastníka testu, ktorá presahuje maximálny časový limit danej sekcie."
@@ -1902,7 +1902,7 @@ msgid "White on Black"
 msgstr "Biela na Čiernom"
 
 msgid "White on Blue (TAO standard theme)"
-msgstr "Biela na modrej (štandardná téma TAO)"
+msgstr "Biela na Modrej (štandardná téma PET)"
 
 msgid "Who can view the rubric block during the delivery."
 msgstr "Kto si môže počas dodávky pozrieť rubriku."
