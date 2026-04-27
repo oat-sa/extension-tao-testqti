@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-04-24 18:33\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.2 Test Driver"
-msgstr "Testovací ovládač QTI 2.2"
+msgstr "Ovládač testu QTI 2.2"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.2 tests"
-msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na riadenie testov kompatibilných s QTI 2.2"
+msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na spúšťanie testov kompatibilných s QTI 2.2"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
@@ -48,7 +48,7 @@ msgstr "URI kompilácie testov QTI"
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI test runner"
-msgstr "Bežec QTI testov"
+msgstr "Spúšťač testov QTI"
 
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "runs a QTI 2.2 test"
@@ -57,22 +57,22 @@ msgstr "spustí test QTI 2.2"
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "Test XML Editor"
-msgstr "Testovací editor XML"
+msgstr "XML Editor testov"
 
 # http://www.tao.lu/Ontologies/generis.rdf#TestXMLEditor
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "The Test XML Editor Role"
-msgstr "Rola editora testovacieho XML"
+msgstr "Rola XML Editora testov"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#label"
 msgid "QTI 2.1 Test Driver"
-msgstr "Testovací ovládač QTI 2.1"
+msgstr "Testový ovládač QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "Driver and configuration/authoring tool implementing the test interface for driving compliant QTI 2.1 tests"
-msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na riadenie testov kompatibilných s QTI 2.1"
+msgstr "Ovládač a konfiguračný/autorský nástroj implementujúci testovacie rozhranie na spúšťanie testov kompatibilných s QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
@@ -82,7 +82,7 @@ msgstr "spustí test QTI 2.1"
 # http://www.tao.lu/Ontologies/TAOTest.rdf#QtiTestModel
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI 2.1 Test Driver"
-msgstr "Testovací ovládač QTI 2.1"
+msgstr "Ovládač testov QTI 2.1"
 
 # http://www.tao.lu/Ontologies/TAOTest.rdf#FormalParamQtiTestDefinition
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
@@ -97,5 +97,5 @@ msgstr "Kompilácia testov QTI"
 # http://www.tao.lu/Ontologies/TAODelivery.rdf#ServiceQtiTestRunner
 msgctxt "http://www.w3.org/2000/01/rdf-schema#comment"
 msgid "QTI test runner"
-msgstr "Bežec QTI testov"
+msgstr "Spúšťač testov QTI"
 
