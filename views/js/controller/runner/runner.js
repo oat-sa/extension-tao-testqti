@@ -35,7 +35,8 @@ define([
     'util/locale',
     'taoTests/runner/providerLoader',
     'taoTests/runner/runner',
-    'css!taoQtiTestCss/new-test-runner'
+    'css!taoQtiTestCss/new-test-runner',
+    'mathJax'
 ], function (
     $,
     _,
@@ -49,7 +50,8 @@ define([
     urlUtil,
     locale,
     providerLoader,
-    runner
+    runner,
+    MathJax
 ) {
     'use strict';
 
@@ -90,6 +92,8 @@ define([
                 serviceCallId : config.serviceCallId,
                 plugins : config && config.providers && Object.keys(config.providers.plugins)
             });
+
+            MathJax && logger.debug('MathJax loaded'); // if loaded mathML would be rendered using it
 
             let preventFeedback = false;
             let errorFeedback = null;
