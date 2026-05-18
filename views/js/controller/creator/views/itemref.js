@@ -23,6 +23,7 @@ define([
     'jquery',
     'lodash',
     'i18n',
+    'module',
     'util/url',
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/helpers/categorySelector',
@@ -35,6 +36,7 @@ define([
     $,
     _,
     __,
+    module,
     urlUtil,
     actions,
     categorySelectorFactory,
@@ -110,9 +112,11 @@ define([
             e.preventDefault();
             const itemUri = $itemRef.data('uri');
             if (itemUri) {
-                previewerFactory('qtiItem', itemUri, {}, {
-                    readOnly: true,
-                    fullPage: true
+                const previewConfig = module.config();
+                previewerFactory(previewConfig.provider || 'qtiItem', itemUri, {}, {
+                    readOnly: false,
+                    fullPage: true,
+                    pluginsOptions: previewConfig.pluginsOptions
                 });
             }
         });
