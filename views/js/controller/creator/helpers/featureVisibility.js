@@ -17,7 +17,7 @@
  *
  */
 
-define(['services/features'], function (features) {
+define(['services/features', 'context'], function (features, context) {
     'use strict';
 
     /**
@@ -75,9 +75,10 @@ define(['services/features'], function (features) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        // TODO: Toggle via features.isVisible() when BE support is added
-        model.showBranchRules = true;
-        model.showPreconditions = true;
+        if (context.featureFlags.FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED !== 'false') {
+            model.showBranchRules = true;
+            model.showPreconditions = true;
+        }
     }
 
     /**

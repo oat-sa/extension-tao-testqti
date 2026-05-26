@@ -17,11 +17,22 @@
  */
 define([
     'lodash',
+    'context',
     'services/features',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
     'json!taoQtiTest/test/creator/helpers/featureVisibility/presetGroupsSample.json'
-], function (_, features, featureVisibility, presetGroupsSample) {
+], function (_, context, features, featureVisibility, presetGroupsSample) {
     'use strict';
+
+    /**
+     * Sets a feature flag value on the shared context
+     * @param {string} flagName
+     * @param {string|undefined} value
+     */
+    function mockFeatureFlag(flagName, value) {
+        context.featureFlags = context.featureFlags || {};
+        context.featureFlags[flagName] = value;
+    }
 
     /**
      * Mocks the isVisible function of services/features to return defined value
@@ -181,6 +192,75 @@ define([
             testPartModelSample.submissionMode,
             0,
             'submission mode is forced to individual'
+        );
+    });
+
+    QUnit.test('shows adaptive test authoring sections by default', function (assert) {
+        assert.expect(2);
+
+        const testPartModelSample = {
+            'qti-type': 'testPart',
+            identifier: 'testPart-1'
+        };
+
+        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', undefined);
+        featureVisibility.addTestPartVisibilityProps(testPartModelSample);
+
+        assert.equal(
+            testPartModelSample.showBranchRules,
+            true,
+            'branch rules are shown by default'
+        );
+        assert.equal(
+            testPartModelSample.showPreconditions,
+            true,
+            'preconditions are shown by default'
+        );
+    });
+
+    QUnit.test('hides adaptive test authoring sections when the feature flag is "false"', function (assert) {
+        assert.expect(2);
+
+        const testPartModelSample = {
+            'qti-type': 'testPart',
+            identifier: 'testPart-1'
+        };
+
+        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', 'false');
+        featureVisibility.addTestPartVisibilityProps(testPartModelSample);
+
+        assert.notEqual(
+            testPartModelSample.showBranchRules,
+            true,
+            'branch rules are hidden when the flag is disabled'
+        );
+        assert.notEqual(
+            testPartModelSample.showPreconditions,
+            true,
+            'preconditions are hidden when the flag is disabled'
+        );
+    });
+
+    QUnit.test('shows adaptive test authoring sections when the feature flag is "true"', function (assert) {
+        assert.expect(2);
+
+        const testPartModelSample = {
+            'qti-type': 'testPart',
+            identifier: 'testPart-1'
+        };
+
+        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', 'true');
+        featureVisibility.addTestPartVisibilityProps(testPartModelSample);
+
+        assert.equal(
+            testPartModelSample.showBranchRules,
+            true,
+            'branch rules are shown when the flag is enabled'
+        );
+        assert.equal(
+            testPartModelSample.showPreconditions,
+            true,
+            'preconditions are shown when the flag is enabled'
         );
     });
 
