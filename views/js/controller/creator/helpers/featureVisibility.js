@@ -75,7 +75,7 @@ define(['services/features', 'context'], function (features, context) {
         if (features.isVisible(`${propertyNamespace}itemSessionControl/allowSkipping`)) {
             model.itemSessionAllowSkipping = true;
         }
-        if (context.featureFlags.FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED !== 'false') {
+        if ((context.featureFlags && context.featureFlags.FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED) !== 'false') {
             model.showBranchRules = true;
             model.showPreconditions = true;
         }
