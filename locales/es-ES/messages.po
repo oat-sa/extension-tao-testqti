@@ -1,5 +1,5 @@
 msgid ""
-msgstr ""
+msgstr " {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 "Project-Id-Version: tao-open-source\n"
 "PO-Revision-Date: 2026-02-04 15:22\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
@@ -21,1992 +21,1992 @@ msgstr ""
 "Language-Team: Spanish\n"
 
 msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
-msgstr "\"Logro de nivel más bajo\" establece el grado de prueba final como el puntaje más bajo entre todas las variables de prueba usando la misma escala."
+msgstr "\ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "%s to answer %s"
-msgstr "%s por responder %s"
+msgstr "%s por responder %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "%title% - Translation (%lang%)"
-msgstr "%title% - Traducción (%lang%)"
+msgstr "%title% - Traducción (%lang%) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "(Visual) Clear all active highlights"
-msgstr "(Visual) Borrar todos los puntos resaldados activos"
+msgstr "(Visual) Borrar todos los puntos resaldados activos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "(Visual) Highlight Text"
-msgstr "(Visual) Texto Resaltado"
+msgstr "(Visual) Texto Resaltado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A concurrent delivery has been detected. Please use the last open session. The present window can be closed."
-msgstr "Se ha detectado una entrega simultánea. Por favor, utilice la última sesión abierta. La ventana actual se puede cerrar."
+msgstr "Se ha detectado una entrega simultánea. Por favor, utilice la última sesión abierta. La ventana actual se puede cerrar. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A human interpretation of the variable's value."
-msgstr "Una interpretación humana del valor de la variable."
+msgstr "Una interpretación humana del valor de la variable. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A QTI Item involved in the QTI Test '%s' could not be compiled."
-msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado."
+msgstr "Un Elemento QTI involucrado en la Prueba '%s' QTI no pudo ser compilado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A QTI Test must contain at least one QTI Item to be compiled. None found."
-msgstr "Una prueba QTI debe contener al menos un Elemento QTI para ser compilado. Ninguno encontrado."
+msgstr "Una prueba QTI debe contener al menos un Elemento QTI para ser compilado. Ninguno encontrado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A qti testpackage"
-msgstr "Un paquete de pruebas QTI"
+msgstr "Un paquete de pruebas QTI {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A remote resource referenced in QTI test '%s' could not be retrieved."
-msgstr "Un recurso remoto referencia en prueba '%s' QTI no se pudo recuperar."
+msgstr "Un recurso remoto referencia en prueba '%s' QTI no se pudo recuperar. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A response to every question in this item is required."
-msgstr "Se requiere una respuesta a todas las preguntas de este ítem."
+msgstr "Se requiere una respuesta a todas las preguntas de este ítem. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A response to this item is invalid."
-msgstr "Una respuesta a este elemento no es válida."
+msgstr "Una respuesta a este elemento no es válida. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A response to this item is required."
-msgstr "Se requiere una respuesta a este artículo."
+msgstr "Se requiere una respuesta a este artículo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A valid response to this item is required."
-msgstr "Se requiere una respuesta válida a este ítem."
+msgstr "Se requiere una respuesta válida a este ítem. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "A visible section is one that is identifiable by the candidate."
-msgstr "Una sección visible es una que es identificable por el candidato."
+msgstr "Una sección visible es una que es identificable por el candidato. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Accessibility tool that enables Test Taker to have the item content read aloud."
-msgstr "Herramienta de accesibilidad que permite a Test Taker leer en voz alta el contenido del artículo."
+msgstr "Herramienta de accesibilidad que permite a Test Taker leer en voz alta el contenido del artículo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Activated"
-msgstr "Activado"
+msgstr "Activado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "add a new weight"
-msgstr "Añadir nueva ponderación"
+msgstr "Añadir nueva ponderación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add a Path"
-msgstr "Añadir una ruta"
+msgstr "Añadir una ruta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add a Prerequisite"
-msgstr "Añadir un prerrequisito"
+msgstr "Añadir un prerrequisito {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add a zip file containing QTI/APIP tests and items"
-msgstr "Añadir un archivo zip que contiene pruebas QTI/APIP y elementos"
+msgstr "Añadir un archivo zip que contiene pruebas QTI/APIP y elementos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add an outcome declaration"
-msgstr "Añadir una declaración de resultado"
+msgstr "Añadir una declaración de resultado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add selected item(s) here."
-msgstr "Añadir elemento(s) seleccionados aqui."
+msgstr "Añadir elemento(s) seleccionados aqui. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add Subsection"
-msgstr "Añadir subsección"
+msgstr "Añadir subsección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Add the source file"
-msgstr "Añadir el archivo origen"
+msgstr "Añadir el archivo origen {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "After you complete the section it would be impossible to return to this section to make changes. Are you sure you want to end the section?"
-msgstr "Después de que complete la sección, no podrá regresar a ella para realizar cambios. ¿Está seguro de que desea terminar la sección?"
+msgstr "Después de que complete la sección, no podrá regresar a ella para realizar cambios. ¿Está seguro de que desea terminar la sección? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "All"
-msgstr "Todos"
+msgstr "Todos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow a Test Taker to print out the item."
-msgstr "Permitir a un Taker de Prueba imprimir el artículo."
+msgstr "Permitir a un Taker de Prueba imprimir el artículo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow Comment"
-msgstr "Permitir Comentario"
+msgstr "Permitir Comentario {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow Review"
-msgstr "Permitir Revisión"
+msgstr "Permitir Revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow Section Skipping"
-msgstr "Permitir saltarse sección"
+msgstr "Permitir saltarse sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow Skipping"
-msgstr "Permitir Saltarse"
+msgstr "Permitir Saltarse {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow skipping of the current section."
-msgstr "Permitir saltarse la sección actual."
+msgstr "Permitir saltarse la sección actual. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow Test-taker to playback media files associated according to APIP protocol to item content."
-msgstr "Permitir al examinado reproducir los archivos multimedia asociados según el protocolo APIP al contenido del artículo."
+msgstr "Permitir al examinado reproducir los archivos multimedia asociados según el protocolo APIP al contenido del artículo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the candidate to review his answers."
-msgstr "Permitir al candidato revisar sus respuestas."
+msgstr "Permitir al candidato revisar sus respuestas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to eliminate / strikethrough answers in choice interactions."
-msgstr "Permitir que el examinado elimine/tache respuestas en las interacciones con opciones."
+msgstr "Permitir que el examinado elimine/tache respuestas en las interacciones con opciones. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to highlight parts of the item text."
-msgstr "Permitir que el examinado resalte partes del texto del ítem."
+msgstr "Permitir que el examinado resalte partes del texto del ítem. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to mask and unmask answers in choice interactions."
-msgstr "Permitir que el examinado oculte y muestre respuestas en las interacciones con opciones."
+msgstr "Permitir que el examinado oculte y muestre respuestas en las interacciones con opciones. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to mask parts of the item with a movable mask."
-msgstr "Permitir que el examinado oculte partes del ítem con una máscara movible."
+msgstr "Permitir que el examinado oculte partes del ítem con una máscara movible. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to use a basic calculator."
-msgstr "Permitir que el examinado utilice una calculadora básica."
+msgstr "Permitir que el examinado utilice una calculadora básica. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to use a calculator respecting the order of operations (BODMAS)."
-msgstr "Permitir que el examinado utilice una calculadora respetando el orden de las operaciones (BODMAS)."
+msgstr "Permitir que el examinado utilice una calculadora respetando el orden de las operaciones (BODMAS). {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to use a movable magnifier tool."
-msgstr "Permitir que el examinado utilice una herramienta de ampliación movible."
+msgstr "Permitir que el examinado utilice una herramienta de ampliación movible. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to use a scientific calculator."
-msgstr "Permitir que el examinado utilice una calculadora científica."
+msgstr "Permitir que el examinado utilice una calculadora científica. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allow the test-taker to visually isolate a line of text."
-msgstr "Permitir que el examinado aísle visualmente una línea de texto."
+msgstr "Permitir que el examinado aísle visualmente una línea de texto. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Allows Test-taker to zoom in and out the item content."
-msgstr "Permitir que el examinado acerque y aleje el contenido del ítem."
+msgstr "Permitir que el examinado acerque y aleje el contenido del ítem. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Also compute the score per categories"
-msgstr "Calcular también el puntaje por categorías"
+msgstr "Calcular también el puntaje por categorías {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occured while retrieving items"
-msgstr "Se produjo un error al recuperar ítems"
+msgstr "Se produjo un error al recuperar ítems {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurred during results submission. Please retry."
-msgstr "Se produjo un error al enviar resultados. Vuelva a intentarlo."
+msgstr "Se produjo un error al enviar resultados. Vuelva a intentarlo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurred during the test initialization!"
-msgstr "Se produjo un error al inicializar la prueba."
+msgstr "Se produjo un error al inicializar la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurred during the test, please content your administrator."
-msgstr "Se produjo un error durante la prueba, póngase en contacto con el administrador."
+msgstr "Se produjo un error durante la prueba, póngase en contacto con el administrador. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurred while loading the original test."
-msgstr "Se ha producido un error al cargar la prueba original."
+msgstr "Se ha producido un error al cargar la prueba original. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurred!"
-msgstr "¡Ha ocurrido un error!"
+msgstr "¡Ha ocurrido un error! {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An error occurs, please contact your administrator"
-msgstr "Se produjo un error, póngase en contacto con el administrador."
+msgstr "Se produjo un error, póngase en contacto con el administrador. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An invisible section with a parent that is subject to shuffling can specify whether or not its children, which will appear to the candidate as if they were part of the parent, are shuffled as a block or mixed up with the other children of the parent section."
-msgstr "Una sección invisible con un padre que está sujeto a barajar puede especificar si o no a sus hijos, lo que le aparece al candidato como si fueran parte de los padres, se barajan como un bloque o se mezcla con los otros hijos de la sección de los padres."
+msgstr "Una sección invisible con un padre que está sujeto a barajar puede especificar si o no a sus hijos, lo que le aparece al candidato como si fueran parte de los padres, se barajan como un bloque o se mezcla con los otros hijos de la sección de los padres. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An item involved in the test cannot be read or is not QTI compliant."
-msgstr "Un elemento involucrado en la prueba no se puede leer o no es compatible con QTI."
+msgstr "Un elemento involucrado en la prueba no se puede leer o no es compatible con QTI. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An item involved in the test cannot be written."
-msgstr "Un elemento involucrado en la prueba no se puede escribir."
+msgstr "Un elemento involucrado en la prueba no se puede escribir. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An optional link to an extended interpretation of the outcome variable."
-msgstr "Un enlace opcional a una interpretación extendida de la variable de resultado."
+msgstr "Un enlace opcional a una interpretación extendida de la variable de resultado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An unknown error occured while compiled QTI Test '%s'."
-msgstr "Ha ocurrido un error desconocido mientras compilaba la prueba '%s' QTI."
+msgstr "Ha ocurrido un error desconocido mientras compilaba la prueba '%s' QTI. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An unknown error occured while compiling QTI test '%s'."
-msgstr "Un error desconocido ocurrió durante la compilación de la prueba '%s' QTI."
+msgstr "Un error desconocido ocurrió durante la compilación de la prueba '%s' QTI. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "An unrecoverable error occurred. Your test session will be paused."
-msgstr "Se produjo un error irrecuperable. La sesión de su prueba se pausará."
+msgstr "Se produjo un error irrecuperable. La sesión de su prueba se pausará. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "and"
-msgstr "y"
+msgstr "y {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "and flagged %s of them"
-msgstr "y marcó %s de ellas"
+msgstr "y marcó %s de ellas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "and you flagged %s item(s) that you can review now"
-msgstr "y marcaste %s artículos que puedes revisar ahora"
+msgstr "y marcaste %s artículos que puedes revisar ahora {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Answer Eliminator"
-msgstr "Eliminador de respuesta"
+msgstr "Eliminador de respuesta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Answer Masking"
-msgstr "Ocultamiento de respuesta"
+msgstr "Ocultamiento de respuesta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Answered"
-msgstr "Respondido"
+msgstr "Respondido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "APIP Text To Speech"
-msgstr "Texto a Voz APIP"
+msgstr "Texto a Voz APIP {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Are you sure you want to clear your answer and go to the next item? You will not be able to go back and provide an answer."
-msgstr "¿Está seguro de que desea borrar su respuesta y pasar al siguiente ítem? No podrá retroceder para proporcionar una respuesta."
+msgstr "¿Está seguro de que desea borrar su respuesta y pasar al siguiente ítem? No podrá retroceder para proporcionar una respuesta. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Are you sure you want to end the test?"
-msgstr "¿Está seguro de que desea finalizar la prueba?"
+msgstr "¿Está seguro de que desea finalizar la prueba? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and change your answer."
-msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder y cambiar su respuesta."
+msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder y cambiar su respuesta. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back and provide an answer."
-msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder y proporcionar una respuesta."
+msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder y proporcionar una respuesta. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Are you sure you want to go to the next item? You will not be able to go back."
-msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder."
+msgstr "¿Está seguro de que desea pasar al siguiente ítem? No podrá retroceder. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Area Masking"
-msgstr "Ocultamiento de área"
+msgstr "Ocultamiento de área {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Associate a blueprint to a section allow you to validate this section against the specified blueprint."
-msgstr "Asociar un blueprint a una sección permite validar esta sección con el plano especificado."
+msgstr "Asociar un blueprint a una sección permite validar esta sección con el plano especificado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Associate Blueprint"
-msgstr "Asociar blueprint"
+msgstr "Asociar blueprint {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "At least one mandatory parameter was required but found missing in your request"
-msgstr "Se necesitaba como mínimo un parámetro obligatorio que no estaba presente en la solicitud"
+msgstr "Se necesitaba como mínimo un parámetro obligatorio que no estaba presente en la solicitud {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
-msgstr "Para este modo se requiere al menos una variable de resultado con una escala de calificación."
+msgstr "Para este modo se requiere al menos una variable de resultado con una escala de calificación. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Author"
-msgstr "Autor"
+msgstr "Autor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Auxiliary file not found at location \"%s\"."
-msgstr "Archivo auxiliar no encontrado en la ubicación \"%s\"."
+msgstr "Archivo auxiliar no encontrado en la ubicación \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Black on Cream"
-msgstr "Negro sobre Crema"
+msgstr "Negro sobre Crema {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Black on Light Blue"
-msgstr "Negro sobre Azul Claro"
+msgstr "Negro sobre Azul Claro {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Black on Light Magenta"
-msgstr "Negro sobre Magenta Claro"
+msgstr "Negro sobre Magenta Claro {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Black on White"
-msgstr "Negro sobre Blanco"
+msgstr "Negro sobre Blanco {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Bookmark question"
-msgstr "Marcador de pregunta"
+msgstr "Marcador de pregunta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Bookmark the current question for later review"
-msgstr "Marcar la pregunta actual para su revisión posterior"
+msgstr "Marcar la pregunta actual para su revisión posterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Bookmarked question %s"
-msgstr "Pregunta marcada %s"
+msgstr "Pregunta marcada %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Branch rule validation error: %s"
-msgstr "Error de validación de regla de rama: %s"
+msgstr "Error de validación de regla de rama: %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Calculator"
-msgstr "Calculadora"
+msgstr "Calculadora {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Calculator BODMAS"
-msgstr "Calculadora BODMAS"
+msgstr "Calculadora BODMAS {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Can not playback media file!"
-msgstr "No se puede reproducir el archivo multimedia!"
+msgstr "No se puede reproducir el archivo multimedia! {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Cancelar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "CANCEL"
-msgstr "CANCELAR"
+msgstr "CANCELAR {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Candidate"
-msgstr "Candidato"
+msgstr "Candidato {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Cardinality"
-msgstr "Cardinalidad"
+msgstr "Cardinalidad {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Categories"
-msgstr "Categorías"
+msgstr "Categorías {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Category name not allowed"
-msgstr "Nombre de categoría no permitido"
+msgstr "Nombre de categoría no permitido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Category score"
-msgstr "Puntaje de categoría"
+msgstr "Puntaje de categoría {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Change the current color preset"
-msgstr "Cambiar el color predeterminado actual"
+msgstr "Cambiar el color predeterminado actual {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Checking this box prevents the test-taker from navigating to other items until the current item constraints, if any, are met. Unchecking this box will allow free navigation even if the responses don't comply with the item constraints set."
-msgstr "Marcar esta casilla evita que la test-taker vaya a otros elementos hasta que se cumplan las restricciones actuales del elemento, si las hay. Desmarcar esta casilla permitirá la navegación libre incluso si las respuestas no cumplen con las restricciones de elementos establecidas."
+msgstr "Marcar esta casilla evita que la test-taker vaya a otros elementos hasta que se cumplan las restricciones actuales del elemento, si las hay. Desmarcar esta casilla permitirá la navegación libre incluso si las respuestas no cumplen con las restricciones de elementos establecidas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Class"
-msgstr "Clase"
+msgstr "Clase {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Class successfully created."
-msgstr "Clase creada correctamente."
+msgstr "Clase creada correctamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Clear all active highlights"
-msgstr "Borrar todos los resaltados activos"
+msgstr "Borrar todos los resaltados activos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Clear Highlights"
-msgstr "Borrar resaltados"
+msgstr "Borrar resaltados {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Click \"%s\" to continue"
-msgstr "Haga clic en \"%s\" para continuar"
+msgstr "Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Click \"%s\" to continue."
-msgstr "Haga clic en \"%s\" para continuar"
+msgstr "Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Click to speak"
-msgstr "Haga clic para hablar"
+msgstr "Haga clic para hablar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Close"
-msgstr "Cerrar"
+msgstr "Cerrar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Close Magnifier"
-msgstr "Cerrar aumento"
+msgstr "Cerrar aumento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Close the mask"
-msgstr "Cerrar ocultamiento"
+msgstr "Cerrar ocultamiento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Close this Section"
-msgstr "Cerrar esta sección"
+msgstr "Cerrar esta sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Collapse the review panel"
-msgstr "Contraer el panel de revisión"
+msgstr "Contraer el panel de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Comment"
-msgstr "Comentario"
+msgstr "Comentario {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Completed items"
-msgstr "Ítems completados"
+msgstr "Ítems completados {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Connected to server"
-msgstr "Conectado al servidor"
+msgstr "Conectado al servidor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "CONTINUE TO THE NEXT SECTION"
-msgstr "CONTINUAR A LA SIGUIENTE SECCIÓN"
+msgstr "CONTINUAR A LA SIGUIENTE SECCIÓN {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Contrast"
-msgstr "Contraste"
+msgstr "Contraste {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Controls the contribution of an individual item score to the overall test score."
-msgstr "Controla la contribución del puntaje de un ítem individual al puntaje total de la prueba."
+msgstr "Controla la contribución del puntaje de un ítem individual al puntaje total de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Controls the maximum number of attempts allowed. 0 means unlimited."
-msgstr "Controla el número máximo de intentos permitidos. 0 significa ilimitado."
+msgstr "Controla el número máximo de intentos permitidos. 0 significa ilimitado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Covers parts of the item"
-msgstr "Cubre partes del ítem"
+msgstr "Cubre partes del ítem {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Custom"
-msgstr "Personalizar"
+msgstr "Personalizar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "custom categories"
-msgstr "categorías personalizadas"
+msgstr "categorías personalizadas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Custom outcome processing. No changes will be made to the existing rules."
-msgstr "Procesamiento de resultados personalizado. No se realizarán cambios en las reglas existentes."
+msgstr "Procesamiento de resultados personalizado. No se realizarán cambios en las reglas existentes. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Cut score"
-msgstr "Puntaje de corte"
+msgstr "Puntaje de corte {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Cut score (pass ratio)"
-msgstr "Puntaje de corte (ratio de aprobado)"
+msgstr "Puntaje de corte (ratio de aprobado) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Define the status of the translation."
-msgstr "Definir el estado de la traducción."
+msgstr "Definir el estado de la traducción. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Defines the maximum magnitude of numeric outcome variables, the maximum must be a positive value and the minimum may be negative."
-msgstr "Define la magnitud máxima de las variables de resultado numéricas, el máximo debe ser un valor positivo y el mínimo puede ser negativo."
+msgstr "Define la magnitud máxima de las variables de resultado numéricas, el máximo debe ser un valor positivo y el mínimo puede ser negativo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Delete"
-msgstr "Eliminar"
+msgstr "Eliminar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Delete prerequisite"
-msgstr "Eliminar prerrequisito"
+msgstr "Eliminar prerrequisito {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Delete rule"
-msgstr "Eliminar regla"
+msgstr "Eliminar regla {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Disable validation"
-msgstr "Desactivar validación"
+msgstr "Desactivar validación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Disconnected from server"
-msgstr "Desconectado del servidor"
+msgstr "Desconectado del servidor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review."
-msgstr "Mostrar una advertencia antes de que el examinado finalice una parte de una prueba si todavía hay ítems por responder o marcados para revisar."
+msgstr "Mostrar una advertencia antes de que el examinado finalice una parte de una prueba si todavía hay ítems por responder o marcados para revisar. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display a warning before the test-taker ends the test part."
-msgstr "Mostrar una advertencia antes de que el examinado finalice una parte de la prueba."
+msgstr "Mostrar una advertencia antes de que el examinado finalice una parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display a warning before the test-taker ends the test."
-msgstr "Mostrar una advertencia antes de que el examinado finalice la prueba."
+msgstr "Mostrar una advertencia antes de que el examinado finalice la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display a warning before the test-taker skips the section. Requires the Section Skipping option."
-msgstr "Mostrar una advertencia antes de que el examinado se salte la sección. Requiere la opción Saltar sección."
+msgstr "Mostrar una advertencia antes de que el examinado se salte la sección. Requiere la opción Saltar sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display End Test Warning"
-msgstr "Mostrar advertencia de fin de prueba"
+msgstr "Mostrar advertencia de fin de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display Next Part Warning"
-msgstr "Mostrar advertencia de parte siguiente"
+msgstr "Mostrar advertencia de parte siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display Next Section Warning"
-msgstr "Mostrar advertencia de sección siguiente"
+msgstr "Mostrar advertencia de sección siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Display Unanswered Warning"
-msgstr "Mostrar advertencia de falta de respuesta"
+msgstr "Mostrar advertencia de falta de respuesta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Displayed label"
-msgstr "Etiqueta mostrada"
+msgstr "Etiqueta mostrada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Displays a customisable magnifier"
-msgstr "Muestra una lupa adaptable"
+msgstr "Muestra una lupa adaptable {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Do not bookmark the current question for later review"
-msgstr "No marque la pregunta actual para su revisión posterior"
+msgstr "No marque la pregunta actual para su revisión posterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Do not flag the current item for later review"
-msgstr "No marcar el ítem actual para revisión posterior"
+msgstr "No marcar el ítem actual para revisión posterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Do not rename it."
-msgstr "No renombrar."
+msgstr "No renombrar. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Do not show alert on timeout"
-msgstr "No mostrar alerta sobre tiempo de espera"
+msgstr "No mostrar alerta sobre tiempo de espera {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Do you want to apply the category \"%s\" to all included items?"
-msgstr "¿Quieres aplicar la categoría \"%s\" a todos los artículos incluidos?"
+msgstr "¿Quieres aplicar la categoría \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Don\\'t save"
-msgstr "No guardar"
+msgstr "No guardar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Download"
-msgstr "Descargar"
+msgstr "Descargar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Download the pupil responses and submit manually."
-msgstr "Descargue las respuestas de los alumnos y envíelas manualmente."
+msgstr "Descargue las respuestas de los alumnos y envíelas manualmente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Each condition below is evaluated, starting from the top, by comparing the variable content with a specific value, using the operator. As soon as a condition is fulfilled, the test taker is redirected to the corresponding target. If no condition is fulfilled, the test taker is presented with the next test part in the natural order."
-msgstr "Cada condición a continuación se evalúa, comenzando desde la parte superior, comparando el contenido de la variable con un valor específico, utilizando el operador. Tan pronto como se cumpla una condición, el tomador de la prueba será redirigido al objetivo correspondiente. Si no se cumple ninguna condición, el tomador del test se presenta con la siguiente parte del test en el orden natural."
+msgstr "Cada condición a continuación se evalúa, comenzando desde la parte superior, comparando el contenido de la variable con un valor específico, utilizando el operador. Tan pronto como se cumpla una condición, el tomador de la prueba será redirigido al objetivo correspondiente. Si no se cumple ninguna condición, el tomador del test se presenta con la siguiente parte del test en el orden natural. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Each prerequisite below is evaluated by comparing the variable content with a specific value, using the operator. If all the prerequisites are fulfilled, this test part is presented. Otherwise, this test part is skipped."
-msgstr "Cada requisito previo a continuación se evalúa comparando el contenido de la variable con un valor específico, utilizando el operador. Si se cumplen todos los requisitos previos, se presenta esta parte del ensayo. De lo contrario, se omitirá esta parte del ensayo."
+msgstr "Cada requisito previo a continuación se evalúa comparando el contenido de la variable con un valor específico, utilizando el operador. Si se cumplen todos los requisitos previos, se presenta esta parte del ensayo. De lo contrario, se omitirá esta parte del ensayo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Edit"
-msgstr "Editar"
+msgstr "Editar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Eliminate choices"
-msgstr "Eliminar opciones"
+msgstr "Eliminar opciones {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable Mark for Review"
-msgstr "Activar marca para revisión"
+msgstr "Activar marca para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable mark for review of items. Requires the Review Screen option."
-msgstr "Activar marca para revisión de elementos. Requiere la opción de Pantalla de revisión."
+msgstr "Activar marca para revisión de elementos. Requiere la opción de Pantalla de revisión. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable Review Screen"
-msgstr "Activar la pantalla de revisión"
+msgstr "Activar la pantalla de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable selection"
-msgstr "Habilitar selección"
+msgstr "Habilitar selección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable Skipping Ahead"
-msgstr "Activar Saltar adelante"
+msgstr "Activar Saltar adelante {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable text to speech"
-msgstr "Habilitar texto a voz"
+msgstr "Habilitar texto a voz {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enable the item review screen / navigator."
-msgstr "Activar la pantalla de revisión/navegador de ítems."
+msgstr "Activar la pantalla de revisión/navegador de ítems. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enables skipping to items within this section. Requires the review screen option."
-msgstr "Permite saltar a otros elementos de esta sección. Requiere la opción Pantalla de revisión."
+msgstr "Permite saltar a otros elementos de esta sección. Requiere la opción Pantalla de revisión. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "End of the test"
-msgstr "Fin de la prueba"
+msgstr "Fin de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "End test"
-msgstr "Finalizar prueba"
+msgstr "Finalizar prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "End Test"
-msgstr "Finalizar prueba"
+msgstr "Finalizar prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enforce Item Constraints"
-msgstr "Forzar restricciones de objetos"
+msgstr "Forzar restricciones de objetos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enter a blueprint"
-msgstr "Ingresar un blueprint"
+msgstr "Ingresar un blueprint {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Enter a custom category"
-msgstr "Ingresar una categoría personalizada"
+msgstr "Ingresar una categoría personalizada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Error"
-msgstr "Error"
+msgstr "Error {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Error during file import"
-msgstr "Error durante la importación"
+msgstr "Error durante la importación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
-msgstr "Error encontrado en la prueba IMS QTI :\n"
+msgstr "Error encontrado en la prueba IMS QTI :\n {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 "%s"
 
 msgid "Expand the review panel"
-msgstr "Expandir el panel de revisión"
+msgstr "Expandir el panel de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export"
-msgstr "Exportar"
+msgstr "Exportar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export failed for the test \"%s"
-msgstr "La exportación falló para la prueba \"%s"
+msgstr "La exportación falló para la prueba \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export failed. Key uri nor classUri in formValues are not defined"
-msgstr "Error al exportar. La clave uri o classUri en los formularios no están definidos"
+msgstr "Error al exportar. La clave uri o classUri en los formularios no están definidos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export metadata"
-msgstr "Exportar metadatos"
+msgstr "Exportar metadatos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export QTI %s Test Package"
-msgstr "Exportar Paquete de Prueba QTI %s"
+msgstr "Exportar Paquete de Prueba QTI %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export QTI 2.1 Test Package"
-msgstr "Exportar Paquete de Prueba QTI 2.1"
+msgstr "Exportar Paquete de Prueba QTI 2.1 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export QTI 2.2 Test Package"
-msgstr "Exportar Paquete de prueba QTI 2.2"
+msgstr "Exportar Paquete de prueba QTI 2.2 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Export successful for the test \"%s"
-msgstr "La exportación fue satisfactoria para la prueba \"%s"
+msgstr "La exportación fue satisfactoria para la prueba \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "External Machine"
-msgstr "Máquina externa"
+msgstr "Máquina externa {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "External Scored"
-msgstr "Puntuación externa"
+msgstr "Puntuación externa {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Feedback block"
-msgstr "Bloque de comentarios"
+msgstr "Bloque de comentarios {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "File name"
-msgstr "Nombre de archivo"
+msgstr "Nombre de archivo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "File not found"
-msgstr "Archivo no encontrado"
+msgstr "Archivo no encontrado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "File not found!"
-msgstr "Archivo no encontrado."
+msgstr "Archivo no encontrado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Filter"
-msgstr "Filtro"
+msgstr "Filtro {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Fixed"
-msgstr "Fijo"
+msgstr "Fijo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Fixed position in a shuffled the selection."
-msgstr "Posición fija en un barajada selección."
+msgstr "Posición fija en un barajada selección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Flag for Review"
-msgstr "Marcar para revisión"
+msgstr "Marcar para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Flag the current item for later review"
-msgstr "Marcar el ítem actual para revisión posterior"
+msgstr "Marcar el ítem actual para revisión posterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Flagged"
-msgstr "Marcado"
+msgstr "Marcado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Flagged for review"
-msgstr "Marcado para revisión"
+msgstr "Marcado para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
-msgstr "Forzar que el ítem se considere informativo y no se tenga en cuenta en los contadores de ítems con/sin respuesta o marcados."
+msgstr "Forzar que el ítem se considere informativo y no se tenga en cuenta en los contadores de ítems con/sin respuesta o marcados. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to next item"
-msgstr "Ir al siguiente ítem"
+msgstr "Ir al siguiente ítem {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to the current question"
-msgstr "Ir a la pregunta actual"
+msgstr "Ir a la pregunta actual {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to the next item?"
-msgstr "¿Desea ir al siguiente ítem?"
+msgstr "¿Desea ir al siguiente ítem? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to the next question"
-msgstr "Pasa a la siguiente pregunta"
+msgstr "Pasa a la siguiente pregunta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to the previous question"
-msgstr "Ir a la pregunta anterior"
+msgstr "Ir a la pregunta anterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Go to the top of the page"
-msgstr "Ir al principio de la página"
+msgstr "Ir al principio de la página {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Gray on Green"
-msgstr "Gris sobre Verde"
+msgstr "Gris sobre Verde {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide Review"
-msgstr "Esconder revisión"
+msgstr "Esconder revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide test overview panel"
-msgstr "Ocultar panel de resumen de prueba"
+msgstr "Ocultar panel de resumen de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide the review screen"
-msgstr "Esconder la pantalla de revisión"
+msgstr "Esconder la pantalla de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide the warning automatically displayed when a test-taker exit a timed section."
-msgstr "Ocultar la advertencia que se muestra automáticamente cuando un examinado sale de una sección temporalizada."
+msgstr "Ocultar la advertencia que se muestra automáticamente cuando un examinado sale de una sección temporalizada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide Timed Section Warning"
-msgstr "Ocultar advertencia de sección temporalizada"
+msgstr "Ocultar advertencia de sección temporalizada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Hide timers"
-msgstr "Temporizador oculto"
+msgstr "Temporizador oculto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Highlight"
-msgstr "Resaltar"
+msgstr "Resaltar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Highlight Text"
-msgstr "Resaltar texto"
+msgstr "Resaltar texto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Highlighter"
-msgstr "Resaltador"
+msgstr "Resaltador {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "hours"
-msgstr "horas"
+msgstr "horas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Html title"
-msgstr "Título HTML"
+msgstr "Título HTML {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Human"
-msgstr "Humano"
+msgstr "Humano {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Identifier"
-msgstr "Identificador"
+msgstr "Identificador {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If required it must appear (at least once) in the selection."
-msgstr "Si es requerido debe aparecer (al menos una vez) en la selección."
+msgstr "Si es requerido debe aparecer (al menos una vez) en la selección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If required, it must appears at least once in the selection."
-msgstr "Si es requerido, debe aparece al menos una vez en la selección."
+msgstr "Si es requerido, debe aparece al menos una vez en la selección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
-msgstr "Si se establece, hace que el orden de los elementos secundarios se ordenen al azar, de lo contrario se utiliza el orden en que los elementos secundarios son definidos."
+msgstr "Si se establece, hace que el orden de los elementos secundarios se ordenen al azar, de lo contrario se utiliza el orden en que los elementos secundarios son definidos. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If the candidate can skip the item, without submitting a response (default is true)."
-msgstr "Indica si el candidato puede saltarse el ítem sin tener que enviar una respuesta (el valor predeterminado es Verdadero)."
+msgstr "Indica si el candidato puede saltarse el ítem sin tener que enviar una respuesta (el valor predeterminado es Verdadero). {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category."
-msgstr "Si se establece la opción de categoría, el puntaje también se procesará por categorías y los resultados tendrán lugar en PASS_xxx, siendo xxx el nombre de la categoría."
+msgstr "Si se establece la opción de categoría, el puntaje también se procesará por categorías y los resultados tendrán lugar en PASS_xxx, siendo xxx el nombre de la categoría. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category."
-msgstr "Si se establece la opción de categoría, el puntaje también se procesará por categorías y los resultados tendrán lugar en SCORE_xxx, siendo xxx el nombre de la categoría."
+msgstr "Si se establece la opción de categoría, el puntaje también se procesará por categorías y los resultados tendrán lugar en SCORE_xxx, siendo xxx el nombre de la categoría. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If the connection cannot be restored, see option B."
-msgstr "Si no se puede restablecer la conexión, véase la opción B."
+msgstr "Si no se puede restablecer la conexión, véase la opción B. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If you continue, those paths will be removed."
-msgstr "Si continúa, se eliminarán esas rutas."
+msgstr "Si continúa, se eliminarán esas rutas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If you have already added manually graded outcome variables, please select their grading scale in Outcome Declarations."
-msgstr "Si ya ha añadido variables de resultado calificadas manualmente, por favor seleccione su escala de calificación en Declaraciones de resultado."
+msgstr "Si ya ha añadido variables de resultado calificadas manualmente, por favor seleccione su escala de calificación en Declaraciones de resultado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If you leave the test, your changes will not be saved due to invalid test settings. Are you sure you wish to leave?"
-msgstr "Si abandonas la prueba, los cambios no se guardarán debido a la configuración de prueba no válida. ¿Estás seguro de que deseas salir?"
+msgstr "Si abandonas la prueba, los cambios no se guardarán debido a la configuración de prueba no válida. ¿Estás seguro de que deseas salir? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "If you need help, please contact our Helpline on 0330 088 4171."
-msgstr "Si necesita ayuda, por favor contacte con nuestra línea de ayuda en el 0330 088 4171."
+msgstr "Si necesita ayuda, por favor contacte con nuestra línea de ayuda en el 0330 088 4171. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Import"
-msgstr "Importar"
+msgstr "Importar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Import a QTI/APIP Content Package"
-msgstr "Importar un paquete de contenido QTI/APIP"
+msgstr "Importar un paquete de contenido QTI/APIP {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Import QTI TEST into \"%s"
-msgstr "Importar PRUEBA QTI en \"%s"
+msgstr "Importar PRUEBA QTI en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "IMS QTI Item referenciado como \"%s\" en el archivo de Manifiesto de IMS no pudo ser importado."
+msgstr "IMS QTI Item referenciado como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "IMS QTI Item referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "Elemento IMS QTI referenciado como \"%s\" en el archivo Manifiesto IMS importado satisfactoriamente."
+msgstr "Elemento IMS QTI referenciado como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "IMS QTI Test Package successfully imported."
-msgstr "Paquete de Prueba IMS QTI importado satisfactoriamente."
+msgstr "Paquete de Prueba IMS QTI importado satisfactoriamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully imported."
-msgstr "Prueba IMS QTI referenciada como \"%s\" en el archivo Manifiesto IMS importada satisfactoriamente."
+msgstr "Prueba IMS QTI referenciada como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "In progress"
-msgstr "En progreso"
+msgstr "En progreso {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "In this part of the test navigation is not allowed."
-msgstr "En esta parte de la prueba no se permite navegar."
+msgstr "En esta parte de la prueba no se permite navegar. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Inconsistency at line %1d:"
-msgstr "Inconsistencia en linea %1d:"
+msgstr "Inconsistencia en linea %1d: {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Individual"
-msgstr "Individual"
+msgstr "Individual {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Informational item"
-msgstr "Artículo informativo"
+msgstr "Artículo informativo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Informational Item Usage"
-msgstr "Uso de ítem informativo"
+msgstr "Uso de ítem informativo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Internal server error!"
-msgstr "Error interno del servidor."
+msgstr "Error interno del servidor. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Interpretation"
-msgstr "Interpretación"
+msgstr "Interpretación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "is already used in the test."
-msgstr "ya se utiliza en la prueba."
+msgstr "ya se utiliza en la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
-msgstr "no es un identificador válido (alfanumérico, guiones bajos, guiones y puntos)"
+msgstr "no es un identificador válido (alfanumérico, guiones bajos, guiones y puntos) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "is not a valid identifier (everything except spaces)"
-msgstr "no es un identificador válido (todo excepto espacios)"
+msgstr "no es un identificador válido (todo excepto espacios) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale."
-msgstr "Crea un resultado GRADE, y si se selecciona una escala, también un MAX_GRADE con el valor superior de esa escala."
+msgstr "Crea un resultado GRADE, y si se selecciona una escala, también un MAX_GRADE con el valor superior de esa escala. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "It is not possible to save your responses while working offline."
-msgstr "No es posible guardar las respuestas mientras se trabaja fuera de línea."
+msgstr "No es posible guardar las respuestas mientras se trabaja fuera de línea. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item \"%s\" is completed."
-msgstr "El ítem \"%s\" está completo."
+msgstr "El ítem \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item %d"
-msgstr "Elemento %d"
+msgstr "Elemento %d {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item %d of %d"
-msgstr "Elemento %d de %d"
+msgstr "Elemento %d de %d {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item %s loaded"
-msgstr "Elemento %s cargado"
+msgstr "Elemento %s cargado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item Reference Properties"
-msgstr "Elemento Referencia Propiedades"
+msgstr "Elemento Referencia Propiedades {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item response identifier does not match current item"
-msgstr "El identificador de respuesta del elemento no coincide con el elemento actual"
+msgstr "El identificador de respuesta del elemento no coincide con el elemento actual {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Item Session Control"
-msgstr "Control de Sesión de Elemento"
+msgstr "Control de Sesión de Elemento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Items"
-msgstr "Elementos"
+msgstr "Elementos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "items"
-msgstr "elementos"
+msgstr "elementos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Items can optionally be assigned to one or more categories."
-msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías."
+msgstr "Los elementos opcionalmente pueden ser asignados a una o más categorías. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Items Compilation"
-msgstr "Compilación de Elementos"
+msgstr "Compilación de Elementos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Items marked for later review"
-msgstr "Ítems marcados para revisión posterior"
+msgstr "Ítems marcados para revisión posterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Items with assessmentItemRef identifiers \"%s\" are not registered in the related CAT endpoint."
-msgstr "Los ítems con identificadores assessmentItemRef \"%s\" no se registran en el punto final CAT relacionado."
+msgstr "Los ítems con identificadores assessmentItemRef \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Jump Menu"
-msgstr "Saltar Menú"
+msgstr "Saltar Menú {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Jump to:"
-msgstr "Saltar a:"
+msgstr "Saltar a: {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Keep Together"
-msgstr "Mantener junto"
+msgstr "Mantener junto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Keyboard Navigation"
-msgstr "Navegación por teclado"
+msgstr "Navegación por teclado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
-msgstr "Los atajos de teclado para las Herramientas de Accesibilidad están disponibles para el examinado."
+msgstr "Los atajos de teclado para las Herramientas de Accesibilidad están disponibles para el examinado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Late submission allowed"
-msgstr "Envio tardío permitido"
+msgstr "Envio tardío permitido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Leave a comment"
-msgstr "Dejar un comentario"
+msgstr "Dejar un comentario {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Line Reader"
-msgstr "Lector de línea"
+msgstr "Lector de línea {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Linear"
-msgstr "Lineal"
+msgstr "Lineal {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Link durations to activate the guided navigation"
-msgstr "Enlazar duraciones para activar navegación guiada"
+msgstr "Enlazar duraciones para activar navegación guiada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Locked duration  : guided navigation. The test transition to the next item once the duration reaches 0."
-msgstr "Duración bloqueada: navegación guiada. La prueba pasa al siguiente ítem una vez que la duración alcanza 0."
+msgstr "Duración bloqueada: navegación guiada. La prueba pasa al siguiente ítem una vez que la duración alcanza 0. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Long interpretation"
-msgstr "Interpretación larga"
+msgstr "Interpretación larga {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Lowest Grade Achieved"
-msgstr "El nivel más bajo logrado"
+msgstr "El nivel más bajo logrado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Magnifier"
-msgstr "Aumento"
+msgstr "Aumento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Magnify less"
-msgstr "Aumentar menos"
+msgstr "Aumentar menos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Magnify more"
-msgstr "Aumentar más"
+msgstr "Aumentar más {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Magnifying Glass"
-msgstr "Lente de aumento"
+msgstr "Lente de aumento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Main navigation"
-msgstr "Navegación principal"
+msgstr "Navegación principal {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Manage Rubric Blocks"
-msgstr "Administrar Bloques de Rúbrica"
+msgstr "Administrar Bloques de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Manage test properties"
-msgstr "Administrar las propiedades de prueba"
+msgstr "Administrar las propiedades de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 #, tao-public
 msgid "Manage tests"
-msgstr "Gestionar pruebas"
+msgstr "Gestionar pruebas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Manage Tests"
-msgstr "Gestionar Pruebas"
+msgstr "Gestionar Pruebas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Mark for review"
-msgstr "Marcar para revisión"
+msgstr "Marcar para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Masking"
-msgstr "Ocultamiento"
+msgstr "Ocultamiento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Match value"
-msgstr "Coincidir con el valor"
+msgstr "Coincidir con el valor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Max Attempts"
-msgstr "Intentos Máximos"
+msgstr "Intentos Máximos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum Duration"
-msgstr "Máxima Duración"
+msgstr "Máxima Duración {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum duration : the items times out when the duration reaches 0."
-msgstr "Duración máxima: los ítems exceden el tiempo definido cuando la duración alcanza 0."
+msgstr "Duración máxima: los ítems exceden el tiempo definido cuando la duración alcanza 0. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum duration for the all test."
-msgstr "Máxima duración para toda la prueba."
+msgstr "Máxima duración para toda la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum duration for this item."
-msgstr "Máxima duración para este elemento."
+msgstr "Máxima duración para este elemento. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum duration for this section."
-msgstr "Máxima duración para esta sección."
+msgstr "Máxima duración para esta sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum duration for this test part."
-msgstr "Máxima duración para esta parte de la prueba."
+msgstr "Máxima duración para esta parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Maximum number of points achievable"
-msgstr "Número máximo de puntos alcanzables"
+msgstr "Número máximo de puntos alcanzables {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Metadata export is not available for test \"%s."
-msgstr "La exportación de metadatos no está disponible para la prueba \"%s."
+msgstr "La exportación de metadatos no está disponible para la prueba \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum Duration"
-msgstr "Minima Duración"
+msgstr "Minima Duración {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum duration : enforces the test taker to stay on the item for the given duration."
-msgstr "Duración mínima: fuerza al examinado a quedarse en el ítem durante el tiempo establecido."
+msgstr "Duración mínima: fuerza al examinado a quedarse en el ítem durante el tiempo establecido. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum duration for the test."
-msgstr "Minima duración para la prueba."
+msgstr "Minima duración para la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum duration for this item."
-msgstr "Minima duración para la este elemento."
+msgstr "Minima duración para la este elemento. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum duration for this section."
-msgstr "Minima duración para esta sección."
+msgstr "Minima duración para esta sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Minimum duration for this test part."
-msgstr "Minima duración para esta parte de la prueba."
+msgstr "Minima duración para esta parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "minutes"
-msgstr "minutos"
+msgstr "minutos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Missed required parameter \\'id\\'."
-msgstr "Falta el parámetro requerido \\'id\\'."
+msgstr "Falta el parámetro requerido \\'id\\'. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Missed test package file"
-msgstr "Se omitió el archivo de paquete de la prueba"
+msgstr "Se omitió el archivo de paquete de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Missing filename for QTI Test export"
-msgstr "Falta el nombre del archivo para exportar QTI Test"
+msgstr "Falta el nombre del archivo para exportar QTI Test {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Missing required configuration option %s"
-msgstr "Falta la opción de configuración requerida %s"
+msgstr "Falta la opción de configuración requerida %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "MNOP is not available for this test configuration."
-msgstr "MNOP no está disponible para esta configuración de prueba."
+msgstr "MNOP no está disponible para esta configuración de prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "MNOP is not available when branch rules are present."
-msgstr "MNOP no está disponible cuando hay reglas de sucursales."
+msgstr "MNOP no está disponible cuando hay reglas de sucursales. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "MNOP requires Outcome processing set to Total score or Cut score."
-msgstr "MNOP requiere que el procesamiento de Salutcome se ajuste a la puntuación total o la puntuación de corte."
+msgstr "MNOP requiere que el procesamiento de Salutcome se ajuste a la puntuación total o la puntuación de corte. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Move"
-msgstr "Mover"
+msgstr "Mover {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Move Down"
-msgstr "Mover hacia abajo"
+msgstr "Mover hacia abajo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Move rule down"
-msgstr "Mover regla hacia abajo"
+msgstr "Mover regla hacia abajo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Move rule up"
-msgstr "Mover regla arriba"
+msgstr "Mover regla arriba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Move Up"
-msgstr "Mover hacia arriba"
+msgstr "Mover hacia arriba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Moving to the next item without time limit reached message."
-msgstr "Pasar al siguiente ítem sin el mensaje de límite de tiempo alcanzado."
+msgstr "Pasar al siguiente ítem sin el mensaje de límite de tiempo alcanzado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "name of the pupil"
-msgstr "nombre del alumno"
+msgstr "nombre del alumno {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Navigation"
-msgstr "Navegación"
+msgstr "Navegación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Navigation shortcuts"
-msgstr "Atajos de Navegación"
+msgstr "Atajos de Navegación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Navigation Warnings"
-msgstr "Advertencias de navegación"
+msgstr "Advertencias de navegación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "network"
-msgstr "red"
+msgstr "red {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "New Rubric Block"
-msgstr "Nuevo Bloque de Rúbrica"
+msgstr "Nuevo Bloque de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "New section"
-msgstr "Nueva sección"
+msgstr "Nueva sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "New test part"
-msgstr "Nueva parte de prueba"
+msgstr "Nueva parte de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Next"
-msgstr "Siguiente"
+msgstr "Siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Next Section"
-msgstr "Sección siguiente"
+msgstr "Sección siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "NO"
-msgstr "NO"
+msgstr "NO {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No"
-msgstr "Nu"
+msgstr "Nu {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No CAT Engine configured for CAT Endpoint \"%s\"."
-msgstr "No hay ningún motor CAT configurado para el punto final CAT \"%s\"."
+msgstr "No hay ningún motor CAT configurado para el punto final CAT \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No file found at location \"%s\"."
-msgstr "Archivo no encontrado en ubicación \"%s\"."
+msgstr "Archivo no encontrado en ubicación \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No instance in form to export"
-msgstr "No hay instancia en el formulario para exportar"
+msgstr "No hay instancia en el formulario para exportar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No items in this test yet."
-msgstr "Aún no hay elementos en esta prueba."
+msgstr "Aún no hay elementos en esta prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No more attempts allowed for item \"%s\"."
-msgstr "No se permiten más intentos para el elemento \"%s\"."
+msgstr "No se permiten más intentos para el elemento \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "no outcome declaration found"
-msgstr "no se encontró ninguna declaración de resultado"
+msgstr "no se encontró ninguna declaración de resultado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No outcome processing. Erase the existing rules, if any."
-msgstr "No se procesa ningún resultado. Borre las reglas existentes, si las hay."
+msgstr "No se procesa ningún resultado. Borre las reglas existentes, si las hay. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No reference to any IMS QTI Item found."
-msgstr "No hay referencia a ningún elemento IMS QTI encontrado."
+msgstr "No hay referencia a ningún elemento IMS QTI encontrado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "No translation"
-msgstr "No hay traducción"
+msgstr "No hay traducción {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Non Linear"
-msgstr "No Lineal"
+msgstr "No Lineal {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "None"
-msgstr "Ninguno"
+msgstr "Ninguno {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Not all test could be exported"
-msgstr "No se pudo exportar toda la prueba"
+msgstr "No se pudo exportar toda la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Not answered"
-msgstr "No contestado"
+msgstr "No contestado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Not seen"
-msgstr "No se ha visto"
+msgstr "No se ha visto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Not shuffled, the position remains fixed."
-msgstr "No reorganizado, la posición permanece fija."
+msgstr "No reorganizado, la posición permanece fija. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Note: This mode does not use categories or weights."
-msgstr "Nota: Este modo no utiliza categorías o pesos."
+msgstr "Nota: Este modo no utiliza categorías o pesos. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Offline"
-msgstr "Fuera de línea"
+msgstr "Fuera de línea {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "OK"
-msgstr "Ok"
+msgstr "Ok {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Ok"
-msgstr "Aceptar"
+msgstr "Aceptar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "OK & End test"
-msgstr "Aceptar y finalizar la prueba"
+msgstr "Aceptar y finalizar la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Once you close this section, you cannot return to it or change your answers."
-msgstr "Una vez que cierre esta  sección, no podrá volver a ella ni cambiar sus respuestas."
+msgstr "Una vez que cierre esta  sección, no podrá volver a ella ni cambiar sus respuestas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "One or more dependent IMS QTI Items could not be imported."
-msgstr "Uno o más Elementos IMS QTI dependientes no podían ser importados."
+msgstr "Uno o más Elementos IMS QTI dependientes no podían ser importados. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Online"
-msgstr "En línea"
+msgstr "En línea {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Only display the items marked for review"
-msgstr "Mostrar solo los ítems marcados para revisión"
+msgstr "Mostrar solo los ítems marcados para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Only display the unanswered items"
-msgstr "Mostrar solo los ítems sin respuesta"
+msgstr "Mostrar solo los ítems sin respuesta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Op."
-msgstr "Op."
+msgstr "Op. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Open Calculator"
-msgstr "Abrir calculadora"
+msgstr "Abrir calculadora {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Open Keyboard Shortcuts"
-msgstr "Abrir atajos de teclado"
+msgstr "Abrir atajos de teclado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Operator"
-msgstr "Operador"
+msgstr "Operador {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Option A"
-msgstr "Opción A"
+msgstr "Opción A {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Option B"
-msgstr "Opción B"
+msgstr "Opción B {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "or"
-msgstr "o"
+msgstr "o {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Ordering"
-msgstr "Ordenamiento"
+msgstr "Ordenamiento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Original title"
-msgstr "Título original"
+msgstr "Título original {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Outcome"
-msgstr "Resultado"
+msgstr "Resultado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Outcome declarations"
-msgstr "Declaraciones de resultados"
+msgstr "Declaraciones de resultados {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Outcome identifier must be unique and non-empty. Please choose a valid identifier."
-msgstr "El identificador de salida debe ser único y no vacío. Por favor, elija un identificador válido."
+msgstr "El identificador de salida debe ser único y no vacío. Por favor, elija un identificador válido. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Outcome processing"
-msgstr "Procesamiento de resultados"
+msgstr "Procesamiento de resultados {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Package is valid but no tests were found. Make sure that it contains valid QTI tests."
-msgstr "El paquete es válido, pero no se encontraron pruebas. Asegúrese de que contiene pruebas QTI válidas."
+msgstr "El paquete es válido, pero no se encontraron pruebas. Asegúrese de que contiene pruebas QTI válidas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Part %d"
-msgstr "Parte %d"
+msgstr "Parte %d {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Passage"
-msgstr "Pasaje"
+msgstr "Pasaje {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Paths"
-msgstr "Rutas"
+msgstr "Rutas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Pause"
-msgstr "Pausar"
+msgstr "Pausar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Pause the test"
-msgstr "Pausar la prueba"
+msgstr "Pausar la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Pending"
-msgstr "Pendiente"
+msgstr "Pendiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Play"
-msgstr "Reproducir"
+msgstr "Reproducir {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Please confirm you want to leave the test."
-msgstr "Confirme que desea abandonar la prueba."
+msgstr "Confirme que desea abandonar la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Please fix the invalid settings and try again."
-msgstr "Por favor, corrija la configuración no válida y vuelva a intentarlo."
+msgstr "Por favor, corrija la configuración no válida y vuelva a intentarlo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Please try reloading the page or pause the test. If you pause, you will be able to resume the test from this page."
-msgstr "Por favor, intente recargar la página o pausar la prueba. Si hace una pausa, podrá reanudar la prueba desde esta página."
+msgstr "Por favor, intente recargar la página o pausar la prueba. Si hace una pausa, podrá reanudar la prueba desde esta página. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Please wait while we try to restore the connection."
-msgstr "Por favor espere mientras intenta restablecer la conexión."
+msgstr "Por favor espere mientras intenta restablecer la conexión. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Points"
-msgstr "Puntos"
+msgstr "Puntos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Prerequisites"
-msgstr "Prerrequisitos"
+msgstr "Prerrequisitos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Preview"
-msgstr "Vista previa"
+msgstr "Vista previa {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Preview the covered area"
-msgstr "Vista preliminar del área cubierta"
+msgstr "Vista preliminar del área cubierta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Previous"
-msgstr "Anterior"
+msgstr "Anterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Print Out"
-msgstr "Imprimir"
+msgstr "Imprimir {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Proceed"
-msgstr "Proceder"
+msgstr "Proceder {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "PROCEED & END ASSESSMENT"
-msgstr "PROCEDER Y FINALIZAR LA EVALUACIÓN"
+msgstr "PROCEDER Y FINALIZAR LA EVALUACIÓN {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Proctor"
-msgstr "Supervisor"
+msgstr "Supervisor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Properties"
-msgstr "Propiedades"
+msgstr "Propiedades {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI 2.1 Test Driver"
-msgstr "Conductor de Prueba QTI 2.1"
+msgstr "Conductor de Prueba QTI 2.1 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Item Runner"
-msgstr "Item QTI Runner"
+msgstr "Item QTI Runner {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI metadata as properties"
-msgstr "Metadatos QTI como propiedades"
+msgstr "Metadatos QTI como propiedades {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test \"%s\" publishing failed."
-msgstr "Publicación de prueba \"%s\" QTI fallida."
+msgstr "Publicación de prueba \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test \"%s\" successfully published."
-msgstr "Prueba \"%s\" QTI publicada satisfactoriamente."
+msgstr "Prueba \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI test import failed"
-msgstr "Importación de pruebas QTI falló"
+msgstr "Importación de pruebas QTI falló {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test Metadata"
-msgstr "Metadatos de prueba QTI"
+msgstr "Metadatos de prueba QTI {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test Package %s"
-msgstr "Paquete de Prueba QTI %s"
+msgstr "Paquete de Prueba QTI %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test Package 2.1"
-msgstr "Paquete de Prueba QTI 2.1"
+msgstr "Paquete de Prueba QTI 2.1 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI Test Package 2.2"
-msgstr "Paquete de prueba QTI 2.2"
+msgstr "Paquete de prueba QTI 2.2 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "QTI/APIP Test Content Package"
-msgstr "Paquete con contenido de prueba QTI/APIP"
+msgstr "Paquete con contenido de prueba QTI/APIP {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "question"
-msgstr "pregunta"
+msgstr "pregunta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Question"
-msgstr "Pregunta"
+msgstr "Pregunta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Question %s"
-msgstr "Pregunta %s"
+msgstr "Pregunta %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "questions"
-msgstr "preguntas"
+msgstr "preguntas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Reference"
-msgstr "Referencia"
+msgstr "Referencia {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Regenerate"
-msgstr "Regenerar"
+msgstr "Regenerar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Reload the page"
-msgstr "Recargar la página"
+msgstr "Recargar la página {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "remaining %s %s"
-msgstr "restante %s %s"
+msgstr "restante %s %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove"
-msgstr "Eliminar"
+msgstr "Eliminar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove Item Reference"
-msgstr "Eliminar Referencia de Elemento"
+msgstr "Eliminar Referencia de Elemento {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove Rubric Block"
-msgstr "Eliminar Bloque de Rúbrica"
+msgstr "Eliminar Bloque de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove Section"
-msgstr "Eliminar Sección"
+msgstr "Eliminar Sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove Subsection"
-msgstr "Eliminar subsección"
+msgstr "Eliminar subsección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Remove Test Part"
-msgstr "Retire la parte de la prueba"
+msgstr "Retire la parte de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Required"
-msgstr "Requerido"
+msgstr "Requerido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Required field"
-msgstr "Campo requerido"
+msgstr "Campo requerido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Reset filters"
-msgstr "Restaurar filtros"
+msgstr "Restaurar filtros {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Resource(s) successfully exported."
-msgstr "Recursos(s) exportados con éxito."
+msgstr "Recursos(s) exportados con éxito. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "ResultTransmission event successfully registered"
-msgstr "Evento de Transmisión de Resultados registrado con éxito"
+msgstr "Evento de Transmisión de Resultados registrado con éxito {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Review"
-msgstr "Revisión"
+msgstr "Revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Review my Answers"
-msgstr "Revisar mis respuestas"
+msgstr "Revisar mis respuestas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Rubric Block"
-msgstr "Bloque de Rúbrica"
+msgstr "Bloque de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Rubric Block Properties"
-msgstr "Propiedades de Bloque de Rúbrica"
+msgstr "Propiedades de Bloque de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Rubric Blocks"
-msgstr "Bloque de Rúbrica"
+msgstr "Bloque de Rúbrica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Save"
-msgstr "Guardar"
+msgstr "Guardar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Saved"
-msgstr "Guardado"
+msgstr "Guardado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scale name not allowed"
-msgstr "Nombre de escala no permitido"
+msgstr "Nombre de escala no permitido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scientific Calculator"
-msgstr "Calculadora científica"
+msgstr "Calculadora científica {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scorer"
-msgstr "Puntuador"
+msgstr "Puntuador {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scoring"
-msgstr "Puntaje"
+msgstr "Puntaje {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scratch pad"
-msgstr "Bloc de notas"
+msgstr "Bloc de notas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scratch Pad"
-msgstr "Bloc de Notas"
+msgstr "Bloc de Notas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Scratchpad"
-msgstr "Bloc de notas"
+msgstr "Bloc de notas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "seconds"
-msgstr "segundos"
+msgstr "segundos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Section %d"
-msgstr "Sección %d"
+msgstr "Sección %d {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Section %d of %d"
-msgstr "Sección %d de %d"
+msgstr "Sección %d de %d {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Section level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr "La categoría de nivel de sección permite configurar las categorías de los ítems que la componen de una sola vez. Una categoría en gris significa que todos los ítems tienen esa categoría. Una categoría en blanco significa que solo algunos ítems tienen esa categoría."
+msgstr "La categoría de nivel de sección permite configurar las categorías de los ítems que la componen de una sola vez. Una categoría en gris significa que todos los ítems tienen esa categoría. Una categoría en blanco significa que solo algunos ítems tienen esa categoría. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Section Properties"
-msgstr "Propiedades de sección"
+msgstr "Propiedades de sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select"
-msgstr "Seleccionar"
+msgstr "Seleccionar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select a blueprint"
-msgstr "Seleccionar un blueprint"
+msgstr "Seleccionar un blueprint {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select if you want the outcome declaration to be processed by an external system or human scorer. This is typically the case for items asking candidates to write an essay."
-msgstr "Seleccione si desea que la declaración de resultado sea procesada por un sistema externo o un puntuador humano. Este es típicamente el caso de los artículos que piden a los candidatos que escriban un ensayo."
+msgstr "Seleccione si desea que la declaración de resultado sea procesada por un sistema externo o un puntuador humano. Este es típicamente el caso de los artículos que piden a los candidatos que escriban un ensayo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select Items"
-msgstr "Seleccionar elementos"
+msgstr "Seleccionar elementos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select or enter a scale"
-msgstr "Seleccionar o introducir una escala"
+msgstr "Seleccionar o introducir una escala {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Select the way the responses of your test should be processed"
-msgstr "Seleccione cómo deben procesarse las respuestas de su prueba"
+msgstr "Seleccione cómo deben procesarse las respuestas de su prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Selection"
-msgstr "Selección"
+msgstr "Selección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Send"
-msgstr "Enviar"
+msgstr "Enviar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set outcome identifier the feedback block is related to"
-msgstr "Establecer el identificador de resultado con el que está relacionado el bloque de comentarios"
+msgstr "Establecer el identificador de resultado con el que está relacionado el bloque de comentarios {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the cut score (or pass score ratio) associated to the test. It must be a float between 0 and 1."
-msgstr "Establecer el puntaje de corte (o ratio de puntaje de aprobado) asociado con la prueba. Debe ser un número de coma flotante entre 0 y 1."
+msgstr "Establecer el puntaje de corte (o ratio de puntaje de aprobado) asociado con la prueba. Debe ser un número de coma flotante entre 0 y 1. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the rubric block as a feedback block"
-msgstr "Establecer el bloque de rúbrica como bloque de comentarios"
+msgstr "Establecer el bloque de rúbrica como bloque de comentarios {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the value of the outcome that will activate the feedback block"
-msgstr "Establecer el valor del resultado que activará el bloque de comentarios"
+msgstr "Establecer el valor del resultado que activará el bloque de comentarios {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the weight identifier used to process the score"
-msgstr "Establecer el identificador de ponderación utilizado para procesar el puntaje"
+msgstr "Establecer el identificador de ponderación utilizado para procesar el puntaje {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the XHTML-QTI class of the rubric block."
-msgstr "Establecer la clase XHTML-QTI para el bloque de rúbrica."
+msgstr "Establecer la clase XHTML-QTI para el bloque de rúbrica. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Set the XHTML-QTI identifier of the rubric block."
-msgstr "Establecer el identificador XHTML-QTI para el bloque de rúbrica."
+msgstr "Establecer el identificador XHTML-QTI para el bloque de rúbrica. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "SetSynchronisationService successfully configured."
-msgstr "Se ha configurado con éxito SetSynchronisationService."
+msgstr "Se ha configurado con éxito SetSynchronisationService. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Settings"
-msgstr "Ajustes"
+msgstr "Ajustes {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show Feedback"
-msgstr "Mostrar comentarios"
+msgstr "Mostrar comentarios {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show Review"
-msgstr "Mostrar revisión"
+msgstr "Mostrar revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show Solution"
-msgstr "Mostrar Solución"
+msgstr "Mostrar Solución {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show test overview panel"
-msgstr "Mostrar panel de resumen de prueba"
+msgstr "Mostrar panel de resumen de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show the review screen"
-msgstr "Mostrar la pantalla de revisión"
+msgstr "Mostrar la pantalla de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show the solution once the answer is submitted."
-msgstr "Mostrar la solución antes de que la respuesta sea enviada."
+msgstr "Mostrar la solución antes de que la respuesta sea enviada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show timers"
-msgstr "Muestra el temporizador"
+msgstr "Muestra el temporizador {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Show/Hide the review screen"
-msgstr "Mostrar/esconder la pantalla de revisión"
+msgstr "Mostrar/esconder la pantalla de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Shuffle"
-msgstr "Aleatorio"
+msgstr "Aleatorio {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Simultaneous"
-msgstr "Simúltanea"
+msgstr "Simúltanea {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip"
-msgstr "Omitir"
+msgstr "Omitir {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip &amp; End Test"
-msgstr "Saltar &amp; Fin de Prueba"
+msgstr "Saltar &amp; Fin de Prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip and end test"
-msgstr "Saltar y finalizar prueba"
+msgstr "Saltar y finalizar prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip and go to the end of the test"
-msgstr "Saltar e ir al final de la prueba"
+msgstr "Saltar e ir al final de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip and go to the next item"
-msgstr "Saltar e ir al siguiente ítem"
+msgstr "Saltar e ir al siguiente ítem {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip to the end of the test"
-msgstr "Omitir hasta el fin de la prueba"
+msgstr "Omitir hasta el fin de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip to the next item"
-msgstr "Saltar al elemento siguiente"
+msgstr "Saltar al elemento siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Skip to the next section"
-msgstr "Saltar a la siguiente sección"
+msgstr "Saltar a la siguiente sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Some rubric blocks have been updated to reflect the changes in the list of outcomes."
-msgstr "Algunos bloques de rúbrica se actualizaron para reflejar los cambios de la lista de resultados."
+msgstr "Algunos bloques de rúbrica se actualizaron para reflejar los cambios de la lista de resultados. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Something unexpected happened."
-msgstr "Ocurrió algo inesperado."
+msgstr "Ocurrió algo inesperado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Something went wrong..."
-msgstr "Algo salió mal..."
+msgstr "Algo salió mal... {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Speech speed"
-msgstr "Velocidad del habla"
+msgstr "Velocidad del habla {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Speed"
-msgstr "Velocidad"
+msgstr "Velocidad {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Start Test-part"
-msgstr "Iniciar parte de la Prueba"
+msgstr "Iniciar parte de la Prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Status"
-msgstr "Estado"
+msgstr "Estado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Step 1: Download the file (see below when available)."
-msgstr "Paso 1: Descargar el archivo (ver abajo cuando esté disponible)."
+msgstr "Paso 1: Descargar el archivo (ver abajo cuando esté disponible). {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Step 2: When you are online again, please send the downloaded file to receptionbaseline@nfer.ac.uk together with the "
-msgstr "Paso 2: Cuando esté en línea de nuevo, por favor envíe el archivo descargado a receptionbaseline@nfer.ac.uk junto con el "
+msgstr "Paso 2: Cuando esté en línea de nuevo, por favor envíe el archivo descargado a receptionbaseline@nfer.ac.uk junto con el  {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Step 3: Once you have downloaded the file you can close the browser window. Do not do anything further with the assessment whilst it shows as \"in progress\"; the status will be updated once the helpline has uploaded the file."
-msgstr "Paso 3: Una vez que haya descargado el archivo puede cerrar la ventana del navegador. No haga nada más con la evaluación mientras se muestra como \"en progreso\"; el estado se actualizará una vez que la línea de ayuda haya subido el archivo."
+msgstr "Paso 3: Una vez que haya descargado el archivo puede cerrar la ventana del navegador. No haga nada más con la evaluación mientras se muestra como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Stop"
-msgstr "Detener"
+msgstr "Detener {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Submission"
-msgstr "Envío"
+msgstr "Envío {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Submit and go to the end of the test"
-msgstr "Enviar e ir al final de la prueba"
+msgstr "Enviar e ir al final de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Submit and go to the item %s"
-msgstr "Sométase y vaya al artículo %s"
+msgstr "Sométase y vaya al artículo %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Submit and go to the next item"
-msgstr "Enviar e ir al elemento siguiente"
+msgstr "Enviar e ir al elemento siguiente {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Submit and go to the previous item"
-msgstr "Enviar e ir al elemento anterior"
+msgstr "Enviar e ir al elemento anterior {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "SUBMIT THE TEST"
-msgstr "ENVIAR LA PRUEBA"
+msgstr "ENVIAR LA PRUEBA {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "SUBMIT THIS PART"
-msgstr "ENVIAR ESTA PARTE"
+msgstr "ENVIAR ESTA PARTE {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Target"
-msgstr "Target"
+msgstr "Target {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "technical"
-msgstr "técnico"
+msgstr "técnico {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test"
-msgstr "Prueba"
+msgstr "Prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test constructor"
-msgstr "Constructor de prueba"
+msgstr "Constructor de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test metadata successfully exported."
-msgstr "Los metadatos de la prueba se exportaron satisfactoriamente."
+msgstr "Los metadatos de la prueba se exportaron satisfactoriamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test Navigation"
-msgstr "Navegación por la prueba"
+msgstr "Navegación por la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test overview"
-msgstr "Resumen de pruebas"
+msgstr "Resumen de pruebas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test part level category enables configuring the categories of its composing items all at once. A category in gray means that all items have that category. A category in white means that only a few items have that category."
-msgstr "La categoría de nivel de partes de prueba permite configurar las categorías de sus elementos de composición a la vez. Una categoría en gris significa que todos los artículos tienen esa categoría. Una categoría en blanco significa que sólo unos pocos elementos tienen esa categoría."
+msgstr "La categoría de nivel de partes de prueba permite configurar las categorías de sus elementos de composición a la vez. Una categoría en gris significa que todos los artículos tienen esa categoría. Una categoría en blanco significa que sólo unos pocos elementos tienen esa categoría. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test Part Properties"
-msgstr "Propiedades de la parte de prueba"
+msgstr "Propiedades de la parte de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test Preview is not installed, please contact to your administrator."
-msgstr "Vista previa de prueba no está instalada, por favor contacte con su administrador."
+msgstr "Vista previa de prueba no está instalada, por favor contacte con su administrador. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test Saved"
-msgstr "Prueba Guardada"
+msgstr "Prueba Guardada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test status"
-msgstr "Estado de la prueba"
+msgstr "Estado de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test status and review structure"
-msgstr "Estado de las pruebas y estructura de revisión"
+msgstr "Estado de las pruebas y estructura de revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test Status and Structure"
-msgstr "Estado de las pruebas y Estructura"
+msgstr "Estado de las pruebas y Estructura {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test translation status"
-msgstr "Estado de la traducción de prueba"
+msgstr "Estado de la traducción de prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Test-Taker Tools"
-msgstr "Herramientas de examinado"
+msgstr "Herramientas de examinado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 #, tao-public
 msgid "Tests"
-msgstr "Tests"
+msgstr "Tests {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Text content"
-msgstr "Contenido del texto"
+msgstr "Contenido del texto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Text To Speech"
-msgstr "Texto A Voz"
+msgstr "Texto A Voz {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Text to Speech"
-msgstr "Texto a Voz"
+msgstr "Texto a Voz {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "that was being taken."
-msgstr "que estaba siendo tomada."
+msgstr "que estaba siendo tomada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The 'imsmanifest.xml' file found in the archive is not valid."
-msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido."
+msgstr "El archivo 'imsmanifest.xml' encontrado en el archivo no es válido. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "the assessment (LCL or Mathematics)"
-msgstr "la evaluación (LCL o Matemáticas)"
+msgstr "la evaluación (LCL o Matemáticas) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been created but is not already running."
-msgstr "Se creó la evaluación pero aún no funciona."
+msgstr "Se creó la evaluación pero aún no funciona. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been suspended by an authorized proctor. If you wish to resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario."
+msgstr "La evaluación fue suspendida por un coordinador autorizado. Si desea retomar su evaluación, vuelva a iniciarla y contacte a su coordinador si es necesario. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it and contact your proctor if required."
-msgstr "Se suspendió la evaluación. Para reanudar su evaluación, vuelva a iniciarla y póngase en contacto con su supervisor si es necesario."
+msgstr "Se suspendió la evaluación. Para reanudar su evaluación, vuelva a iniciarla y póngase en contacto con su supervisor si es necesario. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been suspended. To resume your assessment, please relaunch it."
-msgstr "La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie."
+msgstr "La evaluación ha sido suspendida. Para reanudar su evaluación, por favor reinicie. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been terminated."
-msgstr "La evaluación se ha terminado."
+msgstr "La evaluación se ha terminado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment has been terminated. You cannot interact with it anymore."
-msgstr "La evaluación terminó. Ya no puede interactuar con ella."
+msgstr "La evaluación terminó. Ya no puede interactuar con ella. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The assessment is still running."
-msgstr "La evaluación sigue ejecutándose."
+msgstr "La evaluación sigue ejecutándose. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The candidate is not allowed to submit invalid responses."
-msgstr "Al candidato no se le permite enviar respuestas equivocadas."
+msgstr "Al candidato no se le permite enviar respuestas equivocadas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The connection seems to be back, please proceed"
-msgstr "Parece que se retomó la conexión. Continúe."
+msgstr "Parece que se retomó la conexión. Continúe. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "the current question"
-msgstr "la pregunta actual"
+msgstr "la pregunta actual {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The dependency to the IMS QTI AssessmentItemRef \"%s\" in the IMS Manifest file could not be resolved."
-msgstr "No se pudo resolver la dependencia a IMS QTI AssessmentItemRef \"%s\" en el archivo de manifiesto de IMS."
+msgstr "No se pudo resolver la dependencia a IMS QTI AssessmentItemRef \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The download will be available in <strong>%d</strong> seconds"
-msgstr "La descarga estará disponible en <strong>%d</strong> segundos"
+msgstr "La descarga estará disponible en <strong>%d</strong> segundos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The following identifiers are not unique accross the test : %s"
-msgstr "Los identificadores siguientes no son únicos en la prueba: %s"
+msgstr "Los identificadores siguientes no son únicos en la prueba: %s {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The given target is not an instance of core_kernel_classes_Resource"
-msgstr "El objetivo dado no es una instancia de core_kernel_classes_Resource"
+msgstr "El objetivo dado no es una instancia de core_kernel_classes_Resource {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The identifier of the item reference."
-msgstr "El identificador de la referencia del elemento."
+msgstr "El identificador de la referencia del elemento. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The identifier of the section."
-msgstr "El identificador de la sección."
+msgstr "El identificador de la sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The IMS QTI Item referenced as \"%s\" in the IMS Manifest file was already stored in the Item Bank."
-msgstr "El artículo QTI de IMS referenciado como \"%s\" en el archivo de manifiesto de IMS ya fue almacenado en el banco de artículos."
+msgstr "El artículo QTI de IMS referenciado como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The IMS QTI Test Package could not be imported."
-msgstr "El Paquete de Prueba IMS QTI no pudo ser importado."
+msgstr "El Paquete de Prueba IMS QTI no pudo ser importado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The IMS QTI Test referenced as \"%s\" in the IMS Manifest file could not be imported."
-msgstr "La Prueba IMS QTI referenciada como \"%s\" en el archivo Manifiesto IMS no pudo ser importada."
+msgstr "La Prueba IMS QTI referenciada como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The maximum number of points (MNOP) that can be achieved in this test. This value is calculated by summing the MAXSCORE of all items across all sections."
-msgstr "El número máximo de puntos (MNOP) que se pueden lograr en esta prueba. Este valor se calcula resumiendo el MAXSCORE de todos los elementos en todas las secciones."
+msgstr "El número máximo de puntos (MNOP) que se pueden lograr en esta prueba. Este valor se calcula resumiendo el MAXSCORE de todos los elementos en todas las secciones. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The navigation mode determines the general paths that the candidate may take. A linear mode restricts the candidate to attempt each item in turn. Non Linear removes this restriction."
-msgstr "El modo de navegación determina los caminos generales que el candidato puede tomar. un modo lineal restringe el candidato a intentar por cada elemento en turno. No Lineal elimina esta restricción."
+msgstr "El modo de navegación determina los caminos generales que el candidato puede tomar. un modo lineal restringe el candidato a intentar por cada elemento en turno. No Lineal elimina esta restricción. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The number of child elements to be selected."
-msgstr "El número de elementos secundarios seran seleccionados."
+msgstr "El número de elementos secundarios seran seleccionados. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The original title of the section."
-msgstr "El título original de la sección."
+msgstr "El título original de la sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The original title of the test."
-msgstr "El título original de la prueba."
+msgstr "El título original de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
-msgstr "El resultado \"%s\" no existe, pero se hace referencia a él en un bloque de comentarios."
+msgstr "El resultado \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The outcomes have been regenerated!"
-msgstr "Los resultados se generaron de nuevo."
+msgstr "Los resultados se generaron de nuevo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The principle identifier of the test."
-msgstr "El identificador principio de la prueba."
+msgstr "El identificador principio de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The provided archive is invalid. Make sure it is not corrupted and that it contains an 'imsmanifest.xml' file."
-msgstr "El archivo proporcionado no es válido. Asegúrese de que no está dañado y que contiene un archivo 'imsmanifest.xml'."
+msgstr "El archivo proporcionado no es válido. Asegúrese de que no está dañado y que contiene un archivo 'imsmanifest.xml'. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The QTI Item with URI '%s' cannot be found."
-msgstr "El elemento QTI con URI '%s' no se ha encontrado."
+msgstr "El elemento QTI con URI '%s' no se ha encontrado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
-msgstr "La prueba '%s' QTI para ser compilada debe contener al menos 1 Elemento QTI. Ninguno encontrado."
+msgstr "La prueba '%s' QTI para ser compilada debe contener al menos 1 Elemento QTI. Ninguno encontrado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The QTI test could not be retrieved correctly."
-msgstr "La prueba QTI No se pudo recuperar correctamente."
+msgstr "La prueba QTI No se pudo recuperar correctamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The QTI Test XML or one of its dependencies is malformed or empty."
-msgstr "El XML de la Prueba QTI o una de sus dependencias esta mal formado o vacío."
+msgstr "El XML de la Prueba QTI o una de sus dependencias esta mal formado o vacío. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The QTI-XML test could not be written correctly."
-msgstr "La prueba QTI-XML no se puede escribir correctamente."
+msgstr "La prueba QTI-XML no se puede escribir correctamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The reference."
-msgstr "La referencia."
+msgstr "La referencia. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The resources related to the IMS QTI Test referenced as \"%s\" in the IMS Manifest file were rolled back."
-msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \"%s\\n\"en el archivo Manifiesto IMS se deshacen."
+msgstr "Los recursos relacionados con la Prueba de QTI IMS referenciada como \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly."
-msgstr "Se procesará el puntaje para toda la prueba. Se calculará una suma de todos los resultados de PUNTAJE y se dividirá por la suma del MAX SCORE; el resultado obtenido se comparará con el puntaje de corte (o ratio de aprobado) y, a continuación, se establecerá el resultado de PASS_TOTAL en consecuencia."
+msgstr "Se procesará el puntaje para toda la prueba. Se calculará una suma de todos los resultados de PUNTAJE y se dividirá por la suma del MAX SCORE; el resultado obtenido se comparará con el puntaje de corte (o ratio de aprobado) y, a continuación, se establecerá el resultado de PASS_TOTAL en consecuencia. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome."
-msgstr "Se procesará el puntaje para toda la prueba. Se calculará una suma de todos los resultados de SCORE; el resultado tendrá lugar en SCORE_TOTAL."
+msgstr "Se procesará el puntaje para toda la prueba. Se calculará una suma de todos los resultados de SCORE; el resultado tendrá lugar en SCORE_TOTAL. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The section title."
-msgstr "El título de sección."
+msgstr "El título de sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The submission mode determines when the candidate's responses are submitted for response processing. A testPart in individual mode requires the candidate to submit their responses on an item-by-item basis. In simultaneous mode the candidate's responses are all submitted together at the end of the testPart."
-msgstr "El modo de presentación determina cuando las respuestas de los candidatos se presentan para el procesamiento de la respuesta. Un testPart en modo individual requiere que el candidato presente sus respuestas en una base elemento por elemento. En el modo simultáneo las respuestas de los candidatos están presentadas juntas al final del testPart."
+msgstr "El modo de presentación determina cuando las respuestas de los candidatos se presentan para el procesamiento de la respuesta. Un testPart en modo individual requiere que el candidato presente sus respuestas en una base elemento por elemento. En el modo simultáneo las respuestas de los candidatos están presentadas juntas al final del testPart. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test cannot be saved because it currently contains invalid settings."
-msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones no válidas."
+msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones no válidas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
-msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones inválidas.\n"
+msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones inválidas.\n {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test cannot be saved because it currently contains invalid settings.\n"
 "Please fix the invalid settings and try again."
-msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones no válidas.\n"
+msgstr "La prueba no se puede guardar porque actualmente contiene configuraciones no válidas.\n {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 "Por favor, corrija la configuración inválida e inténtelo de nuevo."
 
 msgid "The test has been closed/suspended!"
-msgstr "¡La evaluación se cerró/se suspendió!"
+msgstr "¡La evaluación se cerró/se suspendió! {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test has been paused, we are unable to connect to the server."
-msgstr "La prueba se pausó; no podemos establecer conexión con el servidor."
+msgstr "La prueba se pausó; no podemos establecer conexión con el servidor. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test has not been saved."
-msgstr "No se guardó la prueba."
+msgstr "No se guardó la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test has unsaved changes, are you sure you want to leave?"
-msgstr "La prueba tiene cambios no guardados, ¿estás seguro de que quieres irte?"
+msgstr "La prueba tiene cambios no guardados, ¿estás seguro de que quieres irte? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test has unsaved changes, would you like to save it?"
-msgstr "La prueba tiene cambios sin guardar, ¿le gustaría guardarla?"
+msgstr "La prueba tiene cambios sin guardar, ¿le gustaría guardarla? {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test needs to be saved before it can be previewed."
-msgstr "La prueba tiene que ser guardada antes de que pueda ser vista previamente."
+msgstr "La prueba tiene que ser guardada antes de que pueda ser vista previamente. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test part identifier."
-msgstr "El identificador de parte de prueba."
+msgstr "El identificador de parte de prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The test title."
-msgstr "El título de prueba."
+msgstr "El título de prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The time limit has been reached for this part of the test."
-msgstr "Se ha alcanzado el límite de tiempo para esta parte de la prueba."
+msgstr "Se ha alcanzado el límite de tiempo para esta parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The translated section title."
-msgstr "Título de la sección traducida."
+msgstr "Título de la sección traducida. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "The translated test title."
-msgstr "Título de la prueba traducida."
+msgstr "Título de la prueba traducida. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "There are %s unanswered questions"
-msgstr "Hay %s preguntas sin responder"
+msgstr "Hay %s preguntas sin responder {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "There are %s unanswered questions in this part of the test"
-msgstr "Hay %s preguntas sin responder en esta parte de la prueba"
+msgstr "Hay %s preguntas sin responder en esta parte de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "There is %s unanswered question"
-msgstr "Hay %s pregunta sin responder"
+msgstr "Hay %s pregunta sin responder {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "There is %s unanswered question in this part of the test"
-msgstr "Hay %s pregunta sin responder en esta parte de la prueba"
+msgstr "Hay %s pregunta sin responder en esta parte de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "There is not outcomes!"
-msgstr "No hay ningún resultado."
+msgstr "No hay ningún resultado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This constraint affects the visibility of feedback after the end of the last attempt."
-msgstr "Esta restricción afecta la visibilidad de la retroalimentación después del final del último intento."
+msgstr "Esta restricción afecta la visibilidad de la retroalimentación después del final del último intento. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This constraint controls whether or not the candidate is allowed to provide a comment on the item during the session. Comments are not part of the assessed responses."
-msgstr "Esta restricción controla si se permite o no al candidato proporcionar un comentario sobre el tema durante la sesión. Los comentarios no son parte de las respuestas evaluadas."
+msgstr "Esta restricción controla si se permite o no al candidato proporcionar un comentario sobre el tema durante la sesión. Los comentarios no son parte de las respuestas evaluadas. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This functionality is blocked. Please contact with your administrator for more details."
-msgstr "Esta funcionalidad está bloqueada. Por favor, contacta con tu administrador para más detalles."
+msgstr "Esta funcionalidad está bloqueada. Por favor, contacta con tu administrador para más detalles. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This test has been suspended"
-msgstr "Esta prueba ha sido suspendida"
+msgstr "Esta prueba ha sido suspendida {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This test has been terminated"
-msgstr "Esta prueba es terminado"
+msgstr "Esta prueba es terminado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "This test part is used as a target in %s path(s)."
-msgstr "Esta parte de prueba se utiliza como un objetivo en %s ruta(s)."
+msgstr "Esta parte de prueba se utiliza como un objetivo en %s ruta(s). {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Time limit reached for item \"%s\"."
-msgstr "Alcanzó el límite de tiempo para el ítem \"%s\"."
+msgstr "Alcanzó el límite de tiempo para el ítem \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Time limit reached, this part of the test has ended."
-msgstr "Alcanzó el límite de tiempo, esta parte de la prueba ha finalizado."
+msgstr "Alcanzó el límite de tiempo, esta parte de la prueba ha finalizado. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Time limit reached, this part of the test has ended. However you are allowed to finish the current item."
-msgstr "Se alcanzó el límite de tiempo. Esta parte de la prueba finalizó. No obstante, puede finalizar el ítem actual."
+msgstr "Se alcanzó el límite de tiempo. Esta parte de la prueba finalizó. No obstante, puede finalizar el ítem actual. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Time Limits"
-msgstr "Tiempo Límite"
+msgstr "Tiempo Límite {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Time Remaining"
-msgstr "Tiempo restante"
+msgstr "Tiempo restante {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Title"
-msgstr "Título"
+msgstr "Título {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "to"
-msgstr "a"
+msgstr "a {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Toggle playback"
-msgstr "Reproducir la Conmutación"
+msgstr "Reproducir la Conmutación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Toggle start from here mode"
-msgstr "Cambie el modo de inicio desde aquí"
+msgstr "Cambie el modo de inicio desde aquí {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Tool box and flagging for review"
-msgstr "Caja de herramientas y marcado para revisión"
+msgstr "Caja de herramientas y marcado para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Toolbox"
-msgstr "Caja de herramientas"
+msgstr "Caja de herramientas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Total"
-msgstr "Total"
+msgstr "Total {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Total score"
-msgstr "Puntaje total"
+msgstr "Puntaje total {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Translated title"
-msgstr "Título traducido"
+msgstr "Título traducido {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Translation"
-msgstr "Traducción"
+msgstr "Traducción {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Translation completed"
-msgstr "Traducción completada"
+msgstr "Traducción completada {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Try connecting the machine to the internet via cable, or move to an area with a better wifi signal."
-msgstr "Intenta conectar el equipo a Internet por cable, o muévete a un área con una mejor señal wifi."
+msgstr "Intenta conectar el equipo a Internet por cable, o muévete a un área con una mejor señal wifi. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Tutor"
-msgstr "Profesor particular"
+msgstr "Profesor particular {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Type"
-msgstr "Tipo"
+msgstr "Tipo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unanswered"
-msgstr "Sin responder"
+msgstr "Sin responder {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unanswered items"
-msgstr "Elemento sin responder"
+msgstr "Elemento sin responder {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unflag for Review"
-msgstr "Desmarcar para revisión"
+msgstr "Desmarcar para revisión {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unknown error."
-msgstr "Error desconocido."
+msgstr "Error desconocido. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unlink to use separated durations"
-msgstr "Anular enlace para utilizar duraciones independientes"
+msgstr "Anular enlace para utilizar duraciones independientes {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Unseen"
-msgstr "No visto"
+msgstr "No visto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Upload a QTI 2.1 Test Package File"
-msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1"
+msgstr "Subir un Archivo de Paquete de Prueba QTI 2.1 {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
-msgstr "Utilice Ctrl/Alt o Lasso para selección múltiple"
+msgstr "Utilice Ctrl/Alt o Lasso para selección múltiple {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Validate Responses"
-msgstr "Respuestas Validadas"
+msgstr "Respuestas Validadas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Value"
-msgstr "Valor"
+msgstr "Valor {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Variable"
-msgstr "Variable"
+msgstr "Variable {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Viewed"
-msgstr "Visto"
+msgstr "Visto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Viewed items"
-msgstr "Elementos vistos"
+msgstr "Elementos vistos {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Views"
-msgstr "Vistas"
+msgstr "Vistas {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Visible"
-msgstr "Visible"
+msgstr "Visible {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Volume"
-msgstr "Volumen"
+msgstr "Volumen {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Wait for your connection to come back online."
-msgstr "Espere que su conexión vuelva a estar en línea."
+msgstr "Espere que su conexión vuelva a estar en línea. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Warning – You have %s remaining to complete the test."
-msgstr "Advertencia – Le quedan %s minutos para completar la prueba."
+msgstr "Advertencia – Le quedan %s minutos para completar la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Warning – You have %s remaining to complete this item."
-msgstr "Advertencia: le quedan %s para completar este ítem."
+msgstr "Advertencia: le quedan %s para completar este ítem. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Warning – You have %s remaining to complete this section."
-msgstr "Advertencia: le quedan %s para completar esta sección."
+msgstr "Advertencia: le quedan %s para completar esta sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Warning – You have %s remaining to complete this test part."
-msgstr "Advertencia: le quedan %s para completar esta parte de la prueba."
+msgstr "Advertencia: le quedan %s para completar esta parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Warning – You have %s remaining to complete this test."
-msgstr "Advertencia: Le queda(n) %s para completar esta prueba."
+msgstr "Advertencia: Le queda(n) %s para completar esta prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "We are unable to connect the server to submit your results."
-msgstr "No podemos conectar con el servidor para enviar los resultados."
+msgstr "No podemos conectar con el servidor para enviar los resultados. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "We are unable to connect to the server to retrieve the next item."
-msgstr "No se puede conectar al servidor para recuperar el siguiente elemento."
+msgstr "No se puede conectar al servidor para recuperar el siguiente elemento. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Weight"
-msgstr "Ponderación"
+msgstr "Ponderación {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Weighted"
-msgstr "Pesado"
+msgstr "Pesado {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Weights"
-msgstr "Ponderaciones"
+msgstr "Ponderaciones {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "When selecting child elements each element is normally eligible for selection once only."
-msgstr "Cuando seleccione elementos secundarios de cada elemento es normalmente elegible para la selección de una sola vez."
+msgstr "Cuando seleccione elementos secundarios de cada elemento es normalmente elegible para la selección de una sola vez. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the item should still be accepted."
-msgstr "Si la respuesta de un candidato que ha superado la duración máxima del elemento aún debe ser aceptada."
+msgstr "Si la respuesta de un candidato que ha superado la duración máxima del elemento aún debe ser aceptada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the section should still be accepted."
-msgstr "Si la respuesta de un candidato que ha superado la duración máxima de la sección aún debe ser aceptada."
+msgstr "Si la respuesta de un candidato que ha superado la duración máxima de la sección aún debe ser aceptada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Whether a candidate's response that is beyond the maximum duration of the test part should still be accepted."
-msgstr "Si la respuesta de un candidato que ha superado la duración máxima de la parte de una prueba aún debe ser aceptada."
+msgstr "Si la respuesta de un candidato que ha superado la duración máxima de la parte de una prueba aún debe ser aceptada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Whether a candidate's response that is beyond the maximum duration should still be accepted."
-msgstr "Si la respuesta de un candidato que ha superado la duración máxima aún debe ser aceptada."
+msgstr "Si la respuesta de un candidato que ha superado la duración máxima aún debe ser aceptada. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "White on Black"
-msgstr "Blanco sobre Negro"
+msgstr "Blanco sobre Negro {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "White on Blue (TAO standard theme)"
-msgstr "Blanco sobre Azul (tema estándar de TAO)"
+msgstr "Blanco sobre Azul (tema estándar de TAO) {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Who can view the rubric block during the delivery."
-msgstr "Quién puede ver el bloque rúbrica durante la entrega."
+msgstr "Quién puede ver el bloque rúbrica durante la entrega. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "With Replacement"
-msgstr "Con Remplazo"
+msgstr "Con Remplazo {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Wrong file mime type"
-msgstr "Tipo mime de archivo incorrecto"
+msgstr "Tipo mime de archivo incorrecto {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "XML Content"
-msgstr "Contexto XML"
+msgstr "Contexto XML {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 #, tao-public
 msgid "XML Editor"
-msgstr "Editor XML"
+msgstr "Editor XML {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "XML error at line %1$d column %2$d \"%3$s\"."
-msgstr "error XML en la linea %1$d columna %2$d \"%3$s\"."
+msgstr "error XML en la linea %1$d columna %2$d \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Yellow on Blue"
-msgstr "Amarillo sobre Azul"
+msgstr "Amarillo sobre Azul {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "YES"
-msgstr "SI"
+msgstr "SI {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Yes"
-msgstr "Sí"
+msgstr "Sí {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You answered %s of %s question(s) for this section of the test"
-msgstr "Usted respondió %s de %s pregunta(s) para esta sección de la prueba"
+msgstr "Usted respondió %s de %s pregunta(s) para esta sección de la prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You answered all %s question(s) in this section"
-msgstr "Usted respondio a las %s preguntas en esta sección"
+msgstr "Usted respondio a las %s preguntas en esta sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You answered all %s question(s) in this test"
-msgstr "Usted respondio a las %s preguntas en esta prueba"
+msgstr "Usted respondio a las %s preguntas en esta prueba {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You answered only %s of the %s question(s) in this section"
-msgstr "Usted respondió sólo %s de las preguntas %s en esta sección"
+msgstr "Usted respondió sólo %s de las preguntas %s en esta sección {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to go to the next item. Click OK to continue and go to the next item."
-msgstr "Está a punto de pasar al siguiente ítem. Haga clic en \"OK\" para continuar e ir al siguiente ítem."
+msgstr "Está a punto de pasar al siguiente ítem. Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to go to the previous item. Click OK to continue and go to the previous item."
-msgstr "Está a punto de volver al ítem anterior. Haga clic en \"OK\" para continuar e ir al ítem anterior."
+msgstr "Está a punto de volver al ítem anterior. Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to leave this section."
-msgstr "Está a punto de salir de esta sección."
+msgstr "Está a punto de salir de esta sección. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to submit the test."
-msgstr "Está a punto de entregar la prueba."
+msgstr "Está a punto de entregar la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to submit the test. You will not be able to access this test once submitted. Click OK to continue and submit the test."
-msgstr "Está a punto de enviar la prueba. No podrá acceder a esta prueba después de enviarla. Haga clic en \"OK\" para continuar y enviar la prueba."
+msgstr "Está a punto de enviar la prueba. No podrá acceder a esta prueba después de enviarla. Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are about to submit this test part."
-msgstr "Está a punto de entregar esta parte de la prueba."
+msgstr "Está a punto de entregar esta parte de la prueba. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are currently working offline."
-msgstr "Actualmente está trabajando fuera de línea."
+msgstr "Actualmente está trabajando fuera de línea. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You are encountering a prolonged connectivity loss. "
-msgstr "Usted está encontrando una pérdida de conectividad prolongada. "
+msgstr "Usted está encontrando una pérdida de conectividad prolongada.  {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You can magnify the content by up to 200%. Check your browser settings to find out how to do it."
-msgstr "Puedes ampliar el contenido hasta un 200%. Comprueba la configuración de tu navegador para saber cómo hacerlo."
+msgstr "Puedes ampliar el contenido hasta un 200%. Comprueba la configuración de tu navegador para saber cómo hacerlo. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You flagged %s item(s) that you can review now"
-msgstr "Has marcado %s artículo(s) que puedes revisar ahora"
+msgstr "Has marcado %s artículo(s) que puedes revisar ahora {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s item(s) marked for review."
-msgstr "Tiene %s ítem(s) marcado(s) para revisión."
+msgstr "Tiene %s ítem(s) marcado(s) para revisión. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s left to answer remaining %s questions."
-msgstr "Te quedan %s para responder las %s preguntas restantes."
+msgstr "Te quedan %s para responder las %s preguntas restantes. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s remaining to complete the current item."
-msgstr "Te quedan %s para completar el elemento actual."
+msgstr "Te quedan %s para completar el elemento actual. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s unanswered question(s)"
-msgstr "Tienes %s preguntas sin respuesta"
+msgstr "Tienes %s preguntas sin respuesta {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s unanswered question(s) and have %s item(s) marked for review."
-msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión."
+msgstr "Tiene %s pregunta(s) sin respuesta y %s ítem(s) marcado(s) para revisión. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You have %s unanswered question(s)."
-msgstr "Tiene %s pregunta(s) sin respuesta."
+msgstr "Tiene %s pregunta(s) sin respuesta. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "You will not be able to access this test once submitted. Click \"%s\" to continue and submit the test."
-msgstr "No podrás acceder a esta prueba una vez que la hayas enviado. Haga clic en \"%s\" para continuar y enviar la prueba."
+msgstr "No podrás acceder a esta prueba una vez que la hayas enviado. Haga clic en \ {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Your comment…"
-msgstr "Su comentario…"
+msgstr "Su comentario… {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Your connection seems to be back, please proceed."
-msgstr "Su conexión parece haber vuelto, por favor proceda."
+msgstr "Su conexión parece haber vuelto, por favor proceda. {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Zoom"
-msgstr "Aceros"
+msgstr "Aceros {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Zoom in"
-msgstr "Acercar"
+msgstr "Acercar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
 msgid "Zoom out"
-msgstr "Alejar"
+msgstr "Alejar {ruby}{rb}6{/rb}{rt}7{/rt}{/ruby}"
 
