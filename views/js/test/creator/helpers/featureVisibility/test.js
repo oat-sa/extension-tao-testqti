@@ -27,7 +27,7 @@ define([
     /**
      * Sets a feature flag value on the shared context
      * @param {string} flagName
-     * @param {string|undefined} value
+     * @param {boolean|undefined} value
      */
     function mockFeatureFlag(flagName, value) {
         context.featureFlags = context.featureFlags || {};
@@ -218,7 +218,7 @@ define([
         );
     });
 
-    QUnit.test('hides adaptive test authoring sections when the feature flag is "false"', function (assert) {
+    QUnit.test('hides adaptive test authoring sections when the feature flag is disabled', function (assert) {
         assert.expect(2);
 
         const testPartModelSample = {
@@ -226,7 +226,7 @@ define([
             identifier: 'testPart-1'
         };
 
-        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', 'false');
+        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', false);
         featureVisibility.addTestPartVisibilityProps(testPartModelSample);
 
         assert.notEqual(
@@ -241,7 +241,7 @@ define([
         );
     });
 
-    QUnit.test('shows adaptive test authoring sections when the feature flag is "true"', function (assert) {
+    QUnit.test('shows adaptive test authoring sections when the feature flag is enabled', function (assert) {
         assert.expect(2);
 
         const testPartModelSample = {
@@ -249,7 +249,7 @@ define([
             identifier: 'testPart-1'
         };
 
-        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', 'true');
+        mockFeatureFlag('FEATURE_FLAG_ADAPTIVE_TEST_AUTHORING_ENABLED', true);
         featureVisibility.addTestPartVisibilityProps(testPartModelSample);
 
         assert.equal(
