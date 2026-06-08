@@ -97,17 +97,11 @@ class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
 
     private function normalizePages($pages): array
     {
-        if (is_array($pages)) {
-            return $pages;
+        try {
+            return json_decode($pages, true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $_) {
+            return is_array($pages) ? $pages : [];
         }
-
-        if (!is_string($pages) || $pages === '') {
-            return [];
-        }
-
-        $decoded = json_decode($pages, true);
-
-        return is_array($decoded) ? $decoded : [];
     }
 
     private function extractContentUrls(array $properties): array
