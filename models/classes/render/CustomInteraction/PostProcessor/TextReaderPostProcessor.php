@@ -97,10 +97,17 @@ class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
 
     private function normalizePages($pages): array
     {
+        if (is_array($pages)) {
+            return $pages;
+        }
+        if (!is_string($pages)) {
+            return [];
+        }
         try {
-            return json_decode($pages, true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($pages, true, 512, JSON_THROW_ON_ERROR);
+            return is_array($decoded) ? $decoded : [];
         } catch (\JsonException $_) {
-            return is_array($pages) ? $pages : [];
+            return [];
         }
     }
 
