@@ -18,6 +18,8 @@
  * Copyright (c) 2016-2023 (original work) Open Assessment Technologies SA.
  */
 
+declare(strict_types=1);
+
 namespace oat\taoQtiTest\models\runner\navigation;
 
 use common_Exception;
@@ -252,7 +254,7 @@ class QtiRunnerNavigation
 
     private static function getLogger(): common_Logger
     {
-        if (!self::$logger instanceof common_Logger) {
+        if (!isset(self::$logger)) {
             self::$logger = common_Logger::singleton();
         }
 
