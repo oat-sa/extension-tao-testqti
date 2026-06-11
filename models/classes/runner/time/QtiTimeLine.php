@@ -18,6 +18,8 @@
  * Copyright (c) 2016 (original work) Open Assessment Technologies SA ;
  */
 
+declare(strict_types=1);
+
 /**
  * @author Jean-Sébastien Conan <jean-sebastien.conan@vesperiagroup.com>
  */
