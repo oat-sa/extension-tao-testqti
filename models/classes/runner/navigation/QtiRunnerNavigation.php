@@ -252,7 +252,7 @@ class QtiRunnerNavigation
 
     private static function getLogger(): common_Logger
     {
-        if (!self::$logger instanceof common_Logger) {
+        if (!isset(self::$logger)) {
             self::$logger = common_Logger::singleton();
         }
 
