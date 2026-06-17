@@ -335,6 +335,14 @@ define([
                                 creatorContext.on('save', function () {
                                     if (!$saver.hasClass('disabled')) {
                                         $saver.prop('disabled', true).addClass('disabled');
+
+                                        /**
+                                         * WARNING: Do NOT trigger scoring-change for translation tests.
+                                         * 
+                                         * Translation authoring is limited to translatable content only
+                                         * (titles, rubrics, status). Outcome variables must remain unchanged
+                                         * and mirror the original test.
+                                         */
                                         saveScoring.triggerScoringChangeIfNeeded(
                                             modelOverseer,
                                             options.translation
