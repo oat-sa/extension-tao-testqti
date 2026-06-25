@@ -91,6 +91,32 @@ class TextReaderPostProcessorTest extends TestCase
                     'second' => 'second',
                     'third' => 'third',
                 ]
+            ],
+            'Replace pages image sources with content urls' => [
+                [
+                    'pages' => json_encode([
+                        [
+                            'content' => [
+                                '<img src="assets/cat.jpg" alt="cat" /> page 1',
+                                '<img src="assets/dog.jpg" alt="dog" /> page 2',
+                            ],
+                        ],
+                    ]),
+                    self::CONTENT_PREFIX . 'first' => uniqid(self::CONTENT_PREFIX, true),
+                    self::CONTENT_PREFIX . 'second' => uniqid(self::CONTENT_PREFIX, true),
+                ],
+                [
+                    'pages' => json_encode([
+                        [
+                            'content' => [
+                                '<img src="' . self::CONTENT_REPLACER . '" alt="cat"> page 1',
+                                '<img src="' . self::CONTENT_REPLACER . '" alt="dog"> page 2',
+                            ],
+                        ],
+                    ]),
+                    self::CONTENT_PREFIX . 'first' => self::CONTENT_REPLACER,
+                    self::CONTENT_PREFIX . 'second' => self::CONTENT_REPLACER,
+                ]
             ]
         ];
     }

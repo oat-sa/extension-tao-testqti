@@ -185,8 +185,24 @@ class ScaleHandler
             if (isset($outcomeDeclaration['scale']) && !empty($outcomeDeclaration['scale'])) {
                 return true;
             }
+
+            if ($this->hasPersistedScaleReference($outcomeDeclaration)) {
+                return true;
+            }
         }
 
         return false;
+    }
+
+    private function hasPersistedScaleReference(array $outcomeDeclaration): bool
+    {
+        if (
+            !isset($outcomeDeclaration['longInterpretation'])
+            || $outcomeDeclaration['longInterpretation'] === ''
+        ) {
+            return false;
+        }
+
+        return str_starts_with($outcomeDeclaration['longInterpretation'], self::SCALE_DIRECTORY_PATH . '/');
     }
 }
