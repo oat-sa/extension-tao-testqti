@@ -100,6 +100,54 @@ class ScaleHandlerTest extends TestCase
         $this->assertArrayNotHasKey('longInterpretation', $resultModel['outcomeDeclarations'][0]);
     }
 
+    public function testHandlePreservesScaleDirectoryWhenLongInterpretationReferencesScaleFile(): void
+    {
+        $test = $this->createMock(core_kernel_classes_Resource::class);
+        $testDir = $this->createMock(Directory::class);
+        $scaleDir = $this->createMock(Directory::class);
+
+        $model = [
+            'outcomeDeclarations' => [
+                [
+                    'identifier' => 'OUTCOME_1',
+                    'longInterpretation' => 'scales/OUTCOME_1.json',
+                    'interpretation' => 'Label',
+                ],
+            ],
+        ];
+
+        $this->remoteScaleListService
+            ->expects($this->once())
+            ->method('isRemoteListEnabled')
+            ->willReturn(true);
+
+        $this->qtiTestService
+            ->expects($this->once())
+            ->method('getQtiTestDir')
+            ->with($test)
+            ->willReturn($testDir);
+
+        $testDir
+            ->expects($this->once())
+            ->method('getDirectory')
+            ->with('scales')
+            ->willReturn($scaleDir);
+
+        $scaleDir
+            ->expects($this->never())
+            ->method('deleteSelf');
+
+        $this->scalePreprocessor
+            ->expects($this->once())
+            ->method('getScaleRemoteList')
+            ->willReturn([]);
+
+        $result = $this->sut->handle(json_encode($model), $test);
+        $resultModel = json_decode($result, true);
+
+        $this->assertEquals('scales/OUTCOME_1.json', $resultModel['outcomeDeclarations'][0]['longInterpretation']);
+    }
+
     public function testHandleRemovesScaleDirectoryWhenNoScalesAreDefined(): void
     {
         $test = $this->createMock(core_kernel_classes_Resource::class);

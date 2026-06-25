@@ -739,14 +739,19 @@ $brActionBorderColor: #ddd;
             display: none;
         }
         .test-editor-menu {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-items: stretch;
             position: relative;
 
-            #authoringBack {
-                position: absolute;
-                left: 0;
+            li {
+                float: none;
+                margin-left: 0;
             }
-            li:nth-child(2) {
-                @include responsive('margin-left', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
+
+            #authoringBack {
+                position: static;
             }
         }
         .itemrefs-wrapper {
