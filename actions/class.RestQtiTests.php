@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
  *
  */
 
@@ -21,6 +21,7 @@ use oat\tao\model\TaoOntology;
 use oat\tao\model\taskQueue\TaskLog\Entity\EntityInterface;
 use oat\tao\model\taskQueue\TaskLogInterface;
 use oat\taoQtiTest\helpers\QtiPackageExporter;
+use oat\taoQtiTest\models\import\ImportTaskStatusDataExtractor;
 use oat\taoQtiTest\models\tasks\ImportQtiTest;
 use oat\taoQtiItem\controller\AbstractRestQti;
 use core_kernel_classes_Resource as Resource;
@@ -254,20 +255,14 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
      * @param EntityInterface $taskLogEntity
      * @return array
      */
-    protected function addExtraReturnData(EntityInterface $taskLogEntity)
+    protected function addExtraReturnData(EntityInterface $taskLogEntity): array
     {
-        $data = [];
+        return $this->getImportTaskStatusDataExtractor()->extract($taskLogEntity);
+    }
 
-        if ($taskLogEntity->getReport()) {
-            $plainReport = $this->getPlainReport($taskLogEntity->getReport());
-
-            //the third report is report of import test
-            if (isset($plainReport[2]) && isset($plainReport[2]->getData()['rdfsResource'])) {
-                $data['testId'] = $plainReport[2]->getData()['rdfsResource']['uriResource'];
-            }
-        }
-
-        return $data;
+    protected function getImportTaskStatusDataExtractor(): ImportTaskStatusDataExtractor
+    {
+        return new ImportTaskStatusDataExtractor();
     }
 
     /**
