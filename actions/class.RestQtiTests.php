@@ -260,9 +260,16 @@ class taoQtiTest_actions_RestQtiTests extends AbstractRestQti
         return $this->getImportTaskStatusDataExtractor()->extract($taskLogEntity);
     }
 
+    /**
+     * Get import task status data extractor.
+     *
+     * @return ImportTaskStatusDataExtractor
+     */
     protected function getImportTaskStatusDataExtractor(): ImportTaskStatusDataExtractor
     {
-        return new ImportTaskStatusDataExtractor();
+        return $this->getServiceManager()
+            ->getContainer()
+            ->get(ImportTaskStatusDataExtractor::class);
     }
 
     /**
