@@ -459,11 +459,11 @@
                                         },
                                         "testId": {
                                             "type": "string",
-                                            "description": "Identifier of the first imported test. Kept for backward compatibility; use testIds for multi-test packages."
+                                            "description": "Identifier of the imported test. Present only when a single test was imported."
                                         },
                                         "testIds": {
                                             "type": "array",
-                                            "description": "Identifiers of all successfully imported tests",
+                                            "description": "Identifiers of all successfully imported tests. Present only when more than one test was imported.",
                                             "uniqueItems": true,
                                             "items": {
                                                 "type": "string"
@@ -498,7 +498,6 @@
                                 "data": {
                                     "id": "http://tao.local/mytao.rdf#xxxxxxxxxxxxx",
                                     "status": "Success",
-                                    "testId": "http://tao.local/mytao.rdf#test1",
                                     "testIds": [
                                         "http://tao.local/mytao.rdf#test1",
                                         "http://tao.local/mytao.rdf#test2"
