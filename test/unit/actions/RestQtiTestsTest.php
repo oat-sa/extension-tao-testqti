@@ -22,13 +22,17 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\test\unit\actions;
 
+use oat\generis\test\ServiceManagerMockTrait;
 use oat\generis\test\TestCase;
+use oat\oatbox\service\ServiceManager;
 use oat\tao\model\taskQueue\TaskLog\Entity\EntityInterface;
 use oat\taoQtiTest\models\import\ImportTaskStatusDataExtractor;
 use taoQtiTest_actions_RestQtiTests;
 
 class RestQtiTestsTest extends TestCase
 {
+    use ServiceManagerMockTrait;
+
     public function testAddExtraReturnDataDelegatesToImportTaskStatusDataExtractor(): void
     {
         $taskLogEntity = $this->createMock(EntityInterface::class);
@@ -44,6 +48,21 @@ class RestQtiTestsTest extends TestCase
         self::assertSame(
             ['testIds' => ['http://example.com/ontologies/tao.rdf#test1']],
             $subject->exposeAddExtraReturnData($taskLogEntity)
+        );
+    }
+
+    public function testImportTaskStatusDataExtractorIsResolvedFromContainer(): void
+    {
+        $extractor = new ImportTaskStatusDataExtractor();
+        $services = [
+            ImportTaskStatusDataExtractor::class => $extractor,
+        ];
+        $serviceManager = $this->getServiceManagerMock($services);
+        $subject = new ContainerBackedRestQtiTests($serviceManager);
+
+        self::assertSame(
+            $extractor,
+            $subject->exposeImportTaskStatusDataExtractor()
         );
     }
 }
@@ -65,5 +84,25 @@ class TestableRestQtiTests extends taoQtiTest_actions_RestQtiTests
     protected function getImportTaskStatusDataExtractor(): ImportTaskStatusDataExtractor
     {
         return $this->importTaskStatusDataExtractor;
+    }
+}
+
+class ContainerBackedRestQtiTests extends taoQtiTest_actions_RestQtiTests
+{
+    private ServiceManager $serviceManager;
+
+    public function __construct(ServiceManager $serviceManager)
+    {
+        $this->serviceManager = $serviceManager;
+    }
+
+    public function exposeImportTaskStatusDataExtractor(): ImportTaskStatusDataExtractor
+    {
+        return $this->getImportTaskStatusDataExtractor();
+    }
+
+    protected function getServiceManager(): ServiceManager
+    {
+        return $this->serviceManager;
     }
 }
