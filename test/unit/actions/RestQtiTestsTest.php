@@ -90,8 +90,7 @@ class TestableRestQtiTests extends taoQtiTest_actions_RestQtiTests
 
 class ContainerBackedRestQtiTests extends taoQtiTest_actions_RestQtiTests
 {
-    public function exposeImportTaskStatusDataExtractor():
-        ImportTaskStatusDataExtractor
+    public function exposeImportTaskStatusDataExtractor(): ImportTaskStatusDataExtractor
     {
         return $this->getImportTaskStatusDataExtractor();
     }
