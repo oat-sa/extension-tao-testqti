@@ -33,6 +33,16 @@ define([
     'use strict';
 
     /**
+     * Translates a message and strips ruby annotations for select option labels.
+     *
+     * @param {String} message
+     * @returns {String}
+     */
+    function plainLabel(message) {
+        return __.plainTextFromRuby(__(message));
+    }
+
+    /**
      * The default cut score
      * @todo Move this to a config file
      * @type {Number}
@@ -52,31 +62,31 @@ define([
     var processingModes = {
         none: {
             key: 'none',
-            label: __('None'),
+            label: plainLabel('None'),
             description: __('No outcome processing. Erase the existing rules, if any.')
         },
         custom: {
             key: 'custom',
-            label: __('Custom'),
+            label: plainLabel('Custom'),
             description: __('Custom outcome processing. No changes will be made to the existing rules.')
         },
         total: {
             key: 'total',
-            label: __('Total score'),
+            label: plainLabel('Total score'),
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed, the result will take place in the SCORE_TOTAL outcome.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the SCORE_xxx outcome, where xxx is the name of the category.')
         },
         cut: {
             key: 'cut',
-            label: __('Cut score'),
+            label: plainLabel('Cut score'),
             description: __('The score will be processed for the entire test. A sum of all SCORE outcomes will be computed and divided by the sum of MAX SCORE, the result will be compared to the cut score (or pass ratio), then the PASS_TOTAL outcome will be set accordingly.')
                          + ' ' +
                          __('If the category option is set, the score will also be processed per categories, and each results will take place in the PASS_xxx outcome, where xxx is the name of the category.')
         },
         grade: {
             key: 'grade',
-            label: __('Lowest Grade Achieved'),
+            label: plainLabel('Lowest Grade Achieved'),
             description: __('\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale.') +
                 ' ' +
                 __('It creates a GRADE outcome, and if a scale is selected, also a MAX_GRADE with the top value of that scale.') +
