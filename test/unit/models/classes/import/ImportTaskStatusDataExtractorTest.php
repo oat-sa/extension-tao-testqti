@@ -63,7 +63,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractReturnsAllTestIdsFromMultipleTestReports(): void
@@ -111,7 +111,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractIgnoresChildrenWithoutTestData(): void
@@ -131,7 +131,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractReturnsEmptyArrayWhenAllChildrenLackTestData(): void
@@ -162,7 +162,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractIgnoresNestedItemReportsAfterJsonRoundTrip(): void
@@ -187,7 +187,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractIgnoresNestedSuccessReportWithRdfsResourceOnly(): void
@@ -213,7 +213,7 @@ class ImportTaskStatusDataExtractorTest extends TestCase
 
         $result = $this->subject->extract($taskLogEntity);
 
-        self::assertSame(['testId' => $testUri], $result);
+        self::assertSame(['testIds' => [$testUri]], $result);
     }
 
     public function testExtractReturnsTestIdsFromPersistedTaskLogReportJson(): void

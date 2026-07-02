@@ -457,13 +457,9 @@
                                             "type": "string",
                                             "description": "Task execution status"
                                         },
-                                        "testId": {
-                                            "type": "string",
-                                            "description": "Identifier of the imported test. Present only when a single test was imported."
-                                        },
                                         "testIds": {
                                             "type": "array",
-                                            "description": "Identifiers of all successfully imported tests. Present only when more than one test was imported.",
+                                            "description": "Identifiers of all successfully imported tests.",
                                             "uniqueItems": true,
                                             "items": {
                                                 "type": "string"

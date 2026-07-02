@@ -31,7 +31,7 @@ class ImportTaskStatusDataExtractor
     /**
      * Build extra getStatus payload fields from a deferred import task log entity.
      *
-     * @return array{testId?: string, testIds?: string[]}
+     * @return array{testIds?: string[]}
      */
     public function extract(EntityInterface $taskLogEntity): array
     {
@@ -52,10 +52,6 @@ class ImportTaskStatusDataExtractor
 
         if ($testIds === []) {
             return [];
-        }
-
-        if (count($testIds) === 1) {
-            return ['testId' => $testIds[0]];
         }
 
         return ['testIds' => $testIds];
