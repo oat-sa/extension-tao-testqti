@@ -235,12 +235,12 @@
                 {{#each modes}}
                 <div class="feedback-info test-outcome-processing-description" data-key="{{key}}">
                     <span class="icon-info"></span>
-                    {{description}}
+                    {{{dompurify description}}}
                 </div>
                 {{#if error}}
                 <div class="feedback-error test-outcome-processing-error hidden" data-key="{{key}}">
                     <span class="icon-error"></span>
-                    {{error}}
+                    {{{dompurify error}}}
                 </div>
                 {{/if}}
                 {{/each}}
