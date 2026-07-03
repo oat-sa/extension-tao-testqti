@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it\n"
@@ -353,6 +353,9 @@ msgstr ""
 msgid "Close this Section"
 msgstr ""
 
+msgid "Collapse class"
+msgstr "Comprimi classe"
+
 msgid "Collapse the review panel"
 msgstr "Comprimi il pannello recensione"
 
@@ -479,6 +482,9 @@ msgstr "Ogni prerequisito sottostante è valutato confrontando il contenuto vari
 msgid "Edit"
 msgstr ""
 
+msgid "Edit item"
+msgstr "Modifica item"
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -524,6 +530,9 @@ msgstr ""
 msgid "Enter a custom category"
 msgstr ""
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Inserisci il contenuto della rubrica per questa scala dei risultati."
+
 msgid "Error"
 msgstr "Errore"
 
@@ -533,6 +542,9 @@ msgstr "Errore durante l'importazione di file"
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Errore rilevato nel IMS QTI Test: \\ n %s"
+
+msgid "Expand class"
+msgstr "Espandi classe"
 
 msgid "Expand the review panel"
 msgstr "Espandi il riquadro recensione"
@@ -602,6 +614,9 @@ msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr ""
+
+msgid "Go to item"
+msgstr "Vai all'elemento"
 
 msgid "Go to next item"
 msgstr ""
@@ -744,6 +759,9 @@ msgstr ""
 msgid "is already used in the test."
 msgstr "é già usato nel test."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "non è un identificatore valido (alphanum, underscore e dash)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "non è un identificatore valido (alfanumerico, sottolineatura, trattino e punti)"
 
@@ -809,6 +827,9 @@ msgstr ""
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr ""
+
+msgid "Label"
+msgstr "Etichetta"
 
 msgid "Late submission allowed"
 msgstr "Presentazione tardiva concessa"
@@ -1285,6 +1306,12 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
+msgid "Scale"
+msgstr "Scala"
+
+msgid "Scale files could not be stored: %s"
+msgstr "Impossibile memorizzare i file di scala: %s"
+
 msgid "Scale name not allowed"
 msgstr "Nome scala non consentito"
 
@@ -1296,6 +1323,9 @@ msgstr "Segnapunti"
 
 msgid "Scoring"
 msgstr ""
+
+msgid "Scoring Rubric"
+msgstr "Punteggio Rubrica"
 
 msgid "Scratch pad"
 msgstr ""
@@ -1335,6 +1365,9 @@ msgstr "Seleziona gli item"
 
 msgid "Select or enter a scale"
 msgstr "Seleziona o inserisci una scala"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Seleziona o inserisci una scala per questo risultato."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr ""
@@ -1637,6 +1670,9 @@ msgstr "L'archivio fornito non è valido. Assicurarsi che non sia corrotto e che
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr ""
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "La sintassi QTI utilizzata per questo test non è ancora supportata dall'interfaccia utente corrente. Per rivedere o modificare efficacemente i tuoi contenuti, ti consigliamo di utilizzare la funzionalità XML Editor per un'esperienza senza interruzioni."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "Il test QTI '%s' da compilare deve contenere almeno 1 item QTI. Nessuno trovato."
 
@@ -1764,6 +1800,9 @@ msgstr "Titolo"
 msgid "to"
 msgstr ""
 
+msgid "Toggle class children"
+msgstr "Attiva/Disattiva classi figlie"
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1832,6 +1871,9 @@ msgstr ""
 
 msgid "Variable"
 msgstr ""
+
+msgid "View item"
+msgstr "Visualizza elemento"
 
 msgid "Viewed"
 msgstr "Visualizzato"
