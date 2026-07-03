@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: hu\n"
@@ -353,6 +353,9 @@ msgstr "Zárja be a maszkot"
 msgid "Close this Section"
 msgstr "Zárja be ezt a szakaszt"
 
+msgid "Collapse class"
+msgstr "Osztály összecsukása"
+
 msgid "Collapse the review panel"
 msgstr "Az áttekintési panel összecsukása"
 
@@ -479,6 +482,9 @@ msgstr "Az alábbi előfeltételek mindegyikét a változó tartalmának egy ado
 msgid "Edit"
 msgstr "Szerkesztés"
 
+msgid "Edit item"
+msgstr "Elem szerkesztése"
+
 msgid "Eliminate choices"
 msgstr "Választások kiküszöbölése"
 
@@ -524,6 +530,9 @@ msgstr "Adjon meg egy tervrajzot"
 msgid "Enter a custom category"
 msgstr "Adjon meg egy egyéni kategóriát"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Adja meg az eredményskála tartalmát."
+
 msgid "Error"
 msgstr "Hiba"
 
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Hiba az IMS QTI tesztben:\n"
 "%s"
+
+msgid "Expand class"
+msgstr "Osztály kibontása"
 
 msgid "Expand the review panel"
 msgstr "Az áttekintési panel kibontása"
@@ -603,6 +615,9 @@ msgstr "Felülvizsgálatra jelölve"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Kényszerítse a tételt információként való figyelembevételre, és ne vegye figyelembe a (megválaszolatlan) / megjelölt számlálókban."
+
+msgid "Go to item"
+msgstr "Ugrás az elemre"
 
 msgid "Go to next item"
 msgstr "Ugrás a következő elemre"
@@ -745,6 +760,9 @@ msgstr "Értelmezés"
 msgid "is already used in the test."
 msgstr "már használatban van a tesztben."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "nem érvényes azonosító (alfa-szám, aláhúzásjel és kötőjel)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "nem érvényes azonosító (alfa-szám, aláhúzásjel, kötőjel és pontok)"
 
@@ -810,6 +828,9 @@ msgstr "Billentyűzetnavigáció"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "A vizsgázó számára elérhetők az Akadálymentesítési Eszközök billentyűparancsai."
+
+msgid "Label"
+msgstr "Címke"
 
 msgid "Late submission allowed"
 msgstr "Késői beküldés engedélyezett"
@@ -1286,6 +1307,12 @@ msgstr "Megtakarítás"
 msgid "Saved"
 msgstr "Mentett"
 
+msgid "Scale"
+msgstr "Skála"
+
+msgid "Scale files could not be stored: %s"
+msgstr "A méretezési fájlokat nem sikerült tárolni: %s"
+
 msgid "Scale name not allowed"
 msgstr "Skálanév nem engedélyezett"
 
@@ -1297,6 +1324,9 @@ msgstr "Gólszerző"
 
 msgid "Scoring"
 msgstr "Pontozás"
+
+msgid "Scoring Rubric"
+msgstr "Pontozási rubrika"
 
 msgid "Scratch pad"
 msgstr "Jegyzettömb"
@@ -1336,6 +1366,9 @@ msgstr "Elemek kiválasztása"
 
 msgid "Select or enter a scale"
 msgstr "Válasszon ki vagy adjon meg egy skálát"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Válasszon vagy adjon meg egy skálát ehhez az eredményhez."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Válassza ki a teszt válaszainak feldolgozási módját"
@@ -1638,6 +1671,9 @@ msgstr "A megadott archívum érvénytelen. Győződjön meg róla, hogy nem sé
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr "A '%s' URI-val rendelkező QTI elem nem található."
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "A teszthez használt QTI szintaxist a jelenlegi felhasználói felület még nem támogatja. A tartalom hatékony áttekintéséhez vagy szerkesztéséhez a zökkenőmentes élmény érdekében az XML-szerkesztő funkció használatát javasoljuk."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "A lefordítandó „%s” QTI tesztnek legalább 1 QTI elemet kell tartalmaznia. Nem található."
 
@@ -1766,6 +1802,9 @@ msgstr "Cím"
 msgid "to"
 msgstr "hogy"
 
+msgid "Toggle class children"
+msgstr "Osztály alárendeltjeinek ki-/bekapcsolása"
+
 msgid "Toggle playback"
 msgstr "Lejátszás be-/kikapcsolása"
 
@@ -1834,6 +1873,9 @@ msgstr "Érték"
 
 msgid "Variable"
 msgstr "Változó"
+
+msgid "View item"
+msgstr "Elem megtekintése"
 
 msgid "Viewed"
 msgstr "Megtekintve"
