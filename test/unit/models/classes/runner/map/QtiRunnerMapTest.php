@@ -23,10 +23,12 @@ declare(strict_types=1);
 namespace oat\taoQtiTest\test\unit\models\classes\runner\map;
 
 use oat\generis\test\TestCase;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
+use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
+use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use oat\taoQtiTest\models\runner\config\Business\Domain\Option;
 use oat\taoQtiTest\models\runner\config\Business\Domain\OptionCollection;
-use oat\taoQtiTest\models\runner\map\QtiRunnerMap;
 use PHPUnit\Framework\MockObject\MockObject;
 use qtism\common\collections\IdentifierCollection;
 use qtism\data\AssessmentItemRef;
@@ -40,14 +42,23 @@ class QtiRunnerMapTest extends TestCase
     /** @var OverriddenOptionsRepositoryInterface|MockObject */
     private $overriddenOptionsRepositoryMock;
 
+    /** @var FeatureFlagChecker|MockObject */
+    private $featureFlagCheckerMock;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->overriddenOptionsRepositoryMock = $this->createMock(OverriddenOptionsRepositoryInterface::class);
+        $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
+        $this->featureFlagCheckerMock
+            ->method('isEnabled')
+            ->willReturn(false);
+
         $this->service = new QtiRunnerMap();
         $this->service->setServiceLocator(
             $this->getServiceLocatorMock([
                 OverriddenOptionsRepositoryInterface::SERVICE_ID => $this->overriddenOptionsRepositoryMock,
+                FeatureFlagChecker::class => $this->featureFlagCheckerMock,
             ])
         );
     }
@@ -72,6 +83,23 @@ class QtiRunnerMapTest extends TestCase
         $this->assertSame($expectedCategoryList, $this->invokeGetAvailableCategories($item));
     }
     // phpcs:enable PSR1.Methods.CamelCapsMethodName
+
+    public function testGetAvailableCategories_WhenSkipTimeoutAlertFeatureFlagIsEnabled_ThenNoAlertTimeoutCategoryIsAdded(): void
+    {
+        $this->featureFlagCheckerMock
+            ->method('isEnabled')
+            ->willReturnCallback(
+                static fn(string $flag): bool => $flag === QtiRunnerMap::FEATURE_FLAG_SKIP_TIMEOUT_ALERT
+            );
+
+        $this->setOverriddenOptionsRepositoryResult([]);
+        $item = new AssessmentItemRef('itemId1', 'itemHref', new IdentifierCollection([]));
+
+        $this->assertSame(
+            [QtiRunnerConfig::CATEGORY_OPTION_PREFIX . 'noAlertTimeout'],
+            $this->invokeGetAvailableCategories($item)
+        );
+    }
 
     public function categoryProvider(): array
     {
