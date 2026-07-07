@@ -383,26 +383,26 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         if (empty($itemInfos['informational'])) {
-            $target['stats']['questions'] ++;
+            $target['stats']['questions']++;
 
             if (!empty($itemInfos['answered'])) {
-                $target['stats']['answered'] ++;
+                $target['stats']['answered']++;
             }
 
             if (!empty($itemInfos['viewed'])) {
-                $target['stats']['questionsViewed'] ++;
+                $target['stats']['questionsViewed']++;
             }
         }
 
         if (!empty($itemInfos['flagged'])) {
-            $target['stats']['flagged'] ++;
+            $target['stats']['flagged']++;
         }
 
         if (!empty($itemInfos['viewed'])) {
-            $target['stats']['viewed'] ++;
+            $target['stats']['viewed']++;
         }
 
-        $target['stats']['total'] ++;
+        $target['stats']['total']++;
     }
 
     /**
