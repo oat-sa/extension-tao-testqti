@@ -50,9 +50,6 @@ class QtiRunnerMapTest extends TestCase
         parent::setUp();
         $this->overriddenOptionsRepositoryMock = $this->createMock(OverriddenOptionsRepositoryInterface::class);
         $this->featureFlagCheckerMock = $this->createMock(FeatureFlagChecker::class);
-        $this->featureFlagCheckerMock
-            ->method('isEnabled')
-            ->willReturn(false);
 
         $this->service = new QtiRunnerMap();
         $this->service->setServiceLocator(
