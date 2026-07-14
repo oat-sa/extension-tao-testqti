@@ -26,7 +26,6 @@ use common_Exception;
 use common_exception_InconsistentData;
 use common_exception_InvalidArgumentType;
 use common_exception_NotImplemented;
-use common_exception_Unauthorized;
 use common_Logger;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
@@ -107,14 +106,7 @@ class QtiRunnerNavigation
         $navigator = self::getNavigator($direction, $scope);
 
         if ($direction === 'next' && $scope === 'section') {
-            if (!\taoQtiTest_helpers_TestRunnerUtils::isNextSectionAllowed($session, $context)) {
-                \taoQtiTest_helpers_TestRunnerUtils::logNextSectionDeniedAttempt(
-                    $session,
-                    $context,
-                    self::class . '::move'
-                );
-                throw new common_exception_Unauthorized(__('Next section navigation is not allowed.'));
-            }
+            \taoQtiTest_helpers_TestRunnerUtils::assertNextSectionAllowed($session, $context);
         }
 
         if (self::isSessionSuspended($context) || self::isExecutionPaused($context)) {

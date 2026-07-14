@@ -675,18 +675,13 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         if ($this->beforeAction()) {
             $session = $this->getTestSession();
 
-            if (!taoQtiTest_helpers_TestRunnerUtils::isNextSectionAllowed($session)) {
-                taoQtiTest_helpers_TestRunnerUtils::logNextSectionDeniedAttempt(
+            try {
+                taoQtiTest_helpers_TestRunnerUtils::assertNextSectionAllowed(
                     $session,
                     null,
-                    __CLASS__ . '::nextSection'
+                    $this->getRequestParameter('serviceCallId')
                 );
-                $this->notifyError(__('Next section navigation is not allowed.'), 403);
 
-                return;
-            }
-
-            try {
                 $session->moveNextAssessmentSection();
 
                 if (
@@ -697,6 +692,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                 }
             } catch (AssessmentTestSessionException $e) {
                 $this->handleAssessmentTestSessionException($e);
+            } catch (common_exception_Unauthorized $e) {
+                $this->notifyError($e->getMessage(), 403);
+
+                return;
             }
 
             $this->afterAction();
