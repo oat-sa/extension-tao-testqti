@@ -675,6 +675,17 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
         if ($this->beforeAction()) {
             $session = $this->getTestSession();
 
+            if (!taoQtiTest_helpers_TestRunnerUtils::isNextSectionAllowed($session)) {
+                taoQtiTest_helpers_TestRunnerUtils::logNextSectionDeniedAttempt(
+                    $session,
+                    null,
+                    __CLASS__ . '::nextSection'
+                );
+                $this->notifyError(__('Next section navigation is not allowed.'), 403);
+
+                return;
+            }
+
             try {
                 $session->moveNextAssessmentSection();
 

@@ -332,6 +332,86 @@ class taoQtiTest_helpers_TestRunnerUtils
     }
 
     /**
+     * Whether the candidate is allowed to navigate to the next assessment section.
+     * Requires the next-section feature flag and a matching QTI category on the current item.
+     *
+     * @param AssessmentTestSession $session
+     * @param RunnerServiceContext|null $context
+     * @return boolean
+     */
+    public static function isNextSectionAllowed(AssessmentTestSession $session, RunnerServiceContext $context = null)
+    {
+        return self::getNextSectionDenialReason($session, $context) === null;
+    }
+
+    /**
+     * @return string|null denial reason, or null when next section navigation is allowed
+     */
+    public static function getNextSectionDenialReason(
+        AssessmentTestSession $session,
+        RunnerServiceContext $context = null
+    ) {
+        $nextSectionEnabled = false;
+
+        if ($context !== null && $context->getTestConfig() !== null) {
+            $nextSectionEnabled = !empty($context->getTestConfig()->getConfigValue('nextSection'));
+        } else {
+            $config = common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
+            $nextSectionEnabled = !empty($config['next-section']);
+        }
+
+        if (!$nextSectionEnabled) {
+            return 'feature-disabled';
+        }
+
+        $categories = self::getCategories($session, $context);
+
+        if (
+            in_array('x-tao-option-nextSection', $categories, true)
+            || in_array('x-tao-option-nextSectionWarning', $categories, true)
+        ) {
+            return null;
+        }
+
+        return 'missing-category';
+    }
+
+    /**
+     * Log rejected next-section navigation attempts for monitoring and investigation.
+     */
+    public static function logNextSectionDeniedAttempt(
+        AssessmentTestSession $session,
+        RunnerServiceContext $context = null,
+        $source = 'unknown'
+    ) {
+        $reason = self::getNextSectionDenialReason($session, $context);
+
+        if ($reason === null) {
+            return;
+        }
+
+        $executionUri = $context !== null ? $context->getTestExecutionUri() : null;
+        $categories = self::getCategories($session, $context);
+        $itemRef = $session->getCurrentAssessmentItemRef();
+        $section = $session->getCurrentAssessmentSection();
+
+        common_Logger::w(
+            sprintf(
+                'Next section navigation rejected (%s): reason=%s item=%s section=%s execution=%s categories=[%s]',
+                $source,
+                $reason,
+                $itemRef !== null ? $itemRef->getIdentifier() : 'n/a',
+                $section !== null ? $section->getIdentifier() : 'n/a',
+                $executionUri ?? 'n/a',
+                implode(',', $categories)
+            ),
+            ['nextSection', 'navigation-rejected']
+        );
+    }
+
+    /**
      * Whether or not the candidate's response is validated
      *
      * @param AssessmentTestSession $session A given AssessmentTestSession object.
