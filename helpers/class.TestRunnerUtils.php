@@ -379,36 +379,27 @@ class taoQtiTest_helpers_TestRunnerUtils
     }
 
     /**
-     * Log rejected next-section navigation attempts for monitoring and investigation.
+     * @throws common_exception_Unauthorized
      */
-    public static function logNextSectionDeniedAttempt(
+    public static function assertNextSectionAllowed(
         AssessmentTestSession $session,
         RunnerServiceContext $context = null,
-        $source = 'unknown'
-    ) {
-        $reason = self::getNextSectionDenialReason($session, $context);
-
-        if ($reason === null) {
+        ?string $deliveryExecutionUri = null
+    ): void {
+        if (self::isNextSectionAllowed($session, $context)) {
             return;
         }
 
-        $executionUri = $context !== null ? $context->getTestExecutionUri() : null;
-        $categories = self::getCategories($session, $context);
-        $itemRef = $session->getCurrentAssessmentItemRef();
-        $section = $session->getCurrentAssessmentSection();
+        $executionUri = $deliveryExecutionUri
+            ?? ($context !== null ? $context->getTestExecutionUri() : null)
+            ?? 'n/a';
 
         common_Logger::w(
-            sprintf(
-                'Next section navigation rejected (%s): reason=%s item=%s section=%s execution=%s categories=[%s]',
-                $source,
-                $reason,
-                $itemRef !== null ? $itemRef->getIdentifier() : 'n/a',
-                $section !== null ? $section->getIdentifier() : 'n/a',
-                $executionUri ?? 'n/a',
-                implode(',', $categories)
-            ),
-            ['nextSection', 'navigation-rejected']
+            sprintf('Next section navigation is not allowed for delivery execution %s', $executionUri),
+            ['nextSection']
         );
+
+        throw new common_exception_Unauthorized(__('Next section navigation is not allowed.'));
     }
 
     /**
