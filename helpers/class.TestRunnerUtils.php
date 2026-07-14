@@ -38,6 +38,7 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\common\datatypes\QtiString;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -390,9 +391,11 @@ class taoQtiTest_helpers_TestRunnerUtils
             return;
         }
 
-        $executionUri = $deliveryExecutionUri
-            ?? ($context !== null ? $context->getTestExecutionUri() : null)
-            ?? 'n/a';
+        $executionUri = $deliveryExecutionUri;
+        if ($executionUri === null && $context instanceof QtiRunnerServiceContext) {
+            $executionUri = $context->getTestExecutionUri();
+        }
+        $executionUri = $executionUri ?? 'n/a';
 
         common_Logger::w(
             sprintf('Next section navigation is not allowed for delivery execution %s', $executionUri),
