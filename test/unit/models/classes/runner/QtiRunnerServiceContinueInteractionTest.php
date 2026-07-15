@@ -27,6 +27,7 @@ use qtism\runtime\tests\AssessmentItemSession;
 use qtism\runtime\tests\AssessmentItemSessionState;
 use qtism\runtime\tests\AssessmentTestSessionException;
 use tao_models_classes_Service;
+use taoResultServer_models_classes_OutcomeVariable as OutcomeVariableModel;
 
 class QtiRunnerServiceContinueInteractionTest extends TestCase
 {
@@ -520,9 +521,9 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         ];
     }
 
-    private function createOutcomeVariable(string $identifier, float $value): \taoResultServer_models_classes_OutcomeVariable
+    private function createOutcomeVariable(string $identifier, float $value): OutcomeVariableModel
     {
-        return (new \taoResultServer_models_classes_OutcomeVariable())
+        return (new OutcomeVariableModel())
             ->setIdentifier($identifier)
             ->setValue((string)$value)
             ->setEpoch('1234567890.1234');
@@ -555,7 +556,7 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         LtiLaunchData $launchData,
         string $executionId
     ): LtiContextRepositoryInterface {
-        return new class($launchData, $executionId) implements LtiContextRepositoryInterface {
+        return new class ($launchData, $executionId) implements LtiContextRepositoryInterface {
             public function __construct(
                 private LtiLaunchData $launchData,
                 private string $executionId
