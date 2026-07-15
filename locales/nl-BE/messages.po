@@ -1,17 +1,24 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2026.02 LTS\n"
-"PO-Revision-Date: 2026-02-03T14:44:11\n"
+"Project-Id-Version: tao-open-source\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
-"Language: nl-BE\n"
+"Language: nl_BE\n"
 "sourceLanguage: en-US\n"
-"targetLanguage: nl-BE\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"targetLanguage: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
 "X-Poedit-KeywordsList: __\n"
 "X-Poedit-SearchPath-0: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: tao-open-source\n"
+"X-Crowdin-Project-ID: 590867\n"
+"X-Crowdin-Language: nl-BE\n"
+"X-Crowdin-File: /[oat-sa.extension-tao-testqti] develop/locales/en-US/messages.po\n"
+"X-Crowdin-File-ID: 817\n"
+"Language-Team: Dutch, Belgium\n"
 
 msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
 msgstr ""
@@ -170,7 +177,7 @@ msgid "An error occurred while loading the original test."
 msgstr ""
 
 msgid "An error occurred!"
-msgstr ""
+msgstr "Er is een fout opgetreden!"
 
 msgid "An error occurs, please contact your administrator"
 msgstr ""
@@ -325,6 +332,9 @@ msgstr ""
 msgid "Clear Highlights"
 msgstr ""
 
+msgid "Click \"%s\" to continue"
+msgstr ""
+
 msgid "Click \"%s\" to continue."
 msgstr ""
 
@@ -341,6 +351,9 @@ msgid "Close the mask"
 msgstr ""
 
 msgid "Close this Section"
+msgstr ""
+
+msgid "Collapse class"
 msgstr ""
 
 msgid "Collapse the review panel"
@@ -400,6 +413,9 @@ msgstr ""
 msgid "Delete rule"
 msgstr ""
 
+msgid "Disable validation"
+msgstr ""
+
 msgid "Disconnected from server"
 msgstr ""
 
@@ -448,7 +464,7 @@ msgstr ""
 msgid "Do you want to apply the category \"%s\" to all included items?"
 msgstr ""
 
-msgid "Don\'t save"
+msgid "Don\\'t save"
 msgstr ""
 
 msgid "Download"
@@ -464,6 +480,9 @@ msgid "Each prerequisite below is evaluated by comparing the variable content wi
 msgstr ""
 
 msgid "Edit"
+msgstr ""
+
+msgid "Edit item"
 msgstr ""
 
 msgid "Eliminate choices"
@@ -508,14 +527,23 @@ msgstr ""
 msgid "Enter a blueprint"
 msgstr ""
 
-msgid "Error"
+msgid "Enter a custom category"
 msgstr ""
+
+msgid "Enter rubric content for this outcome scale."
+msgstr ""
+
+msgid "Error"
+msgstr "Foutmelding"
 
 msgid "Error during file import"
 msgstr ""
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
+msgstr ""
+
+msgid "Expand class"
 msgstr ""
 
 msgid "Expand the review panel"
@@ -534,6 +562,12 @@ msgid "Export metadata"
 msgstr ""
 
 msgid "Export QTI %s Test Package"
+msgstr ""
+
+msgid "Export QTI 2.1 Test Package"
+msgstr ""
+
+msgid "Export QTI 2.2 Test Package"
 msgstr ""
 
 msgid "Export successful for the test \"%s"
@@ -579,6 +613,9 @@ msgid "Flagged for review"
 msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Go to item"
 msgstr ""
 
 msgid "Go to next item"
@@ -644,6 +681,9 @@ msgstr ""
 msgid "If required it must appear (at least once) in the selection."
 msgstr ""
 
+msgid "If required, it must appears at least once in the selection."
+msgstr ""
+
 msgid "If set, it causes the order of the child elements to be randomized, otherwise it uses the order in which the child elements are defined."
 msgstr ""
 
@@ -693,7 +733,7 @@ msgid "IMS QTI Test referenced as \"%s\" in the IMS Manifest file successfully i
 msgstr ""
 
 msgid "In progress"
-msgstr ""
+msgstr "Bezig"
 
 msgid "In this part of the test navigation is not allowed."
 msgstr ""
@@ -717,6 +757,12 @@ msgid "Interpretation"
 msgstr ""
 
 msgid "is already used in the test."
+msgstr ""
+
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr ""
+
+msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr ""
 
 msgid "is not a valid identifier (everything except spaces)"
@@ -750,7 +796,7 @@ msgid "Item Session Control"
 msgstr ""
 
 msgid "Items"
-msgstr ""
+msgstr "Artikelen"
 
 msgid "items"
 msgstr ""
@@ -782,6 +828,9 @@ msgstr ""
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr ""
 
+msgid "Label"
+msgstr ""
+
 msgid "Late submission allowed"
 msgstr ""
 
@@ -804,9 +853,6 @@ msgid "Long interpretation"
 msgstr ""
 
 msgid "Lowest Grade Achieved"
-msgstr ""
-
-msgid "Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
 msgstr ""
 
 msgid "Magnifier"
@@ -870,6 +916,9 @@ msgstr ""
 msgid "Maximum number of points achievable"
 msgstr ""
 
+msgid "Metadata export is not available for test \"%s."
+msgstr ""
+
 msgid "Minimum Duration"
 msgstr ""
 
@@ -889,6 +938,9 @@ msgid "Minimum duration for this test part."
 msgstr ""
 
 msgid "minutes"
+msgstr ""
+
+msgid "Missed required parameter \\'id\\'."
 msgstr ""
 
 msgid "Missed test package file"
@@ -931,7 +983,7 @@ msgid "name of the pupil"
 msgstr ""
 
 msgid "Navigation"
-msgstr ""
+msgstr "Navigatie"
 
 msgid "Navigation shortcuts"
 msgstr ""
@@ -952,7 +1004,7 @@ msgid "New test part"
 msgstr ""
 
 msgid "Next"
-msgstr ""
+msgstr "Volgende"
 
 msgid "Next Section"
 msgstr ""
@@ -1126,7 +1178,7 @@ msgid "Preview the covered area"
 msgstr ""
 
 msgid "Previous"
-msgstr ""
+msgstr "Vorige"
 
 msgid "Print Out"
 msgstr ""
@@ -1167,6 +1219,12 @@ msgstr ""
 msgid "QTI Test Package %s"
 msgstr ""
 
+msgid "QTI Test Package 2.1"
+msgstr ""
+
+msgid "QTI Test Package 2.2"
+msgstr ""
+
 msgid "QTI/APIP Test Content Package"
 msgstr ""
 
@@ -1195,7 +1253,7 @@ msgid "remaining %s %s"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 msgid "Remove Item Reference"
 msgstr ""
@@ -1243,9 +1301,15 @@ msgid "Rubric Blocks"
 msgstr ""
 
 msgid "Save"
-msgstr ""
+msgstr "Opslaan"
 
 msgid "Saved"
+msgstr ""
+
+msgid "Scale"
+msgstr ""
+
+msgid "Scale files could not be stored: %s"
 msgstr ""
 
 msgid "Scale name not allowed"
@@ -1258,6 +1322,9 @@ msgid "Scorer"
 msgstr ""
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scoring Rubric"
 msgstr ""
 
 msgid "Scratch pad"
@@ -1297,6 +1364,9 @@ msgid "Select Items"
 msgstr ""
 
 msgid "Select or enter a scale"
+msgstr ""
+
+msgid "Select or enter a scale for this outcome."
 msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
@@ -1450,9 +1520,12 @@ msgid "technical"
 msgstr ""
 
 msgid "Test"
-msgstr ""
+msgstr "Toets"
 
 msgid "Test constructor"
+msgstr ""
+
+msgid "Test metadata successfully exported."
 msgstr ""
 
 msgid "Test Navigation"
@@ -1465,6 +1538,9 @@ msgid "Test part level category enables configuring the categories of its compos
 msgstr ""
 
 msgid "Test Part Properties"
+msgstr ""
+
+msgid "Test Preview is not installed, please contact to your administrator."
 msgstr ""
 
 msgid "Test Saved"
@@ -1487,7 +1563,7 @@ msgstr ""
 
 #, tao-public
 msgid "Tests"
-msgstr ""
+msgstr "Toetsen"
 
 msgid "Text content"
 msgstr ""
@@ -1526,6 +1602,9 @@ msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr ""
 
 msgid "The assessment is still running."
+msgstr ""
+
+msgid "The candidate is not allowed to submit invalid responses."
 msgstr ""
 
 msgid "The connection seems to be back, please proceed"
@@ -1576,6 +1655,9 @@ msgstr ""
 msgid "The original title of the test."
 msgstr ""
 
+msgid "The outcome \"%s\" does not exist, but it is referenced by a feedback block!"
+msgstr ""
+
 msgid "The outcomes have been regenerated!"
 msgstr ""
 
@@ -1586,6 +1668,9 @@ msgid "The provided archive is invalid. Make sure it is not corrupted and that i
 msgstr ""
 
 msgid "The QTI Item with URI '%s' cannot be found."
+msgstr ""
+
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
 msgstr ""
 
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
@@ -1619,6 +1704,13 @@ msgid "The submission mode determines when the candidate's responses are submitt
 msgstr ""
 
 msgid "The test cannot be saved because it currently contains invalid settings."
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+msgstr ""
+
+msgid "The test cannot be saved because it currently contains invalid settings.\n"
+"Please fix the invalid settings and try again."
 msgstr ""
 
 msgid "The test has been closed/suspended!"
@@ -1708,6 +1800,9 @@ msgstr ""
 msgid "to"
 msgstr ""
 
+msgid "Toggle class children"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1721,7 +1816,7 @@ msgid "Toolbox"
 msgstr ""
 
 msgid "Total"
-msgstr ""
+msgstr "Totaal"
 
 msgid "Total score"
 msgstr ""
@@ -1742,7 +1837,7 @@ msgid "Tutor"
 msgstr ""
 
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 msgid "Unanswered"
 msgstr ""
@@ -1768,10 +1863,16 @@ msgstr ""
 msgid "Use Ctrl/Meta key or Lasso for multiple selection"
 msgstr ""
 
+msgid "Validate Responses"
+msgstr ""
+
 msgid "Value"
 msgstr ""
 
 msgid "Variable"
+msgstr ""
+
+msgid "View item"
 msgstr ""
 
 msgid "Viewed"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:22\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -353,6 +353,9 @@ msgstr "Sluit de bedekker"
 msgid "Close this Section"
 msgstr "Sluit deze sectie"
 
+msgid "Collapse class"
+msgstr "Klas inklappen"
+
 msgid "Collapse the review panel"
 msgstr "Minimaliseer het review paneel"
 
@@ -479,6 +482,9 @@ msgstr "Elke voorwaarde hieronder wordt geëvalueerd door de variabele inhoud te
 msgid "Edit"
 msgstr "Aanpassen"
 
+msgid "Edit item"
+msgstr "Item bewerken"
+
 msgid "Eliminate choices"
 msgstr "Elimineer keuzes"
 
@@ -524,6 +530,9 @@ msgstr "Voer een blauwdruk in"
 msgid "Enter a custom category"
 msgstr "Voer een eigen categorie in"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Voer de rubriekinhoud in voor deze uitslagschaal."
+
 msgid "Error"
 msgstr "Foutmelding"
 
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Fout gevonden in de IMS QTI Toets:\n"
 "%s"
+
+msgid "Expand class"
+msgstr "Klasse uitbreiden"
 
 msgid "Expand the review panel"
 msgstr "Vergroot het review paneel"
@@ -603,6 +615,9 @@ msgstr "Gemarkeerd voor review"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forceer dat het item wordt beschouwd als informatie en niet wordt meegenomen bij de tellingen voor (niet) beantwoord of gemarkeerde items."
+
+msgid "Go to item"
+msgstr "Ga naar item"
 
 msgid "Go to next item"
 msgstr "Ga naar het volgende item"
@@ -745,6 +760,9 @@ msgstr "Interpretatie"
 msgid "is already used in the test."
 msgstr "is al gebruikt in de toets"
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "is geen geldig id (alphanum, onderstrepingsteken en dash)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "is geen geldige naam (alfanumeriek, laag streepje, streep en punten)"
 
@@ -810,6 +828,9 @@ msgstr "Toetsenbord navigatie"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "Toetsenbordsnelkoppelingen voor de Toegankelijkheidsgereedschappen zijn beschikbaar voor de Test-taker."
+
+msgid "Label"
+msgstr "Omschrijving"
 
 msgid "Late submission allowed"
 msgstr "Late inschrijvingen toegestaan"
@@ -1286,6 +1307,12 @@ msgstr "Opslaan"
 msgid "Saved"
 msgstr "Opgeslagen"
 
+msgid "Scale"
+msgstr "Schaal"
+
+msgid "Scale files could not be stored: %s"
+msgstr "Schaal bestanden konden niet worden opgeslagen: %s"
+
 msgid "Scale name not allowed"
 msgstr "Schaal naam niet toegestaan"
 
@@ -1297,6 +1324,9 @@ msgstr "Puntenteller"
 
 msgid "Scoring"
 msgstr "Scoring (Waardering)"
+
+msgid "Scoring Rubric"
+msgstr "Rubriek scoren"
 
 msgid "Scratch pad"
 msgstr "Notitieboekje"
@@ -1336,6 +1366,9 @@ msgstr "Selecteer items"
 
 msgid "Select or enter a scale"
 msgstr "Selecteer of voer een schaal in"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Selecteer of voer een schaal in voor dit resultaat."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Selecteer de wijze waarop de antwoorden op uw examen verwerkt moeten worden"
@@ -1638,6 +1671,9 @@ msgstr "Het aangeleverde archief is ongeldig. Zorg ervoor dat het niet corrupt i
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr "Het QTI Item met URI '%s' kan niet worden gevonden."
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "De QTI-syntaxis die voor deze test wordt gebruikt wordt nog niet ondersteund door de huidige gebruikersinterface. Om je inhoud te bewerken of te bekijken raden we het gebruik van de XML Editor functionaliteit aan voor een naadloze ervaring."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "De te compileren toets '%s' moet minstens één QTI item bevatten. Geen gevonden."
 
@@ -1766,6 +1802,9 @@ msgstr "Titel"
 msgid "to"
 msgstr "naar"
 
+msgid "Toggle class children"
+msgstr "Klassenkinderen in-/uitschakelen"
+
 msgid "Toggle playback"
 msgstr "Afspelen in-/uitschakelen"
 
@@ -1834,6 +1873,9 @@ msgstr "Waarde"
 
 msgid "Variable"
 msgstr "Variabele"
+
+msgid "View item"
+msgstr "Item bekijken"
 
 msgid "Viewed"
 msgstr "Bekeken"

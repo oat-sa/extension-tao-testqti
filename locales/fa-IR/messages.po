@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:24\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fa\n"
@@ -353,6 +353,9 @@ msgstr ""
 msgid "Close this Section"
 msgstr ""
 
+msgid "Collapse class"
+msgstr ""
+
 msgid "Collapse the review panel"
 msgstr ""
 
@@ -479,6 +482,9 @@ msgstr ""
 msgid "Edit"
 msgstr ""
 
+msgid "Edit item"
+msgstr ""
+
 msgid "Eliminate choices"
 msgstr ""
 
@@ -524,6 +530,9 @@ msgstr ""
 msgid "Enter a custom category"
 msgstr ""
 
+msgid "Enter rubric content for this outcome scale."
+msgstr ""
+
 msgid "Error"
 msgstr ""
 
@@ -532,6 +541,9 @@ msgstr ""
 
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
+msgstr ""
+
+msgid "Expand class"
 msgstr ""
 
 msgid "Expand the review panel"
@@ -601,6 +613,9 @@ msgid "Flagged for review"
 msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
+msgstr ""
+
+msgid "Go to item"
 msgstr ""
 
 msgid "Go to next item"
@@ -744,6 +759,9 @@ msgstr ""
 msgid "is already used in the test."
 msgstr ""
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr ""
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr ""
 
@@ -808,6 +826,9 @@ msgid "Keyboard Navigation"
 msgstr ""
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
+msgstr ""
+
+msgid "Label"
 msgstr ""
 
 msgid "Late submission allowed"
@@ -1285,6 +1306,12 @@ msgstr ""
 msgid "Saved"
 msgstr ""
 
+msgid "Scale"
+msgstr ""
+
+msgid "Scale files could not be stored: %s"
+msgstr ""
+
 msgid "Scale name not allowed"
 msgstr ""
 
@@ -1295,6 +1322,9 @@ msgid "Scorer"
 msgstr ""
 
 msgid "Scoring"
+msgstr ""
+
+msgid "Scoring Rubric"
 msgstr ""
 
 msgid "Scratch pad"
@@ -1334,6 +1364,9 @@ msgid "Select Items"
 msgstr ""
 
 msgid "Select or enter a scale"
+msgstr ""
+
+msgid "Select or enter a scale for this outcome."
 msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
@@ -1637,6 +1670,9 @@ msgstr ""
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr ""
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr ""
 
@@ -1764,6 +1800,9 @@ msgstr ""
 msgid "to"
 msgstr ""
 
+msgid "Toggle class children"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1831,6 +1870,9 @@ msgid "Value"
 msgstr ""
 
 msgid "Variable"
+msgstr ""
+
+msgid "View item"
 msgstr ""
 
 msgid "Viewed"

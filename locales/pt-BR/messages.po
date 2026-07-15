@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: pt\n"
@@ -353,6 +353,9 @@ msgstr "Fechar máscara"
 msgid "Close this Section"
 msgstr "Fechar esta seção"
 
+msgid "Collapse class"
+msgstr "Recolher classe"
+
 msgid "Collapse the review panel"
 msgstr "Fechar painel de revisão"
 
@@ -479,6 +482,9 @@ msgstr "Cada pré-requisito abaixo é avaliado comparando o conteúdo da variáv
 msgid "Edit"
 msgstr "Alterar"
 
+msgid "Edit item"
+msgstr "Editar item"
+
 msgid "Eliminate choices"
 msgstr "Eliminar opções"
 
@@ -524,6 +530,9 @@ msgstr "Inserir um diagrama"
 msgid "Enter a custom category"
 msgstr "Inserir uma categoria personalizada"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Digite o conteúdo da rubrica para esta escala de resultados."
+
 msgid "Error"
 msgstr "ERRO"
 
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Erro encontrado no teste IMS QTI\n"
 "%s"
+
+msgid "Expand class"
+msgstr "Expandir classe"
 
 msgid "Expand the review panel"
 msgstr "Abrir o Painel de Revisão"
@@ -603,6 +615,9 @@ msgstr "Marcado para revisão"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forçar o item a ser considerado como informativo e não considerado nos contadores (não )respondidos/sinalizados."
+
+msgid "Go to item"
+msgstr "Ir para a notícia"
 
 msgid "Go to next item"
 msgstr "Ir para o próximo item"
@@ -745,6 +760,9 @@ msgstr "Interpretação"
 msgid "is already used in the test."
 msgstr "já é usado no teste."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "não é um identificador válido (alfabeto, sublinhado e traço)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "não é um identificador válido (alfabeto, sublinhado, traço e pontos)"
 
@@ -810,6 +828,9 @@ msgstr "Navegação por teclado"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "Atalhos de teclado para as Ferramentas de Acessibilidade estão disponíveis para o candidato."
+
+msgid "Label"
+msgstr "Descrição"
 
 msgid "Late submission allowed"
 msgstr "Submissão atrasada permitida"
@@ -1286,6 +1307,12 @@ msgstr "Salvar"
 msgid "Saved"
 msgstr "Salvo"
 
+msgid "Scale"
+msgstr "Escala"
+
+msgid "Scale files could not be stored: %s"
+msgstr "Não foi possível armazenar os arquivos de Escala: %s"
+
 msgid "Scale name not allowed"
 msgstr "Nome da escala não permitido"
 
@@ -1297,6 +1324,9 @@ msgstr "Pontoador"
 
 msgid "Scoring"
 msgstr "Pontuação"
+
+msgid "Scoring Rubric"
+msgstr "Rubrica de Pontuação"
 
 msgid "Scratch pad"
 msgstr "Painel de rascunho"
@@ -1336,6 +1366,9 @@ msgstr "Selecionar itens"
 
 msgid "Select or enter a scale"
 msgstr "Selecione ou insira uma escala"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Selecione ou insira uma escala para este resultado."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Selecione a forma como as respostas do seu teste devem ser processadas"
@@ -1638,6 +1671,9 @@ msgstr "O arquivo fornecido é inválido. Verifique se ele não está corrompido
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr "O item QTI com URI '%s' não pode ser encontrado."
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "A sintaxe de QTI usada para este teste ainda não é suportada pela interface do usuário atual. Para revisar ou editar efetivamente seu conteúdo, recomendamos utilizar a funcionalidade do Editor XML para uma experiência perfeita."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "O teste QTI '%s' para ser compilado deve conter pelo menos 1 Item QTI. Nenhum encontrado."
 
@@ -1765,6 +1801,9 @@ msgstr "Título"
 msgid "to"
 msgstr "para"
 
+msgid "Toggle class children"
+msgstr "Alternar para filhos de classe"
+
 msgid "Toggle playback"
 msgstr "Ativar/desativar reprodução"
 
@@ -1833,6 +1872,9 @@ msgstr "Valor"
 
 msgid "Variable"
 msgstr "Variável"
+
+msgid "View item"
+msgstr "Visualizar item"
 
 msgid "Viewed"
 msgstr "Visualizado"
