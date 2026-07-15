@@ -181,6 +181,36 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $this->assertFalse($this->invokeContinueInteraction($service, $context));
     }
 
+    public function testContinueInteractionContinuesWhenTimeoutRevalidationPasses(): void
+    {
+        $itemSession = $this->createMock(AssessmentItemSession::class);
+        $itemSession->method('getState')->willReturn(AssessmentItemSessionState::INTERACTING);
+        $itemSession->method('getRemainingAttempts')->willReturn(0);
+
+        $session = $this->createMock(TestSession::class);
+        $session->method('isRunning')->willReturn(true);
+        $session->method('isTimeout')->willReturn(true);
+        $session->expects($this->once())
+            ->method('checkTimeLimits')
+            ->with(false, true, false);
+        $session->method('getCurrentAssessmentItemSession')->willReturn($itemSession);
+
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+        $context->method('getTestSession')->willReturn($session);
+
+        $eventManager = $this->createMock(EventManager::class);
+        $eventManager->expects($this->once())->method('trigger');
+
+        $service = $this->createService();
+        $service->setServiceLocator($this->getServiceLocatorMock([
+            EventManager::SERVICE_ID => $eventManager,
+        ]));
+        $service->expects($this->never())->method('onTimeout');
+        $service->expects($this->never())->method('finish');
+
+        $this->assertTrue($this->invokeContinueInteraction($service, $context));
+    }
+
     public function testOnTimeoutMovesToNextTestPartForLinearTestPartOverflow(): void
     {
         $timeoutException = new AssessmentTestSessionException(
