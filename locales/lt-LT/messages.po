@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:23\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt\n"
@@ -353,6 +353,9 @@ msgstr "Uždaryti paslėpimus"
 msgid "Close this Section"
 msgstr "Uždaryti šį Skyrių"
 
+msgid "Collapse class"
+msgstr ""
+
 msgid "Collapse the review panel"
 msgstr "Suskleisti apžvalgos skydelį"
 
@@ -479,6 +482,9 @@ msgstr ""
 msgid "Edit"
 msgstr "Keisti"
 
+msgid "Edit item"
+msgstr "Redaguoti klausimą"
+
 msgid "Eliminate choices"
 msgstr "Eliminuoti pasirinkimus"
 
@@ -524,6 +530,9 @@ msgstr ""
 msgid "Enter a custom category"
 msgstr "Įvesti pasirinktiną kategoriją"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr ""
+
 msgid "Error"
 msgstr ""
 
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Rasta klaida IMS QTI Teste:\n"
 "%s"
+
+msgid "Expand class"
+msgstr ""
 
 msgid "Expand the review panel"
 msgstr "Praplėsti apžvalgos skydelį"
@@ -603,6 +615,9 @@ msgstr ""
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Priversti elementą būti informaciniu ir nebūti atsižvelgtam atsakytų / neatsakytų ir pažymėtų skaičiuoklėje."
+
+msgid "Go to item"
+msgstr ""
 
 msgid "Go to next item"
 msgstr "Eiti į sekantį elementą"
@@ -745,6 +760,9 @@ msgstr "Interpretacija"
 msgid "is already used in the test."
 msgstr "jau naudojamas teste."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr ""
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "blogas identifikatorius (raidžiai, skaičiai, pabraukimo simbolis, brūkšnys ir taškai)"
 
@@ -810,6 +828,9 @@ msgstr ""
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr ""
+
+msgid "Label"
+msgstr "Pavadinimas"
 
 msgid "Late submission allowed"
 msgstr "Vėluojamas pateikimas leidžiamas"
@@ -1286,6 +1307,12 @@ msgstr "Išsaugoti"
 msgid "Saved"
 msgstr ""
 
+msgid "Scale"
+msgstr ""
+
+msgid "Scale files could not be stored: %s"
+msgstr ""
+
 msgid "Scale name not allowed"
 msgstr ""
 
@@ -1297,6 +1324,9 @@ msgstr "Verintojas"
 
 msgid "Scoring"
 msgstr "Įvertinimas"
+
+msgid "Scoring Rubric"
+msgstr ""
 
 msgid "Scratch pad"
 msgstr "Juodraštis"
@@ -1335,6 +1365,9 @@ msgid "Select Items"
 msgstr "Pasirinkti Elementus"
 
 msgid "Select or enter a scale"
+msgstr ""
+
+msgid "Select or enter a scale for this outcome."
 msgstr ""
 
 msgid "Select the way the responses of your test should be processed"
@@ -1638,6 +1671,9 @@ msgstr "Pateiktas archyvas yra blogas. Patikrinkite ar jis nesugadintas ir turi 
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr ""
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr ""
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "QTI Testas '%s' surinkimui privalo turėti bent 1 QTI Elementą. Joks nebuvo surastas."
 
@@ -1765,6 +1801,9 @@ msgstr "Pavadinimas"
 msgid "to"
 msgstr "į"
 
+msgid "Toggle class children"
+msgstr ""
+
 msgid "Toggle playback"
 msgstr ""
 
@@ -1833,6 +1872,9 @@ msgstr "Reikšmė"
 
 msgid "Variable"
 msgstr "Kintamasis"
+
+msgid "View item"
+msgstr ""
 
 msgid "Viewed"
 msgstr "Peržiūrėta"

@@ -9,6 +9,10 @@
                     <span class="tlb-bar">
                         <span class="tlb-start"></span>
                         <span class="tlb-group">
+                            <a href="#" class="tlb-button-off preview-item" title="{{__ 'View item'}}" data-testid="preview-item"><span class="icon-preview"></span></a>
+                            <a href="#" class="tlb-button-off goto-item" title="{{__ 'Go to item'}}" data-testid="goto-item"><span class="icon-item"></span></a>
+                            <a href="#" class="tlb-button-off edit-item" title="{{__ 'Edit item'}}" data-testid="edit-item"><span class="icon-edit"></span></a>
+                            <span class="tlb-separator"></span>
                             <a href="#" class="tlb-button-off property-toggler" title="{{__ 'Item Reference Properties'}}" data-testid="item-properties"><span class="icon-settings"></span></a>
                             <span class="tlb-separator"></span>
                             <a href="#" class="tlb-button-off move-up" title="{{__ 'Move Up'}}" data-testid="move-up-item"><span class="icon-up"></span></a>

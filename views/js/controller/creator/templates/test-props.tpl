@@ -164,7 +164,7 @@
                 <label for="test-outcome-processing">{{__ 'Outcome processing'}}</label>
             </div>
             <div class="col-6">
-                <select name="test-outcome-processing" class="select2" data-bind="scoring.outcomeProcessing" data-bind-encoder="string" data-has-search="false">
+                <select name="test-outcome-processing" class="select2" data-width="100%" data-bind="scoring.outcomeProcessing" data-bind-encoder="string" data-has-search="false">
                 {{#each modes}}
                     <option value="{{key}}" {{#if selected}}selected="selected"{{/if}}>{{label}}</option>
                 {{/each}}
@@ -235,12 +235,12 @@
                 {{#each modes}}
                 <div class="feedback-info test-outcome-processing-description" data-key="{{key}}">
                     <span class="icon-info"></span>
-                    {{description}}
+                    {{{dompurify description}}}
                 </div>
                 {{#if error}}
                 <div class="feedback-error test-outcome-processing-error hidden" data-key="{{key}}">
                     <span class="icon-error"></span>
-                    {{error}}
+                    {{{dompurify error}}}
                 </div>
                 {{/if}}
                 {{/each}}

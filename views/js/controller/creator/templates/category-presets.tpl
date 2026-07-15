@@ -1,5 +1,5 @@
 {{#each presetGroups}}
-<h4 class="toggler closed" data-toggle="~ .category-preset-group-{{groupId}}">{{groupLabel}}</h4>
+<h4 class="toggler closed" data-toggle="~ .category-preset-group-{{groupId}}">{{{dompurify groupLabel}}}</h4>
 
 <div class="category-preset-group-{{groupId}} toggled">
     {{#each presets}}
@@ -16,12 +16,12 @@
             </label>
         </div>
         <div class="col-10">
-            <label for="category-preset-{{id}}">{{label}}</label>
+            <label for="category-preset-{{id}}">{{{dompurify label}}}</label>
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
-                {{description}}
+                {{{dompurify description}}}
             </div>
         </div>
     </div>

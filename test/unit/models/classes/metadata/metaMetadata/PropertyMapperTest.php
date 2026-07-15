@@ -26,19 +26,15 @@ use core_kernel_classes_Literal;
 use core_kernel_classes_Property as Property;
 use core_kernel_classes_Resource as Resource;
 use oat\generis\model\GenerisRdf;
-use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PropertyMapperTest extends TestCase
 {
-    private ChecksumGenerator|MockObject $checksumGeneratorMock;
     private PropertyMapper $subject;
 
     public function setUp(): void
     {
-        $this->checksumGeneratorMock = $this->createMock(ChecksumGenerator::class);
         $metaMetadataCollectionToExport = [
             'label' => RDFS_LABEL,
             'domain' => RDFS_DOMAIN,
@@ -46,7 +42,7 @@ class PropertyMapperTest extends TestCase
             'multiple' => GenerisRdf::PROPERTY_MULTIPLE
         ];
 
-        $this->subject  = new PropertyMapper($this->checksumGeneratorMock, $metaMetadataCollectionToExport);
+        $this->subject = new PropertyMapper($metaMetadataCollectionToExport);
     }
 
     public function testGetMetadataProperties(): void
@@ -54,7 +50,6 @@ class PropertyMapperTest extends TestCase
         $property = $this->createMock(Property::class);
         $resourceMock = $this->createMock(Resource::class);
         $property->method('getUri')->willReturn('uri');
-        $property->method('getRange')->willReturn('range');
         $resourceMock->method('getUri')->willReturn('resource_uri');
 
         $property
@@ -66,11 +61,6 @@ class PropertyMapperTest extends TestCase
                 null
             );
 
-        $this->checksumGeneratorMock
-            ->method('getRangeChecksum')
-            ->willReturn('c315a4bd4fa0f4479b1ea4b5998aa548eed3b670');
-
-
         $result = $this->subject->getMetadataProperties($property);
 
         $this->assertIsArray($result);
@@ -79,11 +69,9 @@ class PropertyMapperTest extends TestCase
         $this->assertArrayHasKey('domain', $result);
         $this->assertArrayHasKey('alias', $result);
         $this->assertArrayNotHasKey('multiple', $result);
-        $this->assertArrayHasKey(PropertyMapper::DATATYPE_CHECKSUM, $result);
         $this->assertEquals('uri', $result['uri']);
         $this->assertEquals('resource_uri', $result['label']);
         $this->assertEquals('value', $result['domain']);
         $this->assertEquals('literal_value', $result['alias']);
-        $this->assertEquals('c315a4bd4fa0f4479b1ea4b5998aa548eed3b670', $result['checksum']);
     }
 }

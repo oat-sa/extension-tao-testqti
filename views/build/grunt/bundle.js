@@ -40,6 +40,7 @@ module.exports = function(grunt) {
                             main: 'lib/codemirror'
                         }
                     ],
+                    babelPreTransform: { enabled: true, exclude: ['mathjax'] },
                     bundles : [{
                         name : 'taoQtiTest',
                         default : true,

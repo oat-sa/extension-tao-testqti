@@ -26,7 +26,6 @@ use oat\generis\model\data\Ontology;
 use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\generis\model\GenerisRdf;
 use oat\generis\model\WidgetRdf;
-use oat\taoQtiItem\model\import\ChecksumGenerator;
 use oat\taoQtiTest\models\classes\metadata\metaMetadata\PropertyMapper;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
@@ -42,7 +41,6 @@ class MetadataServiceProvider implements ContainerServiceProviderInterface
 
         $services->set(PropertyMapper::class, PropertyMapper::class)
             ->args([
-                service(ChecksumGenerator::class),
                 [
                     'label' => RDFS_LABEL,
                     'domain' => RDFS_DOMAIN,

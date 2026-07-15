@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor;
 
+use DOMDocument;
 use oat\taoItems\model\render\ItemAssetsReplacement;
 use oat\taoQtiTest\models\classes\render\CustomInteraction\PostProcessor\Api\CustomInteractionPostProcessorInterface;
 
@@ -45,7 +46,120 @@ class TextReaderPostProcessor implements CustomInteractionPostProcessorInterface
                 $value = $this->itemAssetsReplacement->postProcessAssets($value);
             }
         }
+        unset($value);
+
+        $element['properties'] = $this->replaceImageSourcesInPages($element['properties']);
 
         return $element;
+    }
+
+    private function replaceImageSourcesInPages(array $properties): array
+    {
+        if (!isset($properties['pages'])) {
+            return $properties;
+        }
+
+        $pages = $this->normalizePages($properties['pages']);
+        if ($pages === []) {
+            return $properties;
+        }
+
+        $contentUrls = $this->extractContentUrls($properties);
+        if ($contentUrls === []) {
+            return $properties;
+        }
+
+        $updatedPages = [];
+
+        foreach ($pages as $page) {
+            if (!isset($page['content']) || !is_array($page['content'])) {
+                $updatedPages[] = $page;
+                continue;
+            }
+
+            foreach ($page['content'] as $index => $content) {
+                if (!is_string($content) || $content === '') {
+                    continue;
+                }
+
+                $page['content'][$index] = $this->replaceImageSourcesInContent($content, $contentUrls);
+            }
+
+            $updatedPages[] = $page;
+        }
+
+        $properties['pages'] = is_string($properties['pages'])
+            ? json_encode($updatedPages)
+            : $updatedPages;
+
+        return $properties;
+    }
+
+    private function normalizePages($pages): array
+    {
+        if (is_array($pages)) {
+            return $pages;
+        }
+        if (!is_string($pages)) {
+            return [];
+        }
+        try {
+            $decoded = json_decode($pages, true, 512, JSON_THROW_ON_ERROR);
+            return is_array($decoded) ? $decoded : [];
+        } catch (\JsonException $_) {
+            return [];
+        }
+    }
+
+    private function extractContentUrls(array $properties): array
+    {
+        return array_values(
+            array_filter(
+                $properties,
+                static fn ($value, $key): bool => strpos((string) $key, self::CONTENT_PREFIX) === 0
+                    && is_string($value)
+                    && $value !== '',
+                ARRAY_FILTER_USE_BOTH
+            )
+        );
+    }
+
+    private function replaceImageSourcesInContent(string $content, array &$contentUrls): string
+    {
+        if ($contentUrls === []) {
+            return $content;
+        }
+
+        $previousState = libxml_use_internal_errors(true);
+
+        try {
+            $dom = new DOMDocument();
+            $dom->loadHTML('<meta http-equiv="Content-Type" content="text/html; charset=utf-8">' . $content);
+            libxml_clear_errors();
+
+            foreach ($dom->getElementsByTagName('img') as $image) {
+                $replacement = array_shift($contentUrls);
+                if ($replacement === null) {
+                    break;
+                }
+
+                $image->setAttribute('src', $replacement);
+            }
+
+            $body = $dom->getElementsByTagName('body')->item(0);
+            if ($body === null) {
+                return $content;
+            }
+
+            $result = '';
+            foreach ($body->childNodes as $childNode) {
+                $result .= $dom->saveHTML($childNode);
+            }
+
+            return $result;
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousState);
+        }
     }
 }
