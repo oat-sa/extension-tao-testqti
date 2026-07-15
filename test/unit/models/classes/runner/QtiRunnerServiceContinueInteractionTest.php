@@ -31,14 +31,17 @@ use taoResultServer_models_classes_OutcomeVariable as OutcomeVariableModel;
 
 class QtiRunnerServiceContinueInteractionTest extends TestCase
 {
+    private bool $serviceSingletonBackupTaken = false;
+
     private ?array $serviceSingletonBackup = null;
 
     protected function tearDown(): void
     {
-        if ($this->serviceSingletonBackup !== null) {
+        if ($this->serviceSingletonBackupTaken) {
             $property = new \ReflectionProperty(tao_models_classes_Service::class, 'instances');
             $property->setAccessible(true);
             $property->setValue(null, $this->serviceSingletonBackup);
+            $this->serviceSingletonBackupTaken = false;
             $this->serviceSingletonBackup = null;
         }
 
@@ -418,6 +421,8 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $scoreTotalMax = 10.0;
         $executionId = 'http://execution/id';
         $userUri = 'http://user/id';
+        $persistedVariables = [];
+        $operationOrder = [];
 
         $runningSession = $this->createMock(TestSession::class);
         $runningSession->method('isRunning')->willReturn(true);
@@ -426,7 +431,17 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $runningSession->method('checkTimeLimits')
             ->with(false, true, false)
             ->willThrowException($timeoutException);
-        $runningSession->expects($this->once())->method('moveThroughAndEndTestSession');
+        $runningSession->expects($this->once())
+            ->method('moveThroughAndEndTestSession')
+            ->willReturnCallback(function () use (
+                &$persistedVariables,
+                &$operationOrder,
+                $scoreTotal,
+                $scoreTotalMax
+            ): void {
+                $operationOrder[] = 'persistOutcomes';
+                $persistedVariables = $this->createDeliveryOutcomeVariables($scoreTotal, $scoreTotalMax);
+            });
 
         $closedSession = $this->createMock(TestSession::class);
         $closedSession->method('isRunning')->willReturn(false);
@@ -478,9 +493,18 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $ltiContextRepository = $this->createLtiContextRepositoryStub($launchData, $executionId);
 
         $resultStorage = $this->createMock(RdsResultStorage::class);
-        $resultStorage->method('getDeliveryVariables')
+        $resultStorage->expects($this->once())
+            ->method('getDeliveryVariables')
             ->with($executionId)
-            ->willReturn($this->createDeliveryOutcomeVariables($scoreTotal, $scoreTotalMax));
+            ->willReturnCallback(function () use (&$persistedVariables, &$operationOrder) {
+                $operationOrder[] = 'readOutcomes';
+                $this->assertNotEmpty(
+                    $persistedVariables,
+                    'SCORE_TOTAL outcomes must be persisted before finish reads delivery variables'
+                );
+
+                return $persistedVariables;
+            });
 
         $resultServerService = $this->createMock(ResultServerService::class);
         $resultServerService->method('getResultStorage')->willReturn($resultStorage);
@@ -507,6 +531,7 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $service->setServiceLocator($serviceManager);
 
         $this->assertFalse($this->invokeContinueInteraction($service, $context));
+        $this->assertSame(['persistOutcomes', 'readOutcomes'], $operationOrder);
         $this->assertNotNull($agsPayload);
         $this->assertSame($scoreTotal, $agsPayload['data']['scoreGiven']);
         $this->assertSame($scoreTotalMax, $agsPayload['data']['scoreMaximum']);
@@ -537,6 +562,7 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $property = new \ReflectionProperty(tao_models_classes_Service::class, 'instances');
         $property->setAccessible(true);
         $this->serviceSingletonBackup = $property->getValue();
+        $this->serviceSingletonBackupTaken = true;
         $instances = $this->serviceSingletonBackup ?? [];
         $instances[TaoDeliveryServiceProxy::class] = $proxy;
         $property->setValue(null, $instances);
