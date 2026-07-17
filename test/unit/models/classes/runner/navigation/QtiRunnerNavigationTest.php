@@ -24,12 +24,16 @@ use oat\generis\test\TestCase;
 use oat\taoDelivery\model\execution\DeliveryExecution;
 use oat\taoDelivery\model\execution\DeliveryExecutionInterface;
 use oat\taoDelivery\model\execution\ServiceProxy as TaoDeliveryServiceProxy;
+use oat\taoQtiTest\models\runner\config\RunnerConfig;
 use oat\taoQtiTest\models\runner\navigation\QtiRunnerNavigation;
 use oat\taoQtiTest\models\runner\QtiRunnerPausedException;
 use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 use oat\taoQtiTest\models\runner\session\TestSession;
 use qtism\runtime\tests\AssessmentTestSessionState;
+use qtism\common\collections\StringCollection;
+use qtism\data\AssessmentItemRef;
 use common_Logger;
+use common_exception_Unauthorized;
 use core_kernel_classes_Resource;
 
 class QtiRunnerNavigationTest extends TestCase
@@ -111,5 +115,51 @@ class QtiRunnerNavigationTest extends TestCase
         $this->expectException(QtiRunnerPausedException::class);
 
         QtiRunnerNavigation::move('next', 'item', $context, 'ref');
+    }
+
+    public function testMoveNextSectionRejectedWhenNotAllowed(): void
+    {
+        $testSession = $this->createMock(TestSession::class);
+        $testSession
+            ->expects($this->never())
+            ->method('moveNextAssessmentSection');
+        $testSession
+            ->method('getState')
+            ->willReturn(AssessmentTestSessionState::INTERACTING);
+
+        $context = $this->createNextSectionContext(false, ['x-tao-option-nextSection']);
+        $context
+            ->method('getTestSession')
+            ->willReturn($testSession);
+
+        QtiRunnerNavigation::setLogger($this->createMock(common_Logger::class));
+
+        $this->expectException(common_exception_Unauthorized::class);
+
+        QtiRunnerNavigation::move('next', 'section', $context, null);
+    }
+
+    private function createNextSectionContext(bool $nextSectionEnabled, array $categories): QtiRunnerServiceContext
+    {
+        $testConfig = $this->createMock(RunnerConfig::class);
+        $testConfig
+            ->method('getConfigValue')
+            ->with('nextSection')
+            ->willReturn($nextSectionEnabled);
+
+        $itemRef = $this->createMock(AssessmentItemRef::class);
+        $itemRef
+            ->method('getCategories')
+            ->willReturn(new StringCollection($categories));
+
+        $context = $this->createMock(QtiRunnerServiceContext::class);
+        $context
+            ->method('getTestConfig')
+            ->willReturn($testConfig);
+        $context
+            ->method('getCurrentAssessmentItemRef')
+            ->willReturn($itemRef);
+
+        return $context;
     }
 }
