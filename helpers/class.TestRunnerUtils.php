@@ -38,6 +38,7 @@ use oat\taoQtiTest\models\runner\rubric\QtiRunnerRubric;
 use qtism\common\datatypes\QtiString;
 use oat\oatbox\service\ServiceManager;
 use oat\taoQtiTest\models\runner\RunnerServiceContext;
+use oat\taoQtiTest\models\runner\QtiRunnerServiceContext;
 
 /**
 * Utility methods for the QtiTest Test Runner.
@@ -329,6 +330,79 @@ class taoQtiTest_helpers_TestRunnerUtils
         }
 
         return $doesAllowSkipping && $submissionMode === SubmissionMode::INDIVIDUAL;
+    }
+
+    /**
+     * Whether the candidate is allowed to navigate to the next assessment section.
+     * Requires the next-section feature flag and a matching QTI category on the current item.
+     *
+     * @param AssessmentTestSession $session
+     * @param RunnerServiceContext|null $context
+     * @return boolean
+     */
+    public static function isNextSectionAllowed(AssessmentTestSession $session, RunnerServiceContext $context = null)
+    {
+        return self::getNextSectionDenialReason($session, $context) === null;
+    }
+
+    /**
+     * @return string|null denial reason, or null when next section navigation is allowed
+     */
+    public static function getNextSectionDenialReason(
+        AssessmentTestSession $session,
+        RunnerServiceContext $context = null
+    ) {
+        $nextSectionEnabled = false;
+
+        if ($context !== null && $context->getTestConfig() !== null) {
+            $nextSectionEnabled = !empty($context->getTestConfig()->getConfigValue('nextSection'));
+        } else {
+            $config = common_ext_ExtensionsManager::singleton()
+                ->getExtensionById('taoQtiTest')
+                ->getConfig('testRunner');
+            $nextSectionEnabled = !empty($config['next-section']);
+        }
+
+        if (!$nextSectionEnabled) {
+            return 'feature-disabled';
+        }
+
+        $categories = self::getCategories($session, $context);
+
+        if (
+            in_array('x-tao-option-nextSection', $categories, true)
+            || in_array('x-tao-option-nextSectionWarning', $categories, true)
+        ) {
+            return null;
+        }
+
+        return 'missing-category';
+    }
+
+    /**
+     * @throws common_exception_Unauthorized
+     */
+    public static function assertNextSectionAllowed(
+        AssessmentTestSession $session,
+        RunnerServiceContext $context = null,
+        ?string $deliveryExecutionUri = null
+    ): void {
+        if (self::isNextSectionAllowed($session, $context)) {
+            return;
+        }
+
+        $executionUri = $deliveryExecutionUri;
+        if ($executionUri === null && $context instanceof QtiRunnerServiceContext) {
+            $executionUri = $context->getTestExecutionUri();
+        }
+        $executionUri = $executionUri ?? 'n/a';
+
+        common_Logger::w(
+            sprintf('Next section navigation is not allowed for delivery execution %s', $executionUri),
+            ['nextSection']
+        );
+
+        throw new common_exception_Unauthorized(__('Next section navigation is not allowed.'));
     }
 
     /**

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:22\n"
+"PO-Revision-Date: 2026-07-03 14:55\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ro\n"
@@ -353,6 +353,9 @@ msgstr "Închide masca"
 msgid "Close this Section"
 msgstr "Închideți această secțiune"
 
+msgid "Collapse class"
+msgstr "Restrânge clasa"
+
 msgid "Collapse the review panel"
 msgstr "Restrânge panoul de recenzii"
 
@@ -479,6 +482,9 @@ msgstr "Fiecare condiție prealabilă de mai jos este evaluată prin compararea 
 msgid "Edit"
 msgstr "Editare"
 
+msgid "Edit item"
+msgstr "Editare articol"
+
 msgid "Eliminate choices"
 msgstr "Eliminați opțiunile"
 
@@ -524,6 +530,9 @@ msgstr "Introduceți un plan"
 msgid "Enter a custom category"
 msgstr "Introduceți o categorie personalizată"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Introduceți conținutul cauciucului pentru această scală a rezultatelor."
+
 msgid "Error"
 msgstr "Eroare"
 
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Eroare găsită în testul IMS QTI:\n"
 "%s"
+
+msgid "Expand class"
+msgstr "Extinde clasa"
 
 msgid "Expand the review panel"
 msgstr "Extinde panoul de revizuire"
@@ -603,6 +615,9 @@ msgstr "Marcat pentru revizuire"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Forțează ca elementul să fie considerat ca fiind informațional și să nu fie luat în considerare la (ne)răspunsuri / contoare sub pavilion."
+
+msgid "Go to item"
+msgstr "Du-te la articol"
 
 msgid "Go to next item"
 msgstr "Du-te la următorul element"
@@ -745,6 +760,9 @@ msgstr "Interpretare"
 msgid "is already used in the test."
 msgstr "este deja utilizat în test."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "nu este un identificator valid (alfanum, underscore si dash)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "nu este un identificator valid (alfanum, subliniere, liniuță și puncte)"
 
@@ -810,6 +828,9 @@ msgstr "Navigare tastatură"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "Comenzile rapide de taste pentru Instrumente de Accesibilitate sunt disponibile pentru Test-taker."
+
+msgid "Label"
+msgstr "Etichetă"
 
 msgid "Late submission allowed"
 msgstr "Întârzierea depunerii permisă"
@@ -1286,6 +1307,12 @@ msgstr "Salvează"
 msgid "Saved"
 msgstr "Salvat"
 
+msgid "Scale"
+msgstr "Scala"
+
+msgid "Scale files could not be stored: %s"
+msgstr "Fișierele scanate nu au putut fi stocate: %s"
+
 msgid "Scale name not allowed"
 msgstr "Numele scanării nu este permis"
 
@@ -1297,6 +1324,9 @@ msgstr "Marcator"
 
 msgid "Scoring"
 msgstr "Punctaj"
+
+msgid "Scoring Rubric"
+msgstr "Rubrică de punctaj"
 
 msgid "Scratch pad"
 msgstr "Tastatură Scratch"
@@ -1336,6 +1366,9 @@ msgstr "Selectează elemente"
 
 msgid "Select or enter a scale"
 msgstr "Selectați sau introduceți o scară"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Selectați sau introduceți o scară pentru acest rezultat."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Selectează modul în care răspunsurile testului tău ar trebui să fie procesate"
@@ -1638,6 +1671,9 @@ msgstr "Arhiva furnizată este invalidă. Asigurați-vă că nu este coruptă ș
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr "Elementul QTI cu URI '%s' nu poate fi găsit."
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "Sintaxa QTI utilizată pentru acest test nu este încă suportată de interfața curentă. Pentru a revizui sau edita în mod eficient conținutul, vă recomandăm să utilizați funcționalitatea Editorului XML pentru o experiență continuă."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "Testul QTI '%spentru a fi compilat trebuie să conţină cel puţin 1 element QTI. Nici unul găsit."
 
@@ -1766,6 +1802,9 @@ msgstr "Titlu"
 msgid "to"
 msgstr "către"
 
+msgid "Toggle class children"
+msgstr "Comută copiii clasei"
+
 msgid "Toggle playback"
 msgstr "Comută redarea"
 
@@ -1834,6 +1873,9 @@ msgstr "Valoare"
 
 msgid "Variable"
 msgstr "Variabilă"
+
+msgid "View item"
+msgstr "Vizualizare articol"
 
 msgid "Viewed"
 msgstr "Văzut"

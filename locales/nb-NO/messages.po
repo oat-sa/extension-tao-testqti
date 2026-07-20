@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-04 15:24\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nb_NO\n"
@@ -353,6 +353,9 @@ msgstr "Lukk maskering"
 msgid "Close this Section"
 msgstr "Lukk denne seksjonen"
 
+msgid "Collapse class"
+msgstr "Kollaps klasse"
+
 msgid "Collapse the review panel"
 msgstr "Skjul vinduet for å se gjennom oppgaver"
 
@@ -479,6 +482,9 @@ msgstr "Hver forutsetning nedenfor evalueres ved å sammenligne variabelinnholde
 msgid "Edit"
 msgstr "Redigere"
 
+msgid "Edit item"
+msgstr "Rediger oppgave"
+
 msgid "Eliminate choices"
 msgstr "Fjern valgene"
 
@@ -524,6 +530,9 @@ msgstr "Skriv inn en kopi"
 msgid "Enter a custom category"
 msgstr "Skriv inn en kategori"
 
+msgid "Enter rubric content for this outcome scale."
+msgstr "Legg inn gummiinnholdet for denne resultatskalaen."
+
 msgid "Error"
 msgstr "Feil"
 
@@ -533,6 +542,9 @@ msgstr "Filimport feilet"
 msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "Feil funnet i IMS QTI-prøven: %s"
+
+msgid "Expand class"
+msgstr "Utvid klasse"
 
 msgid "Expand the review panel"
 msgstr "Utvid se gjennom oppgave-panelet"
@@ -602,6 +614,9 @@ msgstr "Flagget for å kunne se gjennom"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "Sett denne oppgaven som en informasjonsside som ikke skal tas med i opptellingen av (u)besvarte/.flaggede oppgaver."
+
+msgid "Go to item"
+msgstr "Gå til element"
 
 msgid "Go to next item"
 msgstr "Gå til neste oppgave"
@@ -744,6 +759,9 @@ msgstr "Navn"
 msgid "is already used in the test."
 msgstr "er allerede brukt i prøven."
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "er ikke en gyldig identifikator (alphanum, underscore og bindestrek)."
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "er ikke en gyldig identifikator (alfanumeriske tegn, understreking, bindestrek og prikker)"
 
@@ -809,6 +827,9 @@ msgstr "Tastaturnavigasjon"
 
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "Tastatursnarveier for tilgjengelighetsverktøy er tilgjengelige for eleven."
+
+msgid "Label"
+msgstr "Navn"
 
 msgid "Late submission allowed"
 msgstr "Sen levering tillatt"
@@ -1285,6 +1306,12 @@ msgstr "Lagre"
 msgid "Saved"
 msgstr "Lagret"
 
+msgid "Scale"
+msgstr "Skala"
+
+msgid "Scale files could not be stored: %s"
+msgstr "Skalafiler kunne ikke lagres: %s"
+
 msgid "Scale name not allowed"
 msgstr "Skalenavn er ikke tillatt"
 
@@ -1296,6 +1323,9 @@ msgstr "Skårer"
 
 msgid "Scoring"
 msgstr "Skåring"
+
+msgid "Scoring Rubric"
+msgstr "Poengform Gummi"
 
 msgid "Scratch pad"
 msgstr "Tegnebrett"
@@ -1335,6 +1365,9 @@ msgstr "Velg oppgaver"
 
 msgid "Select or enter a scale"
 msgstr "Velg eller skriv inn en skala"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "Velg eller skriv inn en skala for dette resultatet."
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "Velg måten svarene på prøven din skal behandles på"
@@ -1637,6 +1670,9 @@ msgstr "Det oppgitte arkivet er ugyldig. Sørg for at det ikke er ødelagt og at
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr ""
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "QTI-syntaksen som brukes i denne testen støttes ikke av dagens brukergrensesnitt. For å effektivt gjennomgå eller redigere innholdet ditt anbefaler vi å bruke XML Editor funksjonaliteten for en sømløs opplevelse."
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "QTI-prøven '%s' som skal kompileres, må inneholde minst 1 QTI-oppgave. Ingen funnet."
 
@@ -1764,6 +1800,9 @@ msgstr "Tittel"
 msgid "to"
 msgstr "til"
 
+msgid "Toggle class children"
+msgstr "Veksle klasse barn"
+
 msgid "Toggle playback"
 msgstr "Slå av og på avspilling"
 
@@ -1832,6 +1871,9 @@ msgstr "Verdi"
 
 msgid "Variable"
 msgstr "Variabel"
+
+msgid "View item"
+msgstr "Vis element"
 
 msgid "Viewed"
 msgstr "Vist"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-05 06:05\n"
+"PO-Revision-Date: 2026-07-03 14:56\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -353,6 +353,9 @@ msgstr "マスクを閉じる"
 msgid "Close this Section"
 msgstr "セクションを閉じる"
 
+msgid "Collapse class"
+msgstr "クラスを閉じる"
+
 msgid "Collapse the review panel"
 msgstr "レビューパネルをたたむ"
 
@@ -479,6 +482,9 @@ msgstr "以下の各前提条件は、変数と特定の値を演算子を用い
 msgid "Edit"
 msgstr "編集"
 
+msgid "Edit item"
+msgstr "アイテム編集"
+
 msgid "Eliminate choices"
 msgstr "選択肢の消去"
 
@@ -507,7 +513,7 @@ msgid "Enables skipping to items within this section. Requires the review screen
 msgstr "このセクション内のスキップを有効にします。レビュースクリーン設定が必要です。"
 
 msgid "End of the test"
-msgstr "テストの終了"
+msgstr "テスト終了"
 
 msgid "End test"
 msgstr "テスト終了"
@@ -516,13 +522,16 @@ msgid "End Test"
 msgstr "テスト終了"
 
 msgid "Enforce Item Constraints"
-msgstr "アイテム制約を強制する"
+msgstr "解答条件での解答を強制"
 
 msgid "Enter a blueprint"
 msgstr "ブループリントの入力"
 
 msgid "Enter a custom category"
 msgstr "カテゴリを入力"
+
+msgid "Enter rubric content for this outcome scale."
+msgstr "このアウトカムスケールのルーブリックコンテンツを入力してください。"
 
 msgid "Error"
 msgstr "エラー"
@@ -534,6 +543,9 @@ msgid "Error found in the IMS QTI Test:\n"
 "%s"
 msgstr "QTIテストにエラーが見つかりました:\n"
 "%s"
+
+msgid "Expand class"
+msgstr "クラスを展開"
 
 msgid "Expand the review panel"
 msgstr "レビューパネルを開く"
@@ -603,6 +615,9 @@ msgstr "見直しマーク"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "インフォメーションのためのアイテムと見なし、解答・未解答や見直しマークのカウントに反映されません。"
+
+msgid "Go to item"
+msgstr "アイテムに移動"
 
 msgid "Go to next item"
 msgstr "次へ進む"
@@ -745,6 +760,9 @@ msgstr "翻訳"
 msgid "is already used in the test."
 msgstr "既にテストで使用されています"
 
+msgid "is not a valid identifier (alphanum, underscore and dash)"
+msgstr "は有効な識別子ではありません (英数字、アンダースコア、ダッシュ)"
+
 msgid "is not a valid identifier (alphanum, underscore, dash and dots)"
 msgstr "は有効な識別子ではありません (英数字、アンダースコア、ダッシュ、ドット)"
 
@@ -811,8 +829,11 @@ msgstr "キーボードナビゲーション"
 msgid "Keyboard shortcuts for the Accessibility Tools are available to the Test-taker."
 msgstr "アクセシビリティツールのキーボードショートカットは、受験者が利用することができます。"
 
+msgid "Label"
+msgstr "ラベル"
+
 msgid "Late submission allowed"
-msgstr "タイムアウトまでのデータを送信"
+msgstr "タイムアウトまでの解答を全て送信"
 
 msgid "Leave a comment"
 msgstr "コメントを残す"
@@ -1286,6 +1307,12 @@ msgstr "保存"
 msgid "Saved"
 msgstr "保存済み"
 
+msgid "Scale"
+msgstr "拡大縮小"
+
+msgid "Scale files could not be stored: %s"
+msgstr "スケールファイルを保存できませんでした: %s"
+
 msgid "Scale name not allowed"
 msgstr "スケール名は許可されません"
 
@@ -1297,6 +1324,9 @@ msgstr "採点者"
 
 msgid "Scoring"
 msgstr "採点方法"
+
+msgid "Scoring Rubric"
+msgstr "ルーブリックのスコア化"
 
 msgid "Scratch pad"
 msgstr "スクラッチパッド"
@@ -1336,6 +1366,9 @@ msgstr "アイテム選択"
 
 msgid "Select or enter a scale"
 msgstr "スケールを選択または入力"
+
+msgid "Select or enter a scale for this outcome."
+msgstr "この結果のスケールを選択または入力します。"
 
 msgid "Select the way the responses of your test should be processed"
 msgstr "テストの採点結果の処理方法を選択します"
@@ -1638,6 +1671,9 @@ msgstr "適応されたアーカイブは無効です。破損していないか
 msgid "The QTI Item with URI '%s' cannot be found."
 msgstr "QTIアイテム（ URI '%s'）が見つかりません。"
 
+msgid "The QTI syntax used for this test is not yet supported by the current UI. To effectively review or edit your content, we recommend using the XML Editor functionality for a seamless experience."
+msgstr "このテストで使用される QTI 構文は、現在の UI ではまだサポートされていません。 コンテンツを効果的に確認または編集するには、シームレスなエクスペリエンスのためにXMLエディタ機能を使用することをお勧めします。"
+
 msgid "The QTI Test '%s' to be compiled must contain at least 1 QTI Item. None found."
 msgstr "コンパイルするQTIテスト'%s'は少なくとも１つのQTIアイテムが必要ですが，見つかりません。"
 
@@ -1765,6 +1801,9 @@ msgstr "タイトル"
 msgid "to"
 msgstr "ー"
 
+msgid "Toggle class children"
+msgstr "クラスの子要素を切り替える"
+
 msgid "Toggle playback"
 msgstr "再生を切り替える"
 
@@ -1833,6 +1872,9 @@ msgstr "値"
 
 msgid "Variable"
 msgstr "変数"
+
+msgid "View item"
+msgstr "アイテムを表示"
 
 msgid "Viewed"
 msgstr "表示済み"

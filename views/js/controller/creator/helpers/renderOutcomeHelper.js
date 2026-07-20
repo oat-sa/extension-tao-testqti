@@ -633,10 +633,10 @@ define([
             const serial = outcome.serial;
 
             const externalScored = {
-                none: {label: __('None'), selected: !outcome.externalScored},
-                human: {label: __('Human'), selected: outcome.externalScored === externalScoredOptions.human},
+                none: {label: __.plainTextFromRuby(__('None')), selected: !outcome.externalScored},
+                human: {label: __.plainTextFromRuby(__('Human')), selected: outcome.externalScored === externalScoredOptions.human},
                 externalMachine: {
-                    label: __('External Machine'),
+                    label: __.plainTextFromRuby(__('External Machine')),
                     selected: outcome.externalScored === externalScoredOptions.externalMachine
                 }
             };
