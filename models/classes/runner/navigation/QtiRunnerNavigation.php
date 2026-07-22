@@ -103,6 +103,10 @@ class QtiRunnerNavigation
         $session = $context->getTestSession();
         $navigator = self::getNavigator($direction, $scope);
 
+        if ($direction === 'next' && $scope === 'section') {
+            \taoQtiTest_helpers_TestRunnerUtils::assertNextSectionAllowed($session, $context);
+        }
+
         if (self::isSessionSuspended($context) || self::isExecutionPaused($context)) {
             self::getLogger()->logDebug(
                 self::class . '::move session is suspended or execution paused'

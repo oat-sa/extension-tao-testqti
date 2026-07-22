@@ -676,6 +676,12 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
             $session = $this->getTestSession();
 
             try {
+                taoQtiTest_helpers_TestRunnerUtils::assertNextSectionAllowed(
+                    $session,
+                    null,
+                    $this->getRequestParameter('serviceCallId')
+                );
+
                 $session->moveNextAssessmentSection();
 
                 if (
@@ -686,6 +692,10 @@ class taoQtiTest_actions_TestRunner extends tao_actions_ServiceModule
                 }
             } catch (AssessmentTestSessionException $e) {
                 $this->handleAssessmentTestSessionException($e);
+            } catch (common_exception_Unauthorized $e) {
+                $this->notifyError($e->getMessage(), 403);
+
+                return;
             }
 
             $this->afterAction();
