@@ -458,7 +458,7 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         $deliveryExecution = $this->createMock(DeliveryExecution::class);
         $deliveryExecution->method('getUserIdentifier')->willReturn($userUri);
         $deliveryExecution->method('getIdentifier')->willReturn($executionId);
-        $deliveryExecution->method('getFinishTime')->willReturn(1234567890.1234);
+        $deliveryExecution->method('getFinishTime')->willReturn('0.12340000 1234567890');
         $deliveryExecution->expects($this->once())->method('setState')->willReturn(true);
 
         $this->injectDeliveryExecutionServiceProxy($deliveryExecution);
@@ -551,7 +551,7 @@ class QtiRunnerServiceContinueInteractionTest extends TestCase
         return (new OutcomeVariableModel())
             ->setIdentifier($identifier)
             ->setValue((string)$value)
-            ->setEpoch('1234567890.1234');
+            ->setEpoch('0.12340000 1234567890');
     }
 
     private function injectDeliveryExecutionServiceProxy(DeliveryExecution $deliveryExecution): void
