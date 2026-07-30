@@ -1,0 +1,32 @@
+[{
+    "qti-type": "div",
+    "xmlBase": "",
+    "content": [{
+        "qti-type": "feedbackBlock",
+        "xmlBase": "",
+        "content": [{
+            "qti-type": "p",
+            "xmlBase": "",
+            "content": [{
+                "qti-type": "textRun",
+                "xmlBase": "",
+                "content": "You have successfully passed the test!"
+            }],
+            "id": "",
+            "class": "",
+            "lang": "",
+            "label": ""
+        }],
+        "outcomeIdentifier": "PASS_TOTAL_RENDERING",
+        "showHide": "show",
+        "identifier": "passed",
+        "id": "",
+        "class": "",
+        "lang": "",
+        "label": ""
+    }],
+    "id": "",
+    "class": "",
+    "lang": "",
+    "label": ""
+}]
