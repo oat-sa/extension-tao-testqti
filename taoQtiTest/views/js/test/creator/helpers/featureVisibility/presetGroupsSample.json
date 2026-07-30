@@ -1,0 +1,203 @@
+[
+    {
+        "groupId": "navigation",
+        "groupLabel": "Test Navigation",
+        "groupOrder": 100,
+        "presets": [
+            {
+                "id": "reviewScreen",
+                "label": "Enable Review Screen",
+                "qtiCategory": "x-tao-option-reviewScreen",
+                "description": "Enable the item review screen / navigator.",
+                "order": 100,
+                "pluginId": "review",
+                "featureFlag": null
+            },
+            {
+                "id": "markReview",
+                "label": "Enable Mark for Review",
+                "qtiCategory": "x-tao-option-markReview",
+                "description": "Enable mark for review of items. Requires the Review Screen option.",
+                "order": 200,
+                "pluginId": "review",
+                "featureFlag": null
+            },
+            {
+                "id": "informational",
+                "label": "Informational Item Usage",
+                "qtiCategory": "x-tao-itemusage-informational",
+                "description": "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters.",
+                "order": 300,
+                "pluginId": "review",
+                "featureFlag": null
+            }
+        ]
+    },
+    {
+        "groupId": "warning",
+        "groupLabel": "Navigation Warnings",
+        "groupOrder": 200,
+        "presets": [
+            {
+                "id": "endTestWarning",
+                "label": "Display End Test Warning",
+                "qtiCategory": "x-tao-option-endTestWarning",
+                "description": "Display a warning before the test-taker ends the test.",
+                "order": 100,
+                "pluginId": "next",
+                "featureFlag": null
+            },
+            {
+                "id": "nextPartWarning",
+                "label": "Display Next Part Warning",
+                "qtiCategory": "x-tao-option-nextPartWarning",
+                "description": "Display a warning before the test-taker ends the test part.",
+                "order": 200,
+                "pluginId": "next",
+                "featureFlag": null
+            },
+            {
+                "id": "nextSectionWarning",
+                "label": "Display Next Section Warning",
+                "qtiCategory": "x-tao-option-nextSectionWarning",
+                "description": "Display a warning before the test-taker skips the section. Requires the Section Skipping option.",
+                "order": 300,
+                "pluginId": "nextSection",
+                "featureFlag": null
+            },
+            {
+                "id": "noExitTimedSectionWarning",
+                "label": "Hide Timed Section Warning",
+                "qtiCategory": "x-tao-option-noExitTimedSectionWarning",
+                "description": "Hide the warning automatically displayed when a test-taker exit a timed section.",
+                "order": 400,
+                "pluginId": "next",
+                "featureFlag": null
+            },
+            {
+                "id": "unansweredWarning",
+                "label": "Display Unanswered Warning",
+                "qtiCategory": "x-tao-option-unansweredWarning",
+                "description": "Display a warning before the test-taker ends a test part and there are still items left unanswered or marked for review.",
+                "order": 500,
+                "pluginId": "next",
+                "featureFlag": null
+            },
+            {
+                "id": "noAlertTimeout",
+                "label": "Do not show alert on timeout",
+                "qtiCategory": "x-tao-option-noAlertTimeout",
+                "description": "Moving to the next item without time limit reached message.",
+                "order": 600,
+                "pluginId": "next",
+                "featureFlag": null
+            }
+        ]
+    },
+    {
+        "groupId": "tools",
+        "groupLabel": "Test-Taker Tools",
+        "groupOrder": 300,
+        "presets": [
+            {
+                "id": "eliminator",
+                "label": "Answer Eliminator",
+                "qtiCategory": "x-tao-option-eliminator",
+                "description": "Allow the test-taker to eliminate / strikethrough answers in choice interactions.",
+                "order": 100,
+                "pluginId": "eliminator",
+                "featureFlag": null
+            },
+            {
+                "id": "answerMasking",
+                "label": "Answer Masking",
+                "qtiCategory": "x-tao-option-answerMasking",
+                "description": "Allow the test-taker to mask and unmask answers in choice interactions.",
+                "order": 200,
+                "pluginId": "answerMasking",
+                "featureFlag": null
+            },
+            {
+                "id": "areaMasking",
+                "label": "Area Masking",
+                "qtiCategory": "x-tao-option-areaMasking",
+                "description": "Allow the test-taker to mask parts of the item with a movable mask.",
+                "order": 300,
+                "pluginId": "area-masking",
+                "featureFlag": null
+            },
+            {
+                "id": "calculator",
+                "label": "Calculator",
+                "qtiCategory": "x-tao-option-calculator",
+                "description": "Allow the test-taker to use a basic calculator.",
+                "order": 400,
+                "pluginId": "calculator",
+                "featureFlag": null
+            },
+            {
+                "id": "calculatorBodmas",
+                "label": "Calculator BODMAS",
+                "qtiCategory": "x-tao-option-calculatorBodmas",
+                "description": "Allow the test-taker to use a calculator respecting the order of operations (BODMAS).",
+                "order": 400,
+                "pluginId": "calculator",
+                "featureFlag": null
+            },
+            {
+                "id": "calculatorScientific",
+                "label": "Scientific Calculator",
+                "qtiCategory": "x-tao-option-calculator-scientific",
+                "description": "Allow the test-taker to use a scientific calculator.",
+                "order": 400,
+                "pluginId": "calculator",
+                "featureFlag": null
+            },
+            {
+                "id": "highlighter",
+                "label": "Highlighter",
+                "qtiCategory": "x-tao-option-highlighter",
+                "description": "Allow the test-taker to highlight parts of the item text.",
+                "order": 500,
+                "pluginId": "highlighter",
+                "featureFlag": null
+            },
+            {
+                "id": "lineReader",
+                "label": "Line Reader",
+                "qtiCategory": "x-tao-option-lineReader",
+                "description": "Allow the test-taker to visually isolate a line of text.",
+                "order": 600,
+                "pluginId": "lineReader",
+                "featureFlag": null
+            },
+            {
+                "id": "magnifier",
+                "label": "Magnifier",
+                "qtiCategory": "x-tao-option-magnifier",
+                "description": "Allow the test-taker to use a movable magnifier tool.",
+                "order": 700,
+                "pluginId": "magnifier",
+                "featureFlag": null
+            },
+            {
+                "id": "zoom",
+                "label": "Zoom",
+                "qtiCategory": "x-tao-option-zoom",
+                "description": "Allows Test-taker to zoom in and out the item content.",
+                "order": 700,
+                "pluginId": "zoom",
+                "featureFlag": null
+            },
+            {
+                "id": "apiptts",
+                "label": "APIP Text To Speech",
+                "qtiCategory": "x-tao-option-apiptts",
+                "description": "Allow Test-taker to playback media files associated according to APIP protocol to item content.",
+                "order": 900,
+                "pluginId": "apiptts",
+                "featureFlag": null
+            }
+        ]
+    }
+]

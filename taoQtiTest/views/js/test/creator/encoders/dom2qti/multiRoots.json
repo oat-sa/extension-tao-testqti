@@ -1,0 +1,47 @@
+[
+    {
+        "qti-type": "p",
+        "xmlBase": "",
+        "id": "",
+        "class": "",
+        "lang": "",
+        "label": "",
+        "content": [
+            {
+                "qti-type": "textRun",
+                "xmlBase": "",
+                "content": "paragraph 1"
+            }
+        ]
+    },
+    {
+        "qti-type": "p",
+        "xmlBase": "",
+        "id": "",
+        "class": "",
+        "lang": "",
+        "label": "",
+        "content": [
+            {
+                "qti-type": "textRun",
+                "xmlBase": "",
+                "content": "paragraph 2"
+            }
+        ]
+    },
+    {
+        "qti-type": "p",
+        "xmlBase": "",
+        "id": "",
+        "class": "",
+        "lang": "",
+        "label": "",
+        "content": [
+            {
+                "qti-type": "textRun",
+                "xmlBase": "",
+                "content": "paragraph 3"
+            }
+        ]
+    }
+]
