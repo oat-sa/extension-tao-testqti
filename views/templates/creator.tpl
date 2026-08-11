@@ -59,7 +59,7 @@
     </section>
 
     <section class="test-creator-sidebar test-creator-area test-creator-props">
-        <div class="action-bar plain content-action-bar horizontal-action-bar">
+        <div class="action-bar plain content-action-bar horizontal-action-bar test-creator-mode-action-bar">
             <ul id="test-creator-mode-tabs" class="plain clearfix test-creator-mode-tabs" role="tablist">
                 <li
                     role="tab"
@@ -90,7 +90,6 @@
             </ul>
         </div>
         <div class="test-creator-props-panel" data-mode-panel="properties">
-            <h1><?=__('Properties')?></h1>
             <div class="qti-widget-properties"></div>
         </div>
         <div
@@ -102,7 +101,7 @@
             <p class="comments-guidance">
                 <?=__('Comments apply to the whole test.')?>
             </p>
-            <div class="test-comments-content-panel panel"></div>
+            <div class="test-comments-content-panel"></div>
         </div>
     </section>
 

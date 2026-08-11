@@ -1,12 +1,26 @@
-/* Test Creator Properties | Comments chrome (panel/list/row from taoItems). */
+/* Test Creator Properties | Comments chrome — match Item mode-tab behaviour.
+ * Panel / list / row styles come from taoItems comments-panel.
+ */
+
+#test-creator .test-creator-props > .test-creator-mode-action-bar {
+    padding: 0 !important;
+    margin: 0;
+    min-height: 34px;
+    background: #ececec;
+    border-bottom: 1px solid #c8ccd0;
+    box-sizing: border-box;
+}
 
 #test-creator .test-creator-props .test-creator-mode-tabs {
     display: flex;
     align-items: stretch;
     width: 100%;
+    height: 34px;
     margin: 0;
     padding: 0;
     list-style: none;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 #test-creator .test-creator-props .test-creator-mode-tabs > [role='tab'] {
@@ -23,8 +37,11 @@
     cursor: pointer;
     box-sizing: border-box;
     overflow: hidden;
-    border-right: 1px solid #ddd;
-    opacity: 0.85;
+    background: #ececec;
+    color: #333;
+    border: 0;
+    border-right: 1px solid #b0b0b0;
+    opacity: 1;
 }
 
 #test-creator .test-creator-props .test-creator-mode-tabs > [role='tab'] .li-inner {
@@ -34,13 +51,24 @@
     gap: 6px;
     width: 100%;
     height: 100%;
+    margin: 0;
     padding: 0;
     white-space: nowrap;
     overflow: hidden;
+    color: inherit;
 }
 
 #test-creator .test-creator-props .test-creator-mode-tabs > [role='tab'] .tab-label {
     display: none;
+}
+
+#test-creator .test-creator-props .test-creator-mode-tabs > [role='tab']:hover {
+    background: #e2e2e2;
+    color: #222;
+}
+
+#test-creator .test-creator-props .test-creator-mode-tabs > [role='tab']:last-child {
+    border-right: 0;
 }
 
 #test-creator .test-creator-props .test-creator-mode-tabs > [role='tab'].active,
@@ -49,8 +77,8 @@
     width: auto;
     min-width: 0;
     max-width: none;
-    opacity: 1;
-    background: rgba(0, 0, 0, 0.06);
+    background: #c8ccd0;
+    color: #222;
 }
 
 #test-creator .test-creator-props .test-creator-mode-tabs > [role='tab'].active .li-inner,
@@ -66,6 +94,16 @@
     text-overflow: ellipsis;
 }
 
+/* No legacy section h1 under the mode tabs (label lives in the active tab). */
+#test-creator .test-creator-props > h1,
+#test-creator .test-creator-props-panel > h1 {
+    display: none;
+}
+
+#test-creator .test-creator-comments-panel {
+    background: transparent;
+}
+
 #test-creator .test-creator-comments-panel .comments-guidance {
     margin: 8px 10px;
     font-size: 12px;
@@ -74,7 +112,18 @@
 
 #test-creator .test-creator-comments-panel .test-comments-content-panel {
     padding: 0;
+    margin: 0;
     min-height: 280px;
     width: 100%;
     box-sizing: border-box;
+    background: transparent;
+}
+
+/* Shared panel fills the rail; list rows stay white like Item. */
+#test-creator .test-creator-comments-panel .item-comments-panel {
+    background: transparent;
+}
+
+#test-creator .test-creator-comments-panel .item-comments-entry {
+    background: #f3f3f3;
 }
