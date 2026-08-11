@@ -49,7 +49,8 @@ define([
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/helpers/branchRules',
     'taoQtiTest/controller/creator/helpers/preConditions',
-    'taoQtiTest/controller/creator/helpers/saveScoring'
+    'taoQtiTest/controller/creator/helpers/saveScoring',
+    'taoQtiTest/controller/creator/components/testComments'
 ], function (
     module,
     $,
@@ -81,7 +82,8 @@ define([
     scaleSelector,
     branchRules,
     preConditions,
-    saveScoring
+    saveScoring,
+    testComments
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -323,6 +325,11 @@ define([
                         if (options.translation) {
                             translationView(creatorContext);
                         }
+
+                                testComments.init({
+                                    testUri: options.testUri,
+                                    $container: $container
+                                });
 
                                 //listen for changes to update available actions
                                 testPartView.listenActionState();
