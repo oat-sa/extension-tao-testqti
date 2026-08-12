@@ -3,17 +3,16 @@
  * Solar has dedicated tab chip overrides.
  */
 
-#test-creator .test-creator-props > .test-creator-mode-action-bar {
+body:not(.solar-design) #test-creator .test-creator-props > .test-creator-mode-action-bar {
     padding: 0 !important;
     margin: 0;
     min-height: 34px;
     background: var(--action-bar-background, #266d9c) !important;
     border-bottom: 0;
     box-sizing: border-box;
-    display: block !important;
 }
 
-#test-creator #test-creator-mode-tabs {
+body:not(.solar-design) #test-creator #test-creator-mode-tabs {
     display: flex !important;
     align-items: stretch;
     justify-content: flex-start;
@@ -137,38 +136,9 @@
     }
 }
 
-/* Solar Design: light chips on light chrome */
-body.solar-design #test-creator #test-creator-mode-tabs {
-    > [role='tab'] {
-        background: #ececec !important;
-        color: #333 !important;
-        border: 0 !important;
-        border-right: 1px solid #b0b0b0 !important;
-        opacity: 1;
-
-        &:hover {
-            background: #e2e2e2 !important;
-            border-color: #b0b0b0 !important;
-            color: #222 !important;
-        }
-
-        &:last-child {
-            border-right: 0 !important;
-        }
-
-        &.active,
-        &[aria-selected='true'] {
-            background: #c8ccd0 !important;
-            border: 0 !important;
-            border-right: 1px solid #9aa0a6 !important;
-            color: #222 !important;
-        }
-    }
-}
-
 /* Keep legacy h1 hidden, label lives in active mode tab. */
-#test-creator .test-creator-props > h1,
-#test-creator .test-creator-props-panel > h1 {
+body:not(.solar-design) #test-creator .test-creator-props > h1,
+body:not(.solar-design) #test-creator .test-creator-props-panel > h1 {
     display: none !important;
 }
 
