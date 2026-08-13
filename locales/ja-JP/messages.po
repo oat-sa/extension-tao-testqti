@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-02-05 06:05\n"
+"PO-Revision-Date: 2026-08-13 12:07\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -353,6 +353,9 @@ msgstr "マスクを閉じる"
 msgid "Close this Section"
 msgstr "セクションを{ruby}閉{rt}と{/rt}{/ruby}じる"
 
+msgid "Collapse class"
+msgstr "クラスを閉じる"
+
 msgid "Collapse the review panel"
 msgstr "レビューパネルをたたむ"
 
@@ -603,6 +606,9 @@ msgstr "ブックマーク"
 
 msgid "Force the item to be considered as informational and not taken into account in (un)answered / flagged counters."
 msgstr "インフォメーションのためのアイテムと見なし、解答・未解答やブックマークのカウントに反映されません。"
+
+msgid "Go to item"
+msgstr "アイテムに移動"
 
 msgid "Go to next item"
 msgstr "次へ進む"
@@ -1170,7 +1176,7 @@ msgid "PROCEED & END ASSESSMENT"
 msgstr "進行と最終評価"
 
 msgid "Proctor"
-msgstr "試験監督"
+msgstr "試験監督者"
 
 msgid "Properties"
 msgstr "属性"
@@ -2008,4 +2014,3 @@ msgstr "拡大"
 
 msgid "Zoom out"
 msgstr "縮小"
-
