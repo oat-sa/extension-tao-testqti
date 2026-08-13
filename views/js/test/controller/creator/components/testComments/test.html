@@ -3,8 +3,20 @@
     <head>
         <meta charset="utf-8" />
         <title>testComments</title>
-        <script type="text/javascript" src="/tao/views/js/lib/require.js"></script>
-        <script type="text/javascript" src="/tao/views/js/loader/bootstrap.js" data-modules="taoQtiTest/test/controller/creator/components/testComments/test"></script>
+        <base href="../../../../../../../../tao/views/" />
+        <link rel="stylesheet" type="text/css" href="js/lib/qunit/qunit.css" />
+        <script type="text/javascript" src="js/lib/qunit/qunit.js"></script>
+        <script type="text/javascript" src="js/lib/require.js"></script>
+
+        <script type="text/javascript">
+            QUnit.config.autostart = false;
+
+            require(['/tao/ClientConfig/config'], function () {
+                require(['taoQtiTest/test/controller/creator/components/testComments/test'], function () {
+                    QUnit.start();
+                });
+            });
+        </script>
     </head>
     <body>
         <div id="qunit"></div>
