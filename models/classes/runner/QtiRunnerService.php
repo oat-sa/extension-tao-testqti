@@ -1432,6 +1432,17 @@ class QtiRunnerService extends ConfigurableService implements PersistableRunnerS
 
             TestRunnerUtils::beginCandidateInteraction($session);
             $continue = true;
+        } elseif ($session->isRunning() === true && $session->isTimeout() === true) {
+            try {
+                $session->checkTimeLimits(false, true, false);
+                $event = new QtiContinueInteractionEvent($context, $this);
+                $this->getServiceManager()->get(EventManager::SERVICE_ID)->trigger($event);
+
+                TestRunnerUtils::beginCandidateInteraction($session);
+                $continue = true;
+            } catch (AssessmentTestSessionException $e) {
+                $this->onTimeout($context, $e);
+            }
         } else {
             $this->finish($context);
         }

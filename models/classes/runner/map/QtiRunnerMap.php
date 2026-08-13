@@ -28,6 +28,8 @@ use oat\oatbox\service\ConfigurableService;
 use oat\taoQtiTest\models\cat\CatService;
 use oat\taoQtiTest\models\cat\CatUtils;
 use oat\taoQtiTest\models\ExtendedStateService;
+use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoQtiTest\models\runner\config\Business\Contract\OverriddenOptionsRepositoryInterface;
 use oat\taoQtiTest\models\runner\config\QtiRunnerConfig;
 use oat\taoQtiTest\models\runner\config\RunnerConfig;
@@ -48,6 +50,8 @@ use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 class QtiRunnerMap extends ConfigurableService implements RunnerMap
 {
     public const SERVICE_ID = 'taoQtiTest/QtiRunnerMap';
+
+    public const FEATURE_FLAG_SKIP_TIMEOUT_ALERT = 'FEATURE_FLAG_SKIP_TIMEOUT_ALERT';
 
     /**
      * Fallback index in case of the delivery was compiled without the index of item href
@@ -379,26 +383,26 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
         }
 
         if (empty($itemInfos['informational'])) {
-            $target['stats']['questions'] ++;
+            $target['stats']['questions']++;
 
             if (!empty($itemInfos['answered'])) {
-                $target['stats']['answered'] ++;
+                $target['stats']['answered']++;
             }
 
             if (!empty($itemInfos['viewed'])) {
-                $target['stats']['questionsViewed'] ++;
+                $target['stats']['questionsViewed']++;
             }
         }
 
         if (!empty($itemInfos['flagged'])) {
-            $target['stats']['flagged'] ++;
+            $target['stats']['flagged']++;
         }
 
         if (!empty($itemInfos['viewed'])) {
-            $target['stats']['viewed'] ++;
+            $target['stats']['viewed']++;
         }
 
-        $target['stats']['total'] ++;
+        $target['stats']['total']++;
     }
 
     /**
@@ -536,7 +540,16 @@ class QtiRunnerMap extends ConfigurableService implements RunnerMap
             }
         }
 
+        if ($this->getFeatureFlagChecker()->isEnabled(self::FEATURE_FLAG_SKIP_TIMEOUT_ALERT)) {
+            $categoriesMap[QtiRunnerConfig::CATEGORY_OPTION_PREFIX . 'noAlertTimeout'] = true;
+        }
+
         return array_keys($categoriesMap);
+    }
+
+    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
+    {
+        return $this->getServiceLocator()->getContainer()->get(FeatureFlagChecker::class);
     }
 
     private function getOverriddenOptionsRepository(): OverriddenOptionsRepositoryInterface
