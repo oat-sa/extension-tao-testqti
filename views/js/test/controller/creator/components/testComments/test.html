@@ -11,6 +11,41 @@
         <script type="text/javascript">
             QUnit.config.autostart = false;
 
+            // ponytail: this API-level test does not exercise shared taoItems runtime,
+            // so we stub those modules to keep this suite self-contained in CI.
+            define('taoItems/services/itemComments', [], function () {
+                return {
+                    RESOURCE_TYPE: {
+                        TEST: 'test'
+                    }
+                };
+            });
+
+            define('taoItems/comments/itemCommentsStore', [], function () {
+                return function () {
+                    return {
+                        on: function () {
+                            return this;
+                        },
+                        off: function () {
+                            return this;
+                        },
+                        load: function () {
+                            return Promise.resolve(this);
+                        }
+                    };
+                };
+            });
+
+            define('taoItems/comments/commentsPanel', [], function () {
+                return function () {
+                    return {
+                        refresh: function () {},
+                        destroy: function () {}
+                    };
+                };
+            });
+
             require(['/tao/ClientConfig/config'], function () {
                 require(['taoQtiTest/test/controller/creator/components/testComments/test'], function () {
                     QUnit.start();
