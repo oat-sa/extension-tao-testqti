@@ -2014,4 +2014,3 @@ msgstr "拡大"
 
 msgid "Zoom out"
 msgstr "縮小"
-
