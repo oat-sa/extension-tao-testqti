@@ -26,11 +26,11 @@ define([
             '<div id="test-creator">',
             '  <div class="test-creator-props">',
             '    <ul id="test-creator-mode-tabs">',
-            '      <li role="tab" data-tab="properties"><span class="tab-label">Properties</span></li>',
-            '      <li role="tab" data-tab="comments" data-label="Comments"><span class="tab-label"></span></li>',
+            '      <li id="test-creator-tab-properties" role="tab" data-tab="properties" aria-controls="test-creator-panel-properties" tabindex="0"><span class="tab-label">Properties</span></li>',
+            '      <li id="test-creator-tab-comments" role="tab" data-tab="comments" data-label="Comments" aria-controls="test-creator-panel-comments" tabindex="-1"><span class="tab-label"></span></li>',
             '    </ul>',
-            '    <section data-mode-panel="properties"></section>',
-            '    <section data-mode-panel="comments">',
+            '    <section id="test-creator-panel-properties" data-mode-panel="properties" aria-labelledby="test-creator-tab-properties"></section>',
+            '    <section id="test-creator-panel-comments" data-mode-panel="comments" aria-labelledby="test-creator-tab-comments">',
             '      <div class="test-comments-content-panel"></div>',
             '    </section>',
             '    <div class="props"></div>',
@@ -110,7 +110,7 @@ define([
             }
         });
 
-        assert.expect(7);
+        assert.expect(9);
         assert.ok(component, 'returns component API');
         assert.strictEqual(component.store, store, 'returns created store');
         assert.strictEqual(component.panel, panel, 'returns created panel');
@@ -118,6 +118,8 @@ define([
         assert.strictEqual(storeFactoryConfig.resourceType, 'test', 'passes TEST resource type');
         assert.strictEqual(panelFactoryConfig.store, store, 'passes store to panel factory');
         assert.ok(loadCalled, 'starts store load during init');
+        assert.strictEqual($container.find('[data-tab="properties"]').attr('tabindex'), '0', 'active tab gets tabindex 0');
+        assert.strictEqual($container.find('[data-tab="comments"]').attr('tabindex'), '-1', 'inactive tab gets tabindex -1');
     });
 
     QUnit.test('init tolerates failing store load and still returns api', function (assert) {
@@ -149,5 +151,49 @@ define([
             assert.ok(true, 'no synchronous crash when load rejects');
             done();
         }, 0);
+    });
+
+    QUnit.test('keyboard switches mode and supports tab focus navigation', function (assert) {
+        const $container = createContainer();
+        const store = createStoreStub();
+        let refreshCalls = 0;
+        const panel = createPanelStub({
+            refresh: function () {
+                refreshCalls += 1;
+            }
+        });
+
+        const component = testComments.init({
+            testUri: 'urn:test:789',
+            $container: $container,
+            storeFactory: function () {
+                return store;
+            },
+            panelFactory: function () {
+                return panel;
+            }
+        });
+
+        const $propertiesTab = $container.find('[data-tab="properties"]');
+        const $commentsTab = $container.find('[data-tab="comments"]');
+
+        assert.expect(8);
+
+        $propertiesTab.trigger($.Event('keydown', { key: 'ArrowRight' }));
+        assert.strictEqual(document.activeElement, $commentsTab.get(0), 'ArrowRight moves focus to next tab');
+
+        $commentsTab.trigger($.Event('keydown', { key: 'Enter' }));
+        assert.strictEqual($commentsTab.attr('aria-selected'), 'true', 'Enter activates focused tab');
+        assert.strictEqual($commentsTab.attr('tabindex'), '0', 'active comments tab gets tabindex 0');
+        assert.strictEqual($propertiesTab.attr('tabindex'), '-1', 'inactive properties tab gets tabindex -1');
+        assert.ok(refreshCalls > 0, 'activating comments refreshes panel');
+
+        $commentsTab.trigger($.Event('keydown', { key: 'Home' }));
+        assert.strictEqual(document.activeElement, $propertiesTab.get(0), 'Home focuses first tab');
+
+        $propertiesTab.trigger($.Event('keydown', { key: 'End' }));
+        assert.strictEqual(document.activeElement, $commentsTab.get(0), 'End focuses last tab');
+
+        assert.ok(component, 'component initialized');
     });
 });

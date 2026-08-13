@@ -83,7 +83,10 @@ define([
             $modeTabs.find('[role="tab"]').each(function () {
                 const $tab = $(this);
                 const active = $tab.data('tab') === mode;
-                $tab.toggleClass('active', active).attr('aria-selected', active ? 'true' : 'false');
+                $tab
+                    .toggleClass('active', active)
+                    .attr('aria-selected', active ? 'true' : 'false')
+                    .attr('tabindex', active ? '0' : '-1');
             });
 
             $propertiesPanel.prop('hidden', isComments);
@@ -95,6 +98,22 @@ define([
             if (isComments) {
                 panel.refresh();
             }
+        }
+
+        function getTabs() {
+            return $modeTabs.find('[role="tab"]');
+        }
+
+        function focusTabByIndex(index) {
+            const $tabs = getTabs();
+            const count = $tabs.length;
+
+            if (!count) {
+                return;
+            }
+
+            const normalizedIndex = (index + count) % count;
+            $tabs.eq(normalizedIndex).trigger('focus');
         }
 
         store.on(
@@ -115,6 +134,41 @@ define([
             e.preventDefault();
             const mode = $(e.currentTarget).data('tab') || TAB_PROPERTIES;
             setMode(mode);
+        });
+
+        $modeTabs.on(`keydown${NS}`, '[role="tab"]', e => {
+            const $tab = $(e.currentTarget);
+            const mode = $tab.data('tab') || TAB_PROPERTIES;
+            const $tabs = getTabs();
+            const tabIndex = $tabs.index($tab);
+
+            switch (e.key) {
+                case 'Enter':
+                case ' ':
+                case 'Spacebar':
+                    e.preventDefault();
+                    setMode(mode);
+                    $tab.trigger('focus');
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    focusTabByIndex(tabIndex + 1);
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    focusTabByIndex(tabIndex - 1);
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    focusTabByIndex(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    focusTabByIndex($tabs.length - 1);
+                    break;
+                default:
+                    break;
+            }
         });
 
         // Gear / property forms live in Properties mode.
