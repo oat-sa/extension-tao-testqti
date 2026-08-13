@@ -43,6 +43,8 @@ define([
      */
     function init(options) {
         const testUri = options && options.testUri;
+        const storeFactory = (options && options.storeFactory) || itemCommentsStoreFactory;
+        const panelFactory = (options && options.panelFactory) || commentsPanelFactory;
         if (!testUri) {
             return null;
         }
@@ -59,12 +61,12 @@ define([
             return null;
         }
 
-        const store = itemCommentsStoreFactory({
+        const store = storeFactory({
             resourceUri: testUri,
             resourceType: itemCommentsApi.RESOURCE_TYPE.TEST
         });
 
-        const panel = commentsPanelFactory({
+        const panel = panelFactory({
             renderTo: $commentsHost,
             store: store
         });
