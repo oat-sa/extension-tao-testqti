@@ -82,7 +82,10 @@ class ResourceCommentsClientConfigHandlerTest extends TestCase
             ],
         ]);
 
-        $this->assertSame('show', $result['services/features']['visibility']['taoQtiTest/creator/test/property/identifier']);
+        $this->assertSame(
+            'show',
+            $result['services/features']['visibility']['taoQtiTest/creator/test/property/identifier']
+        );
         $this->assertSame('hide', $result['services/features']['visibility'][self::COMMENTS_TAB_VISIBILITY_KEY]);
     }
 }
