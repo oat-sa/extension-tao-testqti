@@ -27,6 +27,7 @@ use oat\generis\model\DependencyInjection\ContainerServiceProviderInterface;
 use oat\oatbox\event\EventManager;
 use oat\oatbox\log\LoggerService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\featureFlag\FeatureFlagConfigSwitcher;
 use oat\taoDelivery\model\execution\DeliveryExecutionService;
 use oat\taoDelivery\model\execution\StateServiceInterface;
 use oat\taoDelivery\model\RuntimeService;
@@ -41,6 +42,7 @@ use oat\taoQtiTest\model\Infrastructure\QtiToolsStateRepository;
 use oat\taoQtiTest\model\Infrastructure\QtiTestRepository;
 use oat\taoQtiTest\model\Infrastructure\Validation\ChoiceResponseValidationStrategy;
 use oat\taoQtiTest\model\Infrastructure\Validation\ExtraQtiInteractionResponseValidator;
+use oat\taoQtiTest\model\FeatureFlag\ResourceCommentsClientConfigHandler;
 use oat\taoQtiTest\model\Service\ConcurringSessionService;
 use oat\taoQtiTest\model\Service\ExitTestService;
 use oat\taoQtiTest\model\Service\ListItemsService;
@@ -232,5 +234,22 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
         $services
             ->set(ImportTaskStatusDataExtractor::class, ImportTaskStatusDataExtractor::class)
             ->public();
+
+        $services
+            ->set(ResourceCommentsClientConfigHandler::class)
+            ->public()
+            ->args(
+                [
+                    service(FeatureFlagChecker::class),
+                ]
+            );
+
+        $services->get(FeatureFlagConfigSwitcher::class)
+            ->call(
+                'addClientConfigHandler',
+                [
+                    ResourceCommentsClientConfigHandler::class,
+                ]
+            );
     }
 }
