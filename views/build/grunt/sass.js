@@ -45,6 +45,9 @@ module.exports = function(grunt) {
                         dest : path.join(root, 'css/creator.css'),
                         src : path.join(root, 'scss/creator.scss')
                     }, {
+                        dest : path.join(root, 'css/test-comments.css'),
+                        src : path.join(root, 'scss/test-comments.scss')
+                    }, {
                         dest : path.join(root, 'css/test-runner.css'),
                         src : path.join(root, 'scss/test-runner.scss')
                     }, {

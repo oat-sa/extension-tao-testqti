@@ -59,11 +59,64 @@
     </section>
 
     <section class="test-creator-sidebar test-creator-area test-creator-props">
-        <div class="action-bar plain content-action-bar horizontal-action-bar">
-
+        <div class="action-bar plain content-action-bar horizontal-action-bar test-creator-mode-action-bar">
+            <ul id="test-creator-mode-tabs" class="plain clearfix test-creator-mode-tabs" role="tablist">
+                <li
+                    id="test-creator-tab-properties"
+                    role="tab"
+                    data-tab="properties"
+                    class="active"
+                    aria-selected="true"
+                    aria-controls="test-creator-panel-properties"
+                    tabindex="0"
+                    title="<?=__('Properties')?>"
+                    aria-label="<?=__('Properties')?>"
+                >
+                    <span class="li-inner">
+                        <span class="icon-settings" aria-hidden="true"></span>
+                        <span class="tab-label"><?=__('Properties')?></span>
+                    </span>
+                </li>
+                <li
+                    id="test-creator-tab-comments"
+                    role="tab"
+                    data-tab="comments"
+                    data-label="<?=__('Comments')?>"
+                    aria-controls="test-creator-panel-comments"
+                    title="<?=__('Comments')?>"
+                    aria-label="<?=__('Comments')?>"
+                    aria-selected="false"
+                    tabindex="-1"
+                >
+                    <span class="li-inner">
+                        <span class="icon-speech-bubble" aria-hidden="true"></span>
+                        <span class="tab-label"><?=__('Comments')?></span>
+                    </span>
+                </li>
+            </ul>
         </div>
-        <h1><?=__('Properties')?></h1>
-        <div class="qti-widget-properties"></div>
+        <div
+            id="test-creator-panel-properties"
+            class="test-creator-props-panel"
+            data-mode-panel="properties"
+            role="tabpanel"
+            aria-labelledby="test-creator-tab-properties"
+        >
+            <div class="qti-widget-properties"></div>
+        </div>
+        <div
+            id="test-creator-panel-comments"
+            class="test-creator-comments-panel"
+            data-mode-panel="comments"
+            role="tabpanel"
+            aria-labelledby="test-creator-tab-comments"
+            hidden
+        >
+            <p class="comments-guidance">
+                <?=__('Comments apply to the whole test.')?>
+            </p>
+            <div class="test-comments-content-panel"></div>
+        </div>
     </section>
 
 </div>

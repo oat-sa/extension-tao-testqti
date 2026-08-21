@@ -43,13 +43,15 @@ define([
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
+    'context',
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection',
     'taoQtiTest/controller/creator/helpers/scaleSelector',
     'taoQtiTest/controller/creator/helpers/branchRules',
     'taoQtiTest/controller/creator/helpers/preConditions',
-    'taoQtiTest/controller/creator/helpers/saveScoring'
+    'taoQtiTest/controller/creator/helpers/saveScoring',
+    'taoQtiTest/controller/creator/components/testComments'
 ], function (
     module,
     $,
@@ -75,13 +77,15 @@ define([
     validators,
     changeTracker,
     featureVisibility,
+    context,
     previewerFactory,
     loggerFactory,
     subsectionView,
     scaleSelector,
     branchRules,
     preConditions,
-    saveScoring
+    saveScoring,
+    testComments
 ) {
     ('use strict');
     const logger = loggerFactory('taoQtiTest/controller/creator');
@@ -323,6 +327,23 @@ define([
                         if (options.translation) {
                             translationView(creatorContext);
                         }
+
+                                if (
+                                    (context.featureFlags &&
+                                        context.featureFlags.FEATURE_FLAG_ITEM_COMMENTS_ENABLED) !== false
+                                ) {
+                                    testComments.init({
+                                        testUri: options.testUri,
+                                        $container: $container
+                                    });
+                                } else {
+                                    $container
+                                        .find('#test-creator-mode-tabs [data-tab="comments"]')
+                                        .remove();
+                                    $container
+                                        .find('.test-creator-props [data-mode-panel="comments"]')
+                                        .prop('hidden', true);
+                                }
 
                                 //listen for changes to update available actions
                                 testPartView.listenActionState();
