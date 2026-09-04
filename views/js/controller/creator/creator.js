@@ -330,7 +330,7 @@ define([
 
                                 if (
                                     (context.featureFlags &&
-                                        context.featureFlags.FEATURE_FLAG_ITEM_COMMENTS_ENABLED) !== false
+                                        context.featureFlags.FEATURE_FLAG_RESOURCE_COMMENTS_ENABLED) !== false
                                 ) {
                                     testComments.init({
                                         testUri: options.testUri,
