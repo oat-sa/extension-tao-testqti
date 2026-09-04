@@ -124,7 +124,7 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
         $this->setData(
             'itemCommentsEnabled',
             $this->getFeatureFlagChecker()->isEnabled(
-                FeatureFlagCheckerInterface::FEATURE_FLAG_ITEM_COMMENTS_ENABLED
+                FeatureFlagCheckerInterface::FEATURE_FLAG_RESOURCE_COMMENTS_ENABLED
             )
         );
 
