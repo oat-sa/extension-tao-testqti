@@ -13,7 +13,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- * Copyright (c) 2014-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2014-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -328,10 +328,13 @@ define([
                             translationView(creatorContext);
                         }
 
-                                if (
-                                    (context.featureFlags &&
-                                        context.featureFlags.FEATURE_FLAG_ITEM_COMMENTS_ENABLED) !== false
-                                ) {
+                                // Markup is omitted server-side when the flag is off; this is a safety net.
+                                const commentsFeatureEnabled = !!(
+                                    context.featureFlags &&
+                                    context.featureFlags.FEATURE_FLAG_ITEM_COMMENTS_ENABLED
+                                );
+
+                                if (commentsFeatureEnabled) {
                                     testComments.init({
                                         testUri: options.testUri,
                                         $container: $container
@@ -342,7 +345,7 @@ define([
                                         .remove();
                                     $container
                                         .find('.test-creator-props [data-mode-panel="comments"]')
-                                        .prop('hidden', true);
+                                        .remove();
                                 }
 
                                 //listen for changes to update available actions
