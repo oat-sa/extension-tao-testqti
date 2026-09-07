@@ -103,7 +103,6 @@ $brActionBorderColor: #ddd;
     .test-creator-sidebar {
         background-color: $canvas;
         color: $textColor;
-        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
         @include vendor-prefix(flex, 0 1 auto, property, (-ms-, -webkit-, ''));
         height: 100%;
         display: flex;
@@ -129,6 +128,7 @@ $brActionBorderColor: #ddd;
 
     .test-creator-items{
         position: relative;
+        @include responsive('width', $sideWidthSmall, $sideWidthMedium, $sideWidthWide);
 
         border-right: 1px #ddd $uiGeneralContentBorder;
 
@@ -206,6 +206,10 @@ $brActionBorderColor: #ddd;
 
     .test-creator-props{
         position: relative;
+        width: var(--authoring-right-panel-width);
+        max-width: var(--authoring-right-panel-width);
+        min-width: var(--authoring-right-panel-width);
+        @include vendor-prefix(flex, 0 0 var(--authoring-right-panel-width), property, (-ms-, -webkit-, ''));
         background-color: $uiClickableDefaultBg;
         color: $textColor;
         border-left: 1px solid $uiGeneralContentBorder;
