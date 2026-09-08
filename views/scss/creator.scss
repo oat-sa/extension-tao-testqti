@@ -206,10 +206,10 @@ $brActionBorderColor: #ddd;
 
     .test-creator-props{
         position: relative;
-        width: var(--authoring-right-panel-width);
-        max-width: var(--authoring-right-panel-width);
-        min-width: var(--authoring-right-panel-width);
-        @include vendor-prefix(flex, 0 0 var(--authoring-right-panel-width), property, (-ms-, -webkit-, ''));
+        width: var(--authoring-right-panel-width, 210px);
+        max-width: var(--authoring-right-panel-width, 210px);
+        min-width: var(--authoring-right-panel-width, 210px);
+        @include vendor-prefix(flex, 0 0 var(--authoring-right-panel-width, 210px), property, (-ms-, -webkit-, ''));
         background-color: $uiClickableDefaultBg;
         color: $textColor;
         border-left: 1px solid $uiGeneralContentBorder;
