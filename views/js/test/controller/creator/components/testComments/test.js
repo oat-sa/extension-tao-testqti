@@ -110,16 +110,39 @@ define([
             }
         });
 
-        assert.expect(9);
+        assert.expect(10);
         assert.ok(component, 'returns component API');
         assert.strictEqual(component.store, store, 'returns created store');
         assert.strictEqual(component.panel, panel, 'returns created panel');
         assert.strictEqual(storeFactoryConfig.resourceUri, 'urn:test:123', 'passes test uri to store');
         assert.strictEqual(storeFactoryConfig.resourceType, 'test', 'passes TEST resource type');
         assert.strictEqual(panelFactoryConfig.store, store, 'passes store to panel factory');
+        assert.strictEqual(panelFactoryConfig.mentionsEnabled, false, 'mentions disabled by default');
         assert.ok(loadCalled, 'starts store load during init');
         assert.strictEqual($container.find('[data-tab="properties"]').attr('tabindex'), '0', 'active tab gets tabindex 0');
         assert.strictEqual($container.find('[data-tab="comments"]').attr('tabindex'), '-1', 'inactive tab gets tabindex -1');
+    });
+
+    QUnit.test('init passes mentionsEnabled to panel factory when true', function (assert) {
+        const $container = createContainer();
+        let panelFactoryConfig = null;
+
+        const component = testComments.init({
+            testUri: 'urn:test:mentions',
+            $container: $container,
+            mentionsEnabled: true,
+            storeFactory: function () {
+                return createStoreStub();
+            },
+            panelFactory: function (config) {
+                panelFactoryConfig = config;
+                return createPanelStub();
+            }
+        });
+
+        assert.expect(2);
+        assert.ok(component, 'returns component API');
+        assert.strictEqual(panelFactoryConfig.mentionsEnabled, true, 'passes mentionsEnabled to panel');
     });
 
     QUnit.test('init tolerates failing store load and still returns api', function (assert) {
