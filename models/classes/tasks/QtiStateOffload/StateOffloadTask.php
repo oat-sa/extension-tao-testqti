@@ -39,7 +39,7 @@ class StateOffloadTask extends AbstractQtiStateManipulationTask
         try {
             $archived = $this->getStateMigrationService()->archive($userId, $callId);
         } catch (Throwable $exception) {
-            $this->getLogger()->warning(
+            $this->getLogger()->error(
                 sprintf('Failed to archive %s state', $stateLabel),
                 $logContext + ['exception' => $exception->getMessage()]
             );

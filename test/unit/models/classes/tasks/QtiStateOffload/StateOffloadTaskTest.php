@@ -104,7 +104,7 @@ class StateOffloadTaskTest extends TestCase
 
         $this->queueDispatcher->expects($this->never())->method('createTask');
         $this->logger->expects($this->once())->method('info');
-        $this->logger->expects($this->never())->method('warning');
+        $this->logger->expects($this->never())->method('error');
 
         $report = ($this->subject)($this->params());
 
@@ -122,7 +122,7 @@ class StateOffloadTaskTest extends TestCase
         $this->queueDispatcher->expects($this->never())->method('createTask');
         $this->logger
             ->expects($this->once())
-            ->method('warning')
+            ->method('error')
             ->with(
                 'Failed to archive Test state',
                 $this->callback(static function (array $context): bool {
