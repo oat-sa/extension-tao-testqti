@@ -77,7 +77,6 @@
                         <span class="tab-label"><?=__('Properties')?></span>
                     </span>
                 </li>
-                <?php if (get_data('itemCommentsEnabled')): ?>
                 <li
                     id="test-creator-tab-comments"
                     role="tab"
@@ -94,7 +93,6 @@
                         <span class="tab-label"><?=__('Comments')?></span>
                     </span>
                 </li>
-                <?php endif; ?>
             </ul>
         </div>
         <div
@@ -106,7 +104,6 @@
         >
             <div class="qti-widget-properties"></div>
         </div>
-        <?php if (get_data('itemCommentsEnabled')): ?>
         <div
             id="test-creator-panel-comments"
             class="test-creator-comments-panel"
@@ -120,7 +117,6 @@
             </p>
             <div class="test-comments-content-panel"></div>
         </div>
-        <?php endif; ?>
     </section>
 
 </div>
