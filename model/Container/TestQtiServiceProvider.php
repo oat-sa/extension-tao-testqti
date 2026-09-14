@@ -232,6 +232,5 @@ class TestQtiServiceProvider implements ContainerServiceProviderInterface
         $services
             ->set(ImportTaskStatusDataExtractor::class, ImportTaskStatusDataExtractor::class)
             ->public();
-
     }
 }

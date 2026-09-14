@@ -296,5 +296,4 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     {
         return $this->getServiceManager()->getContainer()->get(ScaleHandler::class);
     }
-
 }
