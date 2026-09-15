@@ -20,12 +20,18 @@ define(['require', 'jquery'], function (require, $) {
 
     var state = {
         testCommentsInitCalls: [],
+        testCommentsInitAttempts: 0,
+        testCommentsShouldFail: false,
+        feedbackErrorCalls: [],
         translationShouldFail: false,
         translationViewCalls: 0
     };
 
     function resetState() {
         state.testCommentsInitCalls = [];
+        state.testCommentsInitAttempts = 0;
+        state.testCommentsShouldFail = false;
+        state.feedbackErrorCalls = [];
         state.translationShouldFail = false;
         state.translationViewCalls = 0;
     }
@@ -65,10 +71,35 @@ define(['require', 'jquery'], function (require, $) {
         });
     }
 
+    function waitForFeedbackError(previousCallsCount) {
+        return new Promise(function (resolve, reject) {
+            var retriesLeft = 20;
+
+            function check() {
+                if (state.feedbackErrorCalls.length > previousCallsCount) {
+                    resolve();
+                    return;
+                }
+
+                if (retriesLeft <= 0) {
+                    reject(new Error('Timed out waiting for feedback error call'));
+                    return;
+                }
+
+                retriesLeft -= 1;
+                setTimeout(check, 0);
+            }
+
+            check();
+        });
+    }
+
     define('taoQtiTest/tests/controller/creator/feedbackMock', [], function () {
         return function () {
             return {
-                error: function () {},
+                error: function (message) {
+                    state.feedbackErrorCalls.push(message);
+                },
                 warning: function () {},
                 success: function () {}
             };
@@ -178,6 +209,11 @@ define(['require', 'jquery'], function (require, $) {
     define('taoQtiTest/tests/controller/creator/testCommentsMock', [], function () {
         return {
             init: function (config) {
+                state.testCommentsInitAttempts += 1;
+                if (state.testCommentsShouldFail) {
+                    throw new Error('test comments init failed');
+                }
+
                 state.testCommentsInitCalls.push(config);
                 return {};
             }
@@ -372,6 +408,29 @@ define(['require', 'jquery'], function (require, $) {
                 assert.equal(state.testCommentsInitCalls.length, 1, 'test comments are still initialized');
                 assert.equal(state.testCommentsInitCalls[0].testUri, 'urn:test:translated', 'test uri is preserved');
                 assert.strictEqual(state.testCommentsInitCalls[0].mentionsEnabled, true, 'mentions flag is forwarded');
+            });
+    });
+
+    QUnit.test('start reports feedback error when test comments initialization fails', function (assert) {
+        state.testCommentsShouldFail = true;
+        assert.expect(2);
+
+        return loadCreatorController()
+            .then(function (creatorController) {
+                var initialFeedbackErrors = state.feedbackErrorCalls.length;
+                var startResult = creatorController.start({
+                    routes: {
+                        save: '/save?uri=' + encodeURIComponent('urn:test:plain')
+                    }
+                });
+
+                return Promise.resolve(startResult).then(function () {
+                    return waitForFeedbackError(initialFeedbackErrors);
+                });
+            })
+            .then(function () {
+                assert.equal(state.testCommentsInitAttempts, 1, 'test comments initialization is attempted once');
+                assert.equal(state.feedbackErrorCalls.length, 1, 'feedback error is reported');
             });
     });
 });
