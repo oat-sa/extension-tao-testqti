@@ -6,18 +6,12 @@ module.exports = function(grunt) {
     var testUrl     = 'http://127.0.0.1:' + grunt.option('testPort');
     var root        = grunt.option('root');
 
-    var testRunners = [
-        root + '/taoQtiTest/views/js/test/**/test.html',
-        root + '/taoQtiTest/views/js/tests/**/test.html'
-    ];
-    var testFiles = [
-        root + '/taoQtiTest/views/js/test/**/test.js',
-        root + '/taoQtiTest/views/js/tests/**/test.js'
-    ];
+    var testRunners = root + '/taoQtiTest/views/js/test/**/test.html';
+    var testFiles = root + '/taoQtiTest/views/js/test/**/test.js';
 
     //extract unit tests
     var extractTests = function extractTests(){
-        return grunt.file.expand(testRunners).map(function(path){
+        return grunt.file.expand([testRunners]).map(function(path){
             return path.replace(root, testUrl);
         });
     };
