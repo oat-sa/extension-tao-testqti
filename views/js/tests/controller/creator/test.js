@@ -42,11 +42,26 @@ define(['require', 'jquery'], function (require, $) {
         ].join(''));
     }
 
-    function waitForSettled() {
-        return new Promise(function (resolve) {
-            setTimeout(function () {
-                setTimeout(resolve, 0);
-            }, 0);
+    function waitForTestCommentsInit(previousCallsCount) {
+        return new Promise(function (resolve, reject) {
+            var retriesLeft = 20;
+
+            function check() {
+                if (state.testCommentsInitCalls.length > previousCallsCount) {
+                    resolve();
+                    return;
+                }
+
+                if (retriesLeft <= 0) {
+                    reject(new Error('Timed out waiting for test comments initialization'));
+                    return;
+                }
+
+                retriesLeft -= 1;
+                setTimeout(check, 0);
+            }
+
+            check();
         });
     }
 
@@ -281,42 +296,36 @@ define(['require', 'jquery'], function (require, $) {
     });
 
     QUnit.test('start initializes test comments for non-translation mode', function (assert) {
-        var done = assert.async();
-
         assert.expect(4);
 
-        loadCreatorController()
+        return loadCreatorController()
             .then(function (creatorController) {
-                creatorController.start({
+                var initialCalls = state.testCommentsInitCalls.length;
+                var startResult = creatorController.start({
                     routes: {
                         save: '/save?uri=' + encodeURIComponent('urn:test:plain')
                     }
                 });
 
-                return waitForSettled();
+                return Promise.resolve(startResult).then(function () {
+                    return waitForTestCommentsInit(initialCalls);
+                });
             })
             .then(function () {
                 assert.equal(state.testCommentsInitCalls.length, 1, 'test comments are initialized once');
                 assert.equal(state.testCommentsInitCalls[0].testUri, 'urn:test:plain', 'test uri is forwarded');
                 assert.strictEqual(state.testCommentsInitCalls[0].mentionsEnabled, false, 'mentions disabled by default');
                 assert.equal(state.translationViewCalls, 0, 'translation view is not used in non-translation mode');
-                done();
-            })
-            .catch(function (err) {
-                assert.ok(false, err && err.message ? err.message : 'Unexpected test failure');
-                done();
             });
     });
 
-    QUnit.test('start initializes test comments even when translation loading fails', function (assert) {
-        var done = assert.async();
+    QUnit.test('start initializes test comments for translation mode', function (assert) {
+        assert.expect(4);
 
-        state.translationShouldFail = true;
-        assert.expect(3);
-
-        loadCreatorController()
+        return loadCreatorController()
             .then(function (creatorController) {
-                creatorController.start({
+                var initialCalls = state.testCommentsInitCalls.length;
+                var startResult = creatorController.start({
                     translation: true,
                     originResourceUri: 'urn:test:origin',
                     itemCommentsMentionsEnabled: true,
@@ -326,17 +335,43 @@ define(['require', 'jquery'], function (require, $) {
                     }
                 });
 
-                return waitForSettled();
+                return Promise.resolve(startResult).then(function () {
+                    return waitForTestCommentsInit(initialCalls);
+                });
+            })
+            .then(function () {
+                assert.equal(state.testCommentsInitCalls.length, 1, 'test comments are initialized once for translation mode');
+                assert.equal(state.testCommentsInitCalls[0].testUri, 'urn:test:translated', 'test uri is preserved');
+                assert.strictEqual(state.testCommentsInitCalls[0].mentionsEnabled, true, 'mentions flag is forwarded');
+                assert.equal(state.translationViewCalls, 1, 'translation view is initialized');
+            });
+    });
+
+    QUnit.test('start initializes test comments even when translation loading fails', function (assert) {
+        state.translationShouldFail = true;
+        assert.expect(3);
+
+        return loadCreatorController()
+            .then(function (creatorController) {
+                var initialCalls = state.testCommentsInitCalls.length;
+                var startResult = creatorController.start({
+                    translation: true,
+                    originResourceUri: 'urn:test:origin',
+                    itemCommentsMentionsEnabled: true,
+                    routes: {
+                        save: '/save?uri=' + encodeURIComponent('urn:test:translated'),
+                        getOrigin: '/origin'
+                    }
+                });
+
+                return Promise.resolve(startResult).then(function () {
+                    return waitForTestCommentsInit(initialCalls);
+                });
             })
             .then(function () {
                 assert.equal(state.testCommentsInitCalls.length, 1, 'test comments are still initialized');
                 assert.equal(state.testCommentsInitCalls[0].testUri, 'urn:test:translated', 'test uri is preserved');
                 assert.strictEqual(state.testCommentsInitCalls[0].mentionsEnabled, true, 'mentions flag is forwarded');
-                done();
-            })
-            .catch(function (err) {
-                assert.ok(false, err && err.message ? err.message : 'Unexpected test failure');
-                done();
             });
     });
 });
