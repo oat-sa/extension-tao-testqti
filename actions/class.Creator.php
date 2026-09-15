@@ -19,8 +19,6 @@
  */
 
 use oat\generis\model\OntologyAwareTrait;
-use oat\tao\model\featureFlag\FeatureFlagChecker;
-use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\tao\model\TaskOrchestrator\TaskOrchestratorEmailService;
 use oat\taoBackOffice\model\lists\ListService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
@@ -122,12 +120,6 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             $guidedNavigation = $runtimeConfig['guidedNavigation'];
         }
         $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
-        $this->setData(
-            'itemCommentsEnabled',
-            $this->getFeatureFlagChecker()->isEnabled(
-                FeatureFlagCheckerInterface::FEATURE_FLAG_RESOURCE_COMMENTS_ENABLED
-            )
-        );
         $this->setData(
             'itemCommentsMentionsEnabled',
             $this->getPsrContainer()->get(TaskOrchestratorEmailService::class)->isConfigured()
@@ -303,10 +295,5 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
     private function getScaleHandler(): ScaleHandler
     {
         return $this->getServiceManager()->getContainer()->get(ScaleHandler::class);
-    }
-
-    private function getFeatureFlagChecker(): FeatureFlagCheckerInterface
-    {
-        return $this->getServiceManager()->getContainer()->get(FeatureFlagChecker::class);
     }
 }
