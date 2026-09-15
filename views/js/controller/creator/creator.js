@@ -326,11 +326,16 @@ define([
                             translationView(creatorContext);
                         }
 
-                                testComments.init({
-                                    testUri: options.testUri,
-                                    $container: $container,
-                                    mentionsEnabled: options.itemCommentsMentionsEnabled === true
-                                });
+                                try {
+                                    testComments.init({
+                                        testUri: options.testUri,
+                                        $container: $container,
+                                        mentionsEnabled: options.itemCommentsMentionsEnabled === true
+                                    });
+                                } catch (err) {
+                                    logger.error(err);
+                                    feedback().error(__('An error occurred while loading the original test.'));
+                                }
 
                                 //listen for changes to update available actions
                                 testPartView.listenActionState();
