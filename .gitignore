@@ -7,3 +7,7 @@ var/
 phpunit.xml
 node_modules
 .idea
+
+# Local agent working notes / editor agent config; never commit
+.ai/
+.cursor/
