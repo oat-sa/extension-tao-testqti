@@ -22,7 +22,7 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoBackOffice\model\lists\ListService;
-use oat\taoDeliverConnect\model\TaskOrchestrator\TaskOrchestratorEmailService;
+use oat\tao\model\TaskOrchestrator\TaskOrchestratorEmailService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\models\classes\scale\ScaleHandler;

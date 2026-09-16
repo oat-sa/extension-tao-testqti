@@ -43,7 +43,6 @@ define([
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
     'taoQtiTest/controller/creator/helpers/featureVisibility',
-    'context',
     'taoTests/previewer/factory',
     'core/logger',
     'taoQtiTest/controller/creator/views/subsection',
@@ -77,7 +76,6 @@ define([
     validators,
     changeTracker,
     featureVisibility,
-    context,
     previewerFactory,
     loggerFactory,
     subsectionView,
@@ -328,22 +326,15 @@ define([
                             translationView(creatorContext);
                         }
 
-                                if (
-                                    (context.featureFlags &&
-                                        context.featureFlags.FEATURE_FLAG_RESOURCE_COMMENTS_ENABLED) !== false
-                                ) {
+                                try {
                                     testComments.init({
                                         testUri: options.testUri,
                                         $container: $container,
                                         mentionsEnabled: options.itemCommentsMentionsEnabled === true
                                     });
-                                } else {
-                                    $container
-                                        .find('#test-creator-mode-tabs [data-tab="comments"]')
-                                        .remove();
-                                    $container
-                                        .find('.test-creator-props [data-mode-panel="comments"]')
-                                        .prop('hidden', true);
+                                } catch (err) {
+                                    logger.error(err);
+                                    feedback().error(__('An error occurred while loading the original test.'));
                                 }
 
                                 //listen for changes to update available actions
