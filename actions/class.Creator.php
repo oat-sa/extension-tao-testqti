@@ -22,7 +22,6 @@ use oat\generis\model\OntologyAwareTrait;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
 use oat\tao\model\featureFlag\FeatureFlagCheckerInterface;
 use oat\taoBackOffice\model\lists\ListService;
-use oat\tao\model\TaskOrchestrator\TaskOrchestratorEmailService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
 use oat\taoQtiTest\models\classes\scale\ScaleHandler;
@@ -127,10 +126,6 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             $this->getFeatureFlagChecker()->isEnabled(
                 FeatureFlagCheckerInterface::FEATURE_FLAG_RESOURCE_COMMENTS_ENABLED
             )
-        );
-        $this->setData(
-            'itemCommentsMentionsEnabled',
-            $this->getPsrContainer()->get(TaskOrchestratorEmailService::class)->isConfigured()
         );
 
         $this->setView('creator.tpl');
