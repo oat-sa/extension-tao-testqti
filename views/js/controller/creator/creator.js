@@ -326,20 +326,15 @@ define([
                             translationView(creatorContext);
                         }
 
-                                if (options.itemCommentsEnabled === true) {
-                                    try {
-                                        testComments.init({
-                                            testUri: options.testUri,
-                                            $container: $container,
-                                            mentionsEnabled: options.itemCommentsMentionsEnabled === true
-                                        });
-                                    } catch (err) {
-                                        logger.error(err);
-                                        feedback().error(__('An error occurred while loading the original test.'));
-                                    }
-                                } else {
-                                    $container.find('#test-creator-tab-comments').remove();
-                                    $container.find('#test-creator-panel-comments').remove();
+                                try {
+                                    testComments.init({
+                                        testUri: options.testUri,
+                                        $container: $container,
+                                        mentionsEnabled: options.itemCommentsMentionsEnabled === true
+                                    });
+                                } catch (err) {
+                                    logger.error(err);
+                                    feedback().error(__('An error occurred while loading the original test.'));
                                 }
 
                                 //listen for changes to update available actions

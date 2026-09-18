@@ -338,7 +338,6 @@ define(['require', 'jquery'], function (require, $) {
             .then(function (creatorController) {
                 var initialCalls = state.testCommentsInitCalls.length;
                 var startResult = creatorController.start({
-                    itemCommentsEnabled: true,
                     routes: {
                         save: '/save?uri=' + encodeURIComponent('urn:test:plain')
                     }
@@ -364,7 +363,6 @@ define(['require', 'jquery'], function (require, $) {
                 var initialCalls = state.testCommentsInitCalls.length;
                 var startResult = creatorController.start({
                     translation: true,
-                    itemCommentsEnabled: true,
                     originResourceUri: 'urn:test:origin',
                     itemCommentsMentionsEnabled: true,
                     routes: {
@@ -394,7 +392,6 @@ define(['require', 'jquery'], function (require, $) {
                 var initialCalls = state.testCommentsInitCalls.length;
                 var startResult = creatorController.start({
                     translation: true,
-                    itemCommentsEnabled: true,
                     originResourceUri: 'urn:test:origin',
                     itemCommentsMentionsEnabled: true,
                     routes: {
@@ -422,7 +419,6 @@ define(['require', 'jquery'], function (require, $) {
             .then(function (creatorController) {
                 var initialFeedbackErrors = state.feedbackErrorCalls.length;
                 var startResult = creatorController.start({
-                    itemCommentsEnabled: true,
                     routes: {
                         save: '/save?uri=' + encodeURIComponent('urn:test:plain')
                     }
