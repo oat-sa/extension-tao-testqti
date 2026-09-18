@@ -13,13 +13,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA.
+ * Foundation, Inc., 31 Milk St # 960789 Boston, MA 02196 USA
  *
  * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 use oat\generis\model\OntologyAwareTrait;
-use oat\tao\model\TaskOrchestrator\TaskOrchestratorEmailService;
 use oat\taoBackOffice\model\lists\ListService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
@@ -120,11 +119,6 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             $guidedNavigation = $runtimeConfig['guidedNavigation'];
         }
         $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
-        $this->setData(
-            'itemCommentsMentionsEnabled',
-            $this->getPsrContainer()->get(TaskOrchestratorEmailService::class)->isConfigured()
-        );
-
         $this->setView('creator.tpl');
     }
 
