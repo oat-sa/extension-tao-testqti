@@ -39,14 +39,12 @@ define([
      * @param {object} options
      * @param {string} options.testUri
      * @param {jQuery|HTMLElement} [options.$container]
-     * @param {boolean} [options.mentionsEnabled=false] when true, wire @mention picker
      * @returns {object|null}
      */
     function init(options) {
         const testUri = options && options.testUri;
         const storeFactory = (options && options.storeFactory) || itemCommentsStoreFactory;
         const panelFactory = (options && options.panelFactory) || commentsPanelFactory;
-        const mentionsEnabled = options && options.mentionsEnabled === true;
         if (!testUri) {
             return null;
         }
@@ -70,8 +68,7 @@ define([
 
         const panel = panelFactory({
             renderTo: $commentsHost,
-            store: store,
-            mentionsEnabled: mentionsEnabled
+            store: store
         });
 
         function updateCountLabel() {

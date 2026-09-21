@@ -329,8 +329,7 @@ define([
                                 try {
                                     testComments.init({
                                         testUri: options.testUri,
-                                        $container: $container,
-                                        mentionsEnabled: options.itemCommentsMentionsEnabled === true
+                                        $container: $container
                                     });
                                 } catch (err) {
                                     logger.error(err);
