@@ -39,7 +39,6 @@ define([
      * @param {object} options
      * @param {string} options.testUri
      * @param {jQuery|HTMLElement} [options.$container]
-     * @param {boolean} [options.mentionsEnabled=false] when true, wire @mention picker
      * @returns {object|null}
      */
     function init(options) {
