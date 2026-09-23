@@ -45,6 +45,7 @@ define([
         const testUri = options && options.testUri;
         const storeFactory = (options && options.storeFactory) || itemCommentsStoreFactory;
         const panelFactory = (options && options.panelFactory) || commentsPanelFactory;
+        const mentionsEnabled = options && options.mentionsEnabled === true;
         if (!testUri) {
             return null;
         }
@@ -68,7 +69,8 @@ define([
 
         const panel = panelFactory({
             renderTo: $commentsHost,
-            store: store
+            store: store,
+            mentionsEnabled: mentionsEnabled
         });
 
         function updateCountLabel() {
