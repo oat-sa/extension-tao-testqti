@@ -64,6 +64,9 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\tao\model\lockDownBrowser\Entity\LockDownBrowser;
+use oat\tao\model\lockDownBrowser\Service\HttpRequestLockDownBrowserDetector;
+use oat\taoDelivery\model\lockDownBrowser\Service\LockDownBrowserExecutionService;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -301,6 +304,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+            $this->recordLockDownBrowserAtInit($serviceContext->getTestExecutionUri());
             $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
             $this->returnJson(
@@ -1101,6 +1105,29 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function getSessionService(): SessionService
     {
         return $this->getServiceLocator()->get(SessionService::class);
+    }
+
+    private function recordLockDownBrowserAtInit(string $deliveryExecutionId): void
+    {
+        try {
+            $clientKioskApiOk = $this->hasRequestParameter('clientKioskApiOk')
+                ? $this->getRequestParameter('clientKioskApiOk')
+                : ($_REQUEST[HttpRequestLockDownBrowserDetector::REQUEST_PARAM_CLIENT_KIOSK_API_OK] ?? null);
+
+            $provider = $this->getPsrContainer()
+                ->get(LockDownBrowserExecutionService::class)
+                ->recordAtInit($deliveryExecutionId, $clientKioskApiOk);
+
+            if ($provider === LockDownBrowser::PROVIDER_KIOSKED) {
+                common_Logger::i(
+                    'Lock down browser recorded as kiosked for delivery execution ' . $deliveryExecutionId
+                );
+            }
+        } catch (Exception $exception) {
+            common_Logger::w(
+                'Lock down browser init recording skipped: ' . $exception->getMessage()
+            );
+        }
     }
 
     private function getDeliveryExecutionService(): DeliveryExecutionService
