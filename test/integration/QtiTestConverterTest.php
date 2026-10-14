@@ -151,4 +151,19 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
         $result = $lookupClassMethod->invoke($converter, 'lt');
         $this->assertEquals($result, 'qtism\data\expressions\operators\Lt');
     }
+
+    public function testFromJsonNormalizesLegacySnakeCaseViewName(): void
+    {
+        $json = file_get_contents(__DIR__ . '/data/branching/test.json');
+        $jsonWithLegacyViewName = preg_replace('/"views":\[\]/', '"views":["test_constructor"]', $json, 1);
+
+        $doc = new XmlDocument('2.1');
+        $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
+        $converter->fromJson($jsonWithLegacyViewName);
+
+        $resultXml = $doc->saveToString();
+
+        $this->assertStringNotContainsString('test_constructor', $resultXml);
+        $this->assertStringContainsString('testConstructor', $resultXml);
+    }
 }

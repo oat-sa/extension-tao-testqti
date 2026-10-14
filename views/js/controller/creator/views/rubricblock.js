@@ -29,6 +29,7 @@ define([
     'taoQtiTest/controller/creator/views/actions',
     'taoQtiTest/controller/creator/encoders/dom2qti',
     'taoQtiTest/controller/creator/helpers/qtiElement',
+    'taoQtiTest/controller/creator/helpers/rubricBlockAudience',
     'taoQtiTest/controller/creator/qtiContentCreator',
     'ckeditor'
 ], function (
@@ -41,6 +42,7 @@ define([
     actions,
     Dom2QtiEncoder,
     qtiElementHelper,
+    rubricBlockAudience,
     qtiContentCreator
 ) {
     'use strict';
@@ -179,6 +181,13 @@ define([
                 return activated;
             }
 
+            function getAudienceOptions() {
+                return _.map(rubricBlockAudience.getOptions(), option => ({
+                    value: option.value,
+                    label: __(option.label)
+                }));
+            }
+
             /**
              * Perform some binding once the property view is created
              * @private
@@ -190,6 +199,7 @@ define([
                 const $feedbackMatchLine = $('.rubric-feedback-match-value', $view);
                 const $feedbackOutcome = $('[name=feedback-outcome]', $view);
                 const $feedbackActivated = $('[name=activated]', $view);
+                const $viewSelect = $('[name=view]', $view);
 
                 // toggle the feedback panel
                 function changeFeedback(activated) {
@@ -237,7 +247,7 @@ define([
                     changeFeedback(activated);
                 }
 
-                $('[name=type]', $view).select2({
+                $viewSelect.select2({
                     minimumResultsForSearch: -1,
                     width: '100%'
                 });
@@ -257,30 +267,13 @@ define([
 
                 changeFeedback(rubricModel.feedback);
                 updateOutcomes();
-                rbViews($view);
-            }
-
-            /**
-             * Set up the views select box
-             * @private
-             * @param {jQueryElement} $propContainer - the element container
-             */
-            function rbViews($propContainer) {
-                const $select = $('[name=view]', $propContainer);
-
-                bindEvent($select.select2({ width: '100%' }), 'select2-removed', () => {
-                    if ($select.select2('val').length === 0) {
-                        $select.select2('val', [1]);
-                    }
-                });
-
-                if ($select.select2('val').length === 0) {
-                    $select.select2('val', [1]);
-                }
             }
 
             rubricModel.orderIndex = (rubricModel.index || 0) + 1;
             rubricModel.uid = _.uniqueId('rb');
+            rubricModel.audienceOptions = getAudienceOptions();
+            rubricModel.view = rubricBlockAudience.getValidView(rubricModel.view, rubricModel.views);
+            rubricModel.views = [rubricModel.view];
             rubricModel.feedback = {
                 activated: !!qtiElementHelper.lookupElement(rubricModel, 'rubricBlock.div.feedbackBlock', 'content'),
                 outcome: qtiElementHelper.lookupProperty(

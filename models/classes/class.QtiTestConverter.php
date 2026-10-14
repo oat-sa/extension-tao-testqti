@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -387,6 +389,9 @@ class taoQtiTest_models_classes_QtiTestConverter
         $collection = $class->newInstance();
         if ($collection instanceof ViewCollection) {
             foreach ($values as $value) {
+                if ($value === 'test_constructor') {
+                    $value = 'testConstructor';
+                }
                 $collection[] = View::getConstantByName($value);
             }
             return $collection;

@@ -19,7 +19,12 @@
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
  */
-define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'], function ($, _, validators) {
+define([
+    'jquery',
+    'lodash',
+    'taoQtiTest/controller/creator/helpers/validators',
+    'taoQtiTest/controller/creator/helpers/rubricBlockAudience'
+], function ($, _, validators, rubricBlockAudience) {
     'use strict';
 
     /**
@@ -27,6 +32,31 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
      * @exports taoQtiTest/controller/creator/qtiTestHelper
      */
     const qtiTestHelper = {
+        consolidateRubricBlocks(sectionLikeModel) {
+            if (!sectionLikeModel || !_.isObject(sectionLikeModel)) {
+                return;
+            }
+
+            if (_.isArray(sectionLikeModel.rubricBlocks)) {
+                if (
+                    sectionLikeModel.rubricBlocks.length === 0 ||
+                    (sectionLikeModel.rubricBlocks.length === 1 &&
+                        sectionLikeModel.rubricBlocks[0].content.length === 0)
+                ) {
+                    delete sectionLikeModel.rubricBlocks;
+                } else {
+                    _.forEach(sectionLikeModel.rubricBlocks, function (rubricBlock) {
+                        rubricBlock.view = rubricBlockAudience.getValidView(rubricBlock.view, rubricBlock.views);
+                        rubricBlock.views = [rubricBlock.view];
+                    });
+                }
+            }
+
+            if (_.isArray(sectionLikeModel.sectionParts)) {
+                _.forEach(sectionLikeModel.sectionParts, this.consolidateRubricBlocks.bind(this));
+            }
+        },
+
         /**
          * Get the list of unique identifiers for the given model.
          * @param {Object|Object[]} model - the JSON QTI model
@@ -89,9 +119,9 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
          */
         consolidateModel: function consolidateModel(model) {
             if (model && model.testParts && _.isArray(model.testParts)) {
-                _.forEach(model.testParts, function (testPart) {
+                _.forEach(model.testParts, testPart => {
                     if (testPart.assessmentSections && _.isArray(testPart.assessmentSections)) {
-                        _.forEach(testPart.assessmentSections, function (assessmentSection) {
+                        _.forEach(testPart.assessmentSections, assessmentSection => {
                             //remove ordering is shuffle is false
                             if (
                                 assessmentSection.ordering &&
@@ -103,7 +133,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
 
                             // clean categories (QTI identifier can't be empty string)
                             if (assessmentSection.sectionParts && _.isArray(assessmentSection.sectionParts)) {
-                                _.forEach(assessmentSection.sectionParts, function (part) {
+                                _.forEach(assessmentSection.sectionParts, part => {
                                     if (
                                         part.categories &&
                                         _.isArray(part.categories) &&
@@ -114,25 +144,7 @@ define(['jquery', 'lodash', 'taoQtiTest/controller/creator/helpers/validators'],
                                 });
                             }
 
-                            if (assessmentSection.rubricBlocks && _.isArray(assessmentSection.rubricBlocks)) {
-                                //remove rubric blocks if empty
-                                if (
-                                    assessmentSection.rubricBlocks.length === 0 ||
-                                    (assessmentSection.rubricBlocks.length === 1 &&
-                                        assessmentSection.rubricBlocks[0].content.length === 0)
-                                ) {
-                                    delete assessmentSection.rubricBlocks;
-                                } else if (assessmentSection.rubricBlocks.length > 0) {
-                                    //ensure the view attribute is present
-                                    _.forEach(assessmentSection.rubricBlocks, function (rubricBlock) {
-                                        rubricBlock.views = ['candidate'];
-                                        //change once views are supported
-                                        //if(rubricBlock && rubricBlock.content && (!rubricBlock.views || (_.isArray(rubricBlock.views) && rubricBlock.views.length === 0))){
-                                        //rubricBlock.views = ['candidate'];
-                                        //}
-                                    });
-                                }
-                            }
+                            this.consolidateRubricBlocks(assessmentSection);
                         });
                     }
                 });

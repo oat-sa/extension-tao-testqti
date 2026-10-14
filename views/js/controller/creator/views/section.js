@@ -29,6 +29,7 @@ define([
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/rubricBlockAudience',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/testPartCategory',
@@ -52,6 +53,7 @@ define([
     itemRefView,
     rubricBlockView,
     templates,
+    rubricBlockAudience,
     qtiTestHelper,
     categorySelectorFactory,
     testPartCategory,
@@ -420,10 +422,11 @@ define([
                 content: templates.rubricblock,
                 templateData: function (cb) {
                     cb({
+                        view: rubricBlockAudience.getDefaultView(),
+                        views: [rubricBlockAudience.getDefaultView()],
                         'qti-type': 'rubricBlock',
                         index: $('.rubricblock', $rubBlocks).length,
-                        content: [],
-                        views: [1]
+                        content: []
                     });
                 }
             });
