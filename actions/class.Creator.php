@@ -36,6 +36,7 @@ use GuzzleHttp\Psr7\Utils;
  * @package taoQtiTest
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
+// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace,Squiz.Classes.ValidClassName.NotCamelCaps -- Legacy TAO class name kept for backward compatibility.
 class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 {
     use OntologyAwareTrait;
