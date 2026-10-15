@@ -39,7 +39,6 @@ define([
     'taoQtiTest/controller/creator/helpers/scoring',
     'taoQtiTest/controller/creator/helpers/translation',
     'taoQtiTest/controller/creator/helpers/testModel',
-    'taoQtiTest/controller/creator/helpers/rubricBlockAudience',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/validators',
     'taoQtiTest/controller/creator/helpers/changeTracker',
@@ -73,7 +72,6 @@ define([
     scoringHelper,
     translationHelper,
     testModelHelper,
-    rubricBlockAudience,
     categorySelector,
     validators,
     changeTracker,
@@ -141,11 +139,8 @@ define([
             options.categoriesPresets = featureVisibility.filterVisiblePresets(options.categoriesPresets) || {};
             options.scalesPresets = options.scalesPresets || [];
             options.testScales = options.testScales || [];
-            options.rubricBlockAudience = options.rubricBlockAudience || [];
             options.guidedNavigation = options.guidedNavigation === true;
             options.translation = options.translation === true;
-
-            rubricBlockAudience.setOptions(options.rubricBlockAudience);
 
             const saveUrl = options.routes.save || '';
             options.testUri = decodeURIComponent(saveUrl.slice(saveUrl.indexOf('uri=') + 4));

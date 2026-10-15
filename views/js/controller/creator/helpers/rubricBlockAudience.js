@@ -19,7 +19,7 @@
 define(['lodash'], function (_) {
     'use strict';
 
-    const defaultOptions = [
+    const rubricBlockViewOptions = [
         { value: 'candidate', label: 'Candidate' },
         { value: 'author', label: 'Author' },
         { value: 'proctor', label: 'Proctor' },
@@ -28,32 +28,11 @@ define(['lodash'], function (_) {
         { value: 'tutor', label: 'Tutor' }
     ];
 
-    let options = defaultOptions.slice();
-
-    function normalizeOption(option) {
-        if (!option || typeof option.value !== 'string' || typeof option.label !== 'string') {
-            return null;
-        }
-
-        return {
-            value: option.value,
-            label: option.label
-        };
-    }
+    let options = rubricBlockViewOptions.slice();
 
     return {
         getOptions() {
             return options.slice();
-        },
-
-        setOptions(candidateOptions) {
-            const normalizedOptions = _.chain(candidateOptions)
-                .map(normalizeOption)
-                .filter(Boolean)
-                .uniqBy('value')
-                .value();
-
-            options = normalizedOptions.length > 0 ? normalizedOptions : defaultOptions.slice();
         },
 
         getDefaultView() {
