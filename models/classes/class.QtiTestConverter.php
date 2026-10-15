@@ -389,9 +389,6 @@ class taoQtiTest_models_classes_QtiTestConverter
         $collection = $class->newInstance();
         if ($collection instanceof ViewCollection) {
             foreach ($values as $value) {
-                if ($value === 'test_constructor') {
-                    $value = 'testConstructor';
-                }
                 $collection[] = View::getConstantByName($value);
             }
             return $collection;
