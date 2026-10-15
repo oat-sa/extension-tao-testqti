@@ -18,8 +18,6 @@
 * Copyright (c) 2013-2025 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
 */
 
-declare(strict_types=1);
-
 use qtism\common\datatypes\QtiPair;
 use qtism\data\rules\BranchRule;
 use qtism\data\state\ExternalScored;
@@ -46,7 +44,6 @@ use qtism\data\View;
  * @package taoQtiTest
  *
  */
-// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace,Squiz.Classes.ValidClassName.NotCamelCaps -- Legacy TAO class name kept for backward compatibility.
 class taoQtiTest_models_classes_QtiTestConverter
 {
     /**

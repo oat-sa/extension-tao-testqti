@@ -19,6 +19,7 @@
  */
 
 use oat\generis\model\OntologyAwareTrait;
+use oat\tao\model\TaskOrchestrator\TaskOrchestratorEmailService;
 use oat\taoBackOffice\model\lists\ListService;
 use oat\taoQtiItem\model\qti\metadata\exporter\scale\ScalePreprocessor;
 use oat\taoQtiItem\model\QtiCreator\Scales\RemoteScaleListService;
@@ -36,7 +37,6 @@ use GuzzleHttp\Psr7\Utils;
  * @package taoQtiTest
  * @license GPLv2  http://www.opensource.org/licenses/gpl-2.0.php
  */
-// phpcs:ignore PSR1.Classes.ClassDeclaration.MissingNamespace,Squiz.Classes.ValidClassName.NotCamelCaps -- Legacy TAO class name kept for backward compatibility.
 class taoQtiTest_actions_Creator extends tao_actions_CommonModule
 {
     use OntologyAwareTrait;
@@ -120,6 +120,11 @@ class taoQtiTest_actions_Creator extends tao_actions_CommonModule
             $guidedNavigation = $runtimeConfig['guidedNavigation'];
         }
         $this->setData('guidedNavigation', json_encode($guidedNavigation == true));
+        $this->setData(
+            'itemCommentsMentionsEnabled',
+            $this->getPsrContainer()->get(TaskOrchestratorEmailService::class)->isConfigured()
+        );
+
         $this->setView('creator.tpl');
     }
 
