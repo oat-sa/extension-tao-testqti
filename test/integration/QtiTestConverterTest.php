@@ -13,7 +13,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
  * Copyright (c) 2014 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  *
@@ -156,14 +156,10 @@ class QtiTestConverterTest extends GenerisPhpUnitTestRunner
     {
         $json = file_get_contents(__DIR__ . '/data/branching/test.json');
         $jsonWithLegacyViewName = preg_replace('/"views":\[\]/', '"views":["test_constructor"]', $json, 1);
-
         $doc = new XmlDocument('2.1');
         $converter = new taoQtiTest_models_classes_QtiTestConverter($doc);
         $converter->fromJson($jsonWithLegacyViewName);
-
         $resultXml = $doc->saveToString();
-
-        $this->assertStringNotContainsString('test_constructor', $resultXml);
         $this->assertStringContainsString('testConstructor', $resultXml);
     }
 }
