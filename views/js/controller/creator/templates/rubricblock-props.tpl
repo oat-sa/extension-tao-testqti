@@ -3,30 +3,25 @@
 
     <h3>{{__ 'Rubric Block'}}: {{orderIndex}}</h3>
 
-    <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/views -->
-    <!--
+    <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/view -->
     <div class="grid-row">
         <div class="col-5">
-            <label for="itemref-identifier">{{__ 'Views'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
+            <label for="rubricblock-view">{{__ 'Audience'}} <abbr title="{{__ 'Required field'}}">*</abbr></label>
         </div>
         <div class="col-6">
-            <select name="view" multiple="multiple" data-bind="views">
-                <option value="author">{{__ 'Author'}}</option>
-                <option value="candidate">{{__ 'Candidate'}}</option>
-                <option value="proctor">{{__ 'Proctor'}}</option>
-                <option value="scorer">{{__ 'Scorer'}}</option>
-                <option value="testConstructor">{{__ 'Test constructor'}}</option>
-                <option value="tutor">{{__ 'Tutor'}}</option>
+            <select id="rubricblock-view" name="view" data-bind="view">
+                {{#each audienceOptions}}
+                <option value="{{value}}">{{label}}</option>
+                {{/each}}
             </select>
         </div>
         <div class="col-1 help">
             <span class="icon-help" data-tooltip="~ .tooltip-content" data-tooltip-theme="info"></span>
             <div class="tooltip-content">
-                {{__ 'Who can view the rubric block during the delivery.'}}
+                {{__ "The audience to which the rubric block's content is to be shown."}}
             </div>
         </div>
     </div>
-    -->
     <!--assessmentTest/testPart/assessmentSection/sectionPart/rubricBlock/class -->
     {{#if classVisible}}
     <div class="grid-row">

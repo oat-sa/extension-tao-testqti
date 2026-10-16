@@ -11,9 +11,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
- * Copyright (c) 2018-2022 (original work) Open Assessment Technologies SA ;
+ * Copyright (c) 2018-2026 (original work) Open Assessment Technologies SA ;
  */
 /**
  * @author Bertrand Chevrier <bertrand@taotesting.com>
@@ -36,6 +36,7 @@ define([
         {title: 'getIdentifiers'},
         {title: 'getIdentifiersOf'},
         {title: 'getAvailableIdentifier'},
+        {title: 'consolidateModel'},
     ]).test('method ', function(data, assert) {
         assert.expect(1);
         assert.equal(typeof qtiTestHelper[data.title], 'function', 'The helper exposes a "' + data.title + '" method');
@@ -119,6 +120,95 @@ define([
         identifier = qtiTestHelper.getAvailableIdentifier(sampleModel, 'weight', 'WEIGHT');
         assert.equal(identifier, 'WEIGHT-1');
 
+    });
+
+    QUnit.module('consolidation');
+
+    QUnit.test('preserve configured rubricBlock view on section and subsection levels', function (assert) {
+        assert.expect(2);
+
+        const model = {
+            testParts: [
+                {
+                    assessmentSections: [
+                        {
+                            rubricBlocks: [
+                                {
+                                    content: [{ 'qti-type': 'p', content: [] }],
+                                    view: 'scorer'
+                                }
+                            ],
+                            sectionParts: [
+                                {
+                                    rubricBlocks: [
+                                        {
+                                            content: [{ 'qti-type': 'p', content: [] }],
+                                            view: 'author'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        qtiTestHelper.consolidateModel(model);
+
+        assert.equal(
+            model.testParts[0].assessmentSections[0].rubricBlocks[0].view,
+            'scorer',
+            'The rubric block view is preserved on section level'
+        );
+        assert.equal(
+            model.testParts[0].assessmentSections[0].sectionParts[0].rubricBlocks[0].view,
+            'author',
+            'The rubric block view is preserved on subsection level'
+        );
+    });
+
+    QUnit.test('fallback to default view and migrate legacy views array', function (assert) {
+        assert.expect(3);
+
+        const model = {
+            testParts: [
+                {
+                    assessmentSections: [
+                        {
+                            rubricBlocks: [
+                                {
+                                    content: [{ 'qti-type': 'p', content: [] }],
+                                    views: ['tutor']
+                                },
+                                {
+                                    content: [{ 'qti-type': 'p', content: [] }],
+                                    view: 'not-supported'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        qtiTestHelper.consolidateModel(model);
+
+        assert.equal(
+            model.testParts[0].assessmentSections[0].rubricBlocks[0].view,
+            'tutor',
+            'Legacy views[0] is migrated to view'
+        );
+        assert.deepEqual(
+            model.testParts[0].assessmentSections[0].rubricBlocks[0].views,
+            ['tutor'],
+            'Legacy views is normalized to a single-value array'
+        );
+        assert.equal(
+            model.testParts[0].assessmentSections[0].rubricBlocks[1].view,
+            'candidate',
+            'Unsupported view falls back to default'
+        );
     });
 
 });
