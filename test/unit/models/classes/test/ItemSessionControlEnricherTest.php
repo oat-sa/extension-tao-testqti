@@ -34,7 +34,8 @@ use qtism\data\TestPart;
 class ItemSessionControlEnricherTest extends TestCase
 {
     private const GOLDEN_TEST_PATH = __DIR__
-        . '/../../../../../../vendor/qtism/qtism/test/samples/ims/tests/golden_required_items_and_sections/golden_required_items_and_sections.xml';
+        . '/../../../../../../vendor/qtism/qtism/test/samples/ims/tests/'
+        . 'golden_required_items_and_sections/golden_required_items_and_sections.xml';
 
     private ItemSessionControlEnricher $sut;
 
