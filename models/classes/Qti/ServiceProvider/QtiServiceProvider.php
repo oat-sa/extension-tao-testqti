@@ -29,6 +29,7 @@ use oat\taoQtiItem\model\ValidationService;
 use oat\taoQtiTest\models\Qti\Converter\AssessmentSectionConverter;
 use oat\taoQtiTest\models\Qti\Converter\TestConverter;
 use oat\taoQtiTest\models\Qti\Identifier\Service\QtiIdentifierSetter;
+use oat\taoQtiTest\models\test\ItemSessionControlEnricher;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use taoQtiTest_models_classes_QtiTestService;
 
@@ -62,5 +63,7 @@ class QtiServiceProvider implements ContainerServiceProviderInterface
                 service(ValidationService::SERVICE_ID)
             ])
             ->public();
+
+        $services->set(ItemSessionControlEnricher::class)->public();
     }
 }
