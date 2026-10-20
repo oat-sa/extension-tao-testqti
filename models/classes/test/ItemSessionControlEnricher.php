@@ -26,7 +26,6 @@ use qtism\data\AssessmentItemRef;
 use qtism\data\AssessmentSection;
 use qtism\data\AssessmentTest;
 use qtism\data\ItemSessionControl;
-use qtism\data\SectionPart;
 use qtism\data\TestPart;
 
 class ItemSessionControlEnricher
@@ -67,13 +66,13 @@ class ItemSessionControlEnricher
         }
     }
 
-    private function ensureItemSessionControl(SectionPart|TestPart $component): void
+    private function ensureItemSessionControl(TestPart|AssessmentSection|AssessmentItemRef $node): void
     {
-        if ($component->hasItemSessionControl()) {
+        if ($node->hasItemSessionControl()) {
             return;
         }
 
-        $component->setItemSessionControl($this->createDefaultItemSessionControl());
+        $node->setItemSessionControl($this->createDefaultItemSessionControl());
     }
 
     private function createDefaultItemSessionControl(): ItemSessionControl
