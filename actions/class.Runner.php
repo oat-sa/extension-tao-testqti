@@ -64,7 +64,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
-use oat\taoDelivery\model\lockDownBrowser\Service\LockDownBrowserExecutionService;
+use oat\taoDelivery\model\browser\Service\LockDownBrowserExecutionService;
 
 /**
  * Class taoQtiTest_actions_Runner
