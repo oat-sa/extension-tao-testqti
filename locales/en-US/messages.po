@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: TAO 2026.06\n"
-"PO-Revision-Date: 2026-05-21T13:10:57\n"
+"Project-Id-Version: TAO 2026.10\n"
+"PO-Revision-Date: 2026-10-19T13:12:37\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: en-US\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 
 msgid "\"Lowest Grade Achieved\" sets the final test grade as the lowest score among all test variables using the same scale."
@@ -247,6 +247,9 @@ msgstr ""
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr ""
 
+msgid "Audience"
+msgstr ""
+
 msgid "Author"
 msgstr ""
 
@@ -353,6 +356,12 @@ msgid "Collapse the review panel"
 msgstr ""
 
 msgid "Comment"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Comments apply to the whole test."
 msgstr ""
 
 msgid "Completed items"
@@ -1002,6 +1011,9 @@ msgstr ""
 msgid "Next Section"
 msgstr ""
 
+msgid "Next section navigation is not allowed."
+msgstr ""
+
 msgid "NO"
 msgstr ""
 
@@ -1105,6 +1117,9 @@ msgid "or"
 msgstr ""
 
 msgid "Ordering"
+msgstr ""
+
+msgid "Original"
 msgstr ""
 
 msgid "Original title"
@@ -1595,6 +1610,9 @@ msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr ""
 
 msgid "The assessment is still running."
+msgstr ""
+
+msgid "The audience to which the rubric block's content is to be shown."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
