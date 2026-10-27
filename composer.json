@@ -64,11 +64,11 @@
     "oat-sa/oatbox-extension-installer": "~1.1||dev-master",
     "qtism/qtism": ">=0.31.0",
     "oat-sa/generis": ">=17.0.0",
-    "oat-sa/tao-core": ">=56.9.4",
+    "oat-sa/tao-core": "dev-feat/INV-1156/lockdown-browser-poc as 99.99",
     "oat-sa/extension-tao-item": ">=13.6.0",
     "oat-sa/extension-tao-itemqti": ">=32.12.0",
     "oat-sa/extension-tao-test": ">=16.4.3",
-    "oat-sa/extension-tao-delivery": ">=16.0.0",
+    "oat-sa/extension-tao-delivery": "dev-feat/INV-1156/lockdown-browser-poc as 99.99",
     "oat-sa/extension-tao-outcome": ">=13.0.0",
     "league/flysystem": "^3.0",
     "slim/slim": "^4.0"
