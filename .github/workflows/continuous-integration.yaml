@@ -21,7 +21,7 @@ jobs:
 
     steps:
       - name: CI
-        uses: oat-sa/tao-extension-ci-action@v1
+        uses: oat-sa/tao-extension-ci-action@fix/INV-1156/extension-ci-fix # @TODO @FIXME Add V1 after fix passes
         with:
           php: ${{ matrix.php-version }}
           coverage: ${{ matrix.coverage }}
