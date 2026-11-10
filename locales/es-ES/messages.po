@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:55\n"
+"PO-Revision-Date: 2026-11-10 15:03\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: es\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "Se necesitaba como mínimo un parámetro obligatorio que no estaba prese
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "Para este modo se requiere al menos una variable de resultado con una escala de calificación."
 
+msgid "Audience"
+msgstr "Público"
+
 msgid "Author"
 msgstr "Autor"
 
@@ -361,6 +364,12 @@ msgstr "Contraer el panel de revisión"
 
 msgid "Comment"
 msgstr "Comentario"
+
+msgid "Comments"
+msgstr "Comentarios"
+
+msgid "Comments apply to the whole test."
+msgstr "Los comentarios se aplican a toda la prueba."
 
 msgid "Completed items"
 msgstr "Ítems completados"
@@ -1010,6 +1019,9 @@ msgstr "Siguiente"
 msgid "Next Section"
 msgstr "Sección siguiente"
 
+msgid "Next section navigation is not allowed."
+msgstr "La navegación de la siguiente sección no está permitida."
+
 msgid "NO"
 msgstr "NO"
 
@@ -1114,6 +1126,9 @@ msgstr "o"
 
 msgid "Ordering"
 msgstr "Ordenamiento"
+
+msgid "Original"
+msgstr "Original"
 
 msgid "Original title"
 msgstr "Título original"
@@ -1604,6 +1619,9 @@ msgstr "La evaluación terminó. Ya no puede interactuar con ella."
 
 msgid "The assessment is still running."
 msgstr "La evaluación sigue ejecutándose."
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "El público al que se va a mostrar el contenido del bloque rubro."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Al candidato no se le permite enviar respuestas equivocadas."
