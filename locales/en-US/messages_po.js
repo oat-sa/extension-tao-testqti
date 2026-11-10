@@ -1,1 +1,1 @@
-{"Wrap image left":"Left","Wrap image right":"Right"}
+{"translations":{"add criteria":"Add criteria","Wrap image left":"Left","Wrap image right":"Right"}}

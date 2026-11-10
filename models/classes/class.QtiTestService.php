@@ -53,6 +53,7 @@ use oat\taoQtiTest\models\Qti\Converter\TestConverter;
 use oat\taoQtiTest\models\scale\ScaleStorageService;
 use oat\taoQtiTest\models\render\QtiPackageImportPreprocessing;
 use oat\taoQtiTest\models\test\AssessmentTestXmlFactory;
+use oat\taoQtiTest\models\test\ItemSessionControlEnricher;
 use oat\taoTests\models\event\TestUpdatedEvent;
 use Psr\Container\ContainerInterface;
 use qtism\common\utils\Format;
@@ -1022,6 +1023,9 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
             $itemRef->setHref($itemResource->getUri());
         }
 
+        $this->getItemSessionControlEnricher()
+            ->enrichImportedTest($testDefinition->getDocumentComponent());
+
         $oldFile = $this->getQtiTestFile($testResource);
         $oldFile->delete();
 
@@ -1708,6 +1712,11 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
+    }
+
+    private function getItemSessionControlEnricher(): ItemSessionControlEnricher
+    {
+        return $this->getPsrContainer()->get(ItemSessionControlEnricher::class);
     }
 
     private function getMetaMetadataImporter(): MetaMetadataImportMapper

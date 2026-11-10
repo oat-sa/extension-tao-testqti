@@ -11,9 +11,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 31 Milk Street, # 960789, Boston, MA 02196, USA.
  *
- * Copyright (c) 2021-2024 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
+ * Copyright (c) 2021-2026 (original work) Open Assessment Technologies SA (under the project TAO-PRODUCT);
  */
 
 define([
@@ -26,6 +26,7 @@ define([
     'taoQtiTest/controller/creator/views/itemref',
     'taoQtiTest/controller/creator/views/rubricblock',
     'taoQtiTest/controller/creator/templates/index',
+    'taoQtiTest/controller/creator/helpers/rubricBlockAudience',
     'taoQtiTest/controller/creator/helpers/qtiTest',
     'taoQtiTest/controller/creator/helpers/categorySelector',
     'taoQtiTest/controller/creator/helpers/sectionCategory',
@@ -46,6 +47,7 @@ define([
     itemRefView,
     rubricBlockView,
     templates,
+    rubricBlockAudience,
     qtiTestHelper,
     categorySelectorFactory,
     sectionCategory,
@@ -409,10 +411,11 @@ define([
                 content: templates.rubricblock,
                 templateData: function (cb) {
                     cb({
+                        view: rubricBlockAudience.getDefaultView(),
+                        views: [rubricBlockAudience.getDefaultView()],
                         'qti-type': 'rubricBlock',
                         index: $('.rubricblock', $rubBlocks).length,
-                        content: [],
-                        views: [1]
+                        content: []
                     });
                 }
             });

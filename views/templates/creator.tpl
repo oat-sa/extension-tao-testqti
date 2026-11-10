@@ -139,8 +139,7 @@ requirejs.config({
             scalesPresets: <?=get_data('scalesPresets')?>,
             testScales: <?=get_data('testScales')?>,
             labels : <?=get_data('labels')?>,
-            guidedNavigation : <?=get_data('guidedNavigation')?>,
-            itemCommentsMentionsEnabled : <?= get_data('itemCommentsMentionsEnabled') ? 'true' : 'false' ?>
+            guidedNavigation : <?=get_data('guidedNavigation')?>
        }
     }
 });
