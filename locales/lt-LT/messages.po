@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: lt\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr ""
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr ""
 
+msgid "Audience"
+msgstr ""
+
 msgid "Author"
 msgstr "Autorius"
 
@@ -361,6 +364,12 @@ msgstr "Suskleisti apžvalgos skydelį"
 
 msgid "Comment"
 msgstr "Komentaras"
+
+msgid "Comments"
+msgstr ""
+
+msgid "Comments apply to the whole test."
+msgstr ""
 
 msgid "Completed items"
 msgstr "Atlikti elementai"
@@ -1010,6 +1019,9 @@ msgstr "Tęsti"
 msgid "Next Section"
 msgstr "Kitas skyrius"
 
+msgid "Next section navigation is not allowed."
+msgstr ""
+
 msgid "NO"
 msgstr ""
 
@@ -1114,6 +1126,9 @@ msgstr ""
 
 msgid "Ordering"
 msgstr "Eiliškumas"
+
+msgid "Original"
+msgstr ""
 
 msgid "Original title"
 msgstr ""
@@ -1604,6 +1619,9 @@ msgstr "Šis vertinimas buvo nutrauktas. Jūs negalite tęsti jo toliau."
 
 msgid "The assessment is still running."
 msgstr "Įvertinimas vis dar vykdomas."
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Kandidatui neleidžiama pateikti blogus atsakymus."
