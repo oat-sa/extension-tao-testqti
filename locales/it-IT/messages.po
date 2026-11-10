@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: it\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr ""
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "Per questa modalità è necessaria almeno una variabile di risultato classificata manualmente con una scala di classificazione."
 
+msgid "Audience"
+msgstr "Pubblico"
+
 msgid "Author"
 msgstr "Autore"
 
@@ -361,6 +364,12 @@ msgstr "Comprimi il pannello recensione"
 
 msgid "Comment"
 msgstr "Commenta"
+
+msgid "Comments"
+msgstr "Commenti"
+
+msgid "Comments apply to the whole test."
+msgstr "Le osservazioni si applicano all'intera prova."
 
 msgid "Completed items"
 msgstr "Item completati"
@@ -1009,6 +1018,9 @@ msgstr "Successivo"
 msgid "Next Section"
 msgstr "Sezione successiva"
 
+msgid "Next section navigation is not allowed."
+msgstr "La navigazione nella sezione successiva non è consentita."
+
 msgid "NO"
 msgstr ""
 
@@ -1113,6 +1125,9 @@ msgstr ""
 
 msgid "Ordering"
 msgstr "Ordinamento"
+
+msgid "Original"
+msgstr ""
 
 msgid "Original title"
 msgstr "Titolo originale"
@@ -1603,6 +1618,9 @@ msgstr ""
 
 msgid "The assessment is still running."
 msgstr ""
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "Il pubblico a cui il contenuto del blocco rubric deve essere mostrato."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Il candidato non è autorizzato a inviare le risposte sbagliate."

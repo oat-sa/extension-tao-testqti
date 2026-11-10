@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: fa\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr ""
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr ""
 
+msgid "Audience"
+msgstr ""
+
 msgid "Author"
 msgstr ""
 
@@ -360,6 +363,12 @@ msgid "Collapse the review panel"
 msgstr ""
 
 msgid "Comment"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
+msgid "Comments apply to the whole test."
 msgstr ""
 
 msgid "Completed items"
@@ -1009,6 +1018,9 @@ msgstr ""
 msgid "Next Section"
 msgstr ""
 
+msgid "Next section navigation is not allowed."
+msgstr ""
+
 msgid "NO"
 msgstr ""
 
@@ -1112,6 +1124,9 @@ msgid "or"
 msgstr ""
 
 msgid "Ordering"
+msgstr ""
+
+msgid "Original"
 msgstr ""
 
 msgid "Original title"
@@ -1602,6 +1617,9 @@ msgid "The assessment has been terminated. You cannot interact with it anymore."
 msgstr ""
 
 msgid "The assessment is still running."
+msgstr ""
+
+msgid "The audience to which the rubric block's content is to be shown."
 msgstr ""
 
 msgid "The candidate is not allowed to submit invalid responses."

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nl\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "Er mist op zijn minst één verplichte parameter in uw verzoek"
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "Tenminste één handmatig beoordeelde resultaatvariabele met een beoordelingsschaal is vereist voor deze modus."
 
+msgid "Audience"
+msgstr "Auditie"
+
 msgid "Author"
 msgstr "Constructeur"
 
@@ -361,6 +364,12 @@ msgstr "Minimaliseer het review paneel"
 
 msgid "Comment"
 msgstr "Commentaar"
+
+msgid "Comments"
+msgstr "Opmerkingen"
+
+msgid "Comments apply to the whole test."
+msgstr "Opmerkingen gelden voor de hele test."
 
 msgid "Completed items"
 msgstr "Beantwoorde vragen"
@@ -1010,6 +1019,9 @@ msgstr "Volgende"
 msgid "Next Section"
 msgstr "Volgende sectie"
 
+msgid "Next section navigation is not allowed."
+msgstr "Volgende sectie navigatie is niet toegestaan."
+
 msgid "NO"
 msgstr "NEE"
 
@@ -1114,6 +1126,9 @@ msgstr "of"
 
 msgid "Ordering"
 msgstr "Sorteervolgorde"
+
+msgid "Original"
+msgstr "Origineel"
 
 msgid "Original title"
 msgstr "Oorspronkelijke titel"
@@ -1604,6 +1619,9 @@ msgstr "Het examen is beëindigd.U kunt er niet meer aan werken."
 
 msgid "The assessment is still running."
 msgstr "Het assessment is nog steeds in gang."
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "Het publiek waaraan de inhoud van de rubriekblok moet worden getoond."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "De kandidaat mag geen ongeldige antwoorden indienen."

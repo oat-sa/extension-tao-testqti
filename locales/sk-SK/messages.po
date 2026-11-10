@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: sk\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "Vo vašej požiadavke chýbal aspoň jeden povinný parameter"
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "Pre tento režim je potrebná aspoň jedna premenná výsledku, ktorá sa hodnotí manuálne pomocou hodnotiacej stupnice."
 
+msgid "Audience"
+msgstr "Publikum"
+
 msgid "Author"
 msgstr "Autor"
 
@@ -361,6 +364,12 @@ msgstr "Zatvoriť panel kontroly"
 
 msgid "Comment"
 msgstr "Komentár"
+
+msgid "Comments"
+msgstr "Komentáre"
+
+msgid "Comments apply to the whole test."
+msgstr "Komentáre sa vzťahujú na celý test."
 
 msgid "Completed items"
 msgstr "Dokončené položky"
@@ -1010,6 +1019,9 @@ msgstr "Ďalej"
 msgid "Next Section"
 msgstr "Ďalšia sekcia"
 
+msgid "Next section navigation is not allowed."
+msgstr "Navigácia v ďalšej sekcii nie je povolená."
+
 msgid "NO"
 msgstr "NIE"
 
@@ -1114,6 +1126,9 @@ msgstr "alebo"
 
 msgid "Ordering"
 msgstr "Zoraďovanie"
+
+msgid "Original"
+msgstr "Pôvodný"
 
 msgid "Original title"
 msgstr "Pôvodný názov"
@@ -1604,6 +1619,9 @@ msgstr "Testovanie bolo ukončené. Už s ním nemôžete ďalej pracovať."
 
 msgid "The assessment is still running."
 msgstr "Testovanie stále prebieha."
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "Publikum, ktorému sa má zobraziť obsah rubrikového bloku."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Účastník testu nesmie odoslať neplatné odpovede."

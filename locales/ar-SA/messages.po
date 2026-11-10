@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:55\n"
+"PO-Revision-Date: 2026-11-10 15:05\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ar\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "مطلوب معلمة إلزامية واحدة على الأقل ولك
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "مطلوب على الأقل متغير واحد يدوياً للنتيجة مع مقياس لتحديد الدرجات لهذا الوضع."
 
+msgid "Audience"
+msgstr "الجمهور"
+
 msgid "Author"
 msgstr "كاتب"
 
@@ -361,6 +364,12 @@ msgstr "تصغير لوحة المراجعة"
 
 msgid "Comment"
 msgstr "تعليق"
+
+msgid "Comments"
+msgstr "تعليقات"
+
+msgid "Comments apply to the whole test."
+msgstr "وتنطبق التعليقات على الاختبار بأكمله."
 
 msgid "Completed items"
 msgstr "البنود المكتملة"
@@ -1010,6 +1019,9 @@ msgstr "التالي"
 msgid "Next Section"
 msgstr "الجزء التالي"
 
+msgid "Next section navigation is not allowed."
+msgstr "التنقل المقطع التالي غير مسموح به."
+
 msgid "NO"
 msgstr "لا"
 
@@ -1114,6 +1126,9 @@ msgstr "أو"
 
 msgid "Ordering"
 msgstr "يأمر"
+
+msgid "Original"
+msgstr "الأصل"
 
 msgid "Original title"
 msgstr "العنوان الأصلي"
@@ -1604,6 +1619,9 @@ msgstr "تم إنهاء التقييم. لا يمكنك التفاعل معه ب
 
 msgid "The assessment is still running."
 msgstr "التقييم لا يزال قيد التشغيل."
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "الجمهور الذي سيعرض عليه محتوى الكتلة الروبورية."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "لا يسمح للمرشح بتقديم ردود غير صحيحة."
