@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-09-03 14:38\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: ja\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "少なくとも1つの必須パラメータが必要ですが、不足�
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "このモードでは、手動で採点スケールを持つ結果変数を少なくとも1つ採点する必要があります。"
 
+msgid "Audience"
+msgstr "オーディエンス:"
+
 msgid "Author"
 msgstr "作成者"
 
@@ -361,6 +364,12 @@ msgstr "レビューパネルをたたむ"
 
 msgid "Comment"
 msgstr "コメント"
+
+msgid "Comments"
+msgstr "コメント"
+
+msgid "Comments apply to the whole test."
+msgstr "コメントはテスト全体に適用されます。"
 
 msgid "Completed items"
 msgstr "完了したアイテム"
@@ -1010,6 +1019,9 @@ msgstr "次へ"
 msgid "Next Section"
 msgstr "次のセクション"
 
+msgid "Next section navigation is not allowed."
+msgstr "次のセクションナビゲーションは許可されていません。"
+
 msgid "NO"
 msgstr "いいえ"
 
@@ -1115,6 +1127,9 @@ msgstr "｜"
 msgid "Ordering"
 msgstr "出題順"
 
+msgid "Original"
+msgstr "元のサイズ"
+
 msgid "Original title"
 msgstr "元のタイトル"
 
@@ -1167,7 +1182,7 @@ msgid "Please wait while we try to restore the connection."
 msgstr "接続を回復中です。しばらくお待ちください。"
 
 msgid "Points"
-msgstr "ポイント（配点）"
+msgstr "配点"
 
 msgid "Prerequisites"
 msgstr "前提条件"
@@ -1604,6 +1619,9 @@ msgstr "テストは終了していますので、これ以上操作すること
 
 msgid "The assessment is still running."
 msgstr "テストは実施中です"
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "ルーブリックブロックの内容が表示されます。"
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "無効な解答（未解答がないか）を確認しアラートを出します。"
