@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: tao-open-source\n"
-"PO-Revision-Date: 2026-07-03 14:56\n"
+"PO-Revision-Date: 2026-11-10 15:04\n"
 "Last-Translator: TAO Translation Team <translation@tao.lu>\n"
 "MIME-Version: 1.0\n"
 "Language: nb_NO\n"
@@ -10,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-Basepath: ../../\n"
-"X-Poedit-KeywordsList: __\n"
+"X-Poedit-KeywordsList: __,__p:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Crowdin-Project: tao-open-source\n"
@@ -254,6 +254,9 @@ msgstr "Minst én obligatorisk parameter var påkrevd, men det ble funnet mangle
 msgid "At least one manually graded outcome variable with a grading scale is required for this mode."
 msgstr "Minst en manuelt gradert utfallsvariabel med en graderingsskala er påkrevd for denne modusen."
 
+msgid "Audience"
+msgstr "Publikum"
+
 msgid "Author"
 msgstr "Forfatter"
 
@@ -361,6 +364,12 @@ msgstr "Skjul vinduet for å se gjennom oppgaver"
 
 msgid "Comment"
 msgstr "Kommentar"
+
+msgid "Comments"
+msgstr "Kommentarer"
+
+msgid "Comments apply to the whole test."
+msgstr "Kommentarene gjelder for hele prøvingen."
 
 msgid "Completed items"
 msgstr "Fullførte oppgaver"
@@ -1009,6 +1018,9 @@ msgstr "Neste"
 msgid "Next Section"
 msgstr "Neste seksjon"
 
+msgid "Next section navigation is not allowed."
+msgstr "Neste seksjons navigasjon er ikke tillatt."
+
 msgid "NO"
 msgstr ""
 
@@ -1113,6 +1125,9 @@ msgstr "eller"
 
 msgid "Ordering"
 msgstr "Rekkefølge på oppgaver"
+
+msgid "Original"
+msgstr "Opprinnelig"
 
 msgid "Original title"
 msgstr "Opprinnelig tittel"
@@ -1603,6 +1618,9 @@ msgstr ""
 
 msgid "The assessment is still running."
 msgstr ""
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "Publikum som rubrikkelens innhold skal vises i."
 
 msgid "The candidate is not allowed to submit invalid responses."
 msgstr "Eleven kan ikke levere ugyldige svar."
