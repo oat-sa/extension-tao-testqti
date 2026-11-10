@@ -64,6 +64,7 @@ use qtism\runtime\tests\AssessmentTestSessionState;
 use taoQtiTest_helpers_TestRunnerUtils as TestRunnerUtils;
 use oat\oatbox\session\SessionService;
 use oat\tao\model\featureFlag\FeatureFlagChecker;
+use oat\taoDelivery\model\browser\Service\LockDownBrowserExecutionService;
 
 /**
  * Class taoQtiTest_actions_Runner
@@ -301,6 +302,7 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
 
         try {
             $serviceContext = $this->getRunnerService()->initServiceContext($this->getServiceContext());
+            $this->recordLockDownBrowserAtInit($serviceContext->getTestExecutionUri());
             $this->returnJson($this->getInitResponse($serviceContext));
         } catch (Exception $e) {
             $this->returnJson(
@@ -1101,6 +1103,13 @@ class taoQtiTest_actions_Runner extends tao_actions_ServiceModule
     private function getSessionService(): SessionService
     {
         return $this->getServiceLocator()->get(SessionService::class);
+    }
+
+    private function recordLockDownBrowserAtInit(string $deliveryExecutionId): void
+    {
+        $this->getPsrContainer()
+            ->get(LockDownBrowserExecutionService::class)
+            ->recordAtInit($deliveryExecutionId, $this->getPsrRequest());
     }
 
     private function getDeliveryExecutionService(): DeliveryExecutionService
