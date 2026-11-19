@@ -20,8 +20,9 @@
  */
 define([
     'jquery',
-    'taoQtiTest/controller/creator/helpers/categorySelector'
-], function($, categorySelectorFactory) {
+    'taoQtiTest/controller/creator/helpers/categorySelector',
+    'taoQtiTest/controller/creator/helpers/featureVisibility'
+], function($, categorySelectorFactory, featureVisibility) {
     'use strict';
 
     var allPresets = [{
@@ -101,6 +102,28 @@ define([
         });
 
     QUnit.module('Category Selector');
+
+    QUnit.test('editing visible presets preserves hidden selected and partial categories', function(assert) {
+        const filter = featureVisibility.filterVisiblePresets;
+        featureVisibility.filterVisiblePresets = groups => groups.map(group => ({
+            ...group,
+            presets: group.presets.filter(preset => !['preset1.1', 'preset1.2'].includes(preset.id))
+        }));
+        try {
+            const selector = categorySelectorFactory($('#qunit-fixture'));
+            selector.createForm();
+            selector.updateFormState(['x-tao-option-preset1.1'], ['x-tao-option-preset1-2']);
+            selector.on('category-change', (selected, partial) => {
+                assert.ok(selected.includes('x-tao-option-preset1.1'), 'hidden selected category survives');
+                assert.ok(partial.includes('x-tao-option-preset1-2'), 'hidden partial category survives');
+                assert.ok(selected.includes('x-tao-option-preset2.1'), 'visible selection is applied');
+            });
+            $('#qunit-fixture input[value="x-tao-option-preset2.1"]').prop('checked', true);
+            selector.updateCategories();
+        } finally {
+            featureVisibility.filterVisiblePresets = filter;
+        }
+    });
 
     QUnit.test('.createForm() creates the preset checkboxes', function(assert) {
         var $container = $('#qunit-fixture'),

@@ -61,6 +61,8 @@ define([
     function categorySelectorFactory($container) {
         const $presetsContainer = $container.find('.category-presets');
         const $customCategoriesSelect = $container.find('[name=category-custom]');
+        let hiddenSelected = [];
+        let hiddenIndeterminate = [];
 
         const categorySelector = {
             /**
@@ -88,8 +90,8 @@ define([
                         .toArray()
                         .map(categoryEl => categoryEl.textContent && categoryEl.textContent.trim());
 
-                const selectedCategories = presetSelected.concat(customSelected);
-                const indeterminatedCategories = presetIndeterminate.concat(customIndeterminate);
+                const selectedCategories = presetSelected.concat(customSelected, hiddenSelected);
+                const indeterminatedCategories = presetIndeterminate.concat(customIndeterminate, hiddenIndeterminate);
 
                 /**
                  * @event categorySelector#category-change
@@ -110,7 +112,7 @@ define([
                 const presetsTpl = templates.properties.categorypresets;
                 const customCategories = _.difference(currentCategories, allQtiCategoriesPresets);
 
-                const filteredPresets = featureVisibility.filterVisiblePresets(allPresets, level);
+                const filteredPresets = featureVisibility.filterVisiblePresets(_.cloneDeep(allPresets), level);
                 // add preset checkboxes
                 $presetsContainer.append(presetsTpl({ presetGroups: filteredPresets }));
 
@@ -168,6 +170,14 @@ define([
                 // Preset categories
 
                 const $presetsCheckboxes = $container.find('.category-preset input');
+                const visibleCategories = $presetsCheckboxes.toArray().flatMap(input => {
+                    const preset = categoryToPreset.get(input.value);
+                    return preset ? preset.categories : [input.value];
+                });
+                const isHiddenPreset = category => categoryToPreset.has(category) && !visibleCategories.includes(category);
+                hiddenSelected = selected.filter(isHiddenPreset);
+                hiddenIndeterminate = indeterminate.filter(isHiddenPreset);
+
                 $presetsCheckboxes.each((idx, input) => {
                     const qtiCategory = input.value;
                     if (!categoryToPreset.has(qtiCategory)) {
