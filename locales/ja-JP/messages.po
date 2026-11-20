@@ -1167,7 +1167,7 @@ msgid "Please wait while we try to restore the connection."
 msgstr "接続を回復中です。しばらくお待ちください。"
 
 msgid "Points"
-msgstr "ポイント（配点）"
+msgstr "配点"
 
 msgid "Prerequisites"
 msgstr "前提条件"
@@ -2051,3 +2051,20 @@ msgstr "拡大"
 msgid "Zoom out"
 msgstr "縮小"
 
+msgid "Audience"
+msgstr "対象者"
+
+msgid "Comments"
+msgstr "コメント"
+
+msgid "Comments apply to the whole test."
+msgstr "コメントはテスト全体に適用"
+
+msgid "Next section navigation is not allowed."
+msgstr "次のセクションへの移動は許可されていません。"
+
+msgid "Original"
+msgstr "元のサイズ"
+
+msgid "The audience to which the rubric block's content is to be shown."
+msgstr "ルーブリックブロックの内容を表示する対象者。"
