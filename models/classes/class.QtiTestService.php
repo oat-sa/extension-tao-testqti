@@ -29,6 +29,7 @@ use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorInterface;
 use oat\tao\model\IdentifierGenerator\Generator\IdentifierGeneratorProxy;
 use oat\tao\model\resources\ResourceAccessDeniedException;
 use oat\tao\model\resources\SecureResourceServiceInterface;
+use oat\tao\model\accessControl\PermissionChecker;
 use oat\tao\model\TaoOntology;
 use oat\taoItems\model\Command\DeleteItemCommand;
 use oat\taoQtiItem\model\qti\converter\ManifestConverter;
@@ -392,6 +393,13 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     ) {
         $testClass = $targetClass;
         $report = new Report(Report::TYPE_INFO);
+        if (!$this->validateItemDestinationClassWriteAccess($report, $itemClassUri)) {
+            $report->setMessage(__('The IMS QTI Test Package could not be imported.'));
+            $report->setType(Report::TYPE_ERROR);
+
+            return $report;
+        }
+
         $validPackage = false;
         $validManifest = false;
         $testsFound = false;
@@ -468,6 +476,10 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
                                 $packageLabel
                             );
                             $report->add($importTestReport);
+
+                            if ($importTestReport->containsError()) {
+                                break;
+                            }
 
                             if ($data = $importTestReport->getData()) {
                                 $alreadyImportedQtiResources = array_unique(
@@ -1560,6 +1572,43 @@ class taoQtiTest_models_classes_QtiTestService extends TestService
     private function getPsrContainer(): ContainerInterface
     {
         return $this->getServiceLocator()->getContainer();
+    }
+
+    private function validateItemDestinationClassWriteAccess(Report $report, ?string $itemClassUri): bool
+    {
+        $itemDestinationClassUri = $itemClassUri ?: TaoOntology::CLASS_URI_ITEM;
+        $itemDestinationClass = $this->getClass($itemDestinationClassUri);
+
+        if (!$itemDestinationClass->exists()) {
+            $report->add(Report::createError(__('The selected item destination class does not exist.')));
+
+            return false;
+        }
+
+        if (!$this->getItemTreeService()->isItemClass($itemDestinationClass)) {
+            $report->add(Report::createError(__('The selected item destination is not a valid item class.')));
+
+            return false;
+        }
+
+        /** @var PermissionChecker $permissionChecker */
+        $permissionChecker = $this->getServiceLocator()->get(PermissionChecker::class);
+        if (!$permissionChecker->hasWriteAccess($itemDestinationClassUri)) {
+            $report->add(
+                Report::createError(
+                    __('You do not have permission to import items into the selected item class.')
+                )
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function getItemSessionControlEnricher(): ItemSessionControlEnricher
+    {
+        return $this->getPsrContainer()->get(ItemSessionControlEnricher::class);
     }
 
     private function getMetaMetadataImporter(): MetaMetadataImportMapper
