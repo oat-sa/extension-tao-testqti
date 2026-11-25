@@ -45,6 +45,10 @@ module.exports = function(grunt) {
                         name : 'taoQtiTest',
                         default : true,
                         babel : true,
+                        exclude: [
+                            'tao/ckeditor/wproofreaderBootstrap',
+                            'tao/ckeditor/wproofreaderExclude'
+                        ],
                         excludeNested: ['taoQtiTest/controller/content/edit']
                     }, {
                         name : 'taoQtiTestRunner',
